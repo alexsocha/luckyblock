@@ -1,0 +1,58 @@
+// import org.apache.tools.ant.filters.*
+
+def luckyConfigDir = "$projectDir/lucky_config"
+def luckyRunConfigDir = "$projectDir/run/config/lucky_block/version-${project.version}"
+def distDir = "$buildDir/libs"
+
+task luckyCopyRunConfig(type: Copy) {
+    from luckyConfigDir
+    into luckyRunConfigDir
+}
+
+task luckyZipConfig(type: Zip) {
+    destinationDir = file(distDir)
+    archiveName = 'default_config.zip'
+    from luckyConfigDir
+}
+
+task luckyPackage(type: Zip) {
+    destinationDir = file(distDir)
+    archiveName = "${project.jarName}.zip" 
+    from zipTree("$distDir/${project.jarNameRaw}.jar")
+    from("$distDir/default_config.zip") {
+        into ('mod/lucky')
+    }
+}
+
+task luckyTemplate(type: Copy) {
+    from "$projectDir/src/main/java/mod/lucky"
+    into "$buildDir/sources/main/java/mod/lucky"
+    include 'Lucky.java'
+    filter { line -> line.replaceAll('\\$\\{project.modid\\}', project.modid) }
+    filter { line -> line.replaceAll('\\$\\{project.version\\}', project.version) }
+    filter { line -> line.replaceAll('\\$\\{project.mcversion\\}', project.mcversion) }
+}
+luckyTemplate.shouldRunAfter(sourceMainJava)
+compileJava.shouldRunAfter(luckyTemplate)
+
+task luckyClient {
+    dependsOn luckyTemplate
+    dependsOn luckyCopyRunConfig
+    dependsOn runClient
+    runClient.shouldRunAfter(luckyCopyRunConfig)
+}
+task luckyServer {
+    dependsOn luckyCopyRunConfig
+    dependsOn runServer
+    runServer.shouldRunAfter(luckyCopyRunConfig)
+}
+
+task luckyBuild {
+    dependsOn luckyTemplate
+    dependsOn build
+    dependsOn luckyZipConfig
+    dependsOn luckyPackage
+
+    luckyZipConfig.shouldRunAfter(build)
+    luckyPackage.shouldRunAfter(luckyZipConfig)
+}

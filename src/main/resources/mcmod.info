@@ -1,0 +1,11 @@
+[
+{
+  "modid": "lucky",
+  "name": "Lucky Block",
+  "description": "Adds a block with random outcomes.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "http://www.minecraftascending.com/projects/lucky_block/lucky_block.html",
+  "authorList": ["Alex Socha"]
+}
+]
