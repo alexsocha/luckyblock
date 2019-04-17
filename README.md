@@ -1,6 +1,6 @@
 # Lucky Block
 
-<img src="https://raw.githubusercontent.com/alexsocha/luckyblock/master/img/icon_yellow.png?sanitize=true" width="110px" align="left" style="margin-top: -5px">
+<img src="https://raw.githubusercontent.com/alexsocha/luckyblock/master/img/icon_yellow.png" width="110px" align="left" style="margin-top: -5px">
 
 Originally created in 2015, the Lucky Block is a mod for Minecraft which has since gained over 5 million users. The mod adds a new block to the game which produces random outcomes, as well as items such as the lucky sword, bow and potion. Additionally, the mod can be customized with hundreds of community add-ons.
 
@@ -16,7 +16,7 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 
 ## Resources
 
-<img src="https://raw.githubusercontent.com/alexsocha/luckyblock/master/img/luckyblock_3d.png?sanitize=true" width="180px" align="right" vspace="20px">
+<img src="https://raw.githubusercontent.com/alexsocha/luckyblock/master/img/luckyblock_3d.png" width="180px" align="right" vspace="20px">
 
 - <a href="">Download Lucky Block</a>
 - <a href="">Minecraft Forums</a>
@@ -28,7 +28,7 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 3. Run Minecraft and enjoy!
 
 ## Add-ons
-<img src="https://raw.githubusercontent.com/alexsocha/luckyblock/master/img/addons_3d.png?sanitize=true" width="400px">
+<img src="https://raw.githubusercontent.com/alexsocha/luckyblock/master/img/addons_3d.png" width="400px">
 
 ### Installing
 1. Install the Lucky Block and run Minecraft at least once.
