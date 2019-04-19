@@ -50,11 +50,13 @@ import org.apache.logging.log4j.Logger;
 public class Lucky {
   public static String version;
   public static String mcversion = MCPVersion.getMCVersion();
+  public static final Logger LOGGER = LogManager.getLogger();
 
   public static BlockLuckyBlock luckyBlock;
   public static ItemLuckySword luckySword;
   public static ItemLuckyBow luckyBow;
   public static ItemLuckyPotion luckyPotion;
+
   public static ArrayList<PluginLoader> luckyBlockPlugins;
   public static ArrayList<Structure> structures;
 
@@ -63,13 +65,7 @@ public class Lucky {
 
   public static int ENTITY_ID = 24653;
 
-  @SidedProxy(clientSide = "mod.lucky.client.ClientProxy", serverSide = "mod.lucky.CommonProxy")
-  public static CommonProxy proxy;
-
   public static SimpleNetworkWrapper networkHandler;
-
-  private static final Logger LOGGER = LogManager.getLogger();
-
 
   public Lucky() {
     // ========== begin 1.13 ==========

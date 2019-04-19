@@ -3,7 +3,7 @@ package mod.lucky.block;
 import java.util.ArrayList;
 import java.util.Random;
 import mod.lucky.command.LuckyCommandLogic;
-import mod.lucky.crafting.LuckyCrafting;
+import mod.lucky.crafting.LuckCrafting;
 import mod.lucky.drop.DropContainer;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
@@ -35,7 +35,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 public class BlockLuckyBlock extends BlockContainer {
   private DropProcessor dropProcessor;
   private LuckyGenerator worldGenerator;
-  private LuckyCrafting crafting;
+  private LuckCrafting crafting;
   private IForgeRegistryEntry.Impl<IRecipe> blockRecipe;
   private boolean creativeModeDrops = false;
 
@@ -46,7 +46,7 @@ public class BlockLuckyBlock extends BlockContainer {
     this.setSoundType(SoundType.STONE);
     this.dropProcessor = new DropProcessor();
     this.worldGenerator = new LuckyGenerator(this);
-    this.crafting = new LuckyCrafting(this);
+    this.crafting = new LuckCrafting(this);
   }
 
   @Override
@@ -204,7 +204,7 @@ public class BlockLuckyBlock extends BlockContainer {
     return this.worldGenerator;
   }
 
-  public LuckyCrafting getCrafting() {
+  public LuckCrafting getCrafting() {
     return this.crafting;
   }
 

@@ -2,7 +2,7 @@ package mod.lucky.item;
 
 import java.util.List;
 import javax.annotation.Nullable;
-import mod.lucky.crafting.LuckyCrafting;
+import mod.lucky.crafting.LuckCrafting;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.entity.EntityLuckyPotion;
 import net.minecraft.client.util.ITooltipFlag;
@@ -22,11 +22,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemLuckyPotion extends Item {
   private DropProcessor dropProcessor;
-  private LuckyCrafting crafting;
+  private LuckCrafting crafting;
 
   public ItemLuckyPotion() {
     this.dropProcessor = new DropProcessor();
-    this.crafting = new LuckyCrafting(this);
+    this.crafting = new LuckCrafting(this);
   }
 
   @Override
@@ -117,7 +117,7 @@ public class ItemLuckyPotion extends Item {
     }
   }
 
-  public LuckyCrafting getCrafting() {
+  public LuckCrafting getCrafting() {
     return this.crafting;
   }
 }

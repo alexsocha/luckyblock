@@ -1,6 +1,6 @@
 package mod.lucky.resources;
 
-import mod.lucky.crafting.CraftingLuckModifier;
+import mod.lucky.crafting.LuckCraftingModifier;
 import mod.lucky.drop.value.ValueParser;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.util.LuckyReader;
@@ -18,8 +18,8 @@ public class ResourceLuckCrafting extends BaseResource {
         ItemStack itemStack = ValueParser.getItemStack(name, null);
         int luck = ValueParser.getInteger(value);
 
-        CraftingLuckModifier luckModifier =
-            new CraftingLuckModifier(itemStack.getItem(), itemStack.getItemDamage(), luck);
+        LuckCraftingModifier luckModifier =
+            new LuckCraftingModifier(itemStack.getItem(), itemStack.getItemDamage(), luck);
         loader.getBlock().getCrafting().addLuckModifier(luckModifier);
         if (loader.getSword() != null)
           loader.getSword().getCrafting().addLuckModifier(luckModifier);

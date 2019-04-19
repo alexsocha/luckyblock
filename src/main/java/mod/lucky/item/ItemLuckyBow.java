@@ -2,7 +2,7 @@ package mod.lucky.item;
 
 import java.util.List;
 import javax.annotation.Nullable;
-import mod.lucky.crafting.LuckyCrafting;
+import mod.lucky.crafting.LuckCrafting;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyFunction;
@@ -30,7 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemLuckyBow extends ItemBow {
   private DropProcessor dropProcessor;
-  private LuckyCrafting crafting;
+  private LuckCrafting crafting;
 
   private String bowTextureName = "lucky:luckyBow";
 
@@ -38,7 +38,7 @@ public class ItemLuckyBow extends ItemBow {
     super();
     this.setMaxDamage(1000);
     this.dropProcessor = new DropProcessor();
-    this.crafting = new LuckyCrafting(this);
+    this.crafting = new LuckCrafting(this);
 
     this.addPropertyOverride(
         new ResourceLocation("pull"),
@@ -225,7 +225,7 @@ public class ItemLuckyBow extends ItemBow {
               + I18n.translateToLocal("item.luckyBlock.customDrop"));
   }
 
-  public LuckyCrafting getCrafting() {
+  public LuckCrafting getCrafting() {
     return this.crafting;
   }
 }

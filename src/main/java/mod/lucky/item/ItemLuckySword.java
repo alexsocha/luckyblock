@@ -2,7 +2,7 @@ package mod.lucky.item;
 
 import java.util.List;
 import javax.annotation.Nullable;
-import mod.lucky.crafting.LuckyCrafting;
+import mod.lucky.crafting.LuckCrafting;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyFunction;
@@ -19,13 +19,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemLuckySword extends ItemSword {
   private DropProcessor dropProcessor;
-  private LuckyCrafting crafting;
+  private LuckCrafting crafting;
 
   public ItemLuckySword() {
     super(Item.ToolMaterial.IRON);
     this.setMaxDamage(3124);
     this.dropProcessor = new DropProcessor();
-    this.crafting = new LuckyCrafting(this);
+    this.crafting = new LuckCrafting(this);
   }
 
   @Override
@@ -93,7 +93,7 @@ public class ItemLuckySword extends ItemSword {
               + I18n.translateToLocal("item.luckyBlock.customDrop"));
   }
 
-  public LuckyCrafting getCrafting() {
+  public LuckCrafting getCrafting() {
     return this.crafting;
   }
 }

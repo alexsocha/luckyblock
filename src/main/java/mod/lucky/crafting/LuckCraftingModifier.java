@@ -2,12 +2,12 @@ package mod.lucky.crafting;
 
 import net.minecraft.item.Item;
 
-public class CraftingLuckModifier {
+public class LuckCraftingModifier {
   private Item item;
   private int damage = -1;
   private int luckValue;
 
-  public CraftingLuckModifier(Item item, int damage, int luckValue) {
+  public LuckCraftingModifier(Item item, int damage, int luckValue) {
     this.item = item;
     this.damage = damage;
     this.luckValue = luckValue;
