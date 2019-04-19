@@ -3,17 +3,23 @@ def luckyRunConfigDir = "$projectDir/run/config/lucky_block/version-${project.ve
 def distDir = "$buildDir/libs"
 
 task luckyCopyRunConfig(type: Copy) {
+    group = 'Lucky Block'
+    description = 'Copies Lucky Block configuration to the run directory.'
     from luckyConfigDir
     into luckyRunConfigDir
 }
 
 task luckyZipConfig(type: Zip) {
+    group = 'Lucky Block'
+    description = 'Creates a Lucky Block configuration zip archive.'
     destinationDir = file(distDir)
     archiveName = 'default_config.zip'
     from luckyConfigDir
 }
 
 task luckyPackage(type: Zip) {
+    group = 'Lucky Block'
+    description = 'Combines build archive with Lucky Block configuration and generates the final zip.'
     destinationDir = file(distDir)
     archiveName = "${project.jarName}.zip" 
     from zipTree("$distDir/${project.jarNameRaw}.jar")
@@ -23,15 +29,21 @@ task luckyPackage(type: Zip) {
 }
 
 task luckyClient {
+    group = 'Lucky Block'
+    description = 'Runs Minecraft client with the Lucky Block.'
     dependsOn luckyCopyRunConfig
     dependsOn 'runClient'
 }
 task luckyServer {
+    group = 'Lucky Block'
+    description = 'Runs Minecraft server with the Lucky Block.'
     dependsOn luckyCopyRunConfig
     dependsOn 'runServer'
 }
 
 task luckyBuild {
+    group = 'Lucky Block'
+    description = 'Builds the Lucky Block.'
     dependsOn build
     dependsOn luckyZipConfig
     dependsOn luckyPackage
