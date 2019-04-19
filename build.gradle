@@ -9,13 +9,12 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'maven-publish'
 
 version = '7.7.0'
 group = 'mod.lucky'
 archivesBaseName = 'lucky'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
     mappings channel: 'snapshot', version: '20180921-1.13'
@@ -26,7 +25,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'error'
             mods {
-                examplemod {
+                lucky {
                     source sourceSets.main
                 }
             }
@@ -36,7 +35,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'error'
             mods {
-                examplemod {
+                lucky {
                     source sourceSets.main
                 }
             }
@@ -44,24 +43,34 @@ minecraft {
     }
 }
 
-dependencies {
-    minecraft 'net.minecraftforge:forge:1.13.2-25.0.146'
+ext {
+    forgeVersion = '1.13.2-25.0.146'
+    mcversion = project.forgeVersion.split('-')[0]
+    jarNameRaw = 'luckyblock-build'
+    jarName = "luckyblock-${project.mcversion}-$version"
 }
 
-// Example for how to get properties into the manifest for reading by the runtime.
+dependencies {
+    minecraft "net.minecraftforge:forge:${project.forgeVersion}"
+}
+
+apply from: 'scripts/tasks.gradle' // custom tasks
+
 jar {
+    archiveName = "${project.jarNameRaw}.jar"
     manifest {
         attributes([
-            "Specification-Title": "lucky",
-            "Specification-Vendor": "examplemodsareus",
-            "Specification-Version": "1",
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"examplemodsareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            'Specification-Title': 'lucky',
+            'Specification-Vendor': 'examplemodsareus',
+            'Specification-Version': '1',
+            'Implementation-Title': project.name,
+            'Implementation-Version': "${version}",
+            'Implementation-Vendor' :'examplemodsareus',
+            'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
+
 processResources {
     expand 'version':project.version
 }
