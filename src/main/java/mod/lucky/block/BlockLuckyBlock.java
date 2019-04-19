@@ -2,15 +2,15 @@ package mod.lucky.block;
 
 import java.util.ArrayList;
 import java.util.Random;
-//import mod.lucky.command.LuckyCommandLogic;
-//import mod.lucky.crafting.LuckyCrafting;
+import mod.lucky.command.LuckyCommandLogic;
+import mod.lucky.crafting.LuckyCrafting;
 import mod.lucky.drop.DropContainer;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
-//import mod.lucky.item.ItemLuckyBlock;
+import mod.lucky.item.ItemLuckyBlock;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.util.LuckyFunction;
-//import mod.lucky.world.LuckyGenerator;
+import mod.lucky.world.LuckyGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
@@ -212,11 +212,11 @@ public class BlockLuckyBlock extends BlockContainer {
     this.blockRecipe = recipe;
     return this;
   }
-/*
+
   public IForgeRegistryEntry.Impl<IRecipe> getBlockRecipe() {
     return this.blockRecipe;
   }
-*/
+
   public boolean getCreativeModeDrops() {
     return this.creativeModeDrops;
   }
