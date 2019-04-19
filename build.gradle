@@ -1,58 +1,67 @@
 buildscript {
     repositories {
-        jcenter()
         maven { url = 'https://files.minecraftforge.net/maven' }
+        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'maven-publish'
 
-version = '7.6.0'
+version = '7.7.0'
+group = 'mod.lucky'
+archivesBaseName = 'lucky'
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    version = '1.12.2-14.23.5.2825'
-    runDir = 'run'
-    mappings = 'snapshot_20171003' // snapshot_YYYYMMDD
+    mappings channel: 'snapshot', version: '20180921-1.13'
+    
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'error'
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'error'
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
-
-ext {
-    modid = 'lucky'
-    mcversionFull = project.minecraft.version
-    mcversion = project.mcversionFull.split('-')[0]
-    jarNameRaw = 'luckyblock-build'
-    jarName = "luckyblock-${project.mcversion}-$version"
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.13.2-25.0.146'
 }
 
-group = "mod.${project.modid}"
-jar.archiveName = "${project.jarNameRaw}.jar"
-
-sourceCompatibility = targetCompatibility = '1.8' // need this here so eclipse task generates correctly
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
+// Example for how to get properties into the manifest for reading by the runtime.
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "lucky",
+            "Specification-Vendor": "examplemodsareus",
+            "Specification-Version": "1",
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"examplemodsareus",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
 }
-
-
-apply from: 'scripts/tasks.gradle' // custom tasks
-
 processResources {
-    // this will ensure that this task is redone when the versions change
-    inputs.property 'version', project.version
-    inputs.property 'mcversion', project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        include 'lucky.properties'
-
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    // copy everything else except the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
+    expand 'version':project.version
 }
