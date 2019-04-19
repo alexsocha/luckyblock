@@ -126,7 +126,7 @@ public class LuckyTickHandler {
         NBTTagList delayDropTags = event.getData().getTagList("LuckyBlockDelayDrops", 10);
         for (int i = 0; i < delayDropTags.tagCount(); i++) {
           DelayLuckyDrop delayDrop =
-              new DelayLuckyDrop(Lucky.lucky_block.getDropProcessor(), null, 0);
+              new DelayLuckyDrop(Lucky.luckyBlock.getDropProcessor(), null, 0);
           delayDrop.readFromNBT(delayDropTags.getCompoundTagAt(i), event.getChunk().getWorld());
           this.addDelayDrop(delayDrop);
         }

@@ -98,7 +98,7 @@ public class ItemLuckyPotion extends Item {
     ItemStack normalItemStack = new ItemStack(this, 1, 0);
     items.add(normalItemStack);
 
-    if (Item.REGISTRY.getNameForObject(this).toString().equals("lucky:lucky_potion")) {
+    if (Item.REGISTRY.getNameForObject(this).toString().equals("lucky:luckyPotion")) {
       NBTTagCompound luckyTag = new NBTTagCompound();
       luckyTag.setInteger("Luck", 100);
 

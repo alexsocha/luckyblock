@@ -3,6 +3,7 @@ package mod.lucky;
 import java.io.File;
 import java.util.ArrayList;
 import mod.lucky.block.BlockLuckyBlock;
+import mod.lucky.client.SetupClient;
 import mod.lucky.drop.func.DropFunction;
 import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
@@ -34,37 +35,27 @@ import net.minecraftforge.fml.relauncher.Side;
 
 // ======= 1.13 ===========
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.versions.MCPVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Lucky.MODID, name = Lucky.NAME, version = Lucky.VERSION)
+@Mod("lucky")
 public class Lucky {
-  @Instance(Lucky.MODID)
-  private static Lucky instance;
+  public static String version;
+  public static String mcversion = MCPVersion.getMCVersion();
 
-  public static final String MODID = "${project.modid}";
-  public static final String VERSION = "${project.version}";
-  public static final String MC_VERSION = "${project.mcversion}";
-  public static final String NAME = "Lucky Block";
-
-  public static BlockLuckyBlock lucky_block;
-  public static ItemLuckySword lucky_sword;
-  public static ItemLuckyBow lucky_bow;
-  public static ItemLuckyPotion lucky_potion;
-  public static ArrayList<PluginLoader> lucky_block_plugins;
+  public static BlockLuckyBlock luckyBlock;
+  public static ItemLuckySword luckySword;
+  public static ItemLuckyBow luckyBow;
+  public static ItemLuckyPotion luckyPotion;
+  public static ArrayList<PluginLoader> luckyBlockPlugins;
   public static ArrayList<Structure> structures;
 
   public static ResourceLoader resourceLoader;
@@ -79,8 +70,6 @@ public class Lucky {
 
   private static final Logger LOGGER = LogManager.getLogger();
 
-  public static String version;
-  public static String mcversion = MCPVersion.getMCVersion();
 
   public Lucky() {
     // ========== begin 1.13 ==========
@@ -88,55 +77,11 @@ public class Lucky {
     LOGGER.info("==========" + Lucky.mcversion + ", " + Lucky.version);
 
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
 
     MinecraftForge.EVENT_BUS.register(this);
     // ======== end 1.13 ========
 
-    networkHandler = NetworkRegistry.INSTANCE.newSimpleChannel("LuckyBlock");
-    networkHandler.registerMessage(
-        ParticlePacket.Handler.class, ParticlePacket.class, 0, Side.CLIENT);
-
-    // Lucky Block
-    lucky_block =
-        (BlockLuckyBlock)
-            new BlockLuckyBlock(Material.WOOD)
-                .setUnlocalizedName("luckyBlock")
-                .setHardness(0.2F)
-                .setResistance(6000000.0F)
-                .setCreativeTab(CreativeTabs.BUILDING_BLOCKS)
-                .setRegistryName("lucky_block");
-    lucky_block.setHarvestLevel("pickaxe", 0);
-    // Lucky Sword
-    lucky_sword =
-        (ItemLuckySword)
-            new ItemLuckySword()
-                .setUnlocalizedName("luckySword")
-                .setCreativeTab(CreativeTabs.COMBAT)
-                .setRegistryName("lucky_sword");
-    // Lucky Bow
-    lucky_bow =
-        (ItemLuckyBow)
-            new ItemLuckyBow()
-                .setUnlocalizedName("luckyBow")
-                .setCreativeTab(CreativeTabs.COMBAT)
-                .setRegistryName("lucky_bow");
-    // Lucky Potion
-    lucky_potion =
-        (ItemLuckyPotion)
-            new ItemLuckyPotion()
-                .setUnlocalizedName("luckyPotion")
-                .setCreativeTab(CreativeTabs.COMBAT)
-                .setRegistryName("lucky_potion");
-
-    lucky_block_plugins = new ArrayList<PluginLoader>();
-    structures = new ArrayList<Structure>();
-
-    DropFunction.registerFunctions();
-    Lucky.resourceLoader = new ResourceLoader(new File("."));
-    Lucky.resourceLoader.registerPlugins();
-    Lucky.resourceLoader.extractDefaultResources();
-    Lucky.resourceLoader.loadAllResources(false);
   }
 
   @EventHandler
@@ -165,7 +110,7 @@ public class Lucky {
         true);
 
     GameRegistry.registerTileEntity(TileEntityLuckyBlock.class, "luckyBlockData");
-    GameRegistry.registerWorldGenerator(lucky_block.getWorldGenerator(), 1);
+    GameRegistry.registerWorldGenerator(luckyBlock.getWorldGenerator(), 1);
 
     this.tickHandler = new LuckyTickHandler();
     MinecraftForge.EVENT_BUS.register(this.tickHandler);
@@ -203,12 +148,44 @@ public class Lucky {
 
   // =============== 1.13 =======================
   private void setup(final FMLCommonSetupEvent event) {
+    networkHandler = NetworkRegistry.INSTANCE.newSimpleChannel("LuckyBlock");
+    networkHandler.registerMessage(
+        ParticlePacket.Handler.class, ParticlePacket.class, 0, Side.CLIENT);
+
+    // Lucky Block
+    luckyBlock = new BlockLuckyBlock(Material.WOOD)
+                .setHardness(0.2F)
+                .setResistance(6000000.0F)
+                .setCreativeTab(CreativeTabs.BUILDING_BLOCKS)
+                .setRegistryName("luckyBlock");
+    luckyBlock.setHarvestLevel("pickaxe", 0);
+    // Lucky Sword
+    luckySword = new ItemLuckySword()
+                .setCreativeTab(CreativeTabs.COMBAT)
+                .setRegistryName("luckySword");
+    // Lucky Bow
+    luckyBow = new ItemLuckyBow()
+                .setCreativeTab(CreativeTabs.COMBAT)
+                .setRegistryName("luckyBow");
+    // Lucky Potion
+    luckyPotion = new ItemLuckyPotion()
+                .setCreativeTab(CreativeTabs.COMBAT)
+                .setRegistryName("luckyPotion");
+
+    luckyBlockPlugins = new ArrayList<PluginLoader>();
+    structures = new ArrayList<Structure>();
+
+    DropFunction.registerFunctions();
+    Lucky.resourceLoader = new ResourceLoader(new File("."));
+    Lucky.resourceLoader.registerPlugins();
+    Lucky.resourceLoader.extractDefaultResources();
+    Lucky.resourceLoader.loadAllResources(false);
     // some preinit code
     LOGGER.info("SETUP");
   }
 
   private void setupClient(final FMLClientSetupEvent event) {
-    LOGGER.info("SETUP CLIENT");
+    SetupClient.setup();
   }
 
   @SubscribeEvent

@@ -32,7 +32,7 @@ public class ItemLuckyBow extends ItemBow {
   private DropProcessor dropProcessor;
   private LuckyCrafting crafting;
 
-  private String bowTextureName = "lucky:lucky_bow";
+  private String bowTextureName = "lucky:luckyBow";
 
   public ItemLuckyBow() {
     super();

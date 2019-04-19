@@ -34,7 +34,7 @@ public class EntityLuckyPotion extends EntityThrowable {
   }
 
   public EntityLuckyPotion(World world, EntityLivingBase thrower) {
-    this(world, thrower, Lucky.lucky_potion, new DropProcessor(), 0, null);
+    this(world, thrower, Lucky.luckyPotion, new DropProcessor(), 0, null);
   }
 
   public EntityLuckyPotion(

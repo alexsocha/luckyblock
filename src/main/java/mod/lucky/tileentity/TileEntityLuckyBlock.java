@@ -45,7 +45,7 @@ public class TileEntityLuckyBlock extends TileEntity implements ITickable {
           this.world
               .getBlockState(new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()))
               .getBlock();
-      if (luckyBlock == Lucky.lucky_block) {
+      if (luckyBlock == Lucky.luckyBlock) {
         if (this.world.isBlockPowered(
             new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()))) {
           ((BlockLuckyBlock) luckyBlock)

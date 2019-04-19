@@ -14,8 +14,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class Register {
   @SubscribeEvent
   public static void registerBlocks(RegistryEvent.Register<Block> event) {
-    event.getRegistry().register(Lucky.lucky_block);
-    for (PluginLoader plugin : Lucky.lucky_block_plugins)
+    event.getRegistry().register(Lucky.luckyBlock);
+    for (PluginLoader plugin : Lucky.luckyBlockPlugins)
       event.getRegistry().register(plugin.getBlock());
   }
 
@@ -24,13 +24,13 @@ public class Register {
     event
         .getRegistry()
         .register(
-            new ItemLuckyBlock(Lucky.lucky_block)
-                .setRegistryName(Lucky.lucky_block.getRegistryName()));
-    event.getRegistry().register(Lucky.lucky_sword);
-    event.getRegistry().register(Lucky.lucky_bow);
-    event.getRegistry().register(Lucky.lucky_potion);
+            new ItemLuckyBlock(Lucky.luckyBlock)
+                .setRegistryName(Lucky.luckyBlock.getRegistryName()));
+    event.getRegistry().register(Lucky.luckySword);
+    event.getRegistry().register(Lucky.luckyBow);
+    event.getRegistry().register(Lucky.luckyPotion);
 
-    for (PluginLoader plugin : Lucky.lucky_block_plugins) {
+    for (PluginLoader plugin : Lucky.luckyBlockPlugins) {
       event
           .getRegistry()
           .register(
@@ -49,35 +49,35 @@ public class Register {
     event
         .getRegistry()
         .register(
-            Lucky.lucky_block
+            Lucky.luckyBlock
                 .getBlockRecipe()
-                .setRegistryName(Lucky.lucky_block.getRegistryName().toString()));
+                .setRegistryName(Lucky.luckyBlock.getRegistryName().toString()));
     event
         .getRegistry()
         .register(
-            Lucky.lucky_block
+            Lucky.luckyBlock
                 .getCrafting()
-                .setRegistryName(Lucky.lucky_block.getRegistryName().toString() + "_luck"));
+                .setRegistryName(Lucky.luckyBlock.getRegistryName().toString() + "_luck"));
     event
         .getRegistry()
         .register(
-            Lucky.lucky_sword
+            Lucky.luckySword
                 .getCrafting()
-                .setRegistryName(Lucky.lucky_sword.getRegistryName().toString() + "_luck"));
+                .setRegistryName(Lucky.luckySword.getRegistryName().toString() + "_luck"));
     event
         .getRegistry()
         .register(
-            Lucky.lucky_bow
+            Lucky.luckyBow
                 .getCrafting()
-                .setRegistryName(Lucky.lucky_bow.getRegistryName().toString() + "_luck"));
+                .setRegistryName(Lucky.luckyBow.getRegistryName().toString() + "_luck"));
     event
         .getRegistry()
         .register(
-            Lucky.lucky_potion
+            Lucky.luckyPotion
                 .getCrafting()
-                .setRegistryName(Lucky.lucky_potion.getRegistryName().toString() + "_luck"));
+                .setRegistryName(Lucky.luckyPotion.getRegistryName().toString() + "_luck"));
 
-    for (PluginLoader plugin : Lucky.lucky_block_plugins) {
+    for (PluginLoader plugin : Lucky.luckyBlockPlugins) {
       if (plugin.getBlock().getBlockRecipe() != null)
         event
             .getRegistry()

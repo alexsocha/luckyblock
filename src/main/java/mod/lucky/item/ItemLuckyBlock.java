@@ -59,7 +59,7 @@ public class ItemLuckyBlock extends ItemBlock {
     ItemStack normalItemStack = new ItemStack(this, 1, 0);
     items.add(normalItemStack);
 
-    if (Block.REGISTRY.getNameForObject(this.getBlock()).toString().equals("lucky:lucky_block")) {
+    if (Block.REGISTRY.getNameForObject(this.getBlock()).toString().equals("lucky:luckyBlock")) {
       NBTTagCompound luckyTag = new NBTTagCompound();
       luckyTag.setInteger("Luck", 80);
 

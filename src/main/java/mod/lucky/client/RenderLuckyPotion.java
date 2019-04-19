@@ -15,7 +15,7 @@ public class RenderLuckyPotion extends RenderSnowball<EntityLuckyPotion> {
   private RenderItem renderItem;
 
   public RenderLuckyPotion(RenderManager renderManager, RenderItem renderItem) {
-    super(renderManager, Lucky.lucky_potion, renderItem);
+    super(renderManager, Lucky.luckyPotion, renderItem);
     this.renderItem = renderItem;
   }
 

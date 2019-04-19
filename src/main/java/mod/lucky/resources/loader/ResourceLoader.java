@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import mod.lucky.resources.*;
 
 public class ResourceLoader {
-  private static File PLUGIN_DIR = new File("/addons/lucky_block");
+  private static File PLUGIN_DIR = new File("/addons/luckyBlock");
 
   private boolean isClient;
   private File minecraftDir;

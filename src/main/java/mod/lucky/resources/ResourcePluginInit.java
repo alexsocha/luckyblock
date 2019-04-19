@@ -95,7 +95,7 @@ public class ResourcePluginInit extends BaseResource {
       }
 
       loader.setLuckyBlockItems(lucky_block, lucky_sword, lucky_bow, lucky_potion);
-      Lucky.lucky_block_plugins.add(pluginLoader);
+      Lucky.luckyBlockPlugins.add(pluginLoader);
     } catch (Exception e) {
       System.err.println(
           "Lucky Block: Error reading 'plugin_init.txt' from plugin '"
