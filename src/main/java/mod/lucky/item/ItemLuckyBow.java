@@ -1,15 +1,10 @@
 package mod.lucky.item;
 
-import java.util.List;
-import javax.annotation.Nullable;
-
-import mod.lucky.crafting.LuckCrafting;
+import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyFunction;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,40 +16,32 @@ import net.minecraft.item.*;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.event.ForgeEventFactory;
 
-public class ItemLuckyBow extends ItemBow {
+public class ItemLuckyBow extends ItemBow implements ILuckyItemContainer {
     private LuckyItem luckyItem = new LuckyItem(this);
-    private String bowTextureName = "lucky:luckyBow";
-
-    private Item.Properties properties = new Item.Properties()
-        .maxStackSize(1)
-        .defaultMaxDamage(1000);
+    private String bowTextureName = Lucky.luckyBow.getRegistryName().toString();
 
     public ItemLuckyBow() {
         super(new Item.Properties()
             .maxStackSize(1)
             .defaultMaxDamage(1000));
-        this.dropProcessor = new DropProcessor();
 
         this.addPropertyOverride(
             new ResourceLocation("pull"),
             new IItemPropertyGetter() {
                 @Override
-                @SideOnly(Side.CLIENT)
-                public float apply(ItemStack stack, World worldIn, EntityLivingBase entityIn) {
+                @OnlyIn(Dist.CLIENT)
+                public float call(ItemStack stack, World worldIn, EntityLivingBase entityIn) {
                     if (entityIn == null) {
                         return 0.0F;
                     } else {
                         ItemStack itemstack = entityIn.getActiveItemStack();
                         return itemstack != null && itemstack.getItem() instanceof ItemLuckyBow
-                            ? (stack.getMaxItemUseDuration() - entityIn.getItemInUseCount()) / 20.0F
+                            ? (stack.getUseDuration() - entityIn.getItemInUseCount()) / 20.0F
                             : 0.0F;
                     }
                 }
@@ -63,84 +50,18 @@ public class ItemLuckyBow extends ItemBow {
             new ResourceLocation("pulling"),
             new IItemPropertyGetter() {
                 @Override
-                @SideOnly(Side.CLIENT)
-                public float apply(ItemStack stack, World worldIn, EntityLivingBase entityIn) {
+                @OnlyIn(Dist.CLIENT)
+                public float call(ItemStack stack, World worldIn, EntityLivingBase entityIn) {
                     return entityIn != null
                         && entityIn.isHandActive()
                         && entityIn.getActiveItemStack() == stack
-                        ? 1.0F
-                        : 0.0F;
+                        ? 1.0F : 0.0F;
                 }
             });
     }
 
     @Override
-    public void onPlayerStoppedUsing(
-        ItemStack itemStack, World world, EntityLivingBase entity, int timeLeft) {
-        if (entity instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) entity;
-
-            boolean unlimitedArrows =
-                player.capabilities.isCreativeMode
-                    || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, itemStack) > 0;
-            ItemStack arrowStack = this.getInventoryArrows(player);
-
-            int initPower = this.getMaxItemUseDuration(itemStack) - timeLeft;
-            initPower =
-                net.minecraftforge.event.ForgeEventFactory.onArrowLoose(
-                    itemStack, world, player, initPower, arrowStack != null || unlimitedArrows);
-            if (initPower < 0) return;
-
-            if (unlimitedArrows || arrowStack != null) {
-                float power = getArrowVelocity(initPower);
-                if (!(power >= 0.1D)) return;
-
-                if (!world.isRemote) {
-                    try {
-                        int luck = ItemLuckyBlock.getLuck(itemStack);
-                        String[] drops = ItemLuckyBlock.getRawDrops(itemStack);
-
-                        EntityArrow entityArrow = new EntityTippedArrow(world, player);
-                        if (drops != null && drops.length != 0)
-                            this.getDropProcessor()
-                                .processRandomDrop(
-                                    LuckyFunction.getDropsFromStringArray(drops),
-                                    new DropProcessData(world, player, entityArrow.getPositionVector())
-                                        .setBowPower(power * 3.0F),
-                                    luck);
-                        else
-                            this.getDropProcessor()
-                                .processRandomDrop(
-                                    new DropProcessData(world, player, entityArrow.getPositionVector())
-                                        .setBowPower(power * 3.0F),
-                                    luck);
-
-                    } catch (Exception e) {
-                        System.err.println(
-                            "The Lucky Bow encountered and error while trying to perform a function. Error report below:");
-                        e.printStackTrace();
-                    }
-                }
-
-                world.playSound(
-                    (EntityPlayer) null,
-                    player.posX,
-                    player.posY,
-                    player.posZ,
-                    SoundEvents.ENTITY_ARROW_SHOOT,
-                    SoundCategory.NEUTRAL,
-                    1.0F,
-                    1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + power * 0.5F);
-
-                if (!unlimitedArrows) {
-                    // setStackSize(getStackSize() - 1)
-                    arrowStack.setCount(arrowStack.getCount() - 1);
-                    // getStackSize()
-                    if (arrowStack.getCount() == 0) player.inventory.deleteStack(arrowStack);
-                }
-            }
-        }
-    }
+    public LuckyItem getLuckyItem() { return this.luckyItem; }
 
     private ItemStack getInventoryArrows(EntityPlayer player) {
         if (this.isArrow(player.getHeldItem(EnumHand.OFF_HAND))) {
@@ -157,6 +78,68 @@ public class ItemLuckyBow extends ItemBow {
             }
 
             return null;
+        }
+    }
+
+    @Override
+    public void onPlayerStoppedUsing(
+        ItemStack stack, World world, EntityLivingBase entity, int timeLeft) {
+
+        if (entity instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) entity;
+
+            boolean unlimitedArrows = player.isCreative()
+                || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
+            ItemStack arrowStack = this.getInventoryArrows(player);
+
+            int initPower = this.getUseDuration(stack) - timeLeft;
+            initPower =
+                ForgeEventFactory.onArrowLoose(
+                    stack, world, player, initPower, arrowStack != null || unlimitedArrows);
+            if (initPower < 0) return;
+
+            if (unlimitedArrows || arrowStack != null) {
+                float power = getArrowVelocity(initPower);
+                if (!(power >= 0.1D)) return;
+
+                if (!world.isRemote) {
+                    try {
+                        int luck = LuckyItem.getLuck(stack);
+                        String[] drops = LuckyItem.getRawDrops(stack);
+
+                        EntityArrow entityArrow = new EntityTippedArrow(world, player);
+                        DropProcessData dropData =
+                            new DropProcessData(world, player, entityArrow.getPositionVector())
+                                .setBowPower(power * 3.0F);
+                        if (drops != null && drops.length != 0)
+                            this.getLuckyItem().getDropProcessor()
+                                .processRandomDrop(
+                                    LuckyFunction.getDropsFromStringArray(drops), dropData, luck);
+                        else
+                            this.getLuckyItem().getDropProcessor()
+                                .processRandomDrop(dropData, luck);
+
+                    } catch (Exception e) {
+                        Lucky.LOGGER.error(DropProcessor.errorMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                world.playSound(
+                    (EntityPlayer) null,
+                    player.posX,
+                    player.posY,
+                    player.posZ,
+                    SoundEvents.ENTITY_ARROW_SHOOT,
+                    SoundCategory.NEUTRAL,
+                    1.0F,
+                    1.0F / (random.nextFloat() * 0.4F + 1.2F) + power * 0.5F);
+
+                if (!unlimitedArrows) {
+                    arrowStack.setCount(arrowStack.getCount() - 1);
+                    if (arrowStack.getCount() == 0) player.inventory.deleteStack(arrowStack);
+                }
+            }
         }
     }
 
@@ -187,22 +170,11 @@ public class ItemLuckyBow extends ItemBow {
     }
 
     @Override
-    public int getItemEnchantability() {
-        return 0;
-    }
+    public int getItemEnchantability() { return 0; }
+    @Override
+    public EnumAction getUseAction(ItemStack stack) { return EnumAction.BOW; }
 
     @Override
-    public EnumAction getUseAction(ItemStack stack) {
-        return EnumAction.BOW;
-    }
-
-    public DropProcessor getDropProcessor() {
-        return this.dropProcessor;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean hasEffect(ItemStack stack) {
-        return true;
-    }
+    @OnlyIn(Dist.CLIENT)
+    public boolean hasEffect(ItemStack stack) { return true; }
 }

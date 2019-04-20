@@ -177,11 +177,10 @@ public class DropProcessor {
         return 0;
     }
 
-    public void registerDrop(DropContainer drop) {
-        this.drops.add(drop);
-    }
+    public void registerDrop(DropContainer drop) { this.drops.add(drop); }
+    public ArrayList<DropContainer> getDrops() { return this.drops; }
 
-    public ArrayList<DropContainer> getDrops() {
-        return this.drops;
+    public static String errorMessage() {
+        return "Error performing Lucky Block function.";
     }
 }
