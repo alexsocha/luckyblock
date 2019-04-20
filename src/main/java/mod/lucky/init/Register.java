@@ -10,113 +10,113 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Register {
-  @SubscribeEvent
-  public static void registerBlocks(RegistryEvent.Register<Block> event) {
-    event.getRegistry().register(Lucky.luckyBlock);
-    for (PluginLoader plugin : Lucky.luckyBlockPlugins)
-      event.getRegistry().register(plugin.getBlock());
-  }
-
-  @SubscribeEvent
-  public static void registerItems(RegistryEvent.Register<Item> event) {
-    event
-        .getRegistry()
-        .register(
-            new ItemLuckyBlock(Lucky.luckyBlock)
-                .setRegistryName(Lucky.luckyBlock.getRegistryName()));
-    event.getRegistry().register(Lucky.luckySword);
-    event.getRegistry().register(Lucky.luckyBow);
-    event.getRegistry().register(Lucky.luckyPotion);
-
-    for (PluginLoader plugin : Lucky.luckyBlockPlugins) {
-      event
-          .getRegistry()
-          .register(
-              new ItemLuckyBlock(plugin.getBlock())
-                  .setRegistryName(plugin.getBlock().getRegistryName()));
-      if (plugin.getSword() != null) event.getRegistry().register(plugin.getSword());
-      if (plugin.getBow() != null) event.getRegistry().register(plugin.getBow());
-      if (plugin.getPotion() != null) event.getRegistry().register(plugin.getPotion());
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        event.getRegistry().register(Lucky.luckyBlock);
+        for (PluginLoader plugin : Lucky.luckyBlockPlugins)
+            event.getRegistry().register(plugin.getBlock());
     }
 
-    Lucky.resourceLoader.loadAllResources(true);
-  }
-
-  @SubscribeEvent
-  public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-    event
-        .getRegistry()
-        .register(
-            Lucky.luckyBlock
-                .getBlockRecipe()
-                .setRegistryName(Lucky.luckyBlock.getRegistryName().toString()));
-    event
-        .getRegistry()
-        .register(
-            Lucky.luckyBlock
-                .getCrafting()
-                .setRegistryName(Lucky.luckyBlock.getRegistryName().toString() + "_luck"));
-    event
-        .getRegistry()
-        .register(
-            Lucky.luckySword
-                .getCrafting()
-                .setRegistryName(Lucky.luckySword.getRegistryName().toString() + "_luck"));
-    event
-        .getRegistry()
-        .register(
-            Lucky.luckyBow
-                .getCrafting()
-                .setRegistryName(Lucky.luckyBow.getRegistryName().toString() + "_luck"));
-    event
-        .getRegistry()
-        .register(
-            Lucky.luckyPotion
-                .getCrafting()
-                .setRegistryName(Lucky.luckyPotion.getRegistryName().toString() + "_luck"));
-
-    for (PluginLoader plugin : Lucky.luckyBlockPlugins) {
-      if (plugin.getBlock().getBlockRecipe() != null)
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
         event
             .getRegistry()
             .register(
-                plugin
-                    .getBlock()
+                new ItemLuckyBlock(Lucky.luckyBlock)
+                    .setRegistryName(Lucky.luckyBlock.getRegistryName()));
+        event.getRegistry().register(Lucky.luckySword);
+        event.getRegistry().register(Lucky.luckyBow);
+        event.getRegistry().register(Lucky.luckyPotion);
+
+        for (PluginLoader plugin : Lucky.luckyBlockPlugins) {
+            event
+                .getRegistry()
+                .register(
+                    new ItemLuckyBlock(plugin.getBlock())
+                        .setRegistryName(plugin.getBlock().getRegistryName()));
+            if (plugin.getSword() != null) event.getRegistry().register(plugin.getSword());
+            if (plugin.getBow() != null) event.getRegistry().register(plugin.getBow());
+            if (plugin.getPotion() != null) event.getRegistry().register(plugin.getPotion());
+        }
+
+        Lucky.resourceLoader.loadAllResources(true);
+    }
+
+    @SubscribeEvent
+    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+        event
+            .getRegistry()
+            .register(
+                Lucky.luckyBlock
                     .getBlockRecipe()
-                    .setRegistryName(plugin.getBlock().getRegistryName().toString()));
-      event
-          .getRegistry()
-          .register(
-              plugin
-                  .getBlock()
-                  .getCrafting()
-                  .setRegistryName(plugin.getBlock().getRegistryName().toString() + "_luck"));
-      if (plugin.getSword() != null)
+                    .setRegistryName(Lucky.luckyBlock.getRegistryName().toString()));
         event
             .getRegistry()
             .register(
-                plugin
-                    .getSword()
+                Lucky.luckyBlock
                     .getCrafting()
-                    .setRegistryName(plugin.getSword().getRegistryName().toString() + "_luck"));
-      if (plugin.getBow() != null)
+                    .setRegistryName(Lucky.luckyBlock.getRegistryName().toString() + "_luck"));
         event
             .getRegistry()
             .register(
-                plugin
-                    .getBow()
+                Lucky.luckySword
                     .getCrafting()
-                    .setRegistryName(plugin.getBow().getRegistryName().toString() + "_luck"));
-      if (plugin.getPotion() != null)
+                    .setRegistryName(Lucky.luckySword.getRegistryName().toString() + "_luck"));
         event
             .getRegistry()
             .register(
-                plugin
-                    .getPotion()
+                Lucky.luckyBow
                     .getCrafting()
-                    .setRegistryName(plugin.getPotion().getRegistryName().toString() + "_luck"));
+                    .setRegistryName(Lucky.luckyBow.getRegistryName().toString() + "_luck"));
+        event
+            .getRegistry()
+            .register(
+                Lucky.luckyPotion
+                    .getCrafting()
+                    .setRegistryName(Lucky.luckyPotion.getRegistryName().toString() + "_luck"));
+
+        for (PluginLoader plugin : Lucky.luckyBlockPlugins) {
+            if (plugin.getBlock().getBlockRecipe() != null)
+                event
+                    .getRegistry()
+                    .register(
+                        plugin
+                            .getBlock()
+                            .getBlockRecipe()
+                            .setRegistryName(plugin.getBlock().getRegistryName().toString()));
+            event
+                .getRegistry()
+                .register(
+                    plugin
+                        .getBlock()
+                        .getCrafting()
+                        .setRegistryName(plugin.getBlock().getRegistryName().toString() + "_luck"));
+            if (plugin.getSword() != null)
+                event
+                    .getRegistry()
+                    .register(
+                        plugin
+                            .getSword()
+                            .getCrafting()
+                            .setRegistryName(plugin.getSword().getRegistryName().toString() + "_luck"));
+            if (plugin.getBow() != null)
+                event
+                    .getRegistry()
+                    .register(
+                        plugin
+                            .getBow()
+                            .getCrafting()
+                            .setRegistryName(plugin.getBow().getRegistryName().toString() + "_luck"));
+            if (plugin.getPotion() != null)
+                event
+                    .getRegistry()
+                    .register(
+                        plugin
+                            .getPotion()
+                            .getCrafting()
+                            .setRegistryName(plugin.getPotion().getRegistryName().toString() + "_luck"));
+        }
     }
-  }
 }

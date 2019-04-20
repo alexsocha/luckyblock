@@ -1,7 +1,9 @@
 package mod.lucky;
 
 public class CommonProxy {
-  public void preRegister() {}
+    public void preRegister() {
+    }
 
-  public void register() {}
+    public void register() {
+    }
 }

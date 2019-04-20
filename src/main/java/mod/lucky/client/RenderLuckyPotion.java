@@ -12,21 +12,21 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class RenderLuckyPotion extends RenderSnowball<EntityLuckyPotion> {
-  private RenderItem renderItem;
+    private RenderItem renderItem;
 
-  public RenderLuckyPotion(RenderManager renderManager, RenderItem renderItem) {
-    super(renderManager, Lucky.luckyPotion, renderItem);
-    this.renderItem = renderItem;
-  }
+    public RenderLuckyPotion(RenderManager renderManager, RenderItem renderItem) {
+        super(renderManager, Lucky.luckyPotion, renderItem);
+        this.renderItem = renderItem;
+    }
 
-  public ItemStack getItemStack(EntityLuckyPotion entity) {
-    ItemStack itemStack = entity.getItemLuckyPotion();
-    if (itemStack == null) itemStack = new ItemStack(Items.STICK, 1);
-    return itemStack;
-  }
+    public ItemStack getItemStack(EntityLuckyPotion entity) {
+        ItemStack itemStack = entity.getItemLuckyPotion();
+        if (itemStack == null) itemStack = new ItemStack(Items.STICK, 1);
+        return itemStack;
+    }
 
-  @Override
-  public ItemStack getStackToRender(EntityLuckyPotion entity) {
-    return this.getItemStack(entity);
-  }
+    @Override
+    public ItemStack getStackToRender(EntityLuckyPotion entity) {
+        return this.getItemStack(entity);
+    }
 }

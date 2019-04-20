@@ -6,61 +6,61 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public class DelayLuckyDrop {
-  private long ticksRemaining;
-  private DropProcessData processData;
-  private DropProcessor dropProcessor;
-  private boolean finished;
+    private long ticksRemaining;
+    private DropProcessData processData;
+    private DropProcessor dropProcessor;
+    private boolean finished;
 
-  public DelayLuckyDrop(
-      DropProcessor dropProcessor, DropProcessData processData, long ticksRemaining) {
-    this.dropProcessor = dropProcessor;
-    this.processData = processData;
-    this.ticksRemaining = ticksRemaining;
-    this.finished = false;
-  }
-
-  public void update() {
-    try {
-      this.ticksRemaining--;
-      if (this.ticksRemaining <= 0) {
-        this.dropProcessor.processDelayDrop(this.processData);
-        this.finished = true;
-      }
-    } catch (Exception e) {
-      System.err.println(
-          "Lucky Block: Error processing delay drop: "
-              + this.processData.getDropProperties().toString());
-      e.printStackTrace();
-      this.finished = true;
+    public DelayLuckyDrop(
+        DropProcessor dropProcessor, DropProcessData processData, long ticksRemaining) {
+        this.dropProcessor = dropProcessor;
+        this.processData = processData;
+        this.ticksRemaining = ticksRemaining;
+        this.finished = false;
     }
-  }
 
-  public void setDropprocessor(DropProcessor dropProcessor) {
-    this.dropProcessor = dropProcessor;
-  }
+    public void update() {
+        try {
+            this.ticksRemaining--;
+            if (this.ticksRemaining <= 0) {
+                this.dropProcessor.processDelayDrop(this.processData);
+                this.finished = true;
+            }
+        } catch (Exception e) {
+            System.err.println(
+                "Lucky Block: Error processing delay drop: "
+                    + this.processData.getDropProperties().toString());
+            e.printStackTrace();
+            this.finished = true;
+        }
+    }
 
-  public DropProcessData getProcessData() {
-    return this.processData;
-  }
+    public void setDropprocessor(DropProcessor dropProcessor) {
+        this.dropProcessor = dropProcessor;
+    }
 
-  public long getTicksRemaining() {
-    return this.ticksRemaining;
-  }
+    public DropProcessData getProcessData() {
+        return this.processData;
+    }
 
-  public boolean finished() {
-    return this.finished;
-  }
+    public long getTicksRemaining() {
+        return this.ticksRemaining;
+    }
 
-  public NBTTagCompound writeToNBT() {
-    NBTTagCompound mainTag = new NBTTagCompound();
-    mainTag.setTag("processData", this.processData.writeToNBT());
-    mainTag.setLong("ticksRemaining", this.ticksRemaining);
-    return mainTag;
-  }
+    public boolean finished() {
+        return this.finished;
+    }
 
-  public void readFromNBT(NBTTagCompound tagCompound, World world) {
-    this.processData = new DropProcessData(world);
-    this.processData.readFromNBT(tagCompound.getCompoundTag("processData"));
-    this.ticksRemaining = tagCompound.getLong("ticksRemaining");
-  }
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound mainTag = new NBTTagCompound();
+        mainTag.setTag("processData", this.processData.writeToNBT());
+        mainTag.setLong("ticksRemaining", this.ticksRemaining);
+        return mainTag;
+    }
+
+    public void readFromNBT(NBTTagCompound tagCompound, World world) {
+        this.processData = new DropProcessData(world);
+        this.processData.readFromNBT(tagCompound.getCompoundTag("processData"));
+        this.ticksRemaining = tagCompound.getLong("ticksRemaining");
+    }
 }

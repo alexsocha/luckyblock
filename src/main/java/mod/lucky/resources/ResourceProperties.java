@@ -5,25 +5,25 @@ import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.util.LuckyReader;
 
 public class ResourceProperties extends BaseResource {
-  @Override
-  public void process(LuckyReader reader, BaseLoader loader) {
-    try {
-      String curLine;
-      while ((curLine = reader.readLine()) != null) {
-        String name = curLine.substring(0, curLine.indexOf('='));
-        String value = curLine.substring(curLine.indexOf('=') + 1, curLine.length());
+    @Override
+    public void process(LuckyReader reader, BaseLoader loader) {
+        try {
+            String curLine;
+            while ((curLine = reader.readLine()) != null) {
+                String name = curLine.substring(0, curLine.indexOf('='));
+                String value = curLine.substring(curLine.indexOf('=') + 1, curLine.length());
 
-        if (name.equals("doDropsOnCreativeMode"))
-          loader.getBlock().setCreativeModeDrops(ValueParser.getBoolean(value));
-      }
-    } catch (Exception e) {
-      System.err.println("Lucky Block: Error reading 'properties.txt'");
-      e.printStackTrace();
+                if (name.equals("doDropsOnCreativeMode"))
+                    loader.getBlock().setCreativeModeDrops(ValueParser.getBoolean(value));
+            }
+        } catch (Exception e) {
+            System.err.println("Lucky Block: Error reading 'properties.txt'");
+            e.printStackTrace();
+        }
     }
-  }
 
-  @Override
-  public String getDirectory() {
-    return "properties.txt";
-  }
+    @Override
+    public String getDirectory() {
+        return "properties.txt";
+    }
 }

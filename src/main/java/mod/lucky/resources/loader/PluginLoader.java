@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import mod.lucky.resources.BaseResource;
 import mod.lucky.resources.ResourcePluginInit;
 import net.minecraft.client.resources.FileResourcePack;
@@ -16,95 +17,95 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class PluginLoader extends BaseLoader {
-  private File pluginFile;
-  private String pluginName = "random_block";
+    private File pluginFile;
+    private String pluginName = "random_block";
 
-  public PluginLoader(File pluginFile) {
-    try {
-      this.pluginFile = pluginFile;
-      this.pluginName = pluginFile.getName();
-    } catch (Exception e) {
-      System.err.println(
-          "Lucky Block: Failed to load plugin loader for file " + pluginFile.toString());
-      e.printStackTrace();
+    public PluginLoader(File pluginFile) {
+        try {
+            this.pluginFile = pluginFile;
+            this.pluginName = pluginFile.getName();
+        } catch (Exception e) {
+            System.err.println(
+                "Lucky Block: Failed to load plugin loader for file " + pluginFile.toString());
+            e.printStackTrace();
+        }
     }
-  }
 
-  public void registerPlugin() {
-    this.loadResource(new ResourcePluginInit());
-  }
-
-  public void initializePlugin() {
-    try {
-      GameRegistry.registerWorldGenerator(this.getBlock().getWorldGenerator(), 1);
-    } catch (Exception e) {
-      System.err.println(
-          "Lucky Block Addons: Error initializing generation for add-on: " + this.pluginFile != null
-              ? this.pluginFile.toString()
-              : "unknown");
+    public void registerPlugin() {
+        this.loadResource(new ResourcePluginInit());
     }
-  }
 
-  @Override
-  public InputStream getResourceStream(BaseResource resource) {
-    try {
-      if (this.pluginFile.isDirectory()) {
-        File file = this.getFile(resource);
-        if (file == null || file.isDirectory()) return null;
-        return new FileInputStream(file);
-      } else {
-        @SuppressWarnings("resource")
-        ZipFile file = new ZipFile(this.pluginFile);
-        ZipEntry entry = file.getEntry(resource.getDirectory());
-        if (entry == null || entry.isDirectory()) return null;
-        InputStream stream = file.getInputStream(entry);
-        return stream;
-      }
-    } catch (Exception e) {
-      if (!resource.isOptional()) {
-        System.err.println(
-            "Lucky Block: Error getting resource '"
-                + resource.getDirectory()
-                + "' from plugin '"
-                + this.pluginFile.getName()
-                + "'");
-        e.printStackTrace();
-      }
+    public void initializePlugin() {
+        try {
+            GameRegistry.registerWorldGenerator(this.getBlock().getWorldGenerator(), 1);
+        } catch (Exception e) {
+            System.err.println(
+                "Lucky Block Addons: Error initializing generation for add-on: " + this.pluginFile != null
+                    ? this.pluginFile.toString()
+                    : "unknown");
+        }
     }
-    return null;
-  }
 
-  public File getFile(BaseResource resource) {
-    return new File(this.pluginFile.getPath() + "/" + resource.getDirectory());
-  }
+    @Override
+    public InputStream getResourceStream(BaseResource resource) {
+        try {
+            if (this.pluginFile.isDirectory()) {
+                File file = this.getFile(resource);
+                if (file == null || file.isDirectory()) return null;
+                return new FileInputStream(file);
+            } else {
+                @SuppressWarnings("resource")
+                ZipFile file = new ZipFile(this.pluginFile);
+                ZipEntry entry = file.getEntry(resource.getDirectory());
+                if (entry == null || entry.isDirectory()) return null;
+                InputStream stream = file.getInputStream(entry);
+                return stream;
+            }
+        } catch (Exception e) {
+            if (!resource.isOptional()) {
+                System.err.println(
+                    "Lucky Block: Error getting resource '"
+                        + resource.getDirectory()
+                        + "' from plugin '"
+                        + this.pluginFile.getName()
+                        + "'");
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 
-  @SideOnly(Side.CLIENT)
-  public IResourcePack getResourcePack() {
-    IResourcePack pack = null;
-    if (this.pluginFile.isDirectory()) pack = new FolderResourcePack(this.pluginFile);
-    else pack = new FileResourcePack(this.pluginFile);
+    public File getFile(BaseResource resource) {
+        return new File(this.pluginFile.getPath() + "/" + resource.getDirectory());
+    }
 
-    return new LegacyV2Adapter(pack);
-  }
+    @SideOnly(Side.CLIENT)
+    public IResourcePack getResourcePack() {
+        IResourcePack pack = null;
+        if (this.pluginFile.isDirectory()) pack = new FolderResourcePack(this.pluginFile);
+        else pack = new FileResourcePack(this.pluginFile);
 
-  public File getPluginFile() {
-    return this.pluginFile;
-  }
+        return new LegacyV2Adapter(pack);
+    }
 
-  public String getPluginName() {
-    return this.pluginName;
-  }
+    public File getPluginFile() {
+        return this.pluginFile;
+    }
 
-  public void setPluginName(String pluginName) {
-    this.pluginName = pluginName;
-  }
+    public String getPluginName() {
+        return this.pluginName;
+    }
 
-  public boolean hasResource(BaseResource resource) {
-    return this.getResourceStream(resource) != null;
-  }
+    public void setPluginName(String pluginName) {
+        this.pluginName = pluginName;
+    }
 
-  @Override
-  public void loadResource(BaseResource resource) {
-    super.loadResource(resource);
-  }
+    public boolean hasResource(BaseResource resource) {
+        return this.getResourceStream(resource) != null;
+    }
+
+    @Override
+    public void loadResource(BaseResource resource) {
+        super.loadResource(resource);
+    }
 }
