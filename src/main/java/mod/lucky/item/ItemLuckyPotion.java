@@ -49,7 +49,7 @@ public class ItemLuckyPotion extends Item {
 
         if (!world.isRemote) {
             int luck = ItemLuckyBlock.getLuck(itemStack);
-            String[] drops = ItemLuckyBlock.getDrops(itemStack);
+            String[] drops = ItemLuckyBlock.getRawDrops(itemStack);
             EntityLuckyPotion luckyPotion =
                 new EntityLuckyPotion(world, player, this, this.dropProcessor, luck, drops);
             luckyPotion.shoot(
@@ -76,7 +76,7 @@ public class ItemLuckyPotion extends Item {
     public void addInformation(
         ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
         int luck = ItemLuckyBlock.getLuck(stack);
-        String[] drops = ItemLuckyBlock.getDrops(stack);
+        String[] drops = ItemLuckyBlock.getRawDrops(stack);
         tooltip.add(
             I18n.translateToLocal("item.luckyBlock.luck")
                 + ": "

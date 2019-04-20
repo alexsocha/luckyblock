@@ -186,7 +186,7 @@ public class BlockLuckyBlock extends BlockContainer {
         if (tileEntityLuck == null) return;
 
         int luck = ItemLuckyBlock.getLuck(itemStack);
-        String[] drops = ItemLuckyBlock.getDrops(itemStack);
+        String[] drops = ItemLuckyBlock.getRawDrops(itemStack);
 
         tileEntityLuck.setLuck(luck);
         if (drops != null && drops.length != 0) tileEntityLuck.setDrops(drops);

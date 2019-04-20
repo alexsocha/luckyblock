@@ -8,6 +8,7 @@ import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyFunction;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,30 +17,31 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemLuckyBow extends ItemBow {
-    private DropProcessor dropProcessor;
-    private LuckCrafting crafting;
-
+    private LuckyItem luckyItem = new LuckyItem(this);
     private String bowTextureName = "lucky:luckyBow";
 
+    private Item.Properties properties = new Item.Properties()
+        .maxStackSize(1)
+        .defaultMaxDamage(1000);
+
     public ItemLuckyBow() {
-        super();
-        this.setMaxDamage(1000);
+        super(new Item.Properties()
+            .maxStackSize(1)
+            .defaultMaxDamage(1000));
         this.dropProcessor = new DropProcessor();
-        this.crafting = new LuckCrafting(this);
 
         this.addPropertyOverride(
             new ResourceLocation("pull"),
@@ -96,7 +98,7 @@ public class ItemLuckyBow extends ItemBow {
                 if (!world.isRemote) {
                     try {
                         int luck = ItemLuckyBlock.getLuck(itemStack);
-                        String[] drops = ItemLuckyBlock.getDrops(itemStack);
+                        String[] drops = ItemLuckyBlock.getRawDrops(itemStack);
 
                         EntityArrow entityArrow = new EntityTippedArrow(world, player);
                         if (drops != null && drops.length != 0)
@@ -158,13 +160,12 @@ public class ItemLuckyBow extends ItemBow {
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    // @Override
+    @OnlyIn(Dist.CLIENT)
     public ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining) {
         ModelResourceLocation modelResourceLocation =
             new ModelResourceLocation(this.bowTextureName, "inventory");
 
-        int useTicks = stack.getMaxItemUseDuration() - useRemaining;
+        int useTicks = stack.getUseDuration() - useRemaining;
 
         if (stack.getItem() == this && player.getActiveItemStack() != null) {
             if (useTicks >= 18) {
@@ -191,7 +192,7 @@ public class ItemLuckyBow extends ItemBow {
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack stack) {
+    public EnumAction getUseAction(ItemStack stack) {
         return EnumAction.BOW;
     }
 
@@ -203,30 +204,5 @@ public class ItemLuckyBow extends ItemBow {
     @SideOnly(Side.CLIENT)
     public boolean hasEffect(ItemStack stack) {
         return true;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void addInformation(
-        ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
-        int luck = ItemLuckyBlock.getLuck(stack);
-        String[] drops = ItemLuckyBlock.getDrops(stack);
-        tooltip.add(
-            I18n.translateToLocal("item.luckyBlock.luck")
-                + ": "
-                + (luck == 0
-                ? TextFormatting.GOLD
-                : (luck < 0 ? TextFormatting.RED : TextFormatting.GREEN + "+"))
-                + String.valueOf(luck));
-        if (drops != null && drops.length != 0)
-            tooltip.add(
-                TextFormatting.GRAY
-                    + ""
-                    + TextFormatting.ITALIC
-                    + I18n.translateToLocal("item.luckyBlock.customDrop"));
-    }
-
-    public LuckCrafting getCrafting() {
-        return this.crafting;
     }
 }

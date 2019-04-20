@@ -23,6 +23,7 @@ public class ItemLuckySword extends ItemSword {
     private LuckCrafting crafting;
 
     public ItemLuckySword() {
+        this.getHighlightTip(h)
         super(Item.ToolMaterial.IRON);
         this.setMaxDamage(3124);
         this.dropProcessor = new DropProcessor();
@@ -39,7 +40,7 @@ public class ItemLuckySword extends ItemSword {
         ItemStack itemStack, EntityLivingBase target, EntityLivingBase attacker) {
         try {
             int luck = ItemLuckyBlock.getLuck(itemStack);
-            String[] drops = ItemLuckyBlock.getDrops(itemStack);
+            String[] drops = ItemLuckyBlock.getRawDrops(itemStack);
 
             if (drops != null && drops.length != 0)
                 this.getDropProcessor()
@@ -78,7 +79,7 @@ public class ItemLuckySword extends ItemSword {
     public void addInformation(
         ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
         int luck = ItemLuckyBlock.getLuck(stack);
-        String[] drops = ItemLuckyBlock.getDrops(stack);
+        String[] drops = ItemLuckyBlock.getRawDrops(stack);
         tooltip.add(
             I18n.translateToLocal("item.luckyBlock.luck")
                 + ": "

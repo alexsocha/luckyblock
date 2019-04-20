@@ -21,9 +21,7 @@ public class Register {
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
-        event
-            .getRegistry()
-            .register(
+        event.getRegistry().register(
                 new ItemLuckyBlock(Lucky.luckyBlock)
                     .setRegistryName(Lucky.luckyBlock.getRegistryName()));
         event.getRegistry().register(Lucky.luckySword);
@@ -31,9 +29,7 @@ public class Register {
         event.getRegistry().register(Lucky.luckyPotion);
 
         for (PluginLoader plugin : Lucky.luckyBlockPlugins) {
-            event
-                .getRegistry()
-                .register(
+            event.getRegistry().register(
                     new ItemLuckyBlock(plugin.getBlock())
                         .setRegistryName(plugin.getBlock().getRegistryName()));
             if (plugin.getSword() != null) event.getRegistry().register(plugin.getSword());
@@ -43,6 +39,8 @@ public class Register {
 
         Lucky.resourceLoader.loadAllResources(true);
     }
+    
+    private static void registerLuckCraftingItem(IForgeRegistry<IRecipe> registry, 
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
