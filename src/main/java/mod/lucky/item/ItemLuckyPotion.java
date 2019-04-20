@@ -4,6 +4,7 @@ import mod.lucky.entity.EntityLuckyPotion;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
@@ -19,7 +20,8 @@ public class ItemLuckyPotion extends Item implements ILuckyItemContainer {
     };
 
     public ItemLuckyPotion() {
-        super(new Item.Properties());
+        super(new Item.Properties()
+            .group(ItemGroup.COMBAT));
     }
 
     @Override

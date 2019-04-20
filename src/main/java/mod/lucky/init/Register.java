@@ -7,8 +7,9 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Register {
@@ -37,12 +38,12 @@ public class Register {
             if (plugin.getPotion() != null) event.getRegistry().register(plugin.getPotion());
         }
 
-        Lucky.resourceLoader.loadAllResources(true);
+        Lucky.resourceRegistry.loadAllResources(true);
     }
     
-    private static void registerLuckCraftingItem(IForgeRegistry<IRecipe> registry, 
+    private static void registerLuckCraftingItem(IForgeRegistry<IRecipe> registry,
 
-    @SubscribeEvent
+                                                 @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         event
             .getRegistry()

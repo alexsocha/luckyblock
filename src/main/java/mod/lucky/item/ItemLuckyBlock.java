@@ -3,6 +3,7 @@ package mod.lucky.item;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
 public class ItemLuckyBlock extends ItemBlock implements ILuckyItemContainer {
@@ -13,7 +14,8 @@ public class ItemLuckyBlock extends ItemBlock implements ILuckyItemContainer {
     };
 
     public ItemLuckyBlock(Block block) {
-        super(block, new Item.Properties());
+        super(block, new Item.Properties()
+            .group(ItemGroup.BUILDING_BLOCKS));
     }
 
     @Override

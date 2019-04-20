@@ -1,15 +1,15 @@
-package mod.lucky.client;
+package mod.lucky.init;
 
 import java.util.List;
 
-import mod.lucky.CommonProxy;
 import mod.lucky.Lucky;
+import mod.lucky.client.LuckyClientEventHandler;
+import mod.lucky.client.RenderFactoryLuckyPotion;
+import mod.lucky.client.RenderFactoryLuckyProjectile;
 import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
 import mod.lucky.resources.loader.PluginLoader;
-import mod.lucky.resources.loader.ResourceLoader;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import mod.lucky.resources.loader.ResourceRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
@@ -29,7 +29,7 @@ public class SetupClient {
 
     private static void registerPluginResources() {
         try {
-            ResourceLoader resourceLoader = new ResourceLoader(Minecraft.getInstance().mcDataDir);
+            ResourceRegistry resourceLoader = new ResourceRegistry(Minecraft.getInstance().mcDataDir);
             List defaultResourcePacks =
                 ObfuscationReflectionHelper.getPrivateValue(
                     FMLClientHandler.class, FMLClientHandler.instance(), "resourcePackList");

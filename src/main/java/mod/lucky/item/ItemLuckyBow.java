@@ -28,7 +28,8 @@ public class ItemLuckyBow extends ItemBow implements ILuckyItemContainer {
     public ItemLuckyBow() {
         super(new Item.Properties()
             .maxStackSize(1)
-            .defaultMaxDamage(1000));
+            .defaultMaxDamage(1000)
+            .group(ItemGroup.COMBAT));
 
         this.addPropertyOverride(
             new ResourceLocation("pull"),
