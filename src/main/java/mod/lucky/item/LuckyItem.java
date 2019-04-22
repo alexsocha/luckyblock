@@ -100,7 +100,7 @@ public class LuckyItem {
     @Nullable
     public static String[] getRawDrops(ItemStack stack) {
         try {
-            return LuckyFunction.getStringArrayFromNBTTagList(
+            return LuckyFunction.strArrayFromTagList(
                 (NBTTagList) stack.getTag().getTag("Drops"));
         } catch (Exception e) { return null; }
     }

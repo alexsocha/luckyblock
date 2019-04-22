@@ -14,7 +14,7 @@ public class ResourceProperties extends BaseResource {
                 String value = curLine.substring(curLine.indexOf('=') + 1, curLine.length());
 
                 if (name.equals("doDropsOnCreativeMode"))
-                    loader.getBlock().setCreativeModeDrops(ValueParser.getBoolean(value));
+                    loader.getBlock().setDoCreativeDrops(ValueParser.getBoolean(value));
             }
         } catch (Exception e) {
             System.err.println("Lucky Block: Error reading 'properties.txt'");

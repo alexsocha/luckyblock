@@ -79,7 +79,7 @@ public class EntityLuckyPotion extends EntityThrowable {
                     hitEntity == null ? this.getPositionVector() : hitEntity.getPositionVector();
                 if (this.customDrops != null && this.customDrops.length != 0)
                     this.impactDropProcessor.processRandomDrop(
-                        LuckyFunction.getDropsFromStringArray(this.customDrops),
+                        LuckyFunction.dropsFromStrArray(this.customDrops),
                         new DropProcessData(this.getEntityWorld(), this.getThrower(), impactPos)
                             .setHitEntity(hitEntity),
                         this.luck);

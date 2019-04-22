@@ -249,7 +249,7 @@ public class LuckyFunction {
         }
     }
 
-    public static NBTTagList getNBTTagListFromStringArray(String[] array) {
+    public static NBTTagList tagListFromStrArray(String[] array) {
         NBTTagList nbttagList = new NBTTagList();
         for (String element : array) {
             nbttagList.appendTag(new NBTTagString(element));
@@ -257,7 +257,7 @@ public class LuckyFunction {
         return nbttagList;
     }
 
-    public static String[] getStringArrayFromNBTTagList(NBTTagList nbttagList) {
+    public static String[] strArrayFromTagList(NBTTagList nbttagList) {
         String[] array = new String[nbttagList == null ? 0 : nbttagList.tagCount()];
         for (int a = 0; a < array.length; a++) {
             array[a] = nbttagList.getStringTagAt(a);
@@ -265,7 +265,7 @@ public class LuckyFunction {
         return array;
     }
 
-    public static ArrayList<DropContainer> getDropsFromStringArray(String[] array) {
+    public static ArrayList<DropContainer> dropsFromStrArray(String[] array) {
         ArrayList<DropContainer> drops = new ArrayList();
         for (String element : array) {
             DropContainer dropContainer = new DropContainer();

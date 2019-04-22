@@ -103,7 +103,7 @@ public class LuckyGenerator implements IWorldGenerator {
         boolean canAdjust = false;
         do {
             BlockPos newPos = new BlockPos(pos.getX(), newPosY, pos.getZ());
-            if (this.block.canBlockStay(world, newPos)) {
+            if (this.block.canPlaceAt(world, newPos)) {
                 canAdjust = true;
                 break;
             }

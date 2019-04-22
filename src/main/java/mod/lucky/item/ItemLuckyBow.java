@@ -115,7 +115,7 @@ public class ItemLuckyBow extends ItemBow implements ILuckyItemContainer {
                         if (drops != null && drops.length != 0)
                             this.getLuckyItem().getDropProcessor()
                                 .processRandomDrop(
-                                    LuckyFunction.getDropsFromStringArray(drops), dropData, luck);
+                                    LuckyFunction.dropsFromStrArray(drops), dropData, luck);
                         else
                             this.getLuckyItem().getDropProcessor()
                                 .processRandomDrop(dropData, luck);

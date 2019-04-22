@@ -18,7 +18,7 @@ public class TileEntityLuckyBlock extends TileEntity implements ITickable {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbttag) {
         super.writeToNBT(nbttag);
-        nbttag.setTag("Drops", LuckyFunction.getNBTTagListFromStringArray(this.drops));
+        nbttag.setTag("Drops", LuckyFunction.tagListFromStrArray(this.drops));
         nbttag.setInteger("Luck", this.luck);
         return nbttag;
     }
@@ -26,7 +26,7 @@ public class TileEntityLuckyBlock extends TileEntity implements ITickable {
     @Override
     public void readFromNBT(NBTTagCompound nbttag) {
         super.readFromNBT(nbttag);
-        this.drops = LuckyFunction.getStringArrayFromNBTTagList((NBTTagList) nbttag.getTag("Drops"));
+        this.drops = LuckyFunction.strArrayFromTagList((NBTTagList) nbttag.getTag("Drops"));
         this.luck = nbttag.getInteger("Luck");
     }
 
