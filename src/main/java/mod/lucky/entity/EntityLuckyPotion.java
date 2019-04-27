@@ -4,12 +4,12 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.DropContainer;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
+import mod.lucky.init.SetupCommon;
 import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.util.LuckyFunction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,50 +21,45 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 public class EntityLuckyPotion extends EntityThrowable {
-    private static final DataParameter<ItemStack> POTION_ITEM =
-        EntityDataManager.<ItemStack>createKey(EntityLuckyPotion.class, DataSerializers.ITEM_STACK);
-    private ItemStack itemLuckyPotion = null;
+    private static final DataParameter<ItemStack> ITEM =
+        EntityDataManager.createKey(EntityLuckyPotion.class, DataSerializers.ITEM_STACK);
+
     private DropProcessor impactDropProcessor;
     private int luck = 0;
     private String[] customDrops = null;
 
     public EntityLuckyPotion(World world) {
-        super(world);
+        this(world, null, Lucky.luckyPotion, new DropProcessor(), 0, null);
     }
 
-    public EntityLuckyPotion(World world, EntityLivingBase thrower) {
-        this(world, thrower, Lucky.luckyPotion, new DropProcessor(), 0, null);
-    }
-
-    public EntityLuckyPotion(
-        World world,
+    public EntityLuckyPotion(World world,
         EntityLivingBase thrower,
         ItemLuckyPotion itemLuckyPotion,
         DropProcessor impactDropProcessor,
-        int luck,
-        String[] customDrops) {
-        super(world, thrower);
-        this.itemLuckyPotion = new ItemStack(itemLuckyPotion, 1);
-        this.dataManager.set(POTION_ITEM, this.itemLuckyPotion);
+        int luck, String[] customDrops) {
+
+        super(SetupCommon.luckyPotionType, thrower, world);
+
+        this.setItemStack(new ItemStack(itemLuckyPotion, 1));
         this.impactDropProcessor = impactDropProcessor;
         this.luck = luck;
         this.customDrops = customDrops;
     }
 
-    public EntityLuckyPotion(World world, double posX, double posY, double posZ) {
-        super(world, posX, posY, posZ);
-    }
-
     @Override
-    protected void entityInit() {
-        super.entityInit();
-        if (this.impactDropProcessor == null) this.impactDropProcessor = new DropProcessor();
-        this.dataManager.register(POTION_ITEM, new ItemStack(Items.STICK));
+    protected void registerData() {
+        this.getDataManager().register(ITEM, ItemStack.EMPTY);
     }
 
-    public ItemStack getItemLuckyPotion() {
-        return this.dataManager.get(POTION_ITEM);
+    public ItemStack getItemStack() {
+        return this.getDataManager().get(ITEM);
+    }
+
+    private void setItemStack(ItemStack stack) {
+        this.getDataManager().set(ITEM, stack);
     }
 
     @Override
@@ -72,71 +67,63 @@ public class EntityLuckyPotion extends EntityThrowable {
         return 0.05F;
     }
 
-    private void luckyImpact(Entity hitEntity) {
+    private void luckyImpact(@Nullable Entity hitEntity) {
         try {
-            if (this.impactDropProcessor != null && this.impactDropProcessor.getDrops().size() > 0) {
-                Vec3d impactPos =
-                    hitEntity == null ? this.getPositionVector() : hitEntity.getPositionVector();
-                if (this.customDrops != null && this.customDrops.length != 0)
+            if (this.impactDropProcessor != null
+                && this.impactDropProcessor.getDrops().size() > 0) {
+
+                Vec3d impactPos = hitEntity == null ? this.getPositionVector()
+                    : hitEntity.getPositionVector();
+
+                DropProcessData dropData = new DropProcessData(
+                    this.getEntityWorld(), this.getThrower(), impactPos);
+                if (hitEntity != null) dropData.setHitEntity(hitEntity);
+
+                if (this.customDrops != null && this.customDrops.length != 0) {
                     this.impactDropProcessor.processRandomDrop(
                         LuckyFunction.dropsFromStrArray(this.customDrops),
-                        new DropProcessData(this.getEntityWorld(), this.getThrower(), impactPos)
-                            .setHitEntity(hitEntity),
-                        this.luck);
-                else
-                    this.impactDropProcessor.processRandomDrop(
-                        new DropProcessData(this.getEntityWorld(), this.getThrower(), impactPos)
-                            .setHitEntity(hitEntity),
-                        this.luck);
+                        dropData, this.luck);
+                } else {
+                    this.impactDropProcessor.processRandomDrop(dropData, this.luck);
+                }
             }
         } catch (Exception e) {
-            System.err.println(
-                "The Lucky Potion encountered and error while trying to perform a function. Error report below:");
+            Lucky.LOGGER.error(DropProcessor.errorMessage());
             e.printStackTrace();
         }
     }
 
     @Override
-    public void onUpdate() {
-        try {
-            if (this.itemLuckyPotion == null && this.getEntityWorld().isRemote)
-                this.itemLuckyPotion = this.dataManager.get(POTION_ITEM);
-        } catch (Exception e) {
-        }
-        this.onEntityUpdate();
-        super.onUpdate();
-    }
-
-    @Override
     protected void onImpact(RayTraceResult rayTraceResult) {
         if (!this.world.isRemote) {
-            this.luckyImpact(rayTraceResult.entityHit);
-            this.setDead();
+            this.luckyImpact(rayTraceResult.entity);
+            this.remove();
         }
     }
 
     @Override
-    public void writeEntityToNBT(NBTTagCompound tagCompound) {
-        super.writeEntityToNBT(tagCompound);
+    public void writeAdditional(NBTTagCompound tagCompound) {
+        super.writeAdditional(tagCompound);
         NBTTagList drops = new NBTTagList();
         for (int i = 0; i < this.impactDropProcessor.getDrops().size(); i++) {
-            drops.appendTag(new NBTTagString(this.impactDropProcessor.getDrops().get(i).toString()));
+            String dropString = this.impactDropProcessor.getDrops().get(i).toString();
+            drops.add(new NBTTagString(dropString));
         }
         tagCompound.setTag("impact", drops);
-        tagCompound.setTag(
-            "itemLuckyPotion", this.getItemLuckyPotion().writeToNBT(new NBTTagCompound()));
+        tagCompound.setTag("itemLuckyPotion",
+            this.getItemStack().write(new NBTTagCompound()));
     }
 
     @Override
-    public void readEntityFromNBT(NBTTagCompound tagCompound) {
-        super.readEntityFromNBT(tagCompound);
-        NBTTagList drops = tagCompound.getTagList("impact", new NBTTagString().getId());
-        for (int i = 0; i < drops.tagCount(); i++) {
+    public void readAdditional(NBTTagCompound tag) {
+        super.readAdditional(tag);
+        NBTTagList drops = tag.getList("impact", new NBTTagString().getId());
+        for (int i = 0; i < drops.size(); i++) {
             DropContainer drop = new DropContainer();
-            drop.readFromString(drops.getStringTagAt(i));
+            drop.readFromString(drops.getString(i));
             this.impactDropProcessor.registerDrop(drop);
         }
-        if (tagCompound.hasKey("itemLuckyPotion"))
-            this.itemLuckyPotion = new ItemStack(tagCompound.getCompoundTag("itemLuckyPotion"));
+        if (tag.hasKey("itemLuckyPotion"))
+            this.setItemStack(ItemStack.read(tag.getCompound("itemLuckyPotion")));
     }
 }

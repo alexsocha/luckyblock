@@ -35,9 +35,15 @@ import java.util.ArrayList;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupCommon {
-    public static final RecipeSerializers.SimpleSerializer<RecipeLuckCrafting> luckCrafting =
-        RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
-            "lucky:luck_crafting", RecipeLuckCrafting::new));
+    public static final RecipeSerializers.SimpleSerializer<RecipeLuckCrafting>
+        luckCraftingSerializer =
+            RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
+                "lucky:luck_crafting", RecipeLuckCrafting::new));
+
+    public static final EntityType<EntityLuckyPotion> luckyPotionType =
+        EntityType.register("lucky:potion",
+            EntityType.Builder.create(
+                EntityLuckyPotion.class, EntityLuckyPotion::new));
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import mod.lucky.Lucky;
 import mod.lucky.client.ClientEventHandler;
+import mod.lucky.client.RenderLuckyPotion;
 import mod.lucky.client.RenderLuckyProjectile;
 import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
@@ -13,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.RenderSprite;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
@@ -38,7 +38,7 @@ public class SetupClient {
             new IRenderFactory<EntityLuckyPotion>() {
                 @Override
                 public Render<EntityLuckyPotion> createRenderFor(RenderManager manager) {
-                    return new RenderSprite<EntityLuckyPotion>(manager, Lucky.luckyPotion,
+                    return new RenderLuckyPotion(manager,
                         Minecraft.getInstance().getItemRenderer());
                 }
             });

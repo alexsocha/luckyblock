@@ -108,6 +108,6 @@ public class RecipeLuckCrafting extends IRecipeHidden {
 
     @Override
     public IRecipeSerializer getSerializer() {
-        return SetupCommon.luckCrafting;
+        return SetupCommon.luckCraftingSerializer;
     }
 }
