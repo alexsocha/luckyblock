@@ -1,6 +1,6 @@
 package mod.lucky.item;
 
-import mod.lucky.crafting.LuckCrafting;
+import mod.lucky.crafting.RecipeLuckCrafting;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyFunction;
 import net.minecraft.client.util.ITooltipFlag;
@@ -23,17 +23,17 @@ import java.util.List;
 
 public class LuckyItem {
     private Item containerItem;
-    private LuckCrafting luckCrafting;
+    private RecipeLuckCrafting luckCrafting;
     private DropProcessor dropProcessor;
 
     public LuckyItem(Item containerItem) {
         this.containerItem = containerItem;
-        this.luckCrafting = new LuckCrafting(containerItem);
+        this.luckCrafting = new RecipeLuckCrafting(containerItem);
         this.dropProcessor = new DropProcessor();
     }
 
     public Item getContainerItem() { return this.containerItem; }
-    public LuckCrafting getLuckCrafting() { return this.luckCrafting; }
+    public RecipeLuckCrafting getLuckCrafting() { return this.luckCrafting; }
     public DropProcessor getDropProcessor() { return this.dropProcessor; }
 
     public boolean hasLuckVariantsInGroup() { return false; }

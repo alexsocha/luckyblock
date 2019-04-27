@@ -5,11 +5,10 @@ import java.util.Random;
 
 import mod.lucky.Lucky;
 import mod.lucky.command.LuckyCommandLogic;
-import mod.lucky.crafting.LuckCrafting;
+import mod.lucky.crafting.RecipeLuckCrafting;
 import mod.lucky.drop.DropContainer;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
-import mod.lucky.item.ItemLuckyBlock;
 import mod.lucky.item.LuckyItem;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.util.LuckyFunction;
@@ -33,12 +32,13 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class BlockLuckyBlock extends BlockContainer {
     private DropProcessor dropProcessor;
     private LuckyGenerator worldGenerator;
-    private LuckCrafting crafting;
+    private RecipeLuckCrafting crafting;
     private IForgeRegistryEntry<IRecipe> blockRecipe;
     private boolean doCreativeDrops = false;
 
@@ -47,11 +47,12 @@ public class BlockLuckyBlock extends BlockContainer {
     public BlockLuckyBlock() {
         super(Block.Properties.create(Material.WOOD, MaterialColor.YELLOW)
             .sound(SoundType.STONE)
-            .hardnessAndResistance(0.2f, 6000000.0f) );
+            .hardnessAndResistance(0.2f, 6000000.0f));
+
 
         this.dropProcessor = new DropProcessor();
         this.worldGenerator = new LuckyGenerator(this);
-        this.crafting = new LuckCrafting(this);
+        this.crafting = new RecipeLuckCrafting(this);
     }
 
     public boolean removeLuckyBlock(
@@ -126,7 +127,7 @@ public class BlockLuckyBlock extends BlockContainer {
     }
 
     @Override
-    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+    public void onBlockAdded(IBlockState state, World world, BlockPos pos, IBlockState oldState) {
         world.markAndNotifyBlock(pos, null, state, state, 3);
     }
 
@@ -176,6 +177,16 @@ public class BlockLuckyBlock extends BlockContainer {
     }
 
     @Override
+    public ToolType getHarvestTool(IBlockState state) {
+        return ToolType.PICKAXE;
+    }
+
+    @Override
+    public int getHarvestLevel(IBlockState state) {
+        return 0;
+    }
+
+    @Override
     public TileEntity createNewTileEntity(IBlockReader reader) {
         return new TileEntityLuckyBlock();
     }
@@ -202,7 +213,7 @@ public class BlockLuckyBlock extends BlockContainer {
 
     public DropProcessor getDropProcessor() { return this.dropProcessor; }
     public LuckyGenerator getWorldGenerator() { return this.worldGenerator; }
-    public LuckCrafting getCrafting() { return this.crafting; }
+    public RecipeLuckCrafting getCrafting() { return this.crafting; }
     public void setDoCreativeDrops(boolean doCreativeDrops) {
         this.doCreativeDrops = doCreativeDrops;
     }

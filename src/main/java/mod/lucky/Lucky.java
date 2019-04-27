@@ -12,6 +12,7 @@ import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceRegistry;
 import mod.lucky.structure.Structure;
 import mod.lucky.world.LuckyTickHandler;
+import net.minecraft.item.crafting.RecipeSerializers;
 import net.minecraft.network.NetworkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -43,6 +44,8 @@ public class Lucky {
     public static LuckyTickHandler tickHandler;
 
     public static SimpleChannel networkChannel;
+
+
 
     public Lucky() {
         Lucky.version = ModLoadingContext.get().getActiveContainer().getModInfo()

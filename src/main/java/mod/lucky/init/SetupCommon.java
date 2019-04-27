@@ -1,11 +1,12 @@
 package mod.lucky.init;
 
-import javafx.geometry.Side;
 import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
+import mod.lucky.crafting.RecipeLuckCrafting;
 import mod.lucky.drop.func.DropFunction;
 import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
+import mod.lucky.item.ItemLuckyBlock;
 import mod.lucky.item.ItemLuckyBow;
 import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.item.ItemLuckySword;
@@ -15,10 +16,16 @@ import mod.lucky.resources.loader.ResourceRegistry;
 import mod.lucky.structure.rotation.Rotations;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.world.LuckyTickHandler;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.Item;
+import net.minecraft.item.crafting.RecipeSerializers;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -26,7 +33,40 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.io.File;
 import java.util.ArrayList;
 
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupCommon {
+    public static final RecipeSerializers.SimpleSerializer<RecipeLuckCrafting> luckCrafting =
+        RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
+            "lucky:luck_crafting", RecipeLuckCrafting::new));
+
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        event.getRegistry().register(Lucky.luckyBlock);
+        for (PluginLoader plugin : Lucky.luckyBlockPlugins)
+            event.getRegistry().register(plugin.getBlock());
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event) {
+        event.getRegistry().register(
+            new ItemLuckyBlock(Lucky.luckyBlock)
+                .setRegistryName(Lucky.luckyBlock.getRegistryName()));
+        event.getRegistry().register(Lucky.luckySword);
+        event.getRegistry().register(Lucky.luckyBow);
+        event.getRegistry().register(Lucky.luckyPotion);
+
+        for (PluginLoader plugin : Lucky.luckyBlockPlugins) {
+            event.getRegistry().register(
+                new ItemLuckyBlock(plugin.getBlock())
+                    .setRegistryName(plugin.getBlock().getRegistryName()));
+            if (plugin.getSword() != null) event.getRegistry().register(plugin.getSword());
+            if (plugin.getBow() != null) event.getRegistry().register(plugin.getBow());
+            if (plugin.getPotion() != null) event.getRegistry().register(plugin.getPotion());
+        }
+
+        Lucky.resourceRegistry.loadAllResources(true);
+    }
+
     private static void setupNetwork() {
         // network channel
         Lucky.networkChannel = NetworkRegistry.ChannelBuilder
@@ -47,37 +87,29 @@ public class SetupCommon {
     public static void setupEntities() {
         // lucky projectile entity
         ForgeRegistries.ENTITIES.register(
-            EntityType.register("lucky_projectile",
+            EntityType.register("lucky:projectile",
                 EntityType.Builder.create(
                     EntityLuckyProjectile.class, EntityLuckyProjectile::new)));
 
         // lucky potion entity
         ForgeRegistries.ENTITIES.register(
-            EntityType.register("lucky_potion",
+            EntityType.register("lucky:potion",
                 EntityType.Builder.create(
                     EntityLuckyPotion.class, EntityLuckyPotion::new)));
 
         // lucky block tile entity
         ForgeRegistries.TILE_ENTITIES.register(
-            TileEntityType.register("lucky_block",
+            TileEntityType.register("lucky:lucky_block",
                 TileEntityType.Builder.create(TileEntityLuckyBlock::new)));
     }
 
     public static void setupItemsAndBlocks() {
-        // lucky block
-        Lucky.luckyBlock = new BlockLuckyBlock(Material.WOOD)
-            .setHardness(0.2F)
-            .setResistance(6000000.0F)
-            .setCreativeTab(CreativeTabs.BUILDING_BLOCKS)
+        Lucky.luckyBlock = (BlockLuckyBlock) new BlockLuckyBlock()
             .setRegistryName("lucky_block");
-        Lucky.luckyBlock.setHarvestLevel("pickaxe", 0);
-        // lucky sword
         Lucky.luckySword = (ItemLuckySword) new ItemLuckySword()
             .setRegistryName("lucky_sword");
-        // lucky bow
         Lucky.luckyBow = (ItemLuckyBow) new ItemLuckyBow()
             .setRegistryName("lucky_bow");
-        // lucky potion
         Lucky.luckyPotion = (ItemLuckyPotion) new ItemLuckyPotion()
             .setRegistryName("lucky_potion");
     }
