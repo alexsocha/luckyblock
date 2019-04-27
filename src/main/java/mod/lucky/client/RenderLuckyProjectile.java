@@ -1,39 +1,38 @@
 package mod.lucky.client;
 
+import mod.lucky.Lucky;
 import mod.lucky.entity.EntityLuckyProjectile;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderLuckyProjectile extends Render {
-    protected RenderLuckyProjectile(RenderManager renderManager) {
+import javax.annotation.Nullable;
+
+public class RenderLuckyProjectile extends Render<EntityLuckyProjectile> {
+    public RenderLuckyProjectile(RenderManager renderManager) {
         super(renderManager);
     }
 
     @Override
-    public void doRender(
-        Entity entity,
-        double posX,
-        double posY,
-        double posZ,
-        float unknownValue,
-        float partialTicks) {
+    public void doRender(EntityLuckyProjectile entity,
+        double posX, double posY, double posZ,
+        float unknownValue, float partialTicks) {
+
         try {
-            if (entity instanceof EntityLuckyProjectile) {
-                EntityLuckyProjectile luckyProjectile = (EntityLuckyProjectile) entity;
-                if (luckyProjectile.getItem() != null)
-                    this.renderManager.renderEntity(
-                        luckyProjectile.getItem(), posX, posY - 0.35D, posZ, 0, partialTicks, true);
+            if (entity.getItem() != null) {
+                this.renderManager.renderEntity(entity.getItem(),
+                    posX, posY - 0.35D, posZ,
+                    0, partialTicks, true);
             }
         } catch (Exception e) {
-            System.err.println("Lucky Block: Error rendering lucky projectile");
+            Lucky.LOGGER.error("Error rendering lucky projectile");
             e.printStackTrace();
         }
     }
 
+    @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
+    protected ResourceLocation getEntityTexture(EntityLuckyProjectile entity) {
         return null;
     }
 }

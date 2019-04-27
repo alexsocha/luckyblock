@@ -23,17 +23,14 @@ import java.util.List;
 
 public class LuckyItem {
     private Item containerItem;
-    private RecipeLuckCrafting luckCrafting;
     private DropProcessor dropProcessor;
 
     public LuckyItem(Item containerItem) {
         this.containerItem = containerItem;
-        this.luckCrafting = new RecipeLuckCrafting(containerItem);
         this.dropProcessor = new DropProcessor();
     }
 
     public Item getContainerItem() { return this.containerItem; }
-    public RecipeLuckCrafting getLuckCrafting() { return this.luckCrafting; }
     public DropProcessor getDropProcessor() { return this.dropProcessor; }
 
     public boolean hasLuckVariantsInGroup() { return false; }
