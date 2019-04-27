@@ -19,8 +19,8 @@ public class RenderLuckyProjectile extends Render<EntityLuckyProjectile> {
         float unknownValue, float partialTicks) {
 
         try {
-            if (entity.getItem() != null) {
-                this.renderManager.renderEntity(entity.getItem(),
+            if (entity.getEntityItem() != null) {
+                this.renderManager.renderEntity(entity.getEntityItem(),
                     posX, posY - 0.35D, posZ,
                     0, partialTicks, true);
             }

@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 public class EntityLuckyPotion extends EntityThrowable {
-    private static final DataParameter<ItemStack> ITEM =
+    private static final DataParameter<ItemStack> ITEM_STACK =
         EntityDataManager.createKey(EntityLuckyPotion.class, DataSerializers.ITEM_STACK);
 
     private DropProcessor impactDropProcessor;
@@ -51,15 +51,15 @@ public class EntityLuckyPotion extends EntityThrowable {
 
     @Override
     protected void registerData() {
-        this.getDataManager().register(ITEM, ItemStack.EMPTY);
+        this.getDataManager().register(ITEM_STACK, ItemStack.EMPTY);
     }
 
     public ItemStack getItemStack() {
-        return this.getDataManager().get(ITEM);
+        return this.getDataManager().get(ITEM_STACK);
     }
 
     private void setItemStack(ItemStack stack) {
-        this.getDataManager().set(ITEM, stack);
+        this.getDataManager().set(ITEM_STACK, stack);
     }
 
     @Override

@@ -45,6 +45,11 @@ public class SetupCommon {
             EntityType.Builder.create(
                 EntityLuckyPotion.class, EntityLuckyPotion::new));
 
+    public static final EntityType<EntityLuckyProjectile> luckyProjectileType =
+        EntityType.register("lucky:projectile",
+            EntityType.Builder.create(
+                EntityLuckyProjectile.class, EntityLuckyProjectile::new));
+
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         event.getRegistry().register(Lucky.luckyBlock);
@@ -91,19 +96,9 @@ public class SetupCommon {
     }
 
     public static void setupEntities() {
-        // lucky projectile entity
-        ForgeRegistries.ENTITIES.register(
-            EntityType.register("lucky:projectile",
-                EntityType.Builder.create(
-                    EntityLuckyProjectile.class, EntityLuckyProjectile::new)));
+        ForgeRegistries.ENTITIES.register(luckyPotionType);
+        ForgeRegistries.ENTITIES.register(luckyProjectileType);
 
-        // lucky potion entity
-        ForgeRegistries.ENTITIES.register(
-            EntityType.register("lucky:potion",
-                EntityType.Builder.create(
-                    EntityLuckyPotion.class, EntityLuckyPotion::new)));
-
-        // lucky block tile entity
         ForgeRegistries.TILE_ENTITIES.register(
             TileEntityType.register("lucky:lucky_block",
                 TileEntityType.Builder.create(TileEntityLuckyBlock::new)));
