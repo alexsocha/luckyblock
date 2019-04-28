@@ -2,6 +2,7 @@ package mod.lucky.tileentity;
 
 import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
+import mod.lucky.init.SetupCommon;
 import mod.lucky.util.LuckyFunction;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,32 +16,36 @@ public class TileEntityLuckyBlock extends TileEntity implements ITickable {
     private String[] drops = new String[0];
     private int luck = 0;
 
+    public TileEntityLuckyBlock() {
+        super(SetupCommon.LUCKY_BLOCK_TE_TYPE);
+    }
+
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbttag) {
-        super.writeToNBT(nbttag);
+    public NBTTagCompound write(NBTTagCompound nbttag) {
+        super.write(nbttag);
         nbttag.setTag("Drops", LuckyFunction.tagListFromStrArray(this.drops));
-        nbttag.setInteger("Luck", this.luck);
+        nbttag.setInt("Luck", this.luck);
         return nbttag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound nbttag) {
-        super.readFromNBT(nbttag);
+    public void read(NBTTagCompound nbttag) {
+        super.read(nbttag);
         this.drops = LuckyFunction.strArrayFromTagList((NBTTagList) nbttag.getTag("Drops"));
-        this.luck = nbttag.getInteger("Luck");
+        this.luck = nbttag.getInt("Luck");
     }
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound nbttag = new NBTTagCompound();
-        this.writeToNBT(nbttag);
+        this.write(nbttag);
         return new SPacketUpdateTileEntity(
             new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()), 1, nbttag);
     }
 
     @Override
-    public void update() {
-        if (this.world != null && !this.world.isRemote && this.world.getTotalWorldTime() % 20L == 0L) {
+    public void tick() {
+        if (this.world != null && !this.world.isRemote && this.world.getGameTime() % 20L == 0L) {
             Block luckyBlock =
                 this.world
                     .getBlockState(new BlockPos(this.pos.getX(), this.pos.getY(), this.pos.getZ()))
@@ -59,19 +64,9 @@ public class TileEntityLuckyBlock extends TileEntity implements ITickable {
         }
     }
 
-    public void setLuck(int luck) {
-        this.luck = luck;
-    }
+    public void setLuck(int luck) { this.luck = luck; }
+    public int getLuck() { return this.luck; }
 
-    public int getLuck() {
-        return this.luck;
-    }
-
-    public void setDrops(String[] drops) {
-        this.drops = drops;
-    }
-
-    public String[] getDrops() {
-        return this.drops;
-    }
+    public void setDrops(String[] drops) { this.drops = drops; }
+    public String[] getDrops() { return this.drops; }
 }

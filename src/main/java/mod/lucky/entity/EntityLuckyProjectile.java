@@ -35,7 +35,7 @@ public class EntityLuckyProjectile extends EntityArrow {
     private DropProcessor dropProcessorImpact;
 
     public EntityLuckyProjectile(World world) {
-        super(SetupCommon.luckyProjectileType, world);
+        super(SetupCommon.LUCKY_PROJECTILE_TYPE, world);
     }
 
     @Override

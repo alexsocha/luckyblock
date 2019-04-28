@@ -6,9 +6,7 @@ import java.util.HashMap;
 import mod.lucky.init.SetupCommon;
 import mod.lucky.item.ILuckyItemContainer;
 import mod.lucky.item.ItemLuckyPotion;
-import mod.lucky.item.LuckyItem;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeHidden;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -117,6 +115,6 @@ public class RecipeLuckCrafting extends IRecipeHidden {
 
     @Override
     public IRecipeSerializer getSerializer() {
-        return SetupCommon.luckCraftingSerializer;
+        return SetupCommon.LUCK_CRAFTING_SERIALIZER;
     }
 }

@@ -35,17 +35,21 @@ import java.util.ArrayList;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupCommon {
-    public static final RecipeSerializers.SimpleSerializer<RecipeLuckCrafting>
-        luckCraftingSerializer =
+    public static final TileEntityType<TileEntityLuckyBlock> LUCKY_BLOCK_TE_TYPE =
+        TileEntityType.register("lucky:lucky_block",
+            TileEntityType.Builder.create(TileEntityLuckyBlock::new));
+
+    public static final RecipeSerializers.
+        SimpleSerializer<RecipeLuckCrafting> LUCK_CRAFTING_SERIALIZER =
             RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
                 "lucky:luck_crafting", RecipeLuckCrafting::new));
 
-    public static final EntityType<EntityLuckyPotion> luckyPotionType =
+    public static final EntityType<EntityLuckyPotion> LUCKY_POTION_TYPE =
         EntityType.register("lucky:potion",
             EntityType.Builder.create(
                 EntityLuckyPotion.class, EntityLuckyPotion::new));
 
-    public static final EntityType<EntityLuckyProjectile> luckyProjectileType =
+    public static final EntityType<EntityLuckyProjectile> LUCKY_PROJECTILE_TYPE =
         EntityType.register("lucky:projectile",
             EntityType.Builder.create(
                 EntityLuckyProjectile.class, EntityLuckyProjectile::new));
@@ -96,8 +100,8 @@ public class SetupCommon {
     }
 
     public static void setupEntities() {
-        ForgeRegistries.ENTITIES.register(luckyPotionType);
-        ForgeRegistries.ENTITIES.register(luckyProjectileType);
+        ForgeRegistries.ENTITIES.register(LUCKY_POTION_TYPE);
+        ForgeRegistries.ENTITIES.register(LUCKY_PROJECTILE_TYPE);
 
         ForgeRegistries.TILE_ENTITIES.register(
             TileEntityType.register("lucky:lucky_block",

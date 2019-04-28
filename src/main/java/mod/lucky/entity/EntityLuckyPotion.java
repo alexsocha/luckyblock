@@ -41,7 +41,7 @@ public class EntityLuckyPotion extends EntityThrowable {
         DropProcessor impactDropProcessor,
         int luck, String[] customDrops) {
 
-        super(SetupCommon.luckyPotionType, thrower, world);
+        super(SetupCommon.LUCKY_POTION_TYPE, thrower, world);
 
         this.setItemStack(new ItemStack(itemLuckyPotion, 1));
         this.impactDropProcessor = impactDropProcessor;
