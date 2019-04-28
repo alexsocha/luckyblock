@@ -22,14 +22,9 @@ public class ResourceNaturalGen extends BaseResource {
                 if (section.equals(">nether")) loader.getBlock().getWorldGenerator().addNetherDrop(drop);
                 if (section.equals(">end")) loader.getBlock().getWorldGenerator().addEndDrop(drop);
             }
-        } catch (Exception e) {
-            System.err.println("Lucky Block: Error reading 'drops.txt'");
-            e.printStackTrace();
-        }
+        } catch (Exception e) { this.logError(); }
     }
 
     @Override
-    public String getDirectory() {
-        return "natural_gen.txt";
-    }
+    public String getDirectory() { return "natural_gen.txt"; }
 }

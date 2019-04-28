@@ -19,12 +19,8 @@ public class ResourceBowDrops extends BaseResource {
     }
 
     @Override
-    public String getDirectory() {
-        return "bow_drops.txt";
-    }
+    public String getDirectory() { return "bow_drops.txt"; }
 
     @Override
-    public boolean isOptional() {
-        return true;
-    }
+    public boolean isOptional() { return true; }
 }

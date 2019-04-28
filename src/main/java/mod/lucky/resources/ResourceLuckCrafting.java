@@ -31,7 +31,5 @@ public class ResourceLuckCrafting extends BaseResource {
     }
 
     @Override
-    public String getDirectory() {
-        return "luck_crafting.txt";
-    }
+    public String getDirectory() { return "luck_crafting.txt"; }
 }

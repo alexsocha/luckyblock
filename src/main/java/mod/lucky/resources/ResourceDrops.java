@@ -18,7 +18,5 @@ public class ResourceDrops extends BaseResource {
     }
 
     @Override
-    public String getDirectory() {
-        return "drops.txt";
-    }
+    public String getDirectory() { return "drops.txt"; }
 }
