@@ -8,25 +8,19 @@ public class ResourceSwordDrops extends BaseResource {
     @Override
     public void process(LuckyReader reader, BaseLoader loader) {
         try {
+            if (loader.getSword() == null) return;
             String curLine;
             while ((curLine = reader.readLine()) != null) {
                 DropContainer drop = new DropContainer();
                 drop.readFromString(curLine);
-                loader.getSword().getDropProcessor().registerDrop(drop);
+                loader.getSword().getLuckyItem().getDropProcessor().registerDrop(drop);
             }
-        } catch (Exception e) {
-            System.err.println("Lucky Block: Error reading 'sword_drops.txt'");
-            e.printStackTrace();
-        }
+        } catch (Exception e) { this.logError(); }
     }
 
     @Override
-    public String getDirectory() {
-        return "sword_drops.txt";
-    }
+    public String getPath() { return "sword_drops.txt"; }
 
     @Override
-    public boolean isOptional() {
-        return true;
-    }
+    public boolean isOptional() { return true; }
 }

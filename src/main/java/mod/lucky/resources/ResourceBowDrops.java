@@ -9,6 +9,7 @@ public class ResourceBowDrops extends BaseResource {
     @Override
     public void process(LuckyReader reader, BaseLoader loader) {
         try {
+            if (loader.getBow() == null) return;
             String curLine;
             while ((curLine = reader.readLine()) != null) {
                 DropContainer drop = new DropContainer();
@@ -19,7 +20,7 @@ public class ResourceBowDrops extends BaseResource {
     }
 
     @Override
-    public String getDirectory() { return "bow_drops.txt"; }
+    public String getPath() { return "bow_drops.txt"; }
 
     @Override
     public boolean isOptional() { return true; }

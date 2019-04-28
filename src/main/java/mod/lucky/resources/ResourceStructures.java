@@ -26,7 +26,7 @@ public class ResourceStructures extends BaseResource {
     }
 
     @Override
-    public String getDirectory() {
+    public String getPath() {
         return "structures.txt";
     }
 }

@@ -11,13 +11,13 @@ public class DefaultLoader extends BaseLoader {
     private File resourceDir;
 
     public DefaultLoader(File minecraftDirectory) {
-        this.resourceDir =
-            new File(minecraftDirectory.getPath() + "/config/luckyBlock/version-" + Lucky.VERSION);
-        this.setLuckyBlockItems(
-            Lucky.getInstance().luckyBlock,
-            Lucky.getInstance().luckySword,
-            Lucky.getInstance().luckyBow,
-            Lucky.getInstance().luckyPotion);
+        this.resourceDir = new File(minecraftDirectory.getPath()
+            + "/config/luckyBlock/version-" + Lucky.VERSION);
+
+        this.setBlock(Lucky.luckyBlock);
+        this.setSword(Lucky.luckySword);
+        this.setBow(Lucky.luckyBow);
+        this.setPotion(Lucky.luckyPotion);
     }
 
     public void extractDefaultResources() {
@@ -42,14 +42,13 @@ public class DefaultLoader extends BaseLoader {
             }
             inputStream.close();
         } catch (Exception e) {
-            System.err.println("Lucky Block: Error extracting default resources");
-            e.printStackTrace();
+            Lucky.LOGGER.error("Error extracting default resources");
         }
     }
 
-    public File getFile(BaseResource resource) {
-        File defaultFile = new File(this.resourceDir.getPath() + "/" + resource.getDirectory());
-        return defaultFile;
+    private File getFile(BaseResource resource) {
+        return new File(this.resourceDir.getPath()
+            + "/" + resource.getPath());
     }
 
     @Override
@@ -60,18 +59,9 @@ public class DefaultLoader extends BaseLoader {
             return new FileInputStream(file);
         } catch (FileNotFoundException e) {
             System.err.println(
-                "Lucky Block: Error getting default resource '" + resource.getDirectory() + "'");
+                "Lucky Block: Error getting default resource '" + resource.getPath() + "'");
             e.printStackTrace();
         }
         return null;
-    }
-
-    @Override
-    public void loadResource(BaseResource resource) {
-        super.loadResource(resource);
-    }
-
-    public File getResourceDir() {
-        return this.resourceDir;
     }
 }

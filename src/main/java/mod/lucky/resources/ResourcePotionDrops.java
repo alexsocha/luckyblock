@@ -8,25 +8,19 @@ public class ResourcePotionDrops extends BaseResource {
     @Override
     public void process(LuckyReader reader, BaseLoader loader) {
         try {
+            if (loader.getPotion() == null) return;
             String curLine;
             while ((curLine = reader.readLine()) != null) {
                 DropContainer drop = new DropContainer();
                 drop.readFromString(curLine);
-                loader.getPotion().getDropProcessor().registerDrop(drop);
+                loader.getPotion().getLuckyItem().getDropProcessor().registerDrop(drop);
             }
-        } catch (Exception e) {
-            System.err.println("Lucky Block: Error reading 'potion_drops.txt'");
-            e.printStackTrace();
-        }
+        } catch (Exception e) { this.logError(); }
     }
 
     @Override
-    public String getDirectory() {
-        return "potion_drops.txt";
-    }
+    public String getPath() { return "potion_drops.txt"; }
 
     @Override
-    public boolean isOptional() {
-        return true;
-    }
+    public boolean isOptional() { return true; }
 }

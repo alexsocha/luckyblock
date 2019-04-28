@@ -24,7 +24,6 @@ public class ResourceManager {
         this.registerResource(new ResourceLuckCrafting());
         this.registerResource(new ResourceNaturalGen());
         this.registerResource(new ResourceProperties());
-        this.registerResource(new ResourceRecipes());
         this.registerResource(new ResourceStructuresDir());
         this.registerResource(new ResourceStructures());
         this.resetLoaders();

@@ -6,35 +6,29 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import mod.lucky.Lucky;
 import mod.lucky.resources.BaseResource;
 import mod.lucky.resources.ResourcePluginInit;
-import net.minecraft.client.resources.FileResourcePack;
-import net.minecraft.client.resources.FolderResourcePack;
-import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.client.resources.LegacyV2Adapter;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.resources.FilePack;
+import net.minecraft.resources.FolderPack;
+import net.minecraft.resources.IResourcePack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PluginLoader extends BaseLoader {
     private File pluginFile;
-    private String pluginName = "random_block";
+    private String pluginName;
 
     public PluginLoader(File pluginFile) {
-        try {
-            this.pluginFile = pluginFile;
-            this.pluginName = pluginFile.getName();
-        } catch (Exception e) {
-            System.err.println(
-                "Lucky Block: Failed to load plugin loader for file " + pluginFile.toString());
-            e.printStackTrace();
-        }
+        this.pluginFile = pluginFile;
+        this.pluginName = pluginFile.getName();
     }
 
     public void registerPlugin() {
         this.loadResource(new ResourcePluginInit());
     }
 
+    /*
     public void initializePlugin() {
         try {
             GameRegistry.registerWorldGenerator(this.getBlock().getWorldGenerator(), 1);
@@ -44,7 +38,7 @@ public class PluginLoader extends BaseLoader {
                     ? this.pluginFile.toString()
                     : "unknown");
         }
-    }
+    }*/
 
     @Override
     public InputStream getResourceStream(BaseResource resource) {
@@ -56,36 +50,29 @@ public class PluginLoader extends BaseLoader {
             } else {
                 @SuppressWarnings("resource")
                 ZipFile file = new ZipFile(this.pluginFile);
-                ZipEntry entry = file.getEntry(resource.getDirectory());
+                ZipEntry entry = file.getEntry(resource.getPath());
                 if (entry == null || entry.isDirectory()) return null;
                 InputStream stream = file.getInputStream(entry);
                 return stream;
             }
         } catch (Exception e) {
             if (!resource.isOptional()) {
-                System.err.println(
-                    "Lucky Block: Error getting resource '"
-                        + resource.getDirectory()
-                        + "' from plugin '"
-                        + this.pluginFile.getName()
-                        + "'");
-                e.printStackTrace();
+                Lucky.LOGGER.error("Error getting resource '" + resource.getPath()
+                    + "' from plugin '" + this.pluginFile.getName() + "'");
             }
         }
         return null;
     }
 
     public File getFile(BaseResource resource) {
-        return new File(this.pluginFile.getPath() + "/" + resource.getDirectory());
+        return new File(this.pluginFile.getPath() + "/" + resource.getPath());
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public IResourcePack getResourcePack() {
         IResourcePack pack = null;
-        if (this.pluginFile.isDirectory()) pack = new FolderResourcePack(this.pluginFile);
-        else pack = new FileResourcePack(this.pluginFile);
-
-        return new LegacyV2Adapter(pack);
+        if (this.pluginFile.isDirectory()) return new FolderPack(this.pluginFile);
+        else return new FilePack(this.pluginFile);
     }
 
     public File getPluginFile() {

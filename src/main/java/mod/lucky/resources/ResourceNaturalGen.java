@@ -26,5 +26,5 @@ public class ResourceNaturalGen extends BaseResource {
     }
 
     @Override
-    public String getDirectory() { return "natural_gen.txt"; }
+    public String getPath() { return "natural_gen.txt"; }
 }

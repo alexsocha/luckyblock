@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
 import mod.lucky.item.*;
 import mod.lucky.resources.BaseResource;
@@ -27,7 +28,8 @@ public abstract class BaseLoader {
             LuckyReader reader = new LuckyReader(new InputStreamReader(stream));
             resource.process(reader, this);
         } catch (Exception e) {
-            System.err.println("Lucky Block: Error loading resource: " + resource.getDirectory());
+            Lucky.LOGGER.error("Lucky Block: Error loading resource: " + resource.getPath());
+            System.err.println("Lucky Block: Error loading resource: " + resource.getPath());
             e.printStackTrace();
         }
     }

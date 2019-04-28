@@ -5,11 +5,8 @@ import mod.lucky.util.LuckyReader;
 
 public class ResourceStructuresDir extends BaseResource {
     @Override
-    public void process(LuckyReader reader, BaseLoader loader) {
-    }
+    public void process(LuckyReader reader, BaseLoader loader) {}
 
     @Override
-    public String getDirectory() {
-        return "structures";
-    }
+    public String getPath() { return "structures"; }
 }

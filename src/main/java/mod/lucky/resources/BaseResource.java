@@ -7,10 +7,10 @@ import mod.lucky.util.LuckyReader;
 public abstract class BaseResource {
     public abstract void process(LuckyReader reader, BaseLoader loader);
 
-    public abstract String getDirectory();
+    public abstract String getPath();
 
     protected void logError() {
-        Lucky.LOGGER.error("Error processing resource: " + this.getDirectory());
+        Lucky.LOGGER.error("Error processing resource: " + this.getPath());
     }
 
     public boolean isOptional() {

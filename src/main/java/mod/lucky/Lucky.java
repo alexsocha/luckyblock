@@ -25,8 +25,8 @@ import org.apache.logging.log4j.Logger;
 
 @Mod("lucky")
 public class Lucky {
-    private static String version;
-    private static String mcversion = MCPVersion.getMCVersion();
+    public static String VERSION;
+    public static final String MC_VERSION = MCPVersion.getMCVersion();
 
     public static final Logger LOGGER = LogManager.getLogger();
 
@@ -43,12 +43,10 @@ public class Lucky {
 
     public static SimpleChannel networkChannel;
 
-
-
     public Lucky() {
-        Lucky.version = ModLoadingContext.get().getActiveContainer().getModInfo()
+        Lucky.VERSION = ModLoadingContext.get().getActiveContainer().getModInfo()
             .getVersion().toString();
-        LOGGER.info("==========" + Lucky.mcversion + ", " + Lucky.version);
+        LOGGER.info("==========" + Lucky.MC_VERSION + ", " + Lucky.VERSION);
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupCommon);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
@@ -56,13 +54,8 @@ public class Lucky {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private void setupCommon(final FMLCommonSetupEvent event) {
-        SetupCommon.setup();
-    }
-
-    private void setupClient(final FMLClientSetupEvent event) {
-        SetupClient.setup();
-    }
+    private void setupCommon(final FMLCommonSetupEvent event) { SetupCommon.setup(); }
+    private void setupClient(final FMLClientSetupEvent event) { SetupClient.setup(); }
 
     public static Structure getStructure(String id) {
         for (Structure structure : structures) if (id.equals(structure.getId())) return structure;

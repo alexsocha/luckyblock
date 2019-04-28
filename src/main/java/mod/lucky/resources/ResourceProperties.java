@@ -11,19 +11,14 @@ public class ResourceProperties extends BaseResource {
             String curLine;
             while ((curLine = reader.readLine()) != null) {
                 String name = curLine.substring(0, curLine.indexOf('='));
-                String value = curLine.substring(curLine.indexOf('=') + 1, curLine.length());
+                String value = curLine.substring(curLine.indexOf('=') + 1);
 
                 if (name.equals("doDropsOnCreativeMode"))
                     loader.getBlock().setDoCreativeDrops(ValueParser.getBoolean(value));
             }
-        } catch (Exception e) {
-            System.err.println("Lucky Block: Error reading 'properties.txt'");
-            e.printStackTrace();
-        }
+        } catch (Exception e) { this.logError(); }
     }
 
     @Override
-    public String getDirectory() {
-        return "properties.txt";
-    }
+    public String getPath() { return "properties.txt"; }
 }

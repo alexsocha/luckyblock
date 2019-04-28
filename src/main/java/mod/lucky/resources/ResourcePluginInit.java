@@ -22,8 +22,9 @@ public class ResourcePluginInit extends BaseResource {
 
     @Override
     public void process(LuckyReader reader, BaseLoader loader) {
-        if (!(loader instanceof PluginLoader)) return;
         try {
+            if (!(loader instanceof PluginLoader)) return;
+
             String blockId = "random_block";
             String swordId = null;
             String bowId = null;
@@ -58,5 +59,5 @@ public class ResourcePluginInit extends BaseResource {
     }
 
     @Override
-    public String getDirectory() { return "plugin_init.txt"; }
+    public String getPath() { return "plugin_init.txt"; }
 }
