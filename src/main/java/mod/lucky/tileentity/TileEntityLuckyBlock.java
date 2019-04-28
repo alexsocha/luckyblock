@@ -3,7 +3,7 @@ package mod.lucky.tileentity;
 import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
 import mod.lucky.init.SetupCommon;
-import mod.lucky.util.LuckyFunction;
+import mod.lucky.util.LuckyUtils;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -23,7 +23,7 @@ public class TileEntityLuckyBlock extends TileEntity implements ITickable {
     @Override
     public NBTTagCompound write(NBTTagCompound nbttag) {
         super.write(nbttag);
-        nbttag.setTag("Drops", LuckyFunction.tagListFromStrArray(this.drops));
+        nbttag.setTag("Drops", LuckyUtils.tagListFromStrArray(this.drops));
         nbttag.setInt("Luck", this.luck);
         return nbttag;
     }
@@ -31,7 +31,7 @@ public class TileEntityLuckyBlock extends TileEntity implements ITickable {
     @Override
     public void read(NBTTagCompound nbttag) {
         super.read(nbttag);
-        this.drops = LuckyFunction.strArrayFromTagList((NBTTagList) nbttag.getTag("Drops"));
+        this.drops = LuckyUtils.strArrayFromTagList((NBTTagList) nbttag.getTag("Drops"));
         this.luck = nbttag.getInt("Luck");
     }
 

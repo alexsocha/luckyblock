@@ -3,7 +3,7 @@ package mod.lucky.item;
 import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
-import mod.lucky.util.LuckyFunction;
+import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -115,7 +115,7 @@ public class ItemLuckyBow extends ItemBow implements ILuckyItemContainer {
                         if (drops != null && drops.length != 0)
                             this.getLuckyItem().getDropProcessor()
                                 .processRandomDrop(
-                                    LuckyFunction.dropsFromStrArray(drops), dropData, luck);
+                                    LuckyUtils.dropsFromStrArray(drops), dropData, luck);
                         else
                             this.getLuckyItem().getDropProcessor()
                                 .processRandomDrop(dropData, luck);

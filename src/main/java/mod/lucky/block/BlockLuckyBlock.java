@@ -11,7 +11,7 @@ import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.item.LuckyItem;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
-import mod.lucky.util.LuckyFunction;
+import mod.lucky.util.LuckyUtils;
 import mod.lucky.world.LuckyGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -102,7 +102,7 @@ public class BlockLuckyBlock extends BlockContainer {
                     if (luck != 0) tag.setInt("Luck", luck);
                     if (customDrops != null)
                         tag.setTag("Drops",
-                            LuckyFunction.tagListFromStrArray(customDropsRaw));
+                            LuckyUtils.tagListFromStrArray(customDropsRaw));
                     if (tag.hasKey("Luck") || customDrops != null)
                         strack.setTag(tag);
 

@@ -10,7 +10,7 @@ import mod.lucky.drop.DropProperties;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.structure.Structure;
 import mod.lucky.structure.StructureUtils;
-import mod.lucky.util.LuckyFunction;
+import mod.lucky.util.LuckyUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.util.math.BlockPos;
@@ -87,14 +87,14 @@ public class HashVariables {
         string = processBracketHash(string, processData);
 
         string =
-            string.replace("#randPotionDamage", String.valueOf(LuckyFunction.getRandomPotionDamage()));
+            string.replace("#randPotionDamage", String.valueOf(LuckyUtils.getRandomPotionDamage()));
         string =
             string.replace(
-                "#randPotionParticle", String.valueOf(LuckyFunction.getRandomStatusEffect()));
-        string = string.replace("#randPotion", LuckyFunction.getRandomPotionName());
+                "#randPotionParticle", String.valueOf(LuckyUtils.getRandomStatusEffect()));
+        string = string.replace("#randPotion", LuckyUtils.getRandomPotionName());
         string =
-            string.replace("#randSpawnEggDamage", String.valueOf(LuckyFunction.getRandomMobEggID()));
-        string = string.replace("#randSpawnEgg", LuckyFunction.getRandomMobEggName());
+            string.replace("#randSpawnEggDamage", String.valueOf(LuckyUtils.getRandomMobEggID()));
+        string = string.replace("#randSpawnEgg", LuckyUtils.getRandomMobEggName());
 
         if (processData != null) {
             Vec3d harvestPos = processData.getHarvestPos();

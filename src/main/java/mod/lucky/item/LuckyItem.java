@@ -1,8 +1,7 @@
 package mod.lucky.item;
 
-import mod.lucky.crafting.RecipeLuckCrafting;
 import mod.lucky.drop.func.DropProcessor;
-import mod.lucky.util.LuckyFunction;
+import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -97,7 +96,7 @@ public class LuckyItem {
     @Nullable
     public static String[] getRawDrops(ItemStack stack) {
         try {
-            return LuckyFunction.strArrayFromTagList(
+            return LuckyUtils.strArrayFromTagList(
                 (NBTTagList) stack.getTag().getTag("Drops"));
         } catch (Exception e) { return null; }
     }

@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import mod.lucky.drop.func.DropProcessData;
-import mod.lucky.util.LuckyFunction;
+import mod.lucky.util.LuckyUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
@@ -185,7 +185,7 @@ public class CustomNBTTags {
         "#customChestLootTable"
     };
 
-    public static NBTBase getNBTTagFromString(String name, DropProcessData processData) {
+    public static INBTBase getNBTTagFromString(String name, DropProcessData processData) {
         if (name.equals("#luckySwordEnchantments"))
             return getRandomEnchantmentList(
                 4, 6, sharpness, smite, baneOfArthroponds, knockBack, fireAspect, looting, unbreaking);
@@ -303,7 +303,7 @@ public class CustomNBTTags {
                 poison,
                 wither);
 
-        if (name.equals("#randFireworksRocket")) return LuckyFunction.getRandomFireworksRocket();
+        if (name.equals("#randFireworksRocket")) return LuckyUtils.getRandomFireworksRocket();
 
         if (name.startsWith("#randLaunchMotion")) {
             try {
@@ -432,7 +432,7 @@ public class CustomNBTTags {
                         LootTableList.CHESTS_SPAWN_BONUS_CHEST,
                         contents,
                         true,
-                        processData.getWorld().getLootTableManager());
+                        processData.getWorld().getServer().getLootTableManager());
 
                 TileEntityChest tileEntityChest = new TileEntityChest();
                 LootContext.Builder contextBuilder =

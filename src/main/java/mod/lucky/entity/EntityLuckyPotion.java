@@ -6,7 +6,7 @@ import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.init.SetupCommon;
 import mod.lucky.item.ItemLuckyPotion;
-import mod.lucky.util.LuckyFunction;
+import mod.lucky.util.LuckyUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -81,7 +81,7 @@ public class EntityLuckyPotion extends EntityThrowable {
 
                 if (this.customDrops != null && this.customDrops.length != 0) {
                     this.impactDropProcessor.processRandomDrop(
-                        LuckyFunction.dropsFromStrArray(this.customDrops),
+                        LuckyUtils.dropsFromStrArray(this.customDrops),
                         dropData, this.luck);
                 } else {
                     this.impactDropProcessor.processRandomDrop(dropData, this.luck);

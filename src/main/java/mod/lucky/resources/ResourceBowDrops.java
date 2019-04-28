@@ -1,6 +1,5 @@
 package mod.lucky.resources;
 
-import mod.lucky.Lucky;
 import mod.lucky.drop.DropContainer;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.util.LuckyReader;
