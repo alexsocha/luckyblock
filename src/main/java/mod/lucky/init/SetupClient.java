@@ -9,7 +9,7 @@ import mod.lucky.client.RenderLuckyProjectile;
 import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
 import mod.lucky.resources.loader.PluginLoader;
-import mod.lucky.resources.loader.ResourceRegistry;
+import mod.lucky.resources.loader.ResourceManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
@@ -46,7 +46,7 @@ public class SetupClient {
 
     private static void registerPluginResources() {
         try {
-            ResourceRegistry resourceLoader = new ResourceRegistry(Minecraft.getInstance().mcDataDir);
+            ResourceManager resourceLoader = new ResourceManager(Minecraft.getInstance().mcDataDir);
             List defaultResourcePacks =
                 ObfuscationReflectionHelper.getPrivateValue(
                     FMLClientHandler.class, FMLClientHandler.instance(), "resourcePackList");

@@ -2,19 +2,21 @@ package mod.lucky.resources.loader;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import mod.lucky.block.BlockLuckyBlock;
-import mod.lucky.item.ItemLuckyBow;
-import mod.lucky.item.ItemLuckyPotion;
-import mod.lucky.item.ItemLuckySword;
+import mod.lucky.item.*;
 import mod.lucky.resources.BaseResource;
 import mod.lucky.util.LuckyReader;
+import net.minecraft.item.Item;
+
+import javax.annotation.Nullable;
 
 public abstract class BaseLoader {
-    private BlockLuckyBlock lucky_block;
-    private ItemLuckySword lucky_sword;
-    private ItemLuckyBow lucky_bow;
-    private ItemLuckyPotion lucky_potion;
+    private BlockLuckyBlock luckyBlock;
+    private ItemLuckySword luckySword;
+    private ItemLuckyBow luckyBow;
+    private ItemLuckyPotion luckyPotion;
 
     public abstract InputStream getResourceStream(BaseResource resource);
 
@@ -30,30 +32,29 @@ public abstract class BaseLoader {
         }
     }
 
-    public BlockLuckyBlock getBlock() {
-        return this.lucky_block;
+    public void setBlock(BlockLuckyBlock block) { this.luckyBlock = block; }
+    public BlockLuckyBlock getBlock() { return this.luckyBlock; }
+    public ItemLuckyBlock getBlockItem() {
+        return (ItemLuckyBlock) Item.BLOCK_TO_ITEM.get(this.getBlock());
     }
 
-    public ItemLuckySword getSword() {
-        return this.lucky_sword;
-    }
+    public void setSword(ItemLuckySword sword) { this.luckySword = sword; }
+    @Nullable public ItemLuckySword getSword() { return this.luckySword; }
 
-    public ItemLuckyBow getBow() {
-        return this.lucky_bow;
-    }
+    public void setBow(ItemLuckyBow bow) { this.luckyBow = bow; }
+    @Nullable public ItemLuckyBow getBow() { return this.luckyBow; }
 
-    public ItemLuckyPotion getPotion() {
-        return this.lucky_potion;
-    }
+    public void setPotion(ItemLuckyPotion potion) { this.luckyPotion = potion; }
+    @Nullable public ItemLuckyPotion getPotion() { return this.luckyPotion; }
 
-    public void setLuckyBlockItems(
-        BlockLuckyBlock lucky_block,
-        ItemLuckySword lucky_sword,
-        ItemLuckyBow lucky_bow,
-        ItemLuckyPotion lucky_potion) {
-        this.lucky_block = lucky_block;
-        this.lucky_sword = lucky_sword;
-        this.lucky_bow = lucky_bow;
-        this.lucky_potion = lucky_potion;
+    public ArrayList<ILuckyItemContainer> getAllItems() {
+        ArrayList<ILuckyItemContainer> result = new ArrayList<>();
+
+        result.add(this.getBlockItem());
+        if (this.getSword() != null) result.add(this.getSword());
+        if (this.getBow() != null) result.add(this.getBow());
+        if (this.getPotion() != null) result.add(this.getPotion());
+
+        return result;
     }
 }

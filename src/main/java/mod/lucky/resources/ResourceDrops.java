@@ -14,10 +14,7 @@ public class ResourceDrops extends BaseResource {
                 drop.readFromString(curLine);
                 loader.getBlock().getDropProcessor().registerDrop(drop);
             }
-        } catch (Exception e) {
-            System.err.println("Lucky Block: Error reading 'drops.txt'");
-            e.printStackTrace();
-        }
+        } catch (Exception e) { this.logError(); }
     }
 
     @Override

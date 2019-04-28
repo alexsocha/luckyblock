@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import mod.lucky.resources.*;
 
-public class ResourceRegistry {
+public class ResourceManager {
     private static File PLUGIN_DIR = new File("/addons/luckyBlock");
 
     private boolean isClient;
@@ -14,7 +14,7 @@ public class ResourceRegistry {
     private DefaultLoader defaultLoader;
     private ArrayList<PluginLoader> pluginLoaders;
 
-    public ResourceRegistry(File minecraftDir) {
+    public ResourceManager(File minecraftDir) {
         this.minecraftDir = minecraftDir;
         this.resourceList = new ArrayList<BaseResource>();
         this.registerResource(new ResourceDrops());

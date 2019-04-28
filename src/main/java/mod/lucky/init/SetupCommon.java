@@ -12,7 +12,7 @@ import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.item.ItemLuckySword;
 import mod.lucky.network.ParticlePacket;
 import mod.lucky.resources.loader.PluginLoader;
-import mod.lucky.resources.loader.ResourceRegistry;
+import mod.lucky.resources.loader.ResourceManager;
 import mod.lucky.structure.rotation.Rotations;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.world.LuckyTickHandler;
@@ -132,7 +132,7 @@ public class SetupCommon {
         Rotations.registerRotationHandlers();
         DropFunction.registerFunctions();
 
-        Lucky.resourceRegistry = new ResourceRegistry(new File("."));
+        Lucky.resourceRegistry = new ResourceManager(new File("."));
         Lucky.resourceRegistry.registerPlugins();
         Lucky.resourceRegistry.extractDefaultResources();
         Lucky.resourceRegistry.loadAllResources(false);

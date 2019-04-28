@@ -1,5 +1,6 @@
 package mod.lucky.resources;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.DropContainer;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.util.LuckyReader;
@@ -12,12 +13,9 @@ public class ResourceBowDrops extends BaseResource {
             while ((curLine = reader.readLine()) != null) {
                 DropContainer drop = new DropContainer();
                 drop.readFromString(curLine);
-                loader.getBow().getDropProcessor().registerDrop(drop);
+                loader.getBow().getLuckyItem().getDropProcessor().registerDrop(drop);
             }
-        } catch (Exception e) {
-            System.err.println("Lucky Block: Error reading 'bow_drops.txt'");
-            e.printStackTrace();
-        }
+        } catch (Exception e) { this.logError(); }
     }
 
     @Override

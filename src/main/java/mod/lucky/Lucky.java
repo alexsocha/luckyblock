@@ -9,11 +9,9 @@ import mod.lucky.item.ItemLuckyBow;
 import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.item.ItemLuckySword;
 import mod.lucky.resources.loader.PluginLoader;
-import mod.lucky.resources.loader.ResourceRegistry;
+import mod.lucky.resources.loader.ResourceManager;
 import mod.lucky.structure.Structure;
 import mod.lucky.world.LuckyTickHandler;
-import net.minecraft.item.crafting.RecipeSerializers;
-import net.minecraft.network.NetworkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -40,7 +38,7 @@ public class Lucky {
     public static ArrayList<PluginLoader> luckyBlockPlugins;
     public static ArrayList<Structure> structures;
 
-    public static ResourceRegistry resourceRegistry;
+    public static ResourceManager resourceRegistry;
     public static LuckyTickHandler tickHandler;
 
     public static SimpleChannel networkChannel;
