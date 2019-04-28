@@ -39,18 +39,18 @@ public class ResourcePluginInit extends BaseResource {
                 if (name.equalsIgnoreCase("potion_id")) potionId = value;
             }
 
-            BlockLuckyBlock lucky_block = (BlockLuckyBlock)
-                new BlockLuckyBlock().setRegistryName(blockId);
-
             ((PluginLoader) loader).setPluginName(blockId);
+
+            loader.setBlock((BlockLuckyBlock)
+                new BlockLuckyBlock().setRegistryName(blockId));
 
             if (swordId != null) loader.setSword((ItemLuckySword)
                 new ItemLuckySword().setRegistryName(swordId));
 
-            if (swordId != null) loader.setBow((ItemLuckyBow)
+            if (bowId != null) loader.setBow((ItemLuckyBow)
                 new ItemLuckyBow().setRegistryName(bowId));
 
-            if (swordId != null) loader.setPotion((ItemLuckyPotion)
+            if (potionId != null) loader.setPotion((ItemLuckyPotion)
                 new ItemLuckyPotion().setRegistryName(potionId));
 
             Lucky.luckyBlockPlugins.add((PluginLoader) loader);
