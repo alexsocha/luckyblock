@@ -54,7 +54,6 @@ public class LuckyUtils {
             @Override
             public boolean allowLogging() { return false; }
         };
-        pos.
         return new CommandSource(source,
             pos,
             Vec2f.ZERO, // pitchYaw
@@ -66,7 +65,7 @@ public class LuckyUtils {
     }
     public static CommandSource getCommandSource(WorldServer world, BlockPos pos) {
         return LuckyUtils.getCommandSource(world,
-            new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+            new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D));
     }
 
     public static NBTTagCompound getRandomFireworksRocket() {

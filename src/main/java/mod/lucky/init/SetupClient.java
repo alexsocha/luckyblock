@@ -11,7 +11,6 @@ import mod.lucky.entity.EntityLuckyProjectile;
 import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
@@ -19,10 +18,10 @@ import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.packs.ResourcePackLoader;
 
 @OnlyIn(Dist.CLIENT)
 public class SetupClient {
@@ -46,10 +45,10 @@ public class SetupClient {
 
     private static void registerPluginResources() {
         try {
-            ResourceManager resourceLoader = new ResourceManager(Minecraft.getInstance().mcDataDir);
+            ResourceManager resourceLoader = new ResourceManager(Minecraft.getInstance().gameDir);
             List defaultResourcePacks =
                 ObfuscationReflectionHelper.getPrivateValue(
-                    FMLClientHandler.class, FMLClientHandler.instance(), "resourcePackList");
+                    ResourcePackLoader.class, new ResourcePackLoader(), "resourcePackList");
 
             for (PluginLoader pluginLoader : resourceLoader.getPluginLoaders()) {
                 defaultResourcePacks.add(pluginLoader.getResourcePack());

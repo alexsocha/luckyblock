@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.DropValue;
@@ -111,7 +112,7 @@ public class DropSingle extends DropBase {
             this.properties.put(name, property);
             return property;
         } catch (Exception e) {
-            System.err.println("Lucky Block: Error loading property: " + name + "=" + value);
+            Lucky.LOGGER.error("Error loading property: " + name + "=" + value);
             e.printStackTrace();
         }
         return null;
