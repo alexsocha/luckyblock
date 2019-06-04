@@ -38,7 +38,7 @@ public abstract class DropFunction {
         DropSingle.setDefaultProperty("all", "centerZ", Integer.class, 0);
         DropSingle.setDefaultProperty("all", "rotation", Integer.class, 0);
         DropSingle.setDefaultProperty("all", "doUpdate", Boolean.class, false);
-        DropSingle.setDefaultProperty("all", "blockMode", String.class, "replace");
+        DropSingle.setDefaultProperty("all", "applyBlockMode", String.class, "replace");
         DropSingle.setDefaultProperty("all", "displayCommandOutput", Boolean.class, false);
         DropSingle.setDefaultProperty("all", "commandSender", String.class, "@");
         DropSingle.setDefaultProperty("all", "duration", Integer.class, 200);

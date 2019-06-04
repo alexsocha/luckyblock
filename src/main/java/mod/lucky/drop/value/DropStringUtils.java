@@ -44,7 +44,7 @@ public class DropStringUtils {
         else return string;
     }
 
-    public static String[] splitBracketString(String line, char seperator) {
+    public static String[] splitBracketString(String line, char separator) {
         // find correct separators
         char[] lineChar = line.toCharArray();
         int point[] = new int[1024];
@@ -71,7 +71,7 @@ public class DropStringUtils {
                     point[pointCount] = a;
                     break;
                 }
-                if (lineChar[a] == seperator && bracketTier == 0 && !inQuotes) {
+                if (lineChar[a] == separator && bracketTier == 0 && !inQuotes) {
                     point[pointCount] = a;
                     pointCount++;
                 }

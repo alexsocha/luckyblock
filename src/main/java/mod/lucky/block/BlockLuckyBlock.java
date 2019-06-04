@@ -89,7 +89,7 @@ public class BlockLuckyBlock extends BlockContainer {
                     Enchantments.SILK_TOUCH, player) > 0
                     && !removedByRedstone) {
 
-                    ItemStack strack = new ItemStack(this);
+                    ItemStack stack = new ItemStack(this);
                     NBTTagCompound tag = new NBTTagCompound();
 
                     if (luck != 0) tag.setInt("Luck", luck);
@@ -97,9 +97,9 @@ public class BlockLuckyBlock extends BlockContainer {
                         tag.setTag("Drops",
                             LuckyUtils.tagListFromStrArray(customDropsRaw));
                     if (tag.hasKey("Luck") || customDrops != null)
-                        strack.setTag(tag);
+                        stack.setTag(tag);
 
-                    Block.spawnAsEntity(world, harvestPos, strack);
+                    Block.spawnAsEntity(world, harvestPos, stack);
                     return true;
                 } else {
                     DropProcessData dropData = new DropProcessData(world, player, harvestPos);

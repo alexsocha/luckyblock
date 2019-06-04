@@ -87,7 +87,7 @@ public class DropFuncEntity extends DropFunction {
         else if (entity instanceof EntityArrow)
             ((EntityArrow) entity).shootingEntity = processData.getPlayer();
 
-        // adjust height
+        // adjust sizeY
         for (int y = 0; y < 10; y++) {
             if (processData
                 .getWorld()

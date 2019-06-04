@@ -82,12 +82,11 @@ public class ValueParser {
             string = string.substring(1, string.length());
         }
 
-        char operator =
-            string.contains("+")
-                ? '+'
-                : (string.contains("-")
-                ? '-'
-                : (string.contains("*") ? '*' : (string.contains("/") ? '/' : 0)));
+        char operator = string.contains("+") ? '+'
+                : (string.contains("-") ? '-'
+                : (string.contains("*") ? '*'
+                : (string.contains("/") ? '/'
+                : 0)));
         if (operator != 0) {
             String[] splitString = DropStringUtils.splitBracketString(string, operator);
             if (splitString.length >= 2) {

@@ -177,7 +177,7 @@ public class LuckyUtils {
         return 0;
         /*
         Object[] values = EntityList.ENTITY_EGGS.values().toArray();
-        EntityList.EntityEggInfo egg = (EntityList.EntityEggInfo) values[random.nextInt(values.length)];
+        EntityList.EntityEggInfo egg = (EntityList.EntityEggInfo) values[random.nextInt(values.sizeX)];
         return EntityList.getID(EntityList.getClass(egg.spawnedID));
         */
     }
@@ -187,7 +187,7 @@ public class LuckyUtils {
         return 0;
         /*
         Object[] values = EntityList.ENTITY_EGGS.values().toArray();
-        EntityList.EntityEggInfo egg = (EntityList.EntityEggInfo) values[random.nextInt(values.length)];
+        EntityList.EntityEggInfo egg = (EntityList.EntityEggInfo) values[random.nextInt(values.sizeX)];
         return egg.spawnedID.toString();
         */
     }

@@ -1,6 +1,7 @@
 package mod.lucky.structure;
 
 import java.io.InputStream;
+import java.util.HashMap;
 
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropFunction;
@@ -9,33 +10,54 @@ import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.ValueParser;
 import mod.lucky.resources.ResourceStructureFile;
 import mod.lucky.resources.loader.BaseLoader;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 public class Structure {
+    public enum BlockMode {
+        REPLACE("replace"),
+        OVERLAY("overlay"),
+        AIR("air");
+
+        private String name;
+        private static HashMap<String, BlockMode> lookup = new HashMap<>();
+
+        BlockMode(String name) { this.name = name; }
+
+        static {
+            for (BlockMode mode : BlockMode.values())
+                lookup.put(mode.toString(), mode);
+        }
+
+        public String toString() { return this.name; }
+        public static BlockMode fromString(String s) { return lookup.get(s); }
+    }
+
     public static final int STRUCTURE_BLOCK_LIMIT = 100000;
 
-    protected int length;
-    protected int height;
-    protected int width;
+    protected BlockPos size;
 
     protected String fileName;
-    protected InputStream fileStream;
+    private BaseLoader loader;
+
     protected String overlayStruct;
     protected String id;
-    protected String blockMode;
+    protected BlockMode blockMode;
     protected boolean blockUpdate;
 
-    protected Float centerX;
-    protected Float centerY;
-    protected Float centerZ;
-    protected Vec3d centerPos;
+    protected boolean[] explicitCenter = { false, false, false };
+    protected Vec3d centerPos = new Vec3d(0, 0, 0);
 
     public Structure() {
-        this.blockMode = "replace";
+        this.blockMode = BlockMode.REPLACE;
         this.blockUpdate = true;
     }
 
     public void readProperties(String properties, BaseLoader loader) {
+        this.loader = loader;
+
+        double centerX = 0; double centerY = 0; double centerZ = 0;
+
         String[] splitProperties = properties.split(",");
         for (String property : splitProperties) {
             String[] splitProperty = property.split("=");
@@ -47,31 +69,27 @@ public class Structure {
                 this.overlayStruct = ValueParser.getString(propertyValue);
             if (propertyName.equalsIgnoreCase("file")) {
                 this.fileName = ValueParser.getString(propertyValue);
-                this.fileStream = loader.getResourceStream(new ResourceStructureFile(this.fileName));
             }
             if (propertyName.equalsIgnoreCase("centerX")) {
-                if (DropStringUtils.isGenericFloat(propertyValue))
-                    this.centerX = ValueParser.getFloat(propertyValue);
-                else
-                    this.centerX =
-                        ValueParser.getFloat(propertyValue)
-                            + (DropStringUtils.isGenericFloat(propertyValue) ? 0.0F : 0.5F);
+                this.explicitCenter[0] = true;
+                centerX = ValueParser.getFloat(propertyValue);
+                if (!DropStringUtils.isGenericFloat(propertyValue)) centerX += 0.5F;
             }
-            if (propertyName.equalsIgnoreCase("centerY"))
-                this.centerY = ValueParser.getFloat(propertyValue);
+            if (propertyName.equalsIgnoreCase("centerY")) {
+                this.explicitCenter[1] = true;
+                centerY = ValueParser.getFloat(propertyValue);
+            }
             if (propertyName.equalsIgnoreCase("centerZ")) {
-                if (DropStringUtils.isGenericFloat(propertyValue))
-                    this.centerZ = ValueParser.getFloat(propertyValue);
-                else
-                    this.centerZ =
-                        ValueParser.getFloat(propertyValue)
-                            + (DropStringUtils.isGenericFloat(propertyValue) ? 0.0F : 0.5F);
+                this.explicitCenter[2] = true;
+                centerZ = ValueParser.getFloat(propertyValue);
+                if (!DropStringUtils.isGenericFloat(propertyValue)) centerZ += 0.5F;
             }
             if (propertyName.equalsIgnoreCase("blockMode"))
-                this.blockMode = ValueParser.getString(propertyValue);
+                this.blockMode = BlockMode.fromString(ValueParser.getString(propertyValue));
             if (propertyName.equalsIgnoreCase("blockUpdate"))
                 this.blockUpdate = ValueParser.getBoolean(propertyValue);
         }
+        this.centerPos = new Vec3d(centerX, centerY, centerZ);
     }
 
     public Structure newTypeInstance() {
@@ -93,47 +111,39 @@ public class Structure {
             DropSingle drop = processData.getDropSingle();
 
             String oldId = drop.getPropertyString("ID");
-            String oldBlockMode = drop.getPropertyString("blockMode");
+            String oldBlockMode = drop.getPropertyString("applyBlockMode");
 
             drop.setProperty("ID", this.overlayStruct);
-            drop.setProperty("blockMode", "overlay");
+            drop.setProperty("applyBlockMode", "overlay");
             DropFunction.getDropFunction(drop).process(processData);
             drop.setProperty("ID", oldId);
-            drop.setProperty("blockMode", oldBlockMode);
+            drop.setProperty("applyBlockMode", oldBlockMode);
         }
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public Vec3d getCenterPos() {
-        return this.centerPos;
-    }
-
     protected void initCenterPos() {
-        int defaultCenterX = (int) (this.length / 2.0F);
-        int defaultCenterZ = (int) (this.width / 2.0F);
-        if (this.centerX == null) this.centerX = defaultCenterX + 0.5F;
-        if (this.centerY == null) this.centerY = 0.0F;
-        if (this.centerZ == null) this.centerZ = defaultCenterZ + 0.5F;
-        this.centerPos = new Vec3d(this.centerX, this.centerY, this.centerZ);
+        double centerX = !this.explicitCenter[0]
+            ? (int) (this.size.getX() / 2.0) + 0.5 : this.centerPos.x;
+        double centerZ = !this.explicitCenter[2]
+            ? (int) (this.size.getZ() / 2.0) + 0.5 : this.centerPos.z;
+        double centerY = !this.explicitCenter[1] ? 0 : this.centerPos.y;
+
+        this.centerPos = new Vec3d(centerX, centerY, centerZ);
+    }
+
+    public InputStream openFileStream() {
+        return loader.getResourceStream(new ResourceStructureFile(this.fileName));
     }
 
     public Structure copyProperties(Structure structure) {
+        this.loader = structure.loader;
         this.fileName = structure.fileName;
-        this.fileStream = structure.fileStream;
         this.id = structure.id;
         this.overlayStruct = structure.overlayStruct;
-        this.centerX = structure.centerX;
-        this.centerY = structure.centerY;
-        this.centerZ = structure.centerZ;
         this.centerPos = structure.centerPos;
         this.blockMode = structure.blockMode;
         this.blockUpdate = structure.blockUpdate;
-        this.length = structure.length;
-        this.height = structure.height;
-        this.width = structure.width;
+        this.size = structure.size;
         return this;
     }
 }

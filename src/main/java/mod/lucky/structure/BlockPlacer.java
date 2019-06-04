@@ -12,6 +12,7 @@ public class BlockPlacer {
     private ArrayList<BlockPos> updatePos;
     private ArrayList<IBlockState> updateState;
 
+
     public BlockPlacer(World world) {
         this.world = world;
         this.updatePos = new ArrayList<BlockPos>();
@@ -29,10 +30,12 @@ public class BlockPlacer {
         for (int i = 0; i < this.updatePos.size(); i++) {
             this.world.markAndNotifyBlock(
                 this.updatePos.get(i),
-                this.world.getChunkFromBlockCoords(this.updatePos.get(i)),
+                this.world.getChunk(this.updatePos.get(i)),
                 this.world.getBlockState(this.updatePos.get(i)),
                 this.updateState.get(i),
                 3);
         }
     }
+
+    public World getWorld() { return this.world; }
 }

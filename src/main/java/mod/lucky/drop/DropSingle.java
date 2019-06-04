@@ -9,13 +9,11 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.DropValue;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class DropSingle extends DropBase {
     private static String[] multiPosProperties = {"pos", "pos2", "posOffset"};
@@ -89,10 +87,12 @@ public class DropSingle extends DropBase {
     }
 
     public IBlockState getBlockState() {
-        String blockID = this.getPropertyString("ID");
-        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockID));
-        if (block != null) return block.getDefaultState();
-        else return null;
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setString("Name", this.getPropertyString("ID"));
+        if (this.hasProperty("properties"))
+            tag.setTag("Properties", this.getPropertyNBT("properties"));
+
+        return NBTUtil.readBlockState(tag);
     }
 
     public void setProperty(String name, Object value) {
@@ -100,7 +100,7 @@ public class DropSingle extends DropBase {
         this.properties.put(name, new DropValue(value));
     }
 
-    public void setOverrideProperty(String name, Object value) {
+    public void setPropertyIfEmpty(String name, Object value) {
         if (!this.hasProperty(name)) this.setProperty(name, value);
     }
 
@@ -146,22 +146,20 @@ public class DropSingle extends DropBase {
         DropSingle properties = this.copy();
 
         if (!properties.hasProperty("pos")) {
-            properties.setOverrideProperty(
+            properties.setPropertyIfEmpty(
                 "posX", properties.defaultCast("posX", (float) processData.getHarvestPos().x));
-            properties.setOverrideProperty(
+            properties.setPropertyIfEmpty(
                 "posY", properties.defaultCast("posY", (float) processData.getHarvestPos().y));
-            properties.setOverrideProperty(
+            properties.setPropertyIfEmpty(
                 "posZ", properties.defaultCast("posZ", (float) processData.getHarvestPos().z));
         }
 
         for (String posType : multiPosProperties) {
             if (properties.hasProperty(posType)) {
                 properties.getRawProperty(posType).initialize(processData);
-                String[] pos =
-                    properties
-                        .getPropertyString(posType)
-                        .substring(1, properties.getPropertyString(posType).length() - 1)
-                        .split(",");
+                String[] pos = properties.getPropertyString(posType)
+                    .substring(1, properties.getPropertyString(posType).length() - 1)
+                    .split(",");
                 properties.setOverrideRawProperty(posType + "X", pos[0]);
                 properties.setOverrideRawProperty(posType + "Y", pos[1]);
                 properties.setOverrideRawProperty(posType + "Z", pos[2]);
@@ -169,14 +167,12 @@ public class DropSingle extends DropBase {
         }
         if (properties.hasProperty("size")) {
             properties.getRawProperty("size").initialize(processData);
-            String[] size =
-                properties
-                    .getPropertyString("size")
-                    .substring(1, properties.getPropertyString("size").length() - 1)
-                    .split(",");
-            properties.setOverrideRawProperty("length", size[0]);
-            properties.setOverrideRawProperty("height", size[1]);
-            properties.setOverrideRawProperty("width", size[2]);
+            String[] size = properties.getPropertyString("size")
+                .substring(1, properties.getPropertyString("size").length() - 1)
+                .split(",");
+            properties.setOverrideRawProperty("sizeX", size[0]);
+            properties.setOverrideRawProperty("sizeY", size[1]);
+            properties.setOverrideRawProperty("sizeZ", size[2]);
         }
 
         if (properties.needsInitialize) {
@@ -187,41 +183,30 @@ public class DropSingle extends DropBase {
         }
 
         if (properties.hasProperty("posOffsetX"))
-            properties
-                .getRawProperty("posX")
-                .setValue(
-                    properties.defaultCast(
-                        "posX",
-                        properties.getPropertyFloat("posX") + properties.getPropertyFloat("posOffsetX")));
+            properties.getRawProperty("posX").setValue(
+                properties.defaultCast("posX",
+                    properties.getPropertyFloat("posX")
+                        + properties.getPropertyFloat("posOffsetX")));
         if (properties.hasProperty("posOffsetY"))
-            properties
-                .getRawProperty("posY")
-                .setValue(
-                    properties.defaultCast(
-                        "posY",
-                        properties.getPropertyFloat("posY") + properties.getPropertyFloat("posOffsetY")));
+            properties.getRawProperty("posY").setValue(
+                properties.defaultCast("posY",
+                    properties.getPropertyFloat("posY")
+                        + properties.getPropertyFloat("posOffsetY")));
         if (properties.hasProperty("posOffsetZ"))
-            properties
-                .getRawProperty("posZ")
-                .setValue(
-                    properties.defaultCast(
-                        "posZ",
-                        properties.getPropertyFloat("posZ") + properties.getPropertyFloat("posOffsetZ")));
+            properties.getRawProperty("posZ").setValue(
+                properties.defaultCast("posZ",
+                    properties.getPropertyFloat("posZ")
+                        + properties.getPropertyFloat("posOffsetZ")));
 
         for (String posType : multiPosProperties) {
             if (!properties.hasProperty(posType)
                 && (properties.hasProperty(posType + "X")
-                || properties.hasProperty(posType + "Y")
-                || properties.hasProperty(posType + "Z"))) {
-                properties.setProperty(
-                    posType,
-                    "("
-                        + properties.getProperty(posType + "X").toString()
-                        + ","
-                        + properties.getProperty(posType + "Y").toString()
-                        + ","
-                        + properties.getProperty(posType + "Z").toString()
-                        + ")");
+                    || properties.hasProperty(posType + "Y")
+                    || properties.hasProperty(posType + "Z"))) {
+                properties.setProperty(posType, "("
+                    + properties.getProperty(posType + "X").toString() + ","
+                    + properties.getProperty(posType + "Y").toString() + ","
+                    + properties.getProperty(posType + "Z").toString() + ")");
             }
         }
 
@@ -316,6 +301,7 @@ public class DropSingle extends DropBase {
 
     public static void setDefaultProperty(
         String type, String name, Class valueType, Object defaultValue) {
+
         name = processName(name);
         if (defaultValueTypes.get(type) == null)
             defaultValueTypes.put(type, new HashMap<String, Class>());
