@@ -6,42 +6,37 @@ import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 
 import mod.lucky.Lucky;
-import mod.lucky.drop.func.DropProcessData;
-import mod.lucky.drop.func.DropProcessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentUtils;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.world.ChunkDataEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class LuckyTickHandler {
     private ConcurrentHashMap<Integer, Object> delayDrops;
     private boolean shownUpdateVersion = true;
-    private DropProcessor dropProcessor;
 
     public LuckyTickHandler() {
         try {
             this.delayDrops = new ConcurrentHashMap<Integer, Object>();
-            this.dropProcessor = new DropProcessor();
-        } catch (Exception e) {
-
-        }
+        } catch (Exception e) {}
     }
 
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void onClientTick(TickEvent.ClientTickEvent event) {
         try {
-            if (Minecraft.getMinecraft().player != null && this.shownUpdateVersion) {
+            if (Minecraft.getInstance().player != null && this.shownUpdateVersion) {
                 this.shownUpdateVersion = false;
 
-                URL url =
-                    new URL(
-                        "http://www.minecraftascending.com/projects/lucky_block/download/version/version_log.txt");
+                URL url = new URL("http://www.minecraftascending.com/projects/lucky_block/download/version/version_log.txt");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
                 int curLuckyVersion = Integer.valueOf(Lucky.VERSION.replace(".", ""));
@@ -55,10 +50,8 @@ public class LuckyTickHandler {
 
                     if (minecraftVersion >= curMinecraftVersion && luckyVersion > curLuckyVersion) {
                         String message = split[2];
-                        ITextComponent ichatcomponent = ITextComponent.Serializer.jsonToComponent(message);
-                        Minecraft.getMinecraft()
-                            .player
-                            .sendMessage(TextComponentUtils.processComponent(null, ichatcomponent, null));
+                        ITextComponent textComponent = ITextComponent.Serializer.fromJson(message);
+                        Minecraft.getInstance().player.sendMessage(textComponent);
                         break;
                     }
                 }
@@ -97,14 +90,16 @@ public class LuckyTickHandler {
                 NBTTagList dropTags = new NBTTagList();
 
                 for (int i = 0; i > -1; i++) {
-                    if (this.delayDrops.containsKey(i) && this.delayDrops.get(i) instanceof DelayLuckyDrop) {
+                    if (this.delayDrops.containsKey(i)
+                    && this.delayDrops.get(i) instanceof DelayLuckyDrop) {
                         DelayLuckyDrop delayDrop = (DelayLuckyDrop) this.delayDrops.get(i);
-                        if (event
-                            .getChunk()
-                            .getWorld()
-                            .getChunkFromBlockCoords(delayDrop.getProcessData().getHarvestBlockPos())
-                            == event.getChunk()) {
-                            dropTags.appendTag(delayDrop.writeToNBT());
+
+                        BlockPos harvestPos = delayDrop.getProcessData().getHarvestBlockPos();
+                        ChunkPos harvestChunkPos = event.getChunk().getWorldForge()
+                            .getChunkDefault(harvestPos).getPos();
+
+                        if (harvestChunkPos == event.getChunk().getPos()) {
+                            dropTags.add(delayDrop.writeToNBT());
                             saved = true;
                         }
                     }
@@ -114,8 +109,7 @@ public class LuckyTickHandler {
                 if (saved) event.getData().setTag("LuckyBlockDelayDrops", dropTags);
             }
         } catch (Exception e) {
-            System.err.println("Lucky Block: Error saving chunk properties");
-            e.printStackTrace();
+            Lucky.LOGGER.error("Error saving chunk properties");
             this.delayDrops.clear();
         }
     }
@@ -124,11 +118,12 @@ public class LuckyTickHandler {
     public void onChunkLoad(ChunkDataEvent.Load event) {
         try {
             if (event.getData().hasKey("LuckyBlockDelayDrops")) {
-                NBTTagList delayDropTags = event.getData().getTagList("LuckyBlockDelayDrops", 10);
-                for (int i = 0; i < delayDropTags.tagCount(); i++) {
+                NBTTagList delayDropTags = event.getData().getList("LuckyBlockDelayDrops", 10);
+                for (int i = 0; i < delayDropTags.size(); i++) {
                     DelayLuckyDrop delayDrop =
                         new DelayLuckyDrop(Lucky.luckyBlock.getDropProcessor(), null, 0);
-                    delayDrop.readFromNBT(delayDropTags.getCompoundTagAt(i), event.getChunk().getWorld());
+                    delayDrop.readFromNBT(delayDropTags.getCompound(i),
+                        event.getChunk().getWorldForge().getWorld());
                     this.addDelayDrop(delayDrop);
                 }
             }
@@ -139,13 +134,10 @@ public class LuckyTickHandler {
         }
     }
 
-    public void addDelayDrop(DropProcessor dropProcessor, DropProcessData processData, float delay) {
-        this.addDelayDrop(new DelayLuckyDrop(dropProcessor, processData, (long) (delay * 20)));
-    }
-
     public void addDelayDrop(DelayLuckyDrop delayDrop) {
         for (int i = 0; i > -1; i++) {
-            if (!this.delayDrops.containsKey(i) || !(this.delayDrops.get(i) instanceof DelayLuckyDrop)) {
+            if (!this.delayDrops.containsKey(i)
+            || !(this.delayDrops.get(i) instanceof DelayLuckyDrop)) {
                 this.delayDrops.put(i, delayDrop);
                 break;
             }

@@ -10,6 +10,7 @@ import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
 import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceManager;
+import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -73,8 +74,6 @@ public class SetupClient {
         registerItemModel(Lucky.luckyPotion);
         registerItemModel(Lucky.luckyBow);
 
-        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-
         for (PluginLoader loader : Lucky.luckyBlockPlugins) {
             registerItemModel(Item.BLOCK_TO_ITEM.get(loader.getBlock()));
             if (loader.getSword() != null) registerItemModel(loader.getSword());
@@ -87,5 +86,9 @@ public class SetupClient {
         registerEntityRenderers();
         registerPluginResources();
         registerAllItemModels();
+
+        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+        MinecraftForge.EVENT_BUS.register(new LuckyTickHandler());
+
     }
 }
