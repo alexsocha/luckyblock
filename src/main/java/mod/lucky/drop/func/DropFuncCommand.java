@@ -1,12 +1,12 @@
 package mod.lucky.drop.func;
 
 import mod.lucky.command.LuckyCommandLogic;
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 
 public class DropFuncCommand extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
         LuckyCommandLogic luckyCommandLogic = new LuckyCommandLogic();
         luckyCommandLogic.setWorld(processData.getWorld());
         luckyCommandLogic.setPosition(drop.getBlockPos());
@@ -18,8 +18,8 @@ public class DropFuncCommand extends DropFunction {
 
     @Override
     public void registerProperties() {
-        DropProperties.setDefaultProperty(this.getType(), "commandSender", String.class, "@");
-        DropProperties.setDefaultProperty(this.getType(), "displayOutput", Boolean.class, false);
+        DropSingle.setDefaultProperty(this.getType(), "commandSender", String.class, "@");
+        DropSingle.setDefaultProperty(this.getType(), "displayOutput", Boolean.class, false);
     }
 
     @Override

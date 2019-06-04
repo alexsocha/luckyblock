@@ -8,7 +8,7 @@ import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.ValueParser;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class DropContainer extends DropBase {
+public class DropFull extends DropBase {
     private String rawDrop;
 
     private int luck;
@@ -17,7 +17,7 @@ public class DropContainer extends DropBase {
     private boolean setChance;
     private DropBase drop;
 
-    public DropContainer() {
+    public DropFull() {
         super();
         this.luck = 0;
         this.chance = 1.0F;
@@ -113,16 +113,16 @@ public class DropContainer extends DropBase {
         return this.setChance;
     }
 
-    public DropContainer copy() {
-        DropContainer dropContainer = new DropContainer();
-        dropContainer.setLuck(this.luck);
-        dropContainer.setChance(this.chance);
-        dropContainer.setDrop(this.drop);
-        return dropContainer;
+    public DropFull copy() {
+        DropFull dropFull = new DropFull();
+        dropFull.setLuck(this.luck);
+        dropFull.setChance(this.chance);
+        dropFull.setDrop(this.drop);
+        return dropFull;
     }
 
     @Override
-    public DropContainer initialize(DropProcessData processData) {
+    public DropFull initialize(DropProcessData processData) {
         return this;
     }
 
@@ -144,7 +144,7 @@ public class DropContainer extends DropBase {
             group.readFromString(string);
             this.drop = group;
         } else {
-            DropProperties properties = new DropProperties();
+            DropSingle properties = new DropSingle();
             properties.readFromString(string);
             this.drop = properties;
         }

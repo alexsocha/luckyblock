@@ -3,7 +3,7 @@ package mod.lucky.structure;
 import java.io.DataInputStream;
 import java.util.zip.GZIPInputStream;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropProcessData;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityList;
@@ -25,7 +25,7 @@ public class SchematicStructure extends Structure {
 
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
         Vec3d harvestPos = drop.getVecPos();
         int rotation = drop.getPropertyInt("rotation");
         BlockPlacer blockPlacer = new BlockPlacer(processData.getWorld());

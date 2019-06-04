@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
@@ -15,7 +15,7 @@ import net.minecraft.world.WorldServer;
 public class DropFuncParticle extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
         String particleName = drop.getPropertyString("ID");
         EnumParticleTypes particle = null;
         for (EnumParticleTypes particleType : EnumParticleTypes.values()) {
@@ -74,12 +74,12 @@ public class DropFuncParticle extends DropFunction {
 
     @Override
     public void registerProperties() {
-        DropProperties.setDefaultProperty(this.getType(), "length", Float.class, 0.0F);
-        DropProperties.setDefaultProperty(this.getType(), "height", Float.class, 0.0F);
-        DropProperties.setDefaultProperty(this.getType(), "width", Float.class, 0.0F);
-        DropProperties.setDefaultProperty(this.getType(), "size", String.class, "(0.0,0.0,0.0)");
-        DropProperties.setDefaultProperty(this.getType(), "particleAmount", Integer.class, 1);
-        DropProperties.setDefaultProperty(this.getType(), "potion", String.class, "poison");
+        DropSingle.setDefaultProperty(this.getType(), "length", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "height", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "width", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "size", String.class, "(0.0,0.0,0.0)");
+        DropSingle.setDefaultProperty(this.getType(), "particleAmount", Integer.class, 1);
+        DropSingle.setDefaultProperty(this.getType(), "potion", String.class, "poison");
     }
 
     @Override

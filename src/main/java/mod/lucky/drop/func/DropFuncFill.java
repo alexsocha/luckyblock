@@ -1,6 +1,6 @@
 package mod.lucky.drop.func;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -8,7 +8,7 @@ import net.minecraft.util.math.BlockPos;
 public class DropFuncFill extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
         IBlockState blockState = drop.getBlockState();
         BlockPos dropPos = drop.getBlockPos();
         // String blockMode = drop.getPropertyString("blockMode");
@@ -45,18 +45,18 @@ public class DropFuncFill extends DropFunction {
 
     @Override
     public void registerProperties() {
-        DropProperties.setDefaultProperty(this.getType(), "length", Integer.class, 1);
-        DropProperties.setDefaultProperty(this.getType(), "height", Integer.class, 1);
-        DropProperties.setDefaultProperty(this.getType(), "width", Integer.class, 1);
-        DropProperties.setDefaultProperty(this.getType(), "size", String.class, "(1,1,1)");
-        DropProperties.setDefaultProperty(this.getType(), "pos2X", Integer.class, 0);
-        DropProperties.setDefaultProperty(this.getType(), "pos2Y", Integer.class, 0);
-        DropProperties.setDefaultProperty(this.getType(), "pos2Z", Integer.class, 0);
-        DropProperties.setDefaultProperty(this.getType(), "pos2", String.class, "(0,0,0)");
-        DropProperties.setDefaultProperty(this.getType(), "tileEntity", NBTTagCompound.class, null);
-        DropProperties.setDefaultProperty(this.getType(), "blockUpdate", Boolean.class, true);
-        DropProperties.setDefaultProperty(this.getType(), "blockMode", String.class, "replace");
-        DropProperties.setReplaceProperty("tileEntity", "NBTTag");
+        DropSingle.setDefaultProperty(this.getType(), "length", Integer.class, 1);
+        DropSingle.setDefaultProperty(this.getType(), "height", Integer.class, 1);
+        DropSingle.setDefaultProperty(this.getType(), "width", Integer.class, 1);
+        DropSingle.setDefaultProperty(this.getType(), "size", String.class, "(1,1,1)");
+        DropSingle.setDefaultProperty(this.getType(), "pos2X", Integer.class, 0);
+        DropSingle.setDefaultProperty(this.getType(), "pos2Y", Integer.class, 0);
+        DropSingle.setDefaultProperty(this.getType(), "pos2Z", Integer.class, 0);
+        DropSingle.setDefaultProperty(this.getType(), "pos2", String.class, "(0,0,0)");
+        DropSingle.setDefaultProperty(this.getType(), "tileEntity", NBTTagCompound.class, null);
+        DropSingle.setDefaultProperty(this.getType(), "blockUpdate", Boolean.class, true);
+        DropSingle.setDefaultProperty(this.getType(), "blockMode", String.class, "replace");
+        DropSingle.setReplaceProperty("tileEntity", "NBTTag");
     }
 
     @Override

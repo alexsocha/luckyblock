@@ -1,6 +1,6 @@
 package mod.lucky.drop.func;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -12,7 +12,7 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 public class DropFuncBlock extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
         IBlockState blockState = drop.getBlockState();
         if (drop.getPropertyBoolean("blockUpdate") == true)
             processData.getWorld().setBlockState(drop.getBlockPos(), blockState, 3);
@@ -29,11 +29,11 @@ public class DropFuncBlock extends DropFunction {
 
     @Override
     public void registerProperties() {
-        DropProperties.setDefaultProperty(this.getType(), "tileEntity", NBTTagCompound.class, null);
-        DropProperties.setDefaultProperty(this.getType(), "blockUpdate", Boolean.class, true);
-        DropProperties.setReplaceProperty("meta", "damage");
-        DropProperties.setReplaceProperty("state", "damage");
-        DropProperties.setReplaceProperty("tileEntity", "NBTTag");
+        DropSingle.setDefaultProperty(this.getType(), "tileEntity", NBTTagCompound.class, null);
+        DropSingle.setDefaultProperty(this.getType(), "blockUpdate", Boolean.class, true);
+        DropSingle.setReplaceProperty("meta", "damage");
+        DropSingle.setReplaceProperty("state", "damage");
+        DropSingle.setReplaceProperty("tileEntity", "NBTTag");
     }
 
     @Override

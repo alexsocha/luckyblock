@@ -6,7 +6,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import mod.lucky.Lucky;
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.structure.Structure;
 import mod.lucky.structure.StructureUtils;
@@ -294,7 +294,7 @@ public class HashVariables {
                 return fixBackslash(result);
             } else if (processData != null
                 && processData.getProcessType() == DropProcessData.EnumProcessType.LUCKY_STRUCT
-                && processData.getDropProperties() != null
+                && processData.getDropSingle() != null
                 && (type.equals("#sPosX")
                 || type.equals("#sPosY")
                 || type.equals("#sPosZ")
@@ -307,7 +307,7 @@ public class HashVariables {
                 properties[1] = DropStringUtils.removeNumSuffix(properties[1]);
                 properties[2] = DropStringUtils.removeNumSuffix(properties[2]);
 
-                DropProperties drop = processData.getDropProperties();
+                DropSingle drop = processData.getDropSingle();
                 Structure structure = Lucky.getStructure(drop.getPropertyString("ID"));
                 if (structure == null) return "";
                 Vec3d harvestPos =
@@ -365,10 +365,10 @@ public class HashVariables {
                 }
             } else if (processData != null
                 && processData.getProcessType() == DropProcessData.EnumProcessType.LUCKY_STRUCT
-                && processData.getDropProperties() != null
+                && processData.getDropSingle() != null
                 && (type.equals("#drop"))) {
                 String name = properties[0];
-                return processData.getDropProperties().getProperty(name).toString();
+                return processData.getDropSingle().getProperty(name).toString();
             }
         } catch (Exception e) {
             System.err.println("Lucky Block: Error processing hash variable: " + string);

@@ -1,11 +1,11 @@
 package mod.lucky.drop.func;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 
 public class DropFuncExplosion extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
         processData
             .getWorld()
             .newExplosion(
@@ -20,9 +20,9 @@ public class DropFuncExplosion extends DropFunction {
 
     @Override
     public void registerProperties() {
-        DropProperties.setDefaultProperty(this.getType(), "damage", Integer.class, 3);
-        DropProperties.setDefaultProperty(this.getType(), "fire", Boolean.class, false);
-        DropProperties.setReplaceProperty("radius", "damage");
+        DropSingle.setDefaultProperty(this.getType(), "damage", Integer.class, 3);
+        DropSingle.setDefaultProperty(this.getType(), "fire", Boolean.class, false);
+        DropSingle.setReplaceProperty("radius", "damage");
     }
 
     @Override

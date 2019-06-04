@@ -1,6 +1,6 @@
 package mod.lucky.drop.func;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import mod.lucky.entity.EntityLuckyProjectile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 public class DropFuncEntity extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
 
         float posX = drop.getPropertyFloat("posX");
         float posY = drop.getPropertyFloat("posY");
@@ -126,13 +126,13 @@ public class DropFuncEntity extends DropFunction {
 
     @Override
     public void registerProperties() {
-        DropProperties.setDefaultProperty(this.getType(), "NBTTag", NBTTagCompound.class, null);
-        DropProperties.setDefaultProperty(this.getType(), "posX", Float.class, 0.0F);
-        DropProperties.setDefaultProperty(this.getType(), "posY", Float.class, 0.0F);
-        DropProperties.setDefaultProperty(this.getType(), "posZ", Float.class, 0.0F);
-        DropProperties.setDefaultProperty(this.getType(), "posOffsetX", Float.class, 0.0F);
-        DropProperties.setDefaultProperty(this.getType(), "posOffsetY", Float.class, 0.0F);
-        DropProperties.setDefaultProperty(this.getType(), "posOffsetZ", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "NBTTag", NBTTagCompound.class, null);
+        DropSingle.setDefaultProperty(this.getType(), "posX", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "posY", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "posZ", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "posOffsetX", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "posOffsetY", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "posOffsetZ", Float.class, 0.0F);
     }
 
     @Override

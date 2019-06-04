@@ -2,7 +2,7 @@ package mod.lucky.structure;
 
 import java.io.InputStream;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropFunction;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
@@ -90,7 +90,7 @@ public class Structure {
 
     protected void processOverlay(DropProcessData processData) {
         if (this.overlayStruct != null) {
-            DropProperties drop = processData.getDropProperties();
+            DropSingle drop = processData.getDropSingle();
 
             String oldId = drop.getPropertyString("ID");
             String oldBlockMode = drop.getPropertyString("blockMode");

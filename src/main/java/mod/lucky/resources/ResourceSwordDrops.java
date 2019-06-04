@@ -1,6 +1,6 @@
 package mod.lucky.resources;
 
-import mod.lucky.drop.DropContainer;
+import mod.lucky.drop.DropFull;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.util.LuckyReader;
 
@@ -11,7 +11,7 @@ public class ResourceSwordDrops extends BaseResource {
             if (loader.getSword() == null) return;
             String curLine;
             while ((curLine = reader.readLine()) != null) {
-                DropContainer drop = new DropContainer();
+                DropFull drop = new DropFull();
                 drop.readFromString(curLine);
                 loader.getSword().getLuckyItem().getDropProcessor().registerDrop(drop);
             }

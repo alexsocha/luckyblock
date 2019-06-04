@@ -6,7 +6,7 @@ import java.util.Random;
 import mod.lucky.Lucky;
 import mod.lucky.command.LuckyCommandLogic;
 import mod.lucky.crafting.RecipeLuckCrafting;
-import mod.lucky.drop.DropContainer;
+import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.item.LuckyItem;
@@ -61,7 +61,7 @@ public class BlockLuckyBlock extends BlockContainer {
         try {
             int luck = 0;
             String[] customDropsRaw = null;
-            ArrayList<DropContainer> customDrops = null;
+            ArrayList<DropFull> customDrops = null;
 
             TileEntityLuckyBlock tileEntityLuck =
                 (TileEntityLuckyBlock) world.getTileEntity(harvestPos);
@@ -70,11 +70,11 @@ public class BlockLuckyBlock extends BlockContainer {
                 luck = tileEntityLuck.getLuck();
                 customDropsRaw = tileEntityLuck.getDrops();
                 if (customDropsRaw != null && customDropsRaw.length != 0) {
-                    customDrops = new ArrayList<DropContainer>();
+                    customDrops = new ArrayList<DropFull>();
                     for (String rawDrop : customDropsRaw) {
-                        DropContainer dropContainer = new DropContainer();
-                        dropContainer.readFromString(rawDrop);
-                        customDrops.add(dropContainer);
+                        DropFull dropFull = new DropFull();
+                        dropFull.readFromString(rawDrop);
+                        customDrops.add(dropFull);
                     }
                 }
                 world.removeTileEntity(harvestPos);

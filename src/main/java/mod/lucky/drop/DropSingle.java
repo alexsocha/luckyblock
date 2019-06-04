@@ -8,26 +8,25 @@ import java.util.Map;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.DropValue;
-import mod.lucky.drop.value.ValueParser;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.registries.ForgeRegistries;
 
-public class DropProperties extends DropBase {
+public class DropSingle extends DropBase {
     private static String[] multiPosProperties = {"pos", "pos2", "posOffset"};
 
     private HashMap<String, DropValue> properties;
     private boolean needsInitialize = false;
 
-    public DropProperties() {
+    public DropSingle() {
         this.properties = new HashMap<String, DropValue>();
     }
 
-    public HashMap<String, DropValue> getProperties() {
-        return this.properties;
-    }
+    public HashMap<String, DropValue> getProperties() { return this.properties; }
 
     public DropValue getRawProperty(String name) {
         name = processName(name);
@@ -89,13 +88,10 @@ public class DropProperties extends DropBase {
     }
 
     public IBlockState getBlockState() {
-        Block block;
-        try {
-            block = Block.getBlockById(ValueParser.getInteger(this.getPropertyString("ID")));
-        } catch (Exception e) {
-            block = Block.getBlockFromName(this.getPropertyString("ID"));
-        }
-        return block.getStateFromMeta(this.getPropertyInt("damage"));
+        String blockID = this.getPropertyString("ID");
+        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockID));
+        if (block != null) return block.getDefaultState();
+        else return null;
     }
 
     public void setProperty(String name, Object value) {
@@ -145,8 +141,8 @@ public class DropProperties extends DropBase {
     }
 
     @Override
-    public DropProperties initialize(DropProcessData processData) {
-        DropProperties properties = this.copy();
+    public DropSingle initialize(DropProcessData processData) {
+        DropSingle properties = this.copy();
 
         if (!properties.hasProperty("pos")) {
             properties.setOverrideProperty(
@@ -253,8 +249,8 @@ public class DropProperties extends DropBase {
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-        NBTTagCompound propertiesTag = tagCompound.getCompoundTag("properties");
-        for (Object key : propertiesTag.getKeySet()) {
+        NBTTagCompound propertiesTag = tagCompound.getCompound("properties");
+        for (Object key : propertiesTag.keySet()) {
             DropValue dropValue = new DropValue(null);
             dropValue.readFromNBT((NBTTagCompound) propertiesTag.getTag((String) key));
             this.properties.put((String) key, dropValue);
@@ -302,13 +298,13 @@ public class DropProperties extends DropBase {
         return defaultValues.get("all").get(name);
     }
 
-    public DropProperties copy() {
-        DropProperties dropProperties = new DropProperties();
+    public DropSingle copy() {
+        DropSingle dropSingle = new DropSingle();
         for (String key : this.properties.keySet())
-            dropProperties.properties.put(key, this.properties.get(key).copy());
+            dropSingle.properties.put(key, this.properties.get(key).copy());
 
-        dropProperties.needsInitialize = this.needsInitialize;
-        return dropProperties;
+        dropSingle.needsInitialize = this.needsInitialize;
+        return dropSingle;
     }
 
     private static HashMap<String, HashMap<String, Class>> defaultValueTypes =

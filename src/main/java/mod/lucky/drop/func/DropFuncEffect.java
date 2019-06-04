@@ -3,7 +3,7 @@ package mod.lucky.drop.func;
 import java.util.Iterator;
 import java.util.List;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,7 +16,7 @@ import net.minecraft.util.math.Vec3d;
 public class DropFuncEffect extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
 
         Entity target = null;
         AxisAlignedBB effectBox =
@@ -59,11 +59,11 @@ public class DropFuncEffect extends DropFunction {
 
                 while (iterator.hasNext()) {
                     EntityLivingBase entityLivingBase = (EntityLivingBase) iterator.next();
-                    if (processData.getDropProperties().getPropertyBoolean("excludePlayer")
+                    if (processData.getDropSingle().getPropertyBoolean("excludePlayer")
                         && entityLivingBase == processData.getPlayer()) continue;
                     double distance =
                         processData
-                            .getDropProperties()
+                            .getDropSingle()
                             .getVecPos()
                             .distanceTo(entityLivingBase.getPositionVector());
 
@@ -81,31 +81,31 @@ public class DropFuncEffect extends DropFunction {
 
     private void potionEffect(DropProcessData processData, Entity entity, int potionEffectId) {
         Potion potion = Potion.getPotionById(potionEffectId);
-        int duration = (int) (processData.getDropProperties().getPropertyFloat("duration") * 20.0);
+        int duration = (int) (processData.getDropSingle().getPropertyFloat("duration") * 20.0);
         if (potion.isInstant()) duration = 1;
 
         PotionEffect potionEffect =
             new PotionEffect(
-                potion, duration, processData.getDropProperties().getPropertyInt("amplifier"));
+                potion, duration, processData.getDropSingle().getPropertyInt("amplifier"));
         if (entity instanceof EntityLivingBase)
             ((EntityLivingBase) entity).addPotionEffect(potionEffect);
     }
 
     private void specialEffectFire(DropProcessData processData, Entity entity) {
-        entity.setFire(processData.getDropProperties().getPropertyInt("duration"));
+        entity.setFire(processData.getDropSingle().getPropertyInt("duration"));
     }
 
     private void specialEffectKnockback(DropProcessData processData, Entity entity) {
-        Vec3d dropPos = processData.getDropProperties().getVecPos();
+        Vec3d dropPos = processData.getDropSingle().getVecPos();
         float yawAngle =
-            processData.getDropProperties().hasProperty("directionYaw")
-                ? processData.getDropProperties().getPropertyFloat("directionYaw")
+            processData.getDropSingle().hasProperty("directionYaw")
+                ? processData.getDropSingle().getPropertyFloat("directionYaw")
                 : (float)
                 Math.toDegrees(Math.atan2((entity.posX - dropPos.x) * -1, entity.posZ - dropPos.z));
-        float pitchAngle = processData.getDropProperties().getPropertyFloat("directionPitch");
-        float power = processData.getDropProperties().getPropertyFloat("power");
+        float pitchAngle = processData.getDropSingle().getPropertyFloat("directionPitch");
+        float power = processData.getDropSingle().getPropertyFloat("power");
 
-        if (!processData.getDropProperties().hasProperty("target")
+        if (!processData.getDropSingle().hasProperty("target")
             && dropPos.distanceTo(entity.getPositionVector()) < 0.01) {
             pitchAngle = -90;
             power *= 0.5;
@@ -125,14 +125,14 @@ public class DropFuncEffect extends DropFunction {
 
     @Override
     public void registerProperties() {
-        DropProperties.setDefaultProperty(this.getType(), "duration", Integer.class, 30);
-        DropProperties.setDefaultProperty(this.getType(), "amplifier", Integer.class, 0);
-        DropProperties.setDefaultProperty(this.getType(), "target", String.class, "player");
-        DropProperties.setDefaultProperty(this.getType(), "excludePlayer", Boolean.class, false);
-        DropProperties.setDefaultProperty(this.getType(), "range", Float.class, 4);
-        DropProperties.setDefaultProperty(this.getType(), "power", Float.class, 1);
-        DropProperties.setDefaultProperty(this.getType(), "directionYaw", Float.class, 0);
-        DropProperties.setDefaultProperty(this.getType(), "directionPitch", Float.class, -30);
+        DropSingle.setDefaultProperty(this.getType(), "duration", Integer.class, 30);
+        DropSingle.setDefaultProperty(this.getType(), "amplifier", Integer.class, 0);
+        DropSingle.setDefaultProperty(this.getType(), "target", String.class, "player");
+        DropSingle.setDefaultProperty(this.getType(), "excludePlayer", Boolean.class, false);
+        DropSingle.setDefaultProperty(this.getType(), "range", Float.class, 4);
+        DropSingle.setDefaultProperty(this.getType(), "power", Float.class, 1);
+        DropSingle.setDefaultProperty(this.getType(), "directionYaw", Float.class, 0);
+        DropSingle.setDefaultProperty(this.getType(), "directionPitch", Float.class, -30);
     }
 
     @Override

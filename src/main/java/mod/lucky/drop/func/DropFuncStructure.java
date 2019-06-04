@@ -1,13 +1,13 @@
 package mod.lucky.drop.func;
 
 import mod.lucky.Lucky;
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import mod.lucky.structure.Structure;
 
 public class DropFuncStructure extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
         Structure structure = Lucky.getStructure(drop.getPropertyString("ID"));
         if (structure != null) structure.process(processData);
         else
@@ -17,8 +17,8 @@ public class DropFuncStructure extends DropFunction {
 
     @Override
     public void registerProperties() {
-        DropProperties.setDefaultProperty(this.getType(), "rotation", Integer.class, 0);
-        DropProperties.setDefaultProperty(this.getType(), "blockUpdate", Boolean.class, true);
+        DropSingle.setDefaultProperty(this.getType(), "rotation", Integer.class, 0);
+        DropSingle.setDefaultProperty(this.getType(), "blockUpdate", Boolean.class, true);
     }
 
     @Override

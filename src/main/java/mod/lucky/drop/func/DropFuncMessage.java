@@ -8,7 +8,7 @@ public class DropFuncMessage extends DropFunction {
         processData
             .getPlayer()
             .sendMessage(
-                new TextComponentString(processData.getDropProperties().getPropertyString("ID")));
+                new TextComponentString(processData.getDropSingle().getPropertyString("ID")));
     }
 
     @Override

@@ -1,13 +1,13 @@
 package mod.lucky.drop.func;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
 import net.minecraft.world.EnumDifficulty;
 
 public class DropFuncDifficulty extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
         String id = drop.getPropertyString("ID");
         EnumDifficulty enumdifficulty =
             !id.equalsIgnoreCase("peaceful") && !id.equalsIgnoreCase("p")

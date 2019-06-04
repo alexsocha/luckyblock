@@ -3,7 +3,7 @@ package mod.lucky.structure;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropFunction;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
@@ -15,12 +15,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 public class LuckyStructure extends Structure {
-    private ArrayList<DropProperties> blocks;
-    private ArrayList<DropProperties> entities;
+    private ArrayList<DropSingle> blocks;
+    private ArrayList<DropSingle> entities;
 
     @Override
     public void process(DropProcessData processData) {
-        DropProperties drop = processData.getDropProperties();
+        DropSingle drop = processData.getDropSingle();
         Vec3d harvestPos = drop.getVecPos();
         int rotation = drop.getPropertyInt("rotation");
         BlockPlacer blockPlacer = new BlockPlacer(processData.getWorld());
@@ -43,9 +43,9 @@ public class LuckyStructure extends Structure {
 
         DropProcessData blockProcessData = processData.copy();
         blockProcessData.setProcessType(DropProcessData.EnumProcessType.LUCKY_STRUCT);
-        for (DropProperties blockProperties : this.blocks) {
+        for (DropSingle blockProperties : this.blocks) {
             blockProperties = blockProperties.initialize(blockProcessData);
-            blockProcessData.setDropProperties(blockProperties);
+            blockProcessData.setDropSingle(blockProperties);
             if (this.blockMode.equals("air")) {
                 if (blockProperties.getBlockState().getBlock() != Blocks.AIR)
                     StructureUtils.setBlock(
@@ -76,9 +76,9 @@ public class LuckyStructure extends Structure {
 
         DropProcessData entityProcessData = processData.copy();
         entityProcessData.setProcessType(DropProcessData.EnumProcessType.LUCKY_STRUCT);
-        for (DropProperties entityProperties : this.entities) {
+        for (DropSingle entityProperties : this.entities) {
             entityProperties = entityProperties.initialize(entityProcessData);
-            entityProcessData.setDropProperties(entityProperties);
+            entityProcessData.setDropSingle(entityProperties);
             Vec3d originalPos = entityProperties.getVecPos();
             if (entityProperties.getPropertyNBT("NBTTag") != null)
                 Rotations.rotateEntity(
@@ -87,7 +87,7 @@ public class LuckyStructure extends Structure {
                     rotation);
             entityProperties.setVecPos(
                 StructureUtils.getWorldPos(originalPos, this.getCenterPos(), harvestPos, rotation));
-            entityProcessData.setDropProperties(entityProperties);
+            entityProcessData.setDropSingle(entityProperties);
             DropFunction.getDropFunction("entity").process(entityProcessData);
             entityProperties.setVecPos(originalPos);
         }
@@ -104,8 +104,8 @@ public class LuckyStructure extends Structure {
             String section = "";
             String curLine;
 
-            this.blocks = new ArrayList<DropProperties>();
-            this.entities = new ArrayList<DropProperties>();
+            this.blocks = new ArrayList<DropSingle>();
+            this.entities = new ArrayList<DropSingle>();
 
             while ((curLine = reader.readLine()) != null) {
                 if (curLine.startsWith(">")) {
@@ -136,29 +136,29 @@ public class LuckyStructure extends Structure {
                     }
                 }
                 if (section.equals(">blocks")) {
-                    DropProperties dropProperties = new DropProperties();
+                    DropSingle dropSingle = new DropSingle();
                     String[] properties = DropStringUtils.splitBracketString(curLine, ',');
 
-                    dropProperties.setRawProperty("type", "block");
-                    dropProperties.setRawProperty("posX", properties[0]);
-                    dropProperties.setRawProperty("posY", properties[1]);
-                    dropProperties.setRawProperty("posZ", properties[2]);
-                    dropProperties.setRawProperty("ID", properties[3]);
-                    if (properties.length > 4) dropProperties.setRawProperty("meta", properties[4]);
-                    if (properties.length > 5) dropProperties.setRawProperty("tileEntity", properties[5]);
-                    this.blocks.add(dropProperties);
+                    dropSingle.setRawProperty("type", "block");
+                    dropSingle.setRawProperty("posX", properties[0]);
+                    dropSingle.setRawProperty("posY", properties[1]);
+                    dropSingle.setRawProperty("posZ", properties[2]);
+                    dropSingle.setRawProperty("ID", properties[3]);
+                    if (properties.length > 4) dropSingle.setRawProperty("meta", properties[4]);
+                    if (properties.length > 5) dropSingle.setRawProperty("tileEntity", properties[5]);
+                    this.blocks.add(dropSingle);
                 }
                 if (section.equals(">entities")) {
-                    DropProperties dropProperties = new DropProperties();
+                    DropSingle dropSingle = new DropSingle();
                     String[] properties = DropStringUtils.splitBracketString(curLine, ',');
 
-                    dropProperties.setRawProperty("type", "entity");
-                    dropProperties.setRawProperty("posX", properties[0]);
-                    dropProperties.setRawProperty("posY", properties[1]);
-                    dropProperties.setRawProperty("posZ", properties[2]);
-                    dropProperties.setRawProperty("ID", properties[3]);
-                    if (properties.length > 4) dropProperties.setRawProperty("NBTTag", properties[4]);
-                    this.blocks.add(dropProperties);
+                    dropSingle.setRawProperty("type", "entity");
+                    dropSingle.setRawProperty("posX", properties[0]);
+                    dropSingle.setRawProperty("posY", properties[1]);
+                    dropSingle.setRawProperty("posZ", properties[2]);
+                    dropSingle.setRawProperty("ID", properties[3]);
+                    if (properties.length > 4) dropSingle.setRawProperty("NBTTag", properties[4]);
+                    this.blocks.add(dropSingle);
                 }
             }
             reader.close();

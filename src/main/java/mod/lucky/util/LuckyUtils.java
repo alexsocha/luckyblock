@@ -3,7 +3,7 @@ package mod.lucky.util;
 import java.util.ArrayList;
 import java.util.Random;
 
-import mod.lucky.drop.DropContainer;
+import mod.lucky.drop.DropFull;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.entity.Entity;
@@ -224,12 +224,12 @@ public class LuckyUtils {
         return array;
     }
 
-    public static ArrayList<DropContainer> dropsFromStrArray(String[] array) {
-        ArrayList<DropContainer> drops = new ArrayList();
+    public static ArrayList<DropFull> dropsFromStrArray(String[] array) {
+        ArrayList<DropFull> drops = new ArrayList();
         for (String element : array) {
-            DropContainer dropContainer = new DropContainer();
-            dropContainer.readFromString(element);
-            drops.add(dropContainer);
+            DropFull dropFull = new DropFull();
+            dropFull.readFromString(element);
+            drops.add(dropFull);
         }
         return drops;
     }

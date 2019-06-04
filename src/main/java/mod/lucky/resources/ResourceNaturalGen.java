@@ -1,6 +1,6 @@
 package mod.lucky.resources;
 
-import mod.lucky.drop.DropContainer;
+import mod.lucky.drop.DropFull;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.util.LuckyReader;
 
@@ -16,7 +16,7 @@ public class ResourceNaturalGen extends BaseResource {
                     continue;
                 }
 
-                DropContainer drop = new DropContainer();
+                DropFull drop = new DropFull();
                 drop.readFromString(curLine);
                 if (section.equals(">surface")) loader.getBlock().getWorldGenerator().addSurfacedDrop(drop);
                 if (section.equals(">nether")) loader.getBlock().getWorldGenerator().addNetherDrop(drop);

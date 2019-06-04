@@ -1,7 +1,7 @@
 package mod.lucky.entity;
 
 import mod.lucky.Lucky;
-import mod.lucky.drop.DropContainer;
+import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.init.SetupCommon;
@@ -182,7 +182,7 @@ public class EntityLuckyProjectile extends EntityArrow {
             if (trailTag.hasKey("drops")) {
                 NBTTagList drops = trailTag.getList("drops", new NBTTagString().getId());
                 for (int i = 0; i < drops.size(); i++) {
-                    DropContainer drop = new DropContainer();
+                    DropFull drop = new DropFull();
                     drop.readFromString(drops.getString(i));
                     this.dropProcessorTrail.registerDrop(drop);
                 }
@@ -193,7 +193,7 @@ public class EntityLuckyProjectile extends EntityArrow {
         if (tag.hasKey("impact")) {
             NBTTagList drops = tag.getList("impact", new NBTTagString().getId());
             for (int i = 0; i < drops.size(); i++) {
-                DropContainer drop = new DropContainer();
+                DropFull drop = new DropFull();
                 drop.readFromString(drops.getString(i));
                 this.dropProcessorImpact.registerDrop(drop);
             }

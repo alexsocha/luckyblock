@@ -60,7 +60,7 @@ public class DropGroup extends DropBase {
                 group.readFromString(drop);
                 this.drops.add(group);
             } else {
-                DropProperties properties = new DropProperties();
+                DropSingle properties = new DropSingle();
                 properties.readFromString(drop);
                 this.drops.add(properties);
             }

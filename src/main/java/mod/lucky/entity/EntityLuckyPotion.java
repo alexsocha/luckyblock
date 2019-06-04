@@ -1,7 +1,7 @@
 package mod.lucky.entity;
 
 import mod.lucky.Lucky;
-import mod.lucky.drop.DropContainer;
+import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.init.SetupCommon;
@@ -119,7 +119,7 @@ public class EntityLuckyPotion extends EntityThrowable {
         super.readAdditional(tag);
         NBTTagList drops = tag.getList("impact", new NBTTagString().getId());
         for (int i = 0; i < drops.size(); i++) {
-            DropContainer drop = new DropContainer();
+            DropFull drop = new DropFull();
             drop.readFromString(drops.getString(i));
             this.impactDropProcessor.registerDrop(drop);
         }

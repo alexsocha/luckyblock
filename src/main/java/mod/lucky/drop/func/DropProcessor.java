@@ -5,34 +5,34 @@ import java.util.Random;
 
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropBase;
-import mod.lucky.drop.DropContainer;
+import mod.lucky.drop.DropFull;
 import mod.lucky.drop.DropGroup;
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 
 public class DropProcessor {
-    private ArrayList<DropContainer> drops;
+    private ArrayList<DropFull> drops;
     private int debugDropIndex = 0;
     private int debugIndexMin = 0;
     private int debugIndexMax = 1000;
 
     public DropProcessor() {
-        this.drops = new ArrayList<DropContainer>();
+        this.drops = new ArrayList<DropFull>();
     }
 
     public void processDrop(DropBase drop, DropProcessData processData) {
         DropBase processDrop = drop.initialize(processData);
 
-        if (processDrop instanceof DropContainer)
-            this.processDrop(((DropContainer) processDrop).getDrop(), processData);
+        if (processDrop instanceof DropFull)
+            this.processDrop(((DropFull) processDrop).getDrop(), processData);
         if (processDrop instanceof DropGroup) {
             DropGroup group = ((DropGroup) processDrop);
             for (int i = 0; i < group.getAmount(); i++) {
                 this.processDrop(group.getDrops().get(i), processData);
             }
         }
-        if (processDrop instanceof DropProperties) {
-            DropProperties originalDrop = (DropProperties) drop;
-            DropProperties properties = (DropProperties) processDrop;
+        if (processDrop instanceof DropSingle) {
+            DropSingle originalDrop = (DropSingle) drop;
+            DropSingle properties = (DropSingle) processDrop;
             DropFunction dropFunction = DropFunction.getDropFunction(properties);
 
             if (dropFunction == null)
@@ -46,24 +46,24 @@ public class DropProcessor {
                 boolean postInit = properties.getPropertyBoolean("postDelayInit");
 
                 DropProcessData dropData = processData.copy();
-                dropData.setDropProperties(properties);
+                dropData.setDropSingle(properties);
 
                 if (properties.hasProperty("delay")) {
                     if (reinitialize) {
                         for (int i = 0; i < amount; i++) {
-                            float delay = dropData.getDropProperties().getPropertyFloat("delay");
+                            float delay = dropData.getDropSingle().getPropertyFloat("delay");
                             if (postInit) {
-                                dropData.setDropProperties(originalDrop);
+                                dropData.setDropSingle(originalDrop);
                                 Lucky.getInstance().getTickHandler().addDelayDrop(this, dropData.copy(), delay);
                             } else Lucky.getInstance().getTickHandler().addDelayDrop(this, dropData, delay);
-                            if (i < amount - 1) dropData.setDropProperties(originalDrop.initialize(dropData));
+                            if (i < amount - 1) dropData.setDropSingle(originalDrop.initialize(dropData));
                         }
                     } else {
-                        if (postInit) dropData.setDropProperties(originalDrop);
+                        if (postInit) dropData.setDropSingle(originalDrop);
                         Lucky.getInstance()
                             .getTickHandler()
                             .addDelayDrop(
-                                this, dropData, dropData.getDropProperties().getPropertyFloat("delay"));
+                                this, dropData, dropData.getDropSingle().getPropertyFloat("delay"));
                     }
                     return;
                 }
@@ -71,15 +71,15 @@ public class DropProcessor {
                 for (int i = 0; i < amount; i++) {
                     dropFunction.process(dropData);
                     if (reinitialize && i < amount - 1)
-                        dropData.setDropProperties(originalDrop.initialize(dropData));
+                        dropData.setDropSingle(originalDrop.initialize(dropData));
                 }
             }
         }
     }
 
     public void processDelayDrop(DropProcessData processData) {
-        DropProperties originalDrop = processData.getDropProperties();
-        DropProperties properties = processData.getDropProperties();
+        DropSingle originalDrop = processData.getDropSingle();
+        DropSingle properties = processData.getDropSingle();
         DropFunction dropFunction = DropFunction.getDropFunction(properties);
         if (dropFunction == null)
             System.err.println(
@@ -93,7 +93,7 @@ public class DropProcessor {
             boolean reinitialize = properties.getPropertyBoolean("reinitialize");
 
             DropProcessData dropData = processData.copy();
-            dropData.setDropProperties(properties);
+            dropData.setDropSingle(properties);
 
             if (reinitialize) dropFunction.process(dropData);
             else {
@@ -112,7 +112,7 @@ public class DropProcessor {
 
     public void processRandomDrop(
         DropProcessData processData, int luck, boolean output, boolean debug) {
-        DropContainer drop = this.selectRandomDrop(this.drops, luck);
+        DropFull drop = this.selectRandomDrop(this.drops, luck);
         if (debug) {
             if (this.debugDropIndex >= this.drops.size() || this.debugDropIndex > this.debugIndexMax)
                 this.debugDropIndex = this.debugIndexMin;
@@ -125,19 +125,19 @@ public class DropProcessor {
     }
 
     public void processRandomDrop(
-        ArrayList<DropContainer> drops, DropProcessData processData, int luck) {
+        ArrayList<DropFull> drops, DropProcessData processData, int luck) {
         this.processRandomDrop(drops, processData, luck, true);
     }
 
     public void processRandomDrop(
-        ArrayList<DropContainer> drops, DropProcessData processData, int luck, boolean output) {
-        DropContainer drop = this.selectRandomDrop(drops, luck);
+        ArrayList<DropFull> drops, DropProcessData processData, int luck, boolean output) {
+        DropFull drop = this.selectRandomDrop(drops, luck);
         if (drop == null) return;
         if (output) System.out.println("Chosen Lucky Block Drop: " + drop);
         this.processDrop(drop, processData);
     }
 
-    public DropContainer selectRandomDrop(ArrayList<DropContainer> drops, int luck) {
+    public DropFull selectRandomDrop(ArrayList<DropFull> drops, int luck) {
         if (drops.size() == 0) return null;
 
         int lowestLuck = 0;
@@ -153,7 +153,7 @@ public class DropProcessor {
         float weightTotal = 0;
         ArrayList<Float> weightPoints = new ArrayList<Float>();
         weightPoints.add(0.0F);
-        for (DropContainer drop : drops) {
+        for (DropFull drop : drops) {
             int dropLuck = drop.getLuck() + (lowestLuck * -1) + 1;
             float newLuck = 0.0F;
             if (luck >= 0) newLuck = (float) Math.pow(levelIncrease, dropLuck);
@@ -165,7 +165,7 @@ public class DropProcessor {
 
         Random random = new Random();
         float randomIndex = random.nextFloat() * weightTotal;
-        DropContainer chosenDrop = drops.get(this.getDropIndexByWeight(weightPoints, randomIndex));
+        DropFull chosenDrop = drops.get(this.getDropIndexByWeight(weightPoints, randomIndex));
 
         return chosenDrop;
     }
@@ -177,8 +177,8 @@ public class DropProcessor {
         return 0;
     }
 
-    public void registerDrop(DropContainer drop) { this.drops.add(drop); }
-    public ArrayList<DropContainer> getDrops() { return this.drops; }
+    public void registerDrop(DropFull drop) { this.drops.add(drop); }
+    public ArrayList<DropFull> getDrops() { return this.drops; }
 
     public static String errorMessage() {
         return "Error performing Lucky Block function.";

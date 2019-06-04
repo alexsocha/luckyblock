@@ -29,7 +29,7 @@ public class DelayLuckyDrop {
         } catch (Exception e) {
             System.err.println(
                 "Lucky Block: Error processing delay drop: "
-                    + this.processData.getDropProperties().toString());
+                    + this.processData.getDropSingle().toString());
             e.printStackTrace();
             this.finished = true;
         }

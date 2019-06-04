@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import com.mojang.brigadier.StringReader;
 import mod.lucky.command.LuckyCommandLogic;
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.arguments.EntitySelector;
@@ -25,7 +25,7 @@ public class DropProcessData {
     private UUID playerUUID;
     private UUID hitEntityUUID;
     private Vec3d harvestPos;
-    private DropProperties dropProperties;
+    private DropSingle dropSingle;
     private EnumProcessType processType;
 
     public DropProcessData(World world) {
@@ -43,21 +43,21 @@ public class DropProcessData {
     }
 
     public DropProcessData(World world, Entity player, Vec3d harvestPos,
-        DropProperties dropProperties) {
-        this(world, player, harvestPos, dropProperties, EnumProcessType.NORMAL);
+        DropSingle dropSingle) {
+        this(world, player, harvestPos, dropSingle, EnumProcessType.NORMAL);
     }
 
     public DropProcessData(World world, Entity player, Vec3d harvestPos,
-        DropProperties dropProperties, EnumProcessType processType) {
-        this(world, player, harvestPos, dropProperties, processType, null);
+                           DropSingle dropSingle, EnumProcessType processType) {
+        this(world, player, harvestPos, dropSingle, processType, null);
     }
 
     public DropProcessData(World world, Entity player, Vec3d harvestPos,
-        DropProperties dropProperties, EnumProcessType processType, Entity hitEntity) {
+                           DropSingle dropSingle, EnumProcessType processType, Entity hitEntity) {
         this.world = world;
         this.player = player;
         this.harvestPos = harvestPos;
-        this.dropProperties = dropProperties;
+        this.dropSingle = dropSingle;
         this.processType = processType;
         this.hitEntity = hitEntity;
     }
@@ -113,8 +113,8 @@ public class DropProcessData {
         return new BlockPos(this.harvestPos.x, this.harvestPos.y, this.harvestPos.z);
     }
 
-    public DropProperties getDropProperties() {
-        return this.dropProperties;
+    public DropSingle getDropSingle() {
+        return this.dropSingle;
     }
 
     public EnumProcessType getProcessType() {
@@ -125,8 +125,8 @@ public class DropProcessData {
         this.processType = processType;
     }
 
-    public void setDropProperties(DropProperties properties) {
-        this.dropProperties = properties;
+    public void setDropSingle(DropSingle properties) {
+        this.dropSingle = properties;
     }
 
     public void setPlayer(Entity player) {
@@ -138,8 +138,8 @@ public class DropProcessData {
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
-        this.dropProperties = new DropProperties();
-        this.dropProperties.readFromNBT(tagCompound.getCompound("drop"));
+        this.dropSingle = new DropSingle();
+        this.dropSingle.readFromNBT(tagCompound.getCompound("drop"));
         this.harvestPos =
             new Vec3d(
                 tagCompound.getDouble("harvestPosX"),
@@ -155,7 +155,7 @@ public class DropProcessData {
 
     public NBTTagCompound writeToNBT() {
         NBTTagCompound mainTag = new NBTTagCompound();
-        mainTag.setTag("drop", this.dropProperties.writeToNBT());
+        mainTag.setTag("drop", this.dropSingle.writeToNBT());
         mainTag.setDouble("harvestPosX", this.harvestPos.x);
         mainTag.setDouble("harvestPosY", this.harvestPos.y);
         mainTag.setDouble("harvestPosZ", this.harvestPos.z);
@@ -175,7 +175,7 @@ public class DropProcessData {
 
     public DropProcessData copy() {
         return new DropProcessData(this.world, this.player, this.harvestPos,
-            this.dropProperties, this.processType, this.hitEntity)
+            this.dropSingle, this.processType, this.hitEntity)
             .setBowPower(this.bowPower);
     }
 

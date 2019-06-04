@@ -2,7 +2,7 @@ package mod.lucky.drop.func;
 
 import java.util.HashMap;
 
-import mod.lucky.drop.DropProperties;
+import mod.lucky.drop.DropSingle;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class DropFunction {
@@ -14,35 +14,35 @@ public abstract class DropFunction {
     }
 
     public static void registerGlobalProperties() {
-        DropProperties.setDefaultProperty("all", "type", String.class, "item");
-        DropProperties.setDefaultProperty("all", "ID", String.class, "");
-        DropProperties.setDefaultProperty("all", "damage", Integer.class, 0);
-        DropProperties.setDefaultProperty("all", "amount", Integer.class, 1);
-        DropProperties.setDefaultProperty("all", "reinitialize", Boolean.class, false);
-        DropProperties.setDefaultProperty("all", "postDelayInit", Boolean.class, true);
-        DropProperties.setDefaultProperty("all", "delay", Float.class, 0);
-        DropProperties.setDefaultProperty("all", "posX", Float.class, 0);
-        DropProperties.setDefaultProperty("all", "posY", Float.class, 0);
-        DropProperties.setDefaultProperty("all", "posZ", Float.class, 0);
-        DropProperties.setDefaultProperty("all", "pos", String.class, "(0,0,0)");
-        DropProperties.setDefaultProperty("all", "pos2X", Float.class, 0);
-        DropProperties.setDefaultProperty("all", "pos2Y", Float.class, 0);
-        DropProperties.setDefaultProperty("all", "pos2Z", Float.class, 0);
-        DropProperties.setDefaultProperty("all", "pos2", String.class, "(0,0,0)");
-        DropProperties.setDefaultProperty("all", "posOffsetX", Float.class, 0);
-        DropProperties.setDefaultProperty("all", "posOffsetY", Float.class, 0);
-        DropProperties.setDefaultProperty("all", "posOffsetZ", Float.class, 0);
-        DropProperties.setDefaultProperty("all", "posOffset", String.class, "(0,0,0)");
-        DropProperties.setDefaultProperty("all", "centerX", Integer.class, 0);
-        DropProperties.setDefaultProperty("all", "centerY", Integer.class, 0);
-        DropProperties.setDefaultProperty("all", "centerZ", Integer.class, 0);
-        DropProperties.setDefaultProperty("all", "rotation", Integer.class, 0);
-        DropProperties.setDefaultProperty("all", "doUpdate", Boolean.class, false);
-        DropProperties.setDefaultProperty("all", "blockMode", String.class, "replace");
-        DropProperties.setDefaultProperty("all", "displayCommandOutput", Boolean.class, false);
-        DropProperties.setDefaultProperty("all", "commandSender", String.class, "@");
-        DropProperties.setDefaultProperty("all", "duration", Integer.class, 200);
-        DropProperties.setDefaultProperty("all", "NBTTag", NBTTagCompound.class, null);
+        DropSingle.setDefaultProperty("all", "type", String.class, "item");
+        DropSingle.setDefaultProperty("all", "ID", String.class, "");
+        DropSingle.setDefaultProperty("all", "damage", Integer.class, 0);
+        DropSingle.setDefaultProperty("all", "amount", Integer.class, 1);
+        DropSingle.setDefaultProperty("all", "reinitialize", Boolean.class, false);
+        DropSingle.setDefaultProperty("all", "postDelayInit", Boolean.class, true);
+        DropSingle.setDefaultProperty("all", "delay", Float.class, 0);
+        DropSingle.setDefaultProperty("all", "posX", Float.class, 0);
+        DropSingle.setDefaultProperty("all", "posY", Float.class, 0);
+        DropSingle.setDefaultProperty("all", "posZ", Float.class, 0);
+        DropSingle.setDefaultProperty("all", "pos", String.class, "(0,0,0)");
+        DropSingle.setDefaultProperty("all", "pos2X", Float.class, 0);
+        DropSingle.setDefaultProperty("all", "pos2Y", Float.class, 0);
+        DropSingle.setDefaultProperty("all", "pos2Z", Float.class, 0);
+        DropSingle.setDefaultProperty("all", "pos2", String.class, "(0,0,0)");
+        DropSingle.setDefaultProperty("all", "posOffsetX", Float.class, 0);
+        DropSingle.setDefaultProperty("all", "posOffsetY", Float.class, 0);
+        DropSingle.setDefaultProperty("all", "posOffsetZ", Float.class, 0);
+        DropSingle.setDefaultProperty("all", "posOffset", String.class, "(0,0,0)");
+        DropSingle.setDefaultProperty("all", "centerX", Integer.class, 0);
+        DropSingle.setDefaultProperty("all", "centerY", Integer.class, 0);
+        DropSingle.setDefaultProperty("all", "centerZ", Integer.class, 0);
+        DropSingle.setDefaultProperty("all", "rotation", Integer.class, 0);
+        DropSingle.setDefaultProperty("all", "doUpdate", Boolean.class, false);
+        DropSingle.setDefaultProperty("all", "blockMode", String.class, "replace");
+        DropSingle.setDefaultProperty("all", "displayCommandOutput", Boolean.class, false);
+        DropSingle.setDefaultProperty("all", "commandSender", String.class, "@");
+        DropSingle.setDefaultProperty("all", "duration", Integer.class, 200);
+        DropSingle.setDefaultProperty("all", "NBTTag", NBTTagCompound.class, null);
     }
 
     private static HashMap<String, DropFunction> dropFunctions = new HashMap<String, DropFunction>();
@@ -65,8 +65,8 @@ public abstract class DropFunction {
         registerGlobalProperties();
     }
 
-    public static DropFunction getDropFunction(DropProperties dropProperties) {
-        return getDropFunction(dropProperties.getPropertyString("type"));
+    public static DropFunction getDropFunction(DropSingle dropSingle) {
+        return getDropFunction(dropSingle.getPropertyString("type"));
     }
 
     public static DropFunction getDropFunction(String type) {
