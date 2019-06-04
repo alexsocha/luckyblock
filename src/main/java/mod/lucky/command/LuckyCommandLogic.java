@@ -6,6 +6,7 @@ import java.util.Date;
 import net.minecraft.command.CommandResultStats.Type;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.ICommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -14,7 +15,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
-public class LuckyCommandLogic implements ICommandSender {
+public class LuckyCommandLogic implements ICommandSource {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private int successCount;
     private ITextComponent outputMessage = null;
@@ -96,6 +97,21 @@ public class LuckyCommandLogic implements ICommandSender {
                 (new TextComponentString("[" + dateFormat.format(new Date()) + "] "))
                     .appendSibling(message);
         }
+    }
+
+    @Override
+    public boolean shouldReceiveFeedback() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldReceiveErrors() {
+        return false;
+    }
+
+    @Override
+    public boolean allowLogging() {
+        return false;
     }
 
     public void setOutputMessage(ITextComponent message) {

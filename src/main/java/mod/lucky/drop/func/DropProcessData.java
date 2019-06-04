@@ -2,15 +2,20 @@ package mod.lucky.drop.func;
 
 import java.util.UUID;
 
+import com.mojang.brigadier.StringReader;
 import mod.lucky.command.LuckyCommandLogic;
 import mod.lucky.drop.DropProperties;
-import net.minecraft.command.CommandBase;
+import mod.lucky.util.LuckyUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.command.arguments.EntitySelector;
+import net.minecraft.command.arguments.EntitySelectorParser;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.dimension.DimensionType;
 
 public class DropProcessData {
     private World world;
@@ -32,34 +37,23 @@ public class DropProcessData {
     }
 
     public DropProcessData(World world, Entity player, BlockPos harvestPos) {
-        this(
-            world,
-            player,
+        this(world, player,
             new Vec3d(harvestPos.getX() + 0.5, harvestPos.getY(), harvestPos.getZ() + 0.5),
             null);
     }
 
-    public DropProcessData(
-        World world, Entity player, Vec3d harvestPos, DropProperties dropProperties) {
+    public DropProcessData(World world, Entity player, Vec3d harvestPos,
+        DropProperties dropProperties) {
         this(world, player, harvestPos, dropProperties, EnumProcessType.NORMAL);
     }
 
-    public DropProcessData(
-        World world,
-        Entity player,
-        Vec3d harvestPos,
-        DropProperties dropProperties,
-        EnumProcessType processType) {
+    public DropProcessData(World world, Entity player, Vec3d harvestPos,
+        DropProperties dropProperties, EnumProcessType processType) {
         this(world, player, harvestPos, dropProperties, processType, null);
     }
 
-    public DropProcessData(
-        World world,
-        Entity player,
-        Vec3d harvestPos,
-        DropProperties dropProperties,
-        EnumProcessType processType,
-        Entity hitEntity) {
+    public DropProcessData(World world, Entity player, Vec3d harvestPos,
+        DropProperties dropProperties, EnumProcessType processType, Entity hitEntity) {
         this.world = world;
         this.player = player;
         this.harvestPos = harvestPos;
@@ -73,30 +67,26 @@ public class DropProcessData {
     }
 
     public Entity getPlayer() {
-        if (this.player == null) {
-            try {
-                this.player = this.world.getMinecraftServer().getEntityFromUuid(this.playerUUID);
-            } catch (Exception e) {
-
-            }
+        if (this.player == null && this.world instanceof WorldServer) {
+            this.player = ((WorldServer) this.world).getEntityFromUuid(this.playerUUID);
         }
-        if (this.player == null) {
+        if (this.player == null && this.world instanceof WorldServer) {
             try {
                 LuckyCommandLogic luckyCommandLogic = new LuckyCommandLogic();
                 luckyCommandLogic.setWorld(this.world);
                 luckyCommandLogic.setPosition(new BlockPos(this.harvestPos));
-                this.player =
-                    CommandBase.getPlayer(this.world.getMinecraftServer(), luckyCommandLogic, "@p");
-            } catch (Exception e) {
-
-            }
+                EntitySelector selector = new EntitySelectorParser(
+                    new StringReader("@p")).parse();
+                this.player = selector.selectOnePlayer(LuckyUtils.getCommandSource(
+                    (WorldServer) this.world, this.harvestPos));
+            } catch (Exception e) {}
         }
         return this.player;
     }
 
     public Entity getHitEntity() {
-        if (this.hitEntity == null) {
-            this.hitEntity = this.world.getMinecraftServer().getEntityFromUuid(this.hitEntityUUID);
+        if (this.hitEntity == null && this.world instanceof WorldServer) {
+            this.hitEntity = ((WorldServer) this.world).getEntityFromUuid(this.hitEntityUUID);
         }
         return this.hitEntity;
     }
@@ -149,7 +139,7 @@ public class DropProcessData {
 
     public void readFromNBT(NBTTagCompound tagCompound) {
         this.dropProperties = new DropProperties();
-        this.dropProperties.readFromNBT(tagCompound.getCompoundTag("drop"));
+        this.dropProperties.readFromNBT(tagCompound.getCompound("drop"));
         this.harvestPos =
             new Vec3d(
                 tagCompound.getDouble("harvestPosX"),
@@ -160,7 +150,7 @@ public class DropProcessData {
             this.playerUUID = UUID.fromString(tagCompound.getString("playerUUID"));
         if (tagCompound.hasKey("hitEntityUUID"))
             this.hitEntityUUID = UUID.fromString(tagCompound.getString("hitEntityUUID"));
-        this.world = DimensionManager.getWorld(0);
+        this.world = Minecraft.getInstance().getIntegratedServer().getWorld(DimensionType.OVERWORLD);
     }
 
     public NBTTagCompound writeToNBT() {
@@ -184,13 +174,8 @@ public class DropProcessData {
     }
 
     public DropProcessData copy() {
-        return new DropProcessData(
-            this.world,
-            this.player,
-            this.harvestPos,
-            this.dropProperties,
-            this.processType,
-            this.hitEntity)
+        return new DropProcessData(this.world, this.player, this.harvestPos,
+            this.dropProperties, this.processType, this.hitEntity)
             .setBowPower(this.bowPower);
     }
 

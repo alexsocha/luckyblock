@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import mod.lucky.drop.DropContainer;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.ICommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -12,7 +14,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -34,6 +41,32 @@ public class LuckyUtils {
                 && !potion.equals("thick")
                 && !potion.equals("awkward")) potionNames.add(potion);
         }
+    }
+
+    public static CommandSource getCommandSource(WorldServer world, Vec3d pos) {
+        ICommandSource source = new ICommandSource() {
+            @Override
+            public void sendMessage(ITextComponent component) {}
+            @Override
+            public boolean shouldReceiveFeedback() { return false; }
+            @Override
+            public boolean shouldReceiveErrors() { return false; }
+            @Override
+            public boolean allowLogging() { return false; }
+        };
+        pos.
+        return new CommandSource(source,
+            pos,
+            Vec2f.ZERO, // pitchYaw
+            world,
+            2, // permission level
+            "Lucky Block", new TextComponentString("Lucky Block"),
+            world.getServer(),
+            null); // entity type
+    }
+    public static CommandSource getCommandSource(WorldServer world, BlockPos pos) {
+        return LuckyUtils.getCommandSource(world,
+            new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
     }
 
     public static NBTTagCompound getRandomFireworksRocket() {
