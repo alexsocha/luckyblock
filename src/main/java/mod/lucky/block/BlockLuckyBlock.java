@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import mod.lucky.Lucky;
-import mod.lucky.command.LuckyCommandLogic;
-import mod.lucky.crafting.RecipeLuckCrafting;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
@@ -32,17 +30,15 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class BlockLuckyBlock extends BlockContainer {
     private DropProcessor dropProcessor;
     private LuckyGenerator worldGenerator;
-    private RecipeLuckCrafting crafting;
     private IForgeRegistryEntry<IRecipe> blockRecipe;
     private boolean doCreativeDrops = false;
-
-    private final Random random = new Random();
 
     public BlockLuckyBlock() {
         super(Block.Properties.create(Material.WOOD, MaterialColor.YELLOW)
@@ -52,7 +48,6 @@ public class BlockLuckyBlock extends BlockContainer {
 
         this.dropProcessor = new DropProcessor();
         this.worldGenerator = new LuckyGenerator(this);
-        this.crafting = new RecipeLuckCrafting(this);
     }
 
     public boolean removeLuckyBlock(
@@ -84,10 +79,8 @@ public class BlockLuckyBlock extends BlockContainer {
 
             if (!world.isRemote) {
                 if (removedByRedstone) {
-                    LuckyCommandLogic luckyCommandLogic = new LuckyCommandLogic();
-                    luckyCommandLogic.setWorld(world);
-                    luckyCommandLogic.setPosition(harvestPos);
-                    player = CommandBase.getPlayer(world.getMinecraftServer(), luckyCommandLogic, "@p");
+                    player = LuckyUtils.getNearestPlayer(
+                        (WorldServer) world, LuckyUtils.toVec3d(harvestPos));
                 }
 
                 if (player.isCreative() && !this.doCreativeDrops && !removedByRedstone) {
@@ -213,7 +206,7 @@ public class BlockLuckyBlock extends BlockContainer {
 
     public DropProcessor getDropProcessor() { return this.dropProcessor; }
     public LuckyGenerator getWorldGenerator() { return this.worldGenerator; }
-    public RecipeLuckCrafting getCrafting() { return this.crafting; }
+
     public void setDoCreativeDrops(boolean doCreativeDrops) {
         this.doCreativeDrops = doCreativeDrops;
     }

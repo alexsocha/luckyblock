@@ -3,7 +3,6 @@ package mod.lucky.drop.func;
 import java.util.UUID;
 
 import com.mojang.brigadier.StringReader;
-import mod.lucky.command.LuckyCommandLogic;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.Minecraft;
@@ -71,15 +70,7 @@ public class DropProcessData {
             this.player = ((WorldServer) this.world).getEntityFromUuid(this.playerUUID);
         }
         if (this.player == null && this.world instanceof WorldServer) {
-            try {
-                LuckyCommandLogic luckyCommandLogic = new LuckyCommandLogic();
-                luckyCommandLogic.setWorld(this.world);
-                luckyCommandLogic.setPosition(new BlockPos(this.harvestPos));
-                EntitySelector selector = new EntitySelectorParser(
-                    new StringReader("@p")).parse();
-                this.player = selector.selectOnePlayer(LuckyUtils.getCommandSource(
-                    (WorldServer) this.world, this.harvestPos));
-            } catch (Exception e) {}
+            this.player = LuckyUtils.getNearestPlayer((WorldServer) this.world, this.harvestPos);
         }
         return this.player;
     }

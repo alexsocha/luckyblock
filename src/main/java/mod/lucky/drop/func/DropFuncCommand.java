@@ -1,29 +1,40 @@
 package mod.lucky.drop.func;
 
-import mod.lucky.command.LuckyCommandLogic;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
+import mod.lucky.util.LuckyUtils;
+import net.minecraft.command.CommandSource;
+import net.minecraft.world.WorldServer;
 
 public class DropFuncCommand extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
-        LuckyCommandLogic luckyCommandLogic = new LuckyCommandLogic();
-        luckyCommandLogic.setWorld(processData.getWorld());
-        luckyCommandLogic.setPosition(drop.getBlockPos());
-        luckyCommandLogic.setCommand(drop.getPropertyString("ID"));
-        luckyCommandLogic.setName(drop.getPropertyString("commandSender"));
-        luckyCommandLogic.setDoOutput(drop.getPropertyBoolean("displayOutput"));
-        luckyCommandLogic.executeCommand();
+
+        String command = drop.getPropertyString("ID");
+        boolean displayOutput = drop.getPropertyBoolean("displayOutput");
+        String name = drop.getPropertyString("commandSender");
+
+        CommandSource commandSource = LuckyUtils.makeCommandSource(
+            (WorldServer) processData.getWorld(),
+            LuckyUtils.toVec3d(drop.getBlockPos()),
+            displayOutput, name);
+
+        try {
+            commandSource.getServer().getCommandManager().getDispatcher()
+                .execute(command, commandSource);
+        } catch (CommandSyntaxException e) {
+            Lucky.LOGGER.error("Invalid command: " + command);
+        }
     }
 
     @Override
     public void registerProperties() {
-        DropSingle.setDefaultProperty(this.getType(), "commandSender", String.class, "@");
+        DropSingle.setDefaultProperty(this.getType(), "commandSender", String.class, "Lucky Block");
         DropSingle.setDefaultProperty(this.getType(), "displayOutput", Boolean.class, false);
     }
 
     @Override
-    public String getType() {
-        return "command";
-    }
+    public String getType() { return "command"; }
 }

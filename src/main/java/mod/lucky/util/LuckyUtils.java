@@ -3,9 +3,13 @@ package mod.lucky.util;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mod.lucky.drop.DropFull;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ICommandSource;
+import net.minecraft.command.arguments.EntitySelector;
+import net.minecraft.command.arguments.EntitySelectorParser;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumDyeColor;
@@ -43,29 +47,44 @@ public class LuckyUtils {
         }
     }
 
-    public static CommandSource getCommandSource(WorldServer world, Vec3d pos) {
+    public static CommandSource makeCommandSource(
+        WorldServer world, Vec3d pos, boolean doOutput, String name) {
+
         ICommandSource source = new ICommandSource() {
             @Override
             public void sendMessage(ITextComponent component) {}
             @Override
-            public boolean shouldReceiveFeedback() { return false; }
+            public boolean shouldReceiveFeedback() { return doOutput; }
             @Override
-            public boolean shouldReceiveErrors() { return false; }
+            public boolean shouldReceiveErrors() { return doOutput; }
             @Override
-            public boolean allowLogging() { return false; }
+            public boolean allowLogging() { return doOutput; }
         };
         return new CommandSource(source,
             pos,
             Vec2f.ZERO, // pitchYaw
             world,
             2, // permission level
-            "Lucky Block", new TextComponentString("Lucky Block"),
+            name, new TextComponentString(name),
             world.getServer(),
             null); // entity type
     }
-    public static CommandSource getCommandSource(WorldServer world, BlockPos pos) {
-        return LuckyUtils.getCommandSource(world,
-            new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D));
+    public static CommandSource makeCommandSource(
+        WorldServer world, Vec3d pos, boolean doOutput) {
+        return makeCommandSource(world, pos, doOutput, "Lucky Block");
+    }
+
+    public static EntityPlayer getNearestPlayer(WorldServer world, Vec3d pos) {
+        try {
+            EntitySelector selector = new EntitySelectorParser(
+                new StringReader("@p")).parse();
+            return selector.selectOnePlayer(
+                LuckyUtils.makeCommandSource(world, pos, false));
+        } catch (CommandSyntaxException e) { return null; }
+    }
+
+    public static Vec3d toVec3d(BlockPos pos) {
+        return new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
     }
 
     public static NBTTagCompound getRandomFireworksRocket() {

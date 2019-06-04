@@ -10,6 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 public class ValueParser {
@@ -37,7 +39,7 @@ public class ValueParser {
         return null;
     }
 
-    public static NBTBase getNBTBaseFromValue(Object value) {
+    public static INBTBase getNBTBaseFromValue(Object value) {
         if (value.getClass() == String.class) return new NBTTagString((String) value);
         if (value.getClass() == Integer.class) return new NBTTagInt((Integer) value);
         if (value.getClass() == Boolean.class)
@@ -47,7 +49,7 @@ public class ValueParser {
         return null;
     }
 
-    public static Object getValueFromNBTBase(NBTBase nbtBase) {
+    public static Object getValueFromNBTBase(INBTBase nbtBase) {
         if (nbtBase.getClass() == NBTTagString.class) return ((NBTTagString) nbtBase).getString();
         if (nbtBase.getClass() == NBTTagInt.class) return ((NBTTagInt) nbtBase).getInt();
         if (nbtBase.getClass() == NBTTagByte.class)
@@ -193,8 +195,9 @@ public class ValueParser {
         new ArrayList<String>(Arrays.asList("drops", "impact"));
 
     public static Object getNBTTagValue(
-        String string, DropProcessData processData, NBTBase parentTag, String parentTagName)
+        String string, DropProcessData processData, INBTBase parentTag, String parentTagName)
         throws Exception {
+
         if (string.startsWith("(") && string.endsWith(")")) {
             String[] tagContents =
                 DropStringUtils.splitBracketString(string.substring(1, string.length() - 1), ',');
@@ -230,7 +233,7 @@ public class ValueParser {
             return getString(string, processData);
         }
         if (string.startsWith("#")) {
-            NBTBase tagBase = CustomNBTTags.getNBTTagFromString(string, processData);
+            INBTBase tagBase = CustomNBTTags.getNBTTagFromString(string, processData);
             if (tagBase != null) return tagBase;
         }
 
@@ -247,8 +250,8 @@ public class ValueParser {
             if (string.equals("true") || string.equals("false"))
                 return getBoolean(DropStringUtils.removeNumSuffix(string), processData);
             return getInteger(DropStringUtils.removeNumSuffix(string), processData);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
+
         try {
             String[] valuesString = string.split(":");
             if (valuesString.length >= 1) {
@@ -268,18 +271,17 @@ public class ValueParser {
                 if (type == 0 && valuesInt.length > 0) return valuesInt;
                 if (type == 1 && valuesByte.length > 0) return valuesByte;
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
 
         return string;
     }
 
-    public static void setNBTTagValue(NBTBase currTag, String tagName, Object tagValue) {
-        if (currTag instanceof NBTTagCompound) {
-            NBTTagCompound tagCompound = (NBTTagCompound) currTag;
+    public static void setNBTTagValue(INBTBase curTag, String tagName, Object tagValue) {
+        if (curTag instanceof NBTTagCompound) {
+            NBTTagCompound tagCompound = (NBTTagCompound) curTag;
             if (tagValue instanceof String) tagCompound.setString(tagName, (String) tagValue);
             if (tagValue instanceof Boolean) tagCompound.setBoolean(tagName, (Boolean) tagValue);
-            if (tagValue instanceof Integer) tagCompound.setInteger(tagName, (Integer) tagValue);
+            if (tagValue instanceof Integer) tagCompound.setInt(tagName, (Integer) tagValue);
             if (tagValue instanceof Float) tagCompound.setFloat(tagName, (Float) tagValue);
             if (tagValue instanceof Double) tagCompound.setDouble(tagName, (Double) tagValue);
             if (tagValue instanceof Short) tagCompound.setShort(tagName, (Short) tagValue);
@@ -290,63 +292,36 @@ public class ValueParser {
                 tagCompound.setTag(tagName, (NBTTagCompound) tagValue);
             if (tagValue instanceof NBTTagList) tagCompound.setTag(tagName, (NBTTagList) tagValue);
         }
-        if (currTag instanceof NBTTagList) {
-            NBTTagList tagList = (NBTTagList) currTag;
-            if (tagValue instanceof String) tagList.appendTag(new NBTTagString((String) tagValue));
-            if (tagValue instanceof Integer) tagList.appendTag(new NBTTagInt((Integer) tagValue));
-            if (tagValue instanceof Float) tagList.appendTag(new NBTTagFloat((Float) tagValue));
-            if (tagValue instanceof Double) tagList.appendTag(new NBTTagDouble((Double) tagValue));
-            if (tagValue instanceof Short) tagList.appendTag(new NBTTagShort((Short) tagValue));
-            if (tagValue instanceof Byte) tagList.appendTag(new NBTTagByte((Byte) tagValue));
-            if (tagValue instanceof int[]) tagList.appendTag(new NBTTagIntArray((int[]) tagValue));
-            if (tagValue instanceof byte[]) tagList.appendTag(new NBTTagByteArray((byte[]) tagValue));
-            if (tagValue instanceof NBTTagCompound) tagList.appendTag((NBTTagCompound) tagValue);
-            if (tagValue instanceof NBTTagList) tagList.appendTag((NBTTagList) tagValue);
+        if (curTag instanceof NBTTagList) {
+            NBTTagList tagList = (NBTTagList) curTag;
+            if (tagValue instanceof String) tagList.add(new NBTTagString((String) tagValue));
+            if (tagValue instanceof Integer) tagList.add(new NBTTagInt((Integer) tagValue));
+            if (tagValue instanceof Float) tagList.add(new NBTTagFloat((Float) tagValue));
+            if (tagValue instanceof Double) tagList.add(new NBTTagDouble((Double) tagValue));
+            if (tagValue instanceof Short) tagList.add(new NBTTagShort((Short) tagValue));
+            if (tagValue instanceof Byte) tagList.add(new NBTTagByte((Byte) tagValue));
+            if (tagValue instanceof int[]) tagList.add(new NBTTagIntArray((int[]) tagValue));
+            if (tagValue instanceof byte[]) tagList.add(new NBTTagByteArray((byte[]) tagValue));
+            if (tagValue instanceof NBTTagCompound) tagList.add((NBTTagCompound) tagValue);
+            if (tagValue instanceof NBTTagList) tagList.add((NBTTagList) tagValue);
         }
     }
 
     public static Item getItem(String name, DropProcessData processData) {
-        Item item;
-        try {
-            int id = ValueParser.getInteger(name, processData);
-            item = Item.getItemById(id);
-        } catch (Exception e) {
-            String itemName = ValueParser.getString(name, processData);
-            item = Item.getByNameOrId(name);
-        }
-        return item;
+        String fullName = ValueParser.getString(name, processData);
+        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(fullName));
     }
 
     public static Block getBlock(String name, DropProcessData processData) {
-        Block block;
-        try {
-            int id = ValueParser.getInteger(name, processData);
-            block = Block.getBlockById(id);
-        } catch (Exception e) {
-            String blockName = ValueParser.getString(name, processData);
-            block = Block.getBlockFromName(name);
-        }
-        return block;
+        String fullName = ValueParser.getString(name, processData);
+        return ForgeRegistries.BLOCKS.getValue(new ResourceLocation(fullName));
     }
 
     public static ItemStack getItemStack(String name, DropProcessData processData) {
-        try {
-            String[] splitName = name.split(":");
-            Item item1 = getItem(splitName[0], null);
-
-            if (splitName.length == 1 && item1 != null) return new ItemStack(item1);
-            else if (splitName.length == 2) {
-                Item item2 = getItem(splitName[0] + splitName[1], processData);
-                if (item2 == null && item1 != null)
-                    return new ItemStack(item1, 1, ValueParser.getInteger(splitName[1]));
-                else return new ItemStack(item2);
-            } else if (splitName.length >= 3) {
-                Item item2 = getItem(splitName[0] + splitName[1], processData);
-                if (item2 != null) return new ItemStack(item2, 1, ValueParser.getInteger(splitName[3]));
-            }
-        } catch (Exception e) {
-            return null;
-        }
-        return null;
+        String[] splitName = name.split("\\*");
+        Item item = getItem(splitName[0], null);
+        int count = splitName.length > 1
+            ? ValueParser.getInteger(splitName[1], processData) : 1;
+        return new ItemStack(item, count);
     }
 }
