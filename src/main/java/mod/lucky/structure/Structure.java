@@ -96,7 +96,7 @@ public class Structure {
         if (this.fileName.endsWith(".luckystruct")) {
             return new LuckyStructure().copyProperties(this);
         } else {
-            return new SchematicStructure().copyProperties(this);
+            return new TemplateStructure().copyProperties(this);
         }
     }
 

@@ -13,7 +13,6 @@ import mod.lucky.item.ItemLuckySword;
 import mod.lucky.network.ParticlePacket;
 import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceManager;
-import mod.lucky.structure.rotation.Rotations;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.block.Block;
@@ -133,7 +132,6 @@ public class SetupCommon {
         Lucky.tickHandler = new LuckyTickHandler();
         MinecraftForge.EVENT_BUS.register(Lucky.tickHandler);
 
-        Rotations.registerRotationHandlers();
         DropFunction.registerFunctions();
 
         Lucky.resourceRegistry = new ResourceManager(new File("."));
