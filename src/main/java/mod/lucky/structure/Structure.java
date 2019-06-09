@@ -46,7 +46,7 @@ public class Structure {
     protected boolean blockUpdate;
 
     protected boolean[] explicitCenter = { false, false, false };
-    protected Vec3d centerPos = new Vec3d(0, 0, 0);
+    public Vec3d centerPos = new Vec3d(0, 0, 0);
 
     public Structure() {
         this.blockMode = BlockMode.REPLACE;

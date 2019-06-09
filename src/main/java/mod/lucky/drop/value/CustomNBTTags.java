@@ -27,6 +27,7 @@ import net.minecraft.world.storage.loot.conditions.LootConditionManager;
 import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraft.world.storage.loot.functions.LootFunctionManager;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.Constants;
 
 public class CustomNBTTags {
     public static final NBTTagCompound protection = getEnchantment(0, 4);
@@ -109,7 +110,7 @@ public class CustomNBTTags {
 
         nbttag.setByte("Id", (byte) id);
         nbttag.setByte("Amplifier", (byte) amplifier);
-        nbttag.setInteger("Duration", duration);
+        nbttag.setInt("Duration", duration);
 
         return nbttag;
     }
@@ -140,7 +141,7 @@ public class CustomNBTTags {
         NBTTagList nbttaglist = new NBTTagList();
         for (NBTTagCompound enchantment : chosenEnchantments) {
             enchantment.setShort("lvl", (short) (random.nextInt(enchantment.getShort("lvl")) + 1));
-            nbttaglist.appendTag(enchantment);
+            nbttaglist.add(enchantment);
         }
 
         return nbttaglist;
@@ -155,11 +156,11 @@ public class CustomNBTTags {
         for (NBTTagCompound potionEffect : chosenPotionEffects) {
             potionEffect.setByte(
                 "Amplifier", (byte) (random.nextInt(potionEffect.getByte("Amplifier") + 1)));
-            int minDuration = (int) (potionEffect.getInteger("Duration") / 3F);
-            potionEffect.setInteger(
+            int minDuration = (int) (potionEffect.getInt("Duration") / 3F);
+            potionEffect.setInt(
                 "Duration",
-                random.nextInt((potionEffect.getInteger("Duration") + 1) - minDuration) + minDuration);
-            nbttaglist.appendTag(potionEffect);
+                random.nextInt((potionEffect.getInt("Duration") + 1) - minDuration) + minDuration);
+            nbttaglist.add(potionEffect);
         }
 
         return nbttaglist;
@@ -330,9 +331,9 @@ public class CustomNBTTags {
                 float launchMotionY = -MathHelper.sin(launchPitch / 180.0F * (float) Math.PI) * launchPower;
 
                 NBTTagList motionList = new NBTTagList();
-                motionList.appendTag(new NBTTagDouble(launchMotionX));
-                motionList.appendTag(new NBTTagDouble(launchMotionY));
-                motionList.appendTag(new NBTTagDouble(launchMotionZ));
+                motionList.add(new NBTTagDouble(launchMotionX));
+                motionList.add(new NBTTagDouble(launchMotionY));
+                motionList.add(new NBTTagDouble(launchMotionZ));
                 return motionList;
             } catch (Exception e) {
             }
@@ -358,9 +359,9 @@ public class CustomNBTTags {
                 float launchMotionY = -MathHelper.sin(launchPitch / 180.0F * (float) Math.PI) * launchPower;
 
                 NBTTagList motionList = new NBTTagList();
-                motionList.appendTag(new NBTTagDouble(launchMotionX));
-                motionList.appendTag(new NBTTagDouble(launchMotionY));
-                motionList.appendTag(new NBTTagDouble(launchMotionZ));
+                motionList.add(new NBTTagDouble(launchMotionX));
+                motionList.add(new NBTTagDouble(launchMotionY));
+                motionList.add(new NBTTagDouble(launchMotionZ));
                 return motionList;
             } catch (Exception e) {
             }
@@ -400,9 +401,9 @@ public class CustomNBTTags {
                     1.0F);
 
                 NBTTagList motionList = new NBTTagList();
-                motionList.appendTag(new NBTTagDouble(entityArrow.motionX));
-                motionList.appendTag(new NBTTagDouble(entityArrow.motionY));
-                motionList.appendTag(new NBTTagDouble(entityArrow.motionZ));
+                motionList.add(new NBTTagDouble(entityArrow.motionX));
+                motionList.add(new NBTTagDouble(entityArrow.motionY));
+                motionList.add(new NBTTagDouble(entityArrow.motionZ));
                 return motionList;
             } catch (Exception e) {
             }
@@ -411,15 +412,15 @@ public class CustomNBTTags {
         name =
             name.replace(
                 "#chestVillageBlacksmith",
-                "#chestLootTable(" + LootTableList.CHESTS_VILLAGE_BLACKSMITH.getResourcePath() + ")");
+                "#chestLootTable(" + LootTableList.CHESTS_VILLAGE_BLACKSMITH.getPath() + ")");
         name =
             name.replace(
                 "#chestBonusChest",
-                "#chestLootTable(" + LootTableList.CHESTS_SPAWN_BONUS_CHEST.getResourcePath() + ")");
+                "#chestLootTable(" + LootTableList.CHESTS_SPAWN_BONUS_CHEST.getPath() + ")");
         name =
             name.replace(
                 "#chestDungeonChest",
-                "#chestLootTable(" + LootTableList.CHESTS_SIMPLE_DUNGEON.getResourcePath() + ")");
+                "#chestLootTable(" + LootTableList.CHESTS_SIMPLE_DUNGEON.getPath() + ")");
 
         if (name.startsWith("#customChestLootTable(")) {
             try {
@@ -443,8 +444,8 @@ public class CustomNBTTags {
                 lootTable.fillInventory(tileEntityChest, random, contextBuilder.build());
 
                 NBTTagCompound tagCompound = new NBTTagCompound();
-                tileEntityChest.writeToNBT(tagCompound);
-                return tagCompound.getTagList("Items", 10);
+                tileEntityChest.write(tagCompound);
+                return tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND);
 
             } catch (Exception e) {
                 System.err.println("Lucky Block: Error creating chest from .json loot table");
@@ -461,8 +462,8 @@ public class CustomNBTTags {
             tileEntityChest.getStackInSlot(0); // For fillWithLoot()
 
             NBTTagCompound tagCompound = new NBTTagCompound();
-            tileEntityChest.writeToNBT(tagCompound);
-            return tagCompound.getTagList("Items", 10);
+            tileEntityChest.write(tagCompound);
+            return tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND);
         }
 
         return null;

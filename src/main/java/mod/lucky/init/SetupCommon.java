@@ -10,7 +10,6 @@ import mod.lucky.item.ItemLuckyBlock;
 import mod.lucky.item.ItemLuckyBow;
 import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.item.ItemLuckySword;
-import mod.lucky.network.ParticlePacket;
 import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceManager;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
@@ -81,23 +80,6 @@ public class SetupCommon {
         Lucky.resourceRegistry.loadAllResources(true);
     }
 
-    private static void setupNetwork() {
-        // network channel
-        Lucky.networkChannel = NetworkRegistry.ChannelBuilder
-            .named(new ResourceLocation("lucky", "lucky_channel"))
-            .clientAcceptedVersions(v -> true)
-            .serverAcceptedVersions(v -> true)
-            .networkProtocolVersion(() -> FMLNetworkConstants.NETVERSION)
-            .simpleChannel();
-
-        // packet for spawning particles
-        Lucky.networkChannel.messageBuilder(ParticlePacket.class, 0)
-            .decoder(ParticlePacket::decode)
-            .encoder(ParticlePacket::encode)
-            .consumer(ParticlePacket::handle)
-            .add();
-    }
-
     public static void setupEntities() {
         ForgeRegistries.ENTITIES.register(LUCKY_POTION_TYPE);
         ForgeRegistries.ENTITIES.register(LUCKY_PROJECTILE_TYPE);
@@ -119,7 +101,6 @@ public class SetupCommon {
     }
 
     public static void setup() {
-        SetupCommon.setupNetwork();
         SetupCommon.setupItemsAndBlocks();
         SetupCommon.setupEntities();
 

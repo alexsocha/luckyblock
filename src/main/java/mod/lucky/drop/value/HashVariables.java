@@ -148,7 +148,7 @@ public class HashVariables {
             }
 
             if (processData.getWorld() != null) {
-                string = string.replace("#time", String.valueOf(processData.getWorld().getWorldTime()));
+                string = string.replace("#time", String.valueOf(processData.getWorld().getDayTime()));
             }
 
             if (processData.getPlayer() != null) {
@@ -183,7 +183,7 @@ public class HashVariables {
                                 + ")"));
 
                 string =
-                    string.replace("#pName", processData.getPlayer().getDisplayName().getUnformattedText());
+                    string.replace("#pName", processData.getPlayer().getDisplayName().getUnformattedComponentText());
                 string = string.replace("#pUUID", processData.getPlayer().getUniqueID().toString());
                 int playerRotation =
                     (int) Math.round((processData.getPlayer().getRotationYawHead() + 180.0D) / 90.0D) % 4;
@@ -325,7 +325,7 @@ public class HashVariables {
                             ValueParser.getFloat(properties[2], processData));
                     Vec3d worldPos =
                         StructureUtils.getWorldPos(
-                            structCoordPos, structure.getCenterPos(), harvestPos, rotation);
+                            structCoordPos, structure.centerPos, harvestPos, rotation);
 
                     if (type.equals("#sPosX")) return String.valueOf((float) worldPos.x);
                     if (type.equals("#sPosY")) return String.valueOf((float) worldPos.y);
@@ -348,7 +348,7 @@ public class HashVariables {
                             ValueParser.getInteger(properties[2], processData));
                     BlockPos worldPos =
                         StructureUtils.getWorldPos(
-                            structCoordPos, structure.getCenterPos(), harvestPos, rotation);
+                            structCoordPos, structure.centerPos, harvestPos, rotation);
                     if (type.equals("#sPosX")) return String.valueOf(Math.round(worldPos.getX()));
                     if (type.equals("#sPosY")) return String.valueOf(Math.round(worldPos.getY()));
                     if (type.equals("#sPosZ")) return String.valueOf(Math.round(worldPos.getZ()));
