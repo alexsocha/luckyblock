@@ -3,13 +3,16 @@ package mod.lucky.world;
 import java.util.ArrayList;
 import java.util.Random;
 
+import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
 public class LuckyGenerator implements IWorldGenerator {
@@ -34,26 +37,25 @@ public class LuckyGenerator implements IWorldGenerator {
         IChunkGenerator chunkGenerator,
         IChunkProvider chunkProvider) {
         try {
-            switch (world.provider.getDimension()) {
-                case -1:
-                    for (DropFull drop : this.netherDrops)
-                        if (random.nextInt((int) drop.getChance()) == 0)
-                            this.generateNether(world, random, chunkX * 16, chunkZ * 16, drop);
-                    break;
-                case 0:
-                    for (DropFull drop : this.surfaceDrops)
-                        if (random.nextInt((int) drop.getChance()) == 0)
-                            this.generateSurface(world, random, chunkX * 16, chunkZ * 16, drop);
-                    break;
-                case 1:
-                    for (DropFull drop : this.endDrops)
-                        if (random.nextInt((int) drop.getChance()) == 0)
-                            this.generateEnd(world, random, chunkX * 16, chunkZ * 16, drop);
-                    break;
+            Dimension dim = world.getDimension();
+            if (dim.isNether()) {
+                for (DropFull drop : this.netherDrops)
+                    if (random.nextInt((int) drop.getChance()) == 0)
+                        this.generateNether(world, random, chunkX * 16, chunkZ * 16, drop);
+
+            } else if (dim.isSurfaceWorld()) {
+                for (DropFull drop : this.surfaceDrops)
+                    if (random.nextInt((int) drop.getChance()) == 0)
+                        this.generateSurface(world, random, chunkX * 16, chunkZ * 16, drop);
+
+            } else {
+                for (DropFull drop : this.endDrops)
+                    if (random.nextInt((int) drop.getChance()) == 0)
+                        this.generateEnd(world, random, chunkX * 16, chunkZ * 16, drop);
             }
         } catch (Exception e) {
-            System.err.println("Lucky Block: Error during natural generation");
-            e.printStackTrace();
+            Lucky.LOGGER.error("Error during natural generation");
+            Lucky.LOGGER.error(e.getMessage());
         }
     }
 
