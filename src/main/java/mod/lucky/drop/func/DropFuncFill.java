@@ -13,9 +13,9 @@ public class DropFuncFill extends DropFunction {
         BlockPos dropPos = drop.getBlockPos();
         // String applyBlockMode = drop.getPropertyString("applyBlockMode");
 
-        int length = drop.getPropertyInt("sizeX");
-        int height = drop.getPropertyInt("sizeY");
-        int width = drop.getPropertyInt("sizeZ");
+        int length = drop.getPropertyInt("length");
+        int height = drop.getPropertyInt("height");
+        int width = drop.getPropertyInt("width");
         if (drop.hasProperty("pos2X")) {
             length = Math.abs(drop.getPropertyInt("pos2X") - dropPos.getX()) + 1;
             if (dropPos.getX() > drop.getPropertyInt("pos2X")) dropPos = dropPos.add(-length + 1, 0, 0);
@@ -45,9 +45,9 @@ public class DropFuncFill extends DropFunction {
 
     @Override
     public void registerProperties() {
-        DropSingle.setDefaultProperty(this.getType(), "sizeX", Integer.class, 1);
-        DropSingle.setDefaultProperty(this.getType(), "sizeY", Integer.class, 1);
-        DropSingle.setDefaultProperty(this.getType(), "sizeZ", Integer.class, 1);
+        DropSingle.setDefaultProperty(this.getType(), "length", Integer.class, 1);
+        DropSingle.setDefaultProperty(this.getType(), "height", Integer.class, 1);
+        DropSingle.setDefaultProperty(this.getType(), "width", Integer.class, 1);
         DropSingle.setDefaultProperty(this.getType(), "size", String.class, "(1,1,1)");
         DropSingle.setDefaultProperty(this.getType(), "pos2X", Integer.class, 0);
         DropSingle.setDefaultProperty(this.getType(), "pos2Y", Integer.class, 0);

@@ -4,61 +4,87 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.WorldServer;
 
 public class DropFuncParticle extends DropFunction {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
-        String particleName = drop.getPropertyString("ID");
-        EnumParticleTypes particle = null;
-        for (EnumParticleTypes particleType : EnumParticleTypes.values()) {
-            if (particleName.startsWith(particleType.getParticleName())
-                && !particleName.equals("splashpotion")) {
-                particle = particleType;
-                break;
+        String particleId = drop.getPropertyString("ID");
+        boolean isEvent = false;
+        int eventId = 0;
+
+        // particle registry
+        ParticleType particleType = IRegistry.field_212632_u.get(
+            new ResourceLocation(particleId));
+
+        if (particleType == null) {
+            if (ValueParser.getString(
+                particleId, processData).equals("splashpotion")) {
+
+                isEvent = true;
+                eventId = 2002;
+            } else {
+                try {
+                    eventId = ValueParser.getInteger(particleId, processData);
+                    isEvent = true;
+                } catch (Exception e) {}
             }
+        }
+
+        if (particleType == null && !isEvent) {
+            Lucky.LOGGER.error("Invalid particle: " + particleId);
+            return;
         }
 
         if (processData.getWorld() instanceof WorldServer) {
             WorldServer worldServer = (WorldServer) processData.getWorld();
 
-            if (particle != null) {
-                int[] arguments = new int[particle.getArgumentCount()];
+            if (!isEvent) {
+                String particleArgs = "";
+                IParticleData particleData;
 
-                String[] astring1 = particleName.split("_", 3);
-
-                for (int l = 1; l < astring1.length; ++l) {
-                    try {
-                        arguments[l - 1] = Integer.parseInt(astring1[l]);
-                    } catch (NumberFormatException numberformatexception) {
-                        continue;
-                    }
+                String[] splitArgs = particleId.split("_");
+                for (int i = 1; i < splitArgs.length; i++) {
+                    if (i > 1) particleArgs += " ";
+                    particleArgs += splitArgs[i];
+                }
+                try {
+                    particleData = particleType.getDeserializer()
+                        .deserialize(particleType, new StringReader(particleArgs));
+                } catch (CommandSyntaxException e) {
+                    Lucky.LOGGER.error("Failed to process particle: " + particleId);
+                    Lucky.LOGGER.error(e.getMessage());
+                    return;
                 }
 
                 float posX = drop.getPropertyFloat("posX");
                 float posY = drop.getPropertyFloat("posY");
                 float posZ = drop.getPropertyFloat("posZ");
                 int particleAmount = drop.getPropertyInt("particleAmount");
-                float length = drop.getPropertyFloat("sizeX");
-                float height = drop.getPropertyFloat("sizeY");
-                float width = drop.getPropertyFloat("sizeZ");
+                float length = drop.getPropertyFloat("length");
+                float height = drop.getPropertyFloat("height");
+                float width = drop.getPropertyFloat("width");
 
-                worldServer.spawnParticle(
-                    particle, true, posX, posY, posZ, particleAmount, length, height, width, 0, arguments);
+                worldServer.spawnParticle(particleData,
+                    posX, posY, posZ,
+                    particleAmount,
+                    length, height, width, 0);
             } else {
-                int id =
-                    ValueParser.getString(particleName, processData).equals("splashpotion")
-                        ? 2002
-                        : ValueParser.getInteger(particleName, processData);
                 int damage = 0;
-                if (id == 2002) {
+                if (eventId == 2002) {
                     if (drop.hasProperty("potion")) {
                         List<PotionEffect> effectList = Lists.<PotionEffect>newArrayList();
                         PotionType potionType =
@@ -67,16 +93,16 @@ public class DropFuncParticle extends DropFunction {
                         damage = PotionUtils.getPotionColorFromEffectList(effectList);
                     } else damage = drop.getPropertyInt("damage");
                 }
-                worldServer.playEvent(id, drop.getBlockPos(), damage);
+                worldServer.playEvent(eventId, drop.getBlockPos(), damage);
             }
         }
     }
 
     @Override
     public void registerProperties() {
-        DropSingle.setDefaultProperty(this.getType(), "sizeX", Float.class, 0.0F);
-        DropSingle.setDefaultProperty(this.getType(), "sizeY", Float.class, 0.0F);
-        DropSingle.setDefaultProperty(this.getType(), "sizeZ", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "length", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "height", Float.class, 0.0F);
+        DropSingle.setDefaultProperty(this.getType(), "width", Float.class, 0.0F);
         DropSingle.setDefaultProperty(this.getType(), "size", String.class, "(0.0,0.0,0.0)");
         DropSingle.setDefaultProperty(this.getType(), "particleAmount", Integer.class, 1);
         DropSingle.setDefaultProperty(this.getType(), "potion", String.class, "poison");

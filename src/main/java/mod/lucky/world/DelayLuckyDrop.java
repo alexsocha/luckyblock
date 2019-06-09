@@ -60,7 +60,7 @@ public class DelayLuckyDrop {
 
     public void readFromNBT(NBTTagCompound tagCompound, World world) {
         this.processData = new DropProcessData(world);
-        this.processData.readFromNBT(tagCompound.getCompoundTag("processData"));
+        this.processData.readFromNBT(tagCompound.getCompound("processData"));
         this.ticksRemaining = tagCompound.getLong("ticksRemaining");
     }
 }

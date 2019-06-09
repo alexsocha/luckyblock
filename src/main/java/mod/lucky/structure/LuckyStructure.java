@@ -11,7 +11,6 @@ import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.ValueParser;
 import mod.lucky.util.LuckyReader;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -36,7 +35,7 @@ public class LuckyStructure extends Structure {
         blockProcessData.setProcessType(DropProcessData.EnumProcessType.LUCKY_STRUCT);
         for (DropSingle blockDropRaw : this.blockDrops) {
             DropSingle blockDrop = blockDropRaw.initialize(blockProcessData);
-            blockProcessData.setDropSingle(blockDrop);
+            blockProcessData.setDrop(blockDrop);
 
             IBlockState blockStateInit = blockDrop.getBlockState();
             BlockPos blockPos = blockDrop.getBlockPos();
@@ -62,7 +61,7 @@ public class LuckyStructure extends Structure {
         entityProcessData.setProcessType(DropProcessData.EnumProcessType.LUCKY_STRUCT);
         for (DropSingle entityDrop : this.entityDrops) {
             entityDrop = entityDrop.initialize(entityProcessData);
-            entityProcessData.setDropSingle(entityDrop);
+            entityProcessData.setDrop(entityDrop);
 
             Vec3d originalPos = entityDrop.getVecPos();
             if (entityDrop.getPropertyNBT("NBTTag") != null) {

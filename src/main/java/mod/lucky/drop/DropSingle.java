@@ -170,9 +170,9 @@ public class DropSingle extends DropBase {
             String[] size = properties.getPropertyString("size")
                 .substring(1, properties.getPropertyString("size").length() - 1)
                 .split(",");
-            properties.setOverrideRawProperty("sizeX", size[0]);
-            properties.setOverrideRawProperty("sizeY", size[1]);
-            properties.setOverrideRawProperty("sizeZ", size[2]);
+            properties.setOverrideRawProperty("length", size[0]);
+            properties.setOverrideRawProperty("height", size[1]);
+            properties.setOverrideRawProperty("width", size[2]);
         }
 
         if (properties.needsInitialize) {

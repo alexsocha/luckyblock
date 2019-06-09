@@ -8,6 +8,7 @@ import mod.lucky.drop.DropBase;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.DropGroup;
 import mod.lucky.drop.DropSingle;
+import mod.lucky.world.DelayLuckyDrop;
 
 public class DropProcessor {
     private ArrayList<DropFull> drops;
@@ -46,24 +47,22 @@ public class DropProcessor {
                 boolean postInit = properties.getPropertyBoolean("postDelayInit");
 
                 DropProcessData dropData = processData.copy();
-                dropData.setDropSingle(properties);
+                dropData.setDrop(properties);
 
                 if (properties.hasProperty("delay")) {
                     if (reinitialize) {
                         for (int i = 0; i < amount; i++) {
                             float delay = dropData.getDropSingle().getPropertyFloat("delay");
                             if (postInit) {
-                                dropData.setDropSingle(originalDrop);
-                                Lucky.getInstance().getTickHandler().addDelayDrop(this, dropData.copy(), delay);
-                            } else Lucky.getInstance().getTickHandler().addDelayDrop(this, dropData, delay);
-                            if (i < amount - 1) dropData.setDropSingle(originalDrop.initialize(dropData));
+                                dropData.setDrop(originalDrop);
+                                Lucky.tickHandler.addDelayDrop(this, dropData.copy(), delay);
+                            } else Lucky.tickHandler.addDelayDrop(this, dropData, delay);
+                            if (i < amount - 1) dropData.setDrop(originalDrop.initialize(dropData));
                         }
                     } else {
-                        if (postInit) dropData.setDropSingle(originalDrop);
-                        Lucky.getInstance()
-                            .getTickHandler()
-                            .addDelayDrop(
-                                this, dropData, dropData.getDropSingle().getPropertyFloat("delay"));
+                        if (postInit) dropData.setDrop(originalDrop);
+                        float delay = dropData.getDropSingle().getPropertyFloat("delay");
+                        Lucky.tickHandler.addDelayDrop(this, dropData, delay);
                     }
                     return;
                 }
@@ -71,7 +70,7 @@ public class DropProcessor {
                 for (int i = 0; i < amount; i++) {
                     dropFunction.process(dropData);
                     if (reinitialize && i < amount - 1)
-                        dropData.setDropSingle(originalDrop.initialize(dropData));
+                        dropData.setDrop(originalDrop.initialize(dropData));
                 }
             }
         }
@@ -93,7 +92,7 @@ public class DropProcessor {
             boolean reinitialize = properties.getPropertyBoolean("reinitialize");
 
             DropProcessData dropData = processData.copy();
-            dropData.setDropSingle(properties);
+            dropData.setDrop(properties);
 
             if (reinitialize) dropFunction.process(dropData);
             else {

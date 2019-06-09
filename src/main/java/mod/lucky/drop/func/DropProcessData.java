@@ -116,7 +116,7 @@ public class DropProcessData {
         this.processType = processType;
     }
 
-    public void setDropSingle(DropSingle properties) {
+    public void setDrop(DropSingle properties) {
         this.dropSingle = properties;
     }
 

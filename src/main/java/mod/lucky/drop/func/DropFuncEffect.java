@@ -9,9 +9,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class DropFuncEffect extends DropFunction {
     @Override
@@ -42,7 +44,7 @@ public class DropFuncEffect extends DropFunction {
             try {
                 potionEffectId = ValueParser.getInteger(effectID);
             } catch (Exception e) {
-                Potion potion = Potion.getPotionFromResourceLocation(effectID);
+                Potion potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectID));
                 potionEffectId = Potion.getIdFromPotion(potion);
             }
         }

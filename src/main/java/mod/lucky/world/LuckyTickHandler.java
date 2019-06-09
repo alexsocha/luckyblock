@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 
 import mod.lucky.Lucky;
+import mod.lucky.drop.func.DropProcessData;
+import mod.lucky.drop.func.DropProcessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -137,10 +139,15 @@ public class LuckyTickHandler {
     public void addDelayDrop(DelayLuckyDrop delayDrop) {
         for (int i = 0; i > -1; i++) {
             if (!this.delayDrops.containsKey(i)
-            || !(this.delayDrops.get(i) instanceof DelayLuckyDrop)) {
+                || !(this.delayDrops.get(i) instanceof DelayLuckyDrop)) {
+
                 this.delayDrops.put(i, delayDrop);
                 break;
             }
         }
+    }
+
+    public void addDelayDrop(DropProcessor dropProcessor, DropProcessData processData, float delay) {
+        this.addDelayDrop(new DelayLuckyDrop(dropProcessor, processData, (long) (delay * 20)));
     }
 }

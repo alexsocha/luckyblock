@@ -11,8 +11,8 @@ public class DropFuncStructure extends DropFunction {
         Structure structure = Lucky.getStructure(drop.getPropertyString("ID"));
         if (structure != null) structure.process(processData);
         else
-            System.err.println(
-                "Lucky Block: Structure with ID '" + drop.getPropertyString("ID") + "' does not exist");
+            Lucky.LOGGER.error("Structure with ID '"
+                + drop.getPropertyString("ID") + "' does not exist");
     }
 
     @Override

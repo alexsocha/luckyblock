@@ -3,9 +3,8 @@ package mod.lucky.drop.func;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.entity.EntityLuckyProjectile;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -18,6 +17,9 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.UUID;
 
 public class DropFuncEntity extends DropFunction {
     @Override
@@ -56,7 +58,7 @@ public class DropFuncEntity extends DropFunction {
         double posX,
         double posY,
         double posZ) {
-        Entity entity = EntityList.createEntityFromNBT(nbtTagCompound, world);
+        Entity entity = EntityType.create(nbtTagCompound, world);
         if (entity == null) return null;
 
         if (entity instanceof EntityTippedArrow
@@ -80,18 +82,19 @@ public class DropFuncEntity extends DropFunction {
             entity.velocityChanged = true;
         }
 
+        UUID playerUUID = processData.getPlayer().getUniqueID();
         if (entity instanceof EntityFallingBlock && !nbtTagCompound.hasKey("Time"))
             ((EntityFallingBlock) entity).fallTime = 1;
         else if (entity instanceof EntityLuckyProjectile)
-            ((EntityLuckyProjectile) entity).shootingEntity = processData.getPlayer();
+            ((EntityLuckyProjectile) entity).shootingEntity = playerUUID;
         else if (entity instanceof EntityArrow)
-            ((EntityArrow) entity).shootingEntity = processData.getPlayer();
+            ((EntityArrow) entity).shootingEntity = playerUUID;
 
-        // adjust sizeY
+        // adjust height
         for (int y = 0; y < 10; y++) {
-            if (processData
-                .getWorld()
-                .isAirBlock(new BlockPos(entity.posX, entity.posY + y, entity.posZ))) {
+            if (processData.getWorld().isAirBlock(
+                new BlockPos(entity.posX, entity.posY + y, entity.posZ))) {
+
                 entity.posY += y;
                 break;
             }
@@ -100,22 +103,27 @@ public class DropFuncEntity extends DropFunction {
             entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
 
         if (entity instanceof EntityLiving) {
-            if (processData.getProcessType() != DropProcessData.EnumProcessType.LUCKY_STRUCT)
+            if (processData.getProcessType() != DropProcessData.EnumProcessType.LUCKY_STRUCT) {
                 ((EntityLiving) entity)
                     .onInitialSpawn(
-                        world.getDifficultyForLocation(new BlockPos(entity)), (IEntityLivingData) null);
-            ((EntityLiving) entity).readEntityFromNBT(nbtTagCompound);
+                        world.getDifficultyForLocation(new BlockPos(entity)),
+                        null, null);
+            }
+            entity.read(nbtTagCompound);
         }
 
         if (!world.spawnEntity(entity)) {
             return null;
         } else {
-            if (nbtTagCompound.hasKey("Passengers", 9)) {
-                NBTTagList nbttaglist = nbtTagCompound.getTagList("Passengers", 10);
+            if (nbtTagCompound.hasKey("Passengers")) {
+                NBTTagList nbttaglist = nbtTagCompound.getList(
+                    "Passengers", Constants.NBT.TAG_COMPOUND);
 
-                for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-                    Entity entity1 =
-                        spawnEntity(processData, nbttaglist.getCompoundTagAt(i), world, posX, posY, posZ);
+                for (int i = 0; i < nbttaglist.size(); ++i) {
+                    Entity entity1 = spawnEntity(processData,
+                        nbttaglist.getCompound(i),
+                        world,
+                        posX, posY, posZ);
                     if (entity1 != null) entity1.startRiding(entity, true);
                 }
             }
