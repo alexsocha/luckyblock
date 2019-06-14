@@ -54,8 +54,8 @@ public class LuckyGenerator implements IWorldGenerator {
                         this.generateEnd(world, random, chunkX * 16, chunkZ * 16, drop);
             }
         } catch (Exception e) {
-            Lucky.LOGGER.error("Error during natural generation");
-            Lucky.LOGGER.error(e.getMessage());
+            Lucky.error(e, "Error during natural generation");
+            Lucky.error(e, e.getMessage());
         }
     }
 

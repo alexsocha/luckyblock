@@ -55,7 +55,7 @@ public class ResourcePluginInit extends BaseResource {
                 new ItemLuckyPotion().setRegistryName(potionId));
 
             Lucky.luckyBlockPlugins.add((PluginLoader) loader);
-        } catch (Exception e) { this.logError(); }
+        } catch (Exception e) { this.logError(e); }
     }
 
     @Override

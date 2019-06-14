@@ -44,8 +44,7 @@ public class ItemLuckySword extends ItemSword implements ILuckyItemContainer {
             else this.getLuckyItem().getDropProcessor().processRandomDrop(dropData, luck);
 
         } catch (Exception e) {
-            Lucky.LOGGER.error(DropProcessor.errorMessage());
-            e.printStackTrace();
+            Lucky.error(e, DropProcessor.errorMessage());
         }
 
         return super.hitEntity(stack, target, attacker);

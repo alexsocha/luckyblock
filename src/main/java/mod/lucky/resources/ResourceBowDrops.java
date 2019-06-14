@@ -15,7 +15,7 @@ public class ResourceBowDrops extends BaseResource {
                 drop.readFromString(curLine);
                 loader.getBow().getLuckyItem().getDropProcessor().registerDrop(drop);
             }
-        } catch (Exception e) { this.logError(); }
+        } catch (Exception e) { this.logError(e); }
     }
 
     @Override

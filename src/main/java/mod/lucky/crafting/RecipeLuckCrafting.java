@@ -17,11 +17,11 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 public class RecipeLuckCrafting extends IRecipeHidden {
-    private static HashMap<ILuckyItemContainer, ArrayList<LuckCraftingModifier>> LUCK_MODIFIERS;
+    private static HashMap<ILuckyItemContainer, ArrayList<LuckCraftingModifier>>
+        LUCK_MODIFIERS = new HashMap<>();
 
     public RecipeLuckCrafting(ResourceLocation rl) {
         super(rl);
-        LUCK_MODIFIERS = new HashMap<>();
     }
 
     public static void addLuckModifier(

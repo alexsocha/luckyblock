@@ -57,7 +57,7 @@ public class PluginLoader extends BaseLoader {
             }
         } catch (Exception e) {
             if (!resource.isOptional()) {
-                Lucky.LOGGER.error("Error getting resource '" + resource.getPath()
+                Lucky.error(e, "Error getting resource '" + resource.getPath()
                     + "' from plugin '" + this.pluginFile.getName() + "'");
             }
         }

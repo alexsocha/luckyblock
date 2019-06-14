@@ -27,7 +27,7 @@ public class ResourceLuckCrafting extends BaseResource {
                     RecipeLuckCrafting.addLuckModifier(item, luckModifier);
                 }
             }
-        } catch (Exception e) { this.logError(); }
+        } catch (Exception e) { this.logError(e); }
     }
 
     @Override

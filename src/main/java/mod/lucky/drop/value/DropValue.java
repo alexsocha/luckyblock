@@ -1,5 +1,6 @@
 package mod.lucky.drop.value;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -22,8 +23,7 @@ public class DropValue {
             try {
                 this.value = ValueParser.getObject(rawValue, valueType, null);
             } catch (Exception e) {
-                System.err.println("Lucky Block: Error processing value: " + this.rawValue);
-                e.printStackTrace();
+                Lucky.error(e, "Error processing value: " + this.rawValue);
             }
         }
     }
@@ -34,8 +34,7 @@ public class DropValue {
                 this.value = ValueParser.getObject(this.rawValue, this.valueType, processData);
                 return true;
             } catch (Exception e) {
-                System.err.println("Lucky Block: Error processing value: " + this.rawValue);
-                e.printStackTrace();
+                Lucky.error(e, "Error processing value: " + this.rawValue);
             }
         }
         return false;

@@ -73,7 +73,7 @@ public class TemplateStructure extends Structure {
             tag = CompressedStreamTools.read(dataInputStream);
             dataInputStream.close();
         } catch (Exception e) {
-            Lucky.LOGGER.error("Error loading structure '" + this.id + "'");
+            Lucky.error(e, "Error loading structure '" + this.id + "'");
         }
 
         this.template = new Template();

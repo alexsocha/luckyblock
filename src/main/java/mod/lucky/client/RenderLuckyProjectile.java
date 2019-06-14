@@ -25,8 +25,7 @@ public class RenderLuckyProjectile extends Render<EntityLuckyProjectile> {
                     0, partialTicks, true);
             }
         } catch (Exception e) {
-            Lucky.LOGGER.error("Error rendering lucky projectile");
-            e.printStackTrace();
+            Lucky.error(e, "Error rendering lucky projectile");
         }
     }
 

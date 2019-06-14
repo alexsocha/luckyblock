@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.Random;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.entity.Entity;
@@ -448,8 +449,7 @@ public class CustomNBTTags {
                 return tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND);
 
             } catch (Exception e) {
-                System.err.println("Lucky Block: Error creating chest from .json loot table");
-                e.printStackTrace();
+                Lucky.error(e, "Error creating chest from .json loot table");
             }
         }
 

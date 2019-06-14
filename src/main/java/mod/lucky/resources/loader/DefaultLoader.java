@@ -12,7 +12,7 @@ public class DefaultLoader extends BaseLoader {
 
     public DefaultLoader(File minecraftDirectory) {
         this.resourceDir = new File(minecraftDirectory.getPath()
-            + "/config/luckyBlock/version-" + Lucky.VERSION);
+            + "/config/lucky_block/version-" + Lucky.VERSION);
 
         this.setBlock(Lucky.luckyBlock);
         this.setSword(Lucky.luckySword);
@@ -23,6 +23,10 @@ public class DefaultLoader extends BaseLoader {
     public void extractDefaultResources() {
         try {
             InputStream stream = Lucky.class.getResourceAsStream("default_config.zip");
+            if (stream == null) {
+                Lucky.error(null, "No default resources found");
+                return;
+            }
             ZipInputStream inputStream = new ZipInputStream(stream);
 
             ZipEntry entry;
@@ -42,7 +46,7 @@ public class DefaultLoader extends BaseLoader {
             }
             inputStream.close();
         } catch (Exception e) {
-            Lucky.LOGGER.error("Error extracting default resources");
+            Lucky.error(e, "Error extracting default resources");
         }
     }
 
@@ -58,10 +62,9 @@ public class DefaultLoader extends BaseLoader {
             if (file.isDirectory()) return null;
             return new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            System.err.println(
-                "Lucky Block: Error getting default resource '" + resource.getPath() + "'");
-            e.printStackTrace();
+            Lucky.LOGGER.error("Lucky Block: Error getting default resource '"
+                + resource.getPath() + "'");
+            return null;
         }
-        return null;
     }
 }

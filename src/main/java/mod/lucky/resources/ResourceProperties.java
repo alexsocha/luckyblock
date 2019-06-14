@@ -16,7 +16,7 @@ public class ResourceProperties extends BaseResource {
                 if (name.equals("doDropsOnCreativeMode"))
                     loader.getBlock().setDoCreativeDrops(ValueParser.getBoolean(value));
             }
-        } catch (Exception e) { this.logError(); }
+        } catch (Exception e) { this.logError(e); }
     }
 
     @Override

@@ -88,8 +88,7 @@ public class EntityLuckyPotion extends EntityThrowable {
                 }
             }
         } catch (Exception e) {
-            Lucky.LOGGER.error(DropProcessor.errorMessage());
-            e.printStackTrace();
+            Lucky.error(e, DropProcessor.errorMessage());
         }
     }
 

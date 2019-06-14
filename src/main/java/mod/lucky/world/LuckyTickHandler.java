@@ -59,7 +59,6 @@ public class LuckyTickHandler {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -78,8 +77,7 @@ public class LuckyTickHandler {
                 if (!this.delayDrops.containsKey(i)) break;
             }
         } catch (Exception e) {
-            System.err.println("Lucky Block: Error processing delay drop");
-            e.printStackTrace();
+            Lucky.error(e, "Error processing delay drop");
             this.delayDrops.clear();
         }
     }
@@ -111,7 +109,7 @@ public class LuckyTickHandler {
                 if (saved) event.getData().setTag("LuckyBlockDelayDrops", dropTags);
             }
         } catch (Exception e) {
-            Lucky.LOGGER.error("Error saving chunk properties");
+            Lucky.error(e, "Error saving chunk properties");
             this.delayDrops.clear();
         }
     }
@@ -130,8 +128,7 @@ public class LuckyTickHandler {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Lucky Block: Error loading chunk properties");
-            e.printStackTrace();
+            Lucky.error(e, "Error loading chunk properties");
             this.delayDrops.clear();
         }
     }

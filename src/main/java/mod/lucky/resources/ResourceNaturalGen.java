@@ -22,7 +22,7 @@ public class ResourceNaturalGen extends BaseResource {
                 if (section.equals(">nether")) loader.getBlock().getWorldGenerator().addNetherDrop(drop);
                 if (section.equals(">end")) loader.getBlock().getWorldGenerator().addEndDrop(drop);
             }
-        } catch (Exception e) { this.logError(); }
+        } catch (Exception e) { this.logError(e); }
     }
 
     @Override

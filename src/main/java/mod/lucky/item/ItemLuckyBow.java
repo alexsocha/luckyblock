@@ -120,8 +120,7 @@ public class ItemLuckyBow extends ItemBow implements ILuckyItemContainer {
                                 .processRandomDrop(dropData, luck);
 
                     } catch (Exception e) {
-                        Lucky.LOGGER.error(DropProcessor.errorMessage());
-                        e.printStackTrace();
+                        Lucky.error(e, DropProcessor.errorMessage());
                     }
                 }
 

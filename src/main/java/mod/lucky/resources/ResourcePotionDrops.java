@@ -15,7 +15,7 @@ public class ResourcePotionDrops extends BaseResource {
                 drop.readFromString(curLine);
                 loader.getPotion().getLuckyItem().getDropProcessor().registerDrop(drop);
             }
-        } catch (Exception e) { this.logError(); }
+        } catch (Exception e) { this.logError(e); }
     }
 
     @Override

@@ -9,8 +9,8 @@ public abstract class BaseResource {
 
     public abstract String getPath();
 
-    protected void logError() {
-        Lucky.LOGGER.error("Error processing resource: " + this.getPath());
+    protected void logError(Exception e) {
+        Lucky.error(e, "Error processing resource: " + this.getPath());
     }
 
     public boolean isOptional() {

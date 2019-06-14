@@ -55,8 +55,7 @@ public class SetupClient {
             }
 
         } catch (Exception e) {
-            Lucky.LOGGER.error("Error registering add-on resources");
-            e.printStackTrace();
+            Lucky.error(e, "Error registering add-on resources");
         }
     }
 

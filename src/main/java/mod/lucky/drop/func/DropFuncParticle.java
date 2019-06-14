@@ -45,7 +45,7 @@ public class DropFuncParticle extends DropFunction {
         }
 
         if (particleType == null && !isEvent) {
-            Lucky.LOGGER.error("Invalid particle: " + particleId);
+            Lucky.error(null, "Invalid particle: " + particleId);
             return;
         }
 
@@ -65,8 +65,8 @@ public class DropFuncParticle extends DropFunction {
                     particleData = particleType.getDeserializer()
                         .deserialize(particleType, new StringReader(particleArgs));
                 } catch (CommandSyntaxException e) {
-                    Lucky.LOGGER.error("Failed to process particle: " + particleId);
-                    Lucky.LOGGER.error(e.getMessage());
+                    Lucky.error(e, "Failed to process particle: " + particleId);
+                    Lucky.error(e, e.getMessage());
                     return;
                 }
 

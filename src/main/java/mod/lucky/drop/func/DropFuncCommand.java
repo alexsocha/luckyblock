@@ -25,7 +25,7 @@ public class DropFuncCommand extends DropFunction {
             commandSource.getServer().getCommandManager().getDispatcher()
                 .execute(command, commandSource);
         } catch (CommandSyntaxException e) {
-            Lucky.LOGGER.error("Invalid command: " + command);
+            Lucky.error(e, "Invalid command: " + command);
         }
     }
 

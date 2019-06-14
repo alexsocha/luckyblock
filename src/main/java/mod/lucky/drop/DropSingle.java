@@ -112,8 +112,7 @@ public class DropSingle extends DropBase {
             this.properties.put(name, property);
             return property;
         } catch (Exception e) {
-            Lucky.LOGGER.error("Error loading property: " + name + "=" + value);
-            e.printStackTrace();
+            Lucky.error(e, "Error loading property: " + name + "=" + value);
         }
         return null;
     }

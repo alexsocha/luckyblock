@@ -8,6 +8,7 @@ import javax.script.ScriptEngineManager;
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropProcessData;
+import mod.lucky.init.SetupCommon;
 import mod.lucky.structure.Structure;
 import mod.lucky.structure.StructureUtils;
 import mod.lucky.util.LuckyUtils;
@@ -308,7 +309,7 @@ public class HashVariables {
                 properties[2] = DropStringUtils.removeNumSuffix(properties[2]);
 
                 DropSingle drop = processData.getDropSingle();
-                Structure structure = Lucky.getStructure(drop.getPropertyString("ID"));
+                Structure structure = SetupCommon.getStructure(drop.getPropertyString("ID"));
                 if (structure == null) return "";
                 Vec3d harvestPos =
                     new Vec3d(
@@ -371,8 +372,7 @@ public class HashVariables {
                 return processData.getDropSingle().getProperty(name).toString();
             }
         } catch (Exception e) {
-            System.err.println("Lucky Block: Error processing hash variable: " + string);
-            e.printStackTrace();
+            Lucky.error(e, "Error processing hash variable: " + string);
         }
 
         return "";

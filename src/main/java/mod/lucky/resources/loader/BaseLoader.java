@@ -28,9 +28,8 @@ public abstract class BaseLoader {
             LuckyReader reader = new LuckyReader(new InputStreamReader(stream));
             resource.process(reader, this);
         } catch (Exception e) {
-            Lucky.LOGGER.error("Lucky Block: Error loading resource: " + resource.getPath());
-            System.err.println("Lucky Block: Error loading resource: " + resource.getPath());
-            e.printStackTrace();
+            Lucky.error(e, "Lucky Block: Error loading resource: " + resource.getPath());
+            Lucky.error(e, "Error loading resource: " + resource.getPath());
         }
     }
 

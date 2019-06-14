@@ -1,5 +1,7 @@
 package mod.lucky.util;
 
+import mod.lucky.Lucky;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,8 +31,7 @@ public class LuckyReader {
             if (curString == null) return null;
             return finalString;
         } catch (IOException e) {
-            System.err.println("Lucky Block: I/O read Error");
-            e.printStackTrace();
+            Lucky.error(e, "I/O read Error");
         }
         return "";
     }
@@ -39,8 +40,7 @@ public class LuckyReader {
         try {
             this.bufferedReader.close();
         } catch (IOException e) {
-            System.err.println("Lucky Block: I/O close Error");
-            e.printStackTrace();
+            Lucky.error(e, "I/O close Error");
         }
     }
 }

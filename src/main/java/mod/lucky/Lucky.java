@@ -24,6 +24,8 @@ import net.minecraftforge.versions.mcp.MCPVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
+
 @Mod("lucky")
 public class Lucky {
     public static String VERSION;
@@ -39,10 +41,8 @@ public class Lucky {
     public static ArrayList<PluginLoader> luckyBlockPlugins;
     public static ArrayList<Structure> structures;
 
-    public static ResourceManager resourceRegistry;
+    public static ResourceManager resourceManager;
     public static LuckyTickHandler tickHandler;
-
-    public static SimpleChannel networkChannel;
 
     public Lucky() {
         Lucky.VERSION = ModLoadingContext.get().getActiveContainer().getModInfo()
@@ -58,13 +58,8 @@ public class Lucky {
     private void setupCommon(final FMLCommonSetupEvent event) { SetupCommon.setup(); }
     private void setupClient(final FMLClientSetupEvent event) { SetupClient.setup(); }
 
-    public static Structure getStructure(String id) {
-        for (Structure structure : structures)
-            if (id.equals(structure.id)) return structure;
-        return null;
-    }
-
-    public static void addStructure(Structure structure) {
-        structures.add(structure);
+    public static void error(@Nullable Exception e, String message) {
+        LOGGER.error(message);
+        e.printStackTrace();
     }
 }

@@ -14,7 +14,7 @@ public class ResourceDrops extends BaseResource {
                 drop.readFromString(curLine);
                 loader.getBlock().getDropProcessor().registerDrop(drop);
             }
-        } catch (Exception e) { this.logError(); }
+        } catch (Exception e) { this.logError(e); }
     }
 
     @Override

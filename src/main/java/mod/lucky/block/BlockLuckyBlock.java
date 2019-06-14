@@ -112,8 +112,7 @@ public class BlockLuckyBlock extends BlockContainer {
                 }
             }
         } catch (Exception e) {
-            Lucky.LOGGER.error(DropProcessor.errorMessage());
-            e.printStackTrace();
+            Lucky.error(e, DropProcessor.errorMessage());
         }
 
         return true;

@@ -12,6 +12,7 @@ import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.item.ItemLuckySword;
 import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceManager;
+import mod.lucky.structure.Structure;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.block.Block;
@@ -19,7 +20,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.RecipeSerializers;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -51,8 +51,6 @@ public class SetupCommon {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        Lucky.LOGGER.info("registerBlocks ==================");
-
         event.getRegistry().register(Lucky.luckyBlock);
         for (PluginLoader plugin : Lucky.luckyBlockPlugins)
             event.getRegistry().register(plugin.getBlock());
@@ -77,7 +75,7 @@ public class SetupCommon {
             if (plugin.getPotion() != null) event.getRegistry().register(plugin.getPotion());
         }
 
-        Lucky.resourceRegistry.loadAllResources(true);
+        Lucky.resourceManager.loadAllResources(true);
     }
 
     public static void setupEntities() {
@@ -99,22 +97,27 @@ public class SetupCommon {
         Lucky.luckyPotion = (ItemLuckyPotion) new ItemLuckyPotion()
             .setRegistryName("lucky_potion");
 
+        Lucky.structures = new ArrayList<>();
+        Lucky.luckyBlockPlugins = new ArrayList<>();
+
         //SetupCommon.setupEntities();
 
-        Lucky.luckyBlockPlugins = new ArrayList<PluginLoader>();
-
-        Lucky.resourceRegistry = new ResourceManager(new File("."));
+        Lucky.resourceManager = new ResourceManager(new File("."));
         Lucky.tickHandler = new LuckyTickHandler();
         //MinecraftForge.EVENT_BUS.register(Lucky.tickHandler);
 
         DropFunction.registerFunctions();
 
-        //Lucky.resourceRegistry.registerPlugins();
-        //Lucky.resourceRegistry.extractDefaultResources();
-        //Lucky.resourceRegistry.loadAllResources(false);
+        //Lucky.resourceManager.registerPlugins();
+        Lucky.resourceManager.extractDefaultResources();
+        Lucky.resourceManager.loadAllResources(false);
     }
 
-    public static void setup() {
-        Lucky.LOGGER.info("setup ==================");
+    public static Structure getStructure(String id) {
+        return Lucky.structures.stream()
+            .filter(s -> s.id.equals(id))
+            .findFirst().get();
     }
+
+    public static void setup() {}
 }

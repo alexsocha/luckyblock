@@ -1,6 +1,7 @@
 package mod.lucky.resources;
 
 import mod.lucky.Lucky;
+import mod.lucky.init.SetupCommon;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.structure.Structure;
 import mod.lucky.util.LuckyReader;
@@ -17,12 +18,9 @@ public class ResourceStructures extends BaseResource {
                 Structure structure = properties.newTypeInstance();
                 structure.readFromFile();
 
-                Lucky.addStructure(structure);
+                Lucky.structures.add(structure);
             }
-        } catch (Exception e) {
-            System.err.println("Lucky Block: Error reading 'structures.txt'");
-            e.printStackTrace();
-        }
+        } catch (Exception e) { this.logError(e); }
     }
 
     @Override

@@ -3,6 +3,7 @@ package mod.lucky.drop;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.ValueParser;
@@ -72,8 +73,7 @@ public class DropFull extends DropBase {
                     }
                     if (propertyType == 1) this.luck = ValueParser.getInteger(curValue);
                 } catch (Exception e) {
-                    System.err.println("Lucky Block: Error reading luck/chance for drop: " + string);
-                    e.printStackTrace();
+                    Lucky.error(e, "Error reading luck/chance for drop: " + string);
                 }
 
                 String linePart1 = string.substring(0, points.get(count));
@@ -133,8 +133,7 @@ public class DropFull extends DropBase {
             string = this.readLuckChance(string);
             this.readDropFromString(string);
         } catch (Exception e) {
-            System.err.println("Lucky Block: Error reading drop: " + string);
-            e.printStackTrace();
+            Lucky.error(e, "Error reading drop: " + string);
         }
     }
 

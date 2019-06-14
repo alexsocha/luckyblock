@@ -94,8 +94,7 @@ public class EntityLuckyProjectile extends EntityArrow {
                             this.getPositionVector()),
                         0, false);
             } catch (Exception e) {
-                Lucky.LOGGER.error(DropProcessor.errorMessage());
-                e.printStackTrace();
+                Lucky.error(e, DropProcessor.errorMessage());
             }
         }
     }
@@ -113,8 +112,7 @@ public class EntityLuckyProjectile extends EntityArrow {
                 this.dropProcessorImpact.processRandomDrop(dropData, 0);
             }
         } catch (Exception e) {
-            Lucky.LOGGER.error(DropProcessor.errorMessage());
-            e.printStackTrace();
+            Lucky.error(e, DropProcessor.errorMessage());
         }
         this.remove();
     }

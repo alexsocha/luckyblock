@@ -146,7 +146,7 @@ public class LuckyStructure extends Structure {
 
             this.initCenterPos();
         } catch (Exception e) {
-            Lucky.LOGGER.error("Error loading structure '" + this.id + "'");
+            Lucky.error(e, "Error loading structure '" + this.id + "'");
         }
     }
 }

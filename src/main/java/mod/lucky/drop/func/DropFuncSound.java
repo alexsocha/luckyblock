@@ -18,7 +18,7 @@ public class DropFuncSound extends DropFunction {
         SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(
             new ResourceLocation(soundId));
         if (soundEvent == null) {
-            Lucky.LOGGER.error("Invalid sound event: " + soundId);
+            Lucky.error(null, "Invalid sound event: " + soundId);
             return;
         }
 
