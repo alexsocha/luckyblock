@@ -1,0 +1,15 @@
+tile.luckyBlock.name=Lucky Block
+item.luckyBlock.luck=Luck
+item.luckyBlock.customDrop=Has custom drops
+
+item.luckySword.name=Lucky Sword
+item.luckyBow.name=Lucky Bow
+item.luckyPotion.name=Lucky Potion
+
+commands.setluckyblock.usage=/setluckyblock <x> <y> <z> [luck] [customDrops]
+commands.setluckyblock.success=Lucky Block placed
+commands.setluckyblock.failed=Unable to place Luck Block
+commands.setluckyblock.outOfWorld=Cannot place Lucky Block outside of the world
+commands.setluckyblock.noChange=Lucky Block couldn't be placed
+commands.giveluckyblock.usage=/giveluckyblock <player> [amount] [luck] [customDrops]
+commands.giveluckyblock.success=Given %s * %d to %s

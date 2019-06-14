@@ -14,7 +14,6 @@ import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -62,10 +61,12 @@ public class SetupClient {
     }
 
     private static void registerItemModel(Item item) {
+        /*
         Minecraft.getInstance()
             .getItemRenderer()
             .getItemModelMesher()
             .register(item, new ModelResourceLocation(item.getRegistryName().toString()));
+         */
     }
 
     public static void registerAllItemModels() {
@@ -83,12 +84,13 @@ public class SetupClient {
     }
 
     public static void setup() {
+        /*
         registerEntityRenderers();
         registerPluginResources();
         registerAllItemModels();
 
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
         MinecraftForge.EVENT_BUS.register(new LuckyTickHandler());
-
+         */
     }
 }

@@ -184,7 +184,7 @@ public class LuckyUtils {
 
     @Deprecated
     public static String getRandomMobEggName() {
-        return 0;
+        return "";
         /*
         Object[] values = EntityList.ENTITY_EGGS.values().toArray();
         EntityList.EntityEggInfo egg = (EntityList.EntityEggInfo) values[random.nextInt(values.sizeX)];
@@ -206,7 +206,8 @@ public class LuckyUtils {
         int newPosY = posY;
         int airCount = 0;
         for (int a = posY; a < posY + 16; a++) {
-            if (world.getBlockState(new BlockPos(posX, a, posZ)).isOpaqueCube()) {
+            BlockPos pos = new BlockPos(posX, a, posZ);
+            if (world.getBlockState(pos).isOpaqueCube(world, pos)) {
                 airCount = 0;
                 newPosY = a + 1;
             } else {
@@ -219,7 +220,7 @@ public class LuckyUtils {
             }
         }
 
-        if (wasHeightAdjusted == true) {
+        if (wasHeightAdjusted) {
             return newPosY;
         } else {
             return -1;

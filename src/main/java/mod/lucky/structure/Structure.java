@@ -41,7 +41,7 @@ public class Structure {
     private BaseLoader loader;
 
     protected String overlayStruct;
-    protected String id;
+    public String id;
     protected BlockMode blockMode;
     protected boolean blockUpdate;
 

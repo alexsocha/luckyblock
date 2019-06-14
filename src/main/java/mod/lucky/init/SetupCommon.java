@@ -19,13 +19,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.RecipeSerializers;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.FMLNetworkConstants;
-import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.File;
@@ -54,6 +51,8 @@ public class SetupCommon {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        Lucky.LOGGER.info("registerBlocks ==================");
+
         event.getRegistry().register(Lucky.luckyBlock);
         for (PluginLoader plugin : Lucky.luckyBlockPlugins)
             event.getRegistry().register(plugin.getBlock());
@@ -72,6 +71,7 @@ public class SetupCommon {
             event.getRegistry().register(
                 new ItemLuckyBlock(plugin.getBlock())
                     .setRegistryName(plugin.getBlock().getRegistryName()));
+
             if (plugin.getSword() != null) event.getRegistry().register(plugin.getSword());
             if (plugin.getBow() != null) event.getRegistry().register(plugin.getBow());
             if (plugin.getPotion() != null) event.getRegistry().register(plugin.getPotion());
@@ -89,7 +89,7 @@ public class SetupCommon {
                 TileEntityType.Builder.create(TileEntityLuckyBlock::new)));
     }
 
-    public static void setupItemsAndBlocks() {
+    public static void setupStatic() {
         Lucky.luckyBlock = (BlockLuckyBlock) new BlockLuckyBlock()
             .setRegistryName("lucky_block");
         Lucky.luckySword = (ItemLuckySword) new ItemLuckySword()
@@ -98,26 +98,23 @@ public class SetupCommon {
             .setRegistryName("lucky_bow");
         Lucky.luckyPotion = (ItemLuckyPotion) new ItemLuckyPotion()
             .setRegistryName("lucky_potion");
-    }
 
-    public static void setup() {
-        SetupCommon.setupItemsAndBlocks();
-        SetupCommon.setupEntities();
+        //SetupCommon.setupEntities();
 
         Lucky.luckyBlockPlugins = new ArrayList<PluginLoader>();
-        //Lucky.structures = new ArrayList<Structure>();
 
-        // lucky block worl generator
-        //GameRegistry.registerWorldGenerator(luckyBlock.getWorldGenerator(), 1);
-
+        Lucky.resourceRegistry = new ResourceManager(new File("."));
         Lucky.tickHandler = new LuckyTickHandler();
-        MinecraftForge.EVENT_BUS.register(Lucky.tickHandler);
+        //MinecraftForge.EVENT_BUS.register(Lucky.tickHandler);
 
         DropFunction.registerFunctions();
 
-        Lucky.resourceRegistry = new ResourceManager(new File("."));
-        Lucky.resourceRegistry.registerPlugins();
-        Lucky.resourceRegistry.extractDefaultResources();
-        Lucky.resourceRegistry.loadAllResources(false);
+        //Lucky.resourceRegistry.registerPlugins();
+        //Lucky.resourceRegistry.extractDefaultResources();
+        //Lucky.resourceRegistry.loadAllResources(false);
+    }
+
+    public static void setup() {
+        Lucky.LOGGER.info("setup ==================");
     }
 }

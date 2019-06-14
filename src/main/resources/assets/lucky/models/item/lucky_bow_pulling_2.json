@@ -1,0 +1,6 @@
+{
+    "parent": "lucky:item/lucky_bow",
+    "textures": {
+        "layer0": "lucky:items/lucky_bow_pulling_2"
+    }
+}

@@ -34,7 +34,7 @@ minecraft {
 }
 
 ext {
-    forgeVersion = '1.13.2-25.0.146'
+    forgeVersion = '1.13.2-25.0.219'
     mcversion = project.forgeVersion.split('-')[0]
     jarNameRaw = 'luckyblock-build'
     jarName = "luckyblock-${project.mcversion}-$version"
@@ -62,5 +62,9 @@ jar {
 }
 
 processResources {
-    expand 'version':version
+    eachFile {
+        if (it.relativePath.segments[0] in ['META-INF']) {
+            expand 'version':version
+        }
+    }
 }

@@ -13,6 +13,7 @@ import mod.lucky.resources.loader.ResourceManager;
 import mod.lucky.structure.Structure;
 import mod.lucky.world.LuckyTickHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -46,8 +47,8 @@ public class Lucky {
     public Lucky() {
         Lucky.VERSION = ModLoadingContext.get().getActiveContainer().getModInfo()
             .getVersion().toString();
-        LOGGER.info("==========" + Lucky.MC_VERSION + ", " + Lucky.VERSION);
 
+        SetupCommon.setupStatic();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupCommon);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
 
@@ -58,7 +59,8 @@ public class Lucky {
     private void setupClient(final FMLClientSetupEvent event) { SetupClient.setup(); }
 
     public static Structure getStructure(String id) {
-        for (Structure structure : structures) if (id.equals(structure.getId())) return structure;
+        for (Structure structure : structures)
+            if (id.equals(structure.id)) return structure;
         return null;
     }
 

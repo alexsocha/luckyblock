@@ -23,7 +23,6 @@ import net.minecraftforge.event.ForgeEventFactory;
 
 public class ItemLuckyBow extends ItemBow implements ILuckyItemContainer {
     private LuckyItem luckyItem = new LuckyItem(this);
-    private String bowTextureName = Lucky.luckyBow.getRegistryName().toString();
 
     public ItemLuckyBow() {
         super(new Item.Properties()
@@ -146,28 +145,25 @@ public class ItemLuckyBow extends ItemBow implements ILuckyItemContainer {
 
     @OnlyIn(Dist.CLIENT)
     public ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining) {
+        String bowTextureName = Lucky.luckyBow.getRegistryName().toString();
         ModelResourceLocation modelResourceLocation =
-            new ModelResourceLocation(this.bowTextureName, "inventory");
+            new ModelResourceLocation(bowTextureName, "inventory");
 
         int useTicks = stack.getUseDuration() - useRemaining;
 
         if (stack.getItem() == this && player.getActiveItemStack() != null) {
             if (useTicks >= 18) {
                 modelResourceLocation =
-                    new ModelResourceLocation(this.bowTextureName + "_pulling_2", "inventory");
+                    new ModelResourceLocation(bowTextureName + "_pulling_2", "inventory");
             } else if (useTicks > 13) {
                 modelResourceLocation =
-                    new ModelResourceLocation(this.bowTextureName + "_pulling_1", "inventory");
+                    new ModelResourceLocation(bowTextureName + "_pulling_1", "inventory");
             } else if (useTicks > 0) {
                 modelResourceLocation =
-                    new ModelResourceLocation(this.bowTextureName + "_pulling_0", "inventory");
+                    new ModelResourceLocation(bowTextureName + "_pulling_0", "inventory");
             }
         }
         return modelResourceLocation;
-    }
-
-    public void setBowTextureName(String bowTextureName) {
-        this.bowTextureName = bowTextureName;
     }
 
     @Override
