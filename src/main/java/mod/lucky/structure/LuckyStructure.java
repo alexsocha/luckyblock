@@ -144,6 +144,7 @@ public class LuckyStructure extends Structure {
             }
             reader.close();
 
+            this.size = new BlockPos(sizeX, sizeY, sizeZ);
             this.initCenterPos();
         } catch (Exception e) {
             Lucky.error(e, "Error loading structure '" + this.id + "'");

@@ -1,5 +1,5 @@
 {
     "variants": {
-        "normal": { "model": "lucky:lucky_block" }
+        "": { "model": "lucky:block/lucky_block" }
     }
 }

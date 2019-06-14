@@ -60,6 +60,6 @@ public class Lucky {
 
     public static void error(@Nullable Exception e, String message) {
         LOGGER.error(message);
-        e.printStackTrace();
+        if (e != null) e.printStackTrace();
     }
 }

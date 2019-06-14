@@ -1,0 +1,14 @@
+Lucky Block for Minecraft 1.3 Add-on changes
+The following assumes you have an add-on named "Lucky Block Red"
+
+----
+
+blockstates/lucky_block_red.json
+    Change variant "normal" to ""
+    Change "lucky:lucky_block_red" to "lucky:block/lucky_block_red"
+
+lang/en_US.lang
+    Change to json format
+    Change block an item name formats, e.g.
+        tile.luckyBlockRed.name -> block.lucky.lucky_block_red
+        item.luckySwordRed.name -> item.lucky.lucky_sword_red
