@@ -7,6 +7,11 @@
   "item.lucky.lucky_bow": "Lucky Bow",
   "item.lucky.lucky_potion": "Lucky Potion",
 
+  "block.lucky.lucky_block.veryLucky": "Very Lucky Block",
+  "block.lucky.lucky_block.unlucky": "Unlucky Block",
+  "item.lucky.lucky_potion.veryLucky": "Very Lucky Potion",
+  "item.lucky.lucky_potion.unlucky": "Unlucky Potion",
+
   "commands.setluckyblock.usage": "/setluckyblock <x> <y> <z> [luck] [customDrops]",
   "commands.setluckyblock.success": "Lucky Block placed",
   "commands.setluckyblock.failed": "Unable to place Luck Block",

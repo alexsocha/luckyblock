@@ -1,6 +1,7 @@
 package mod.lucky.item;
 
 import mod.lucky.entity.EntityLuckyPotion;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
@@ -8,15 +9,25 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 public class ItemLuckyPotion extends Item implements ILuckyItemContainer {
     private LuckyItem luckyItem = new LuckyItem(this) {
         @Override public boolean hasLuckVariantsInGroup() { return true; }
-        @Override public String getVeryLuckyName() { return "Very Lucky Potion"; }
-        @Override public String getUnluckyName() { return "Unlucky Potion"; }
+        @Override public TextComponentBase getVeryLuckyName() {
+            return new TextComponentTranslation("item.lucky.lucky_potion.veryLucky");
+        }
+        @Override public TextComponentBase getUnluckyName() {
+            return new TextComponentTranslation("item.lucky.lucky_potion.unlucky");
+        }
     };
 
     public ItemLuckyPotion() {
@@ -71,5 +82,16 @@ public class ItemLuckyPotion extends Item implements ILuckyItemContainer {
     @OnlyIn(Dist.CLIENT)
     public boolean hasEffect(ItemStack stack) {
         return true;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn,
+        List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        this.luckyItem.addLuckyTooltip(stack, worldIn, tooltip, flagIn);
+    }
+
+    @Override
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+        if (this.isInGroup(group)) this.luckyItem.addLuckySubItems(items);
     }
 }

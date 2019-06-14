@@ -5,6 +5,7 @@ import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,10 +17,14 @@ import net.minecraft.item.*;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemLuckyBow extends ItemBow implements ILuckyItemContainer {
     private LuckyItem luckyItem = new LuckyItem(this);
@@ -173,4 +178,10 @@ public class ItemLuckyBow extends ItemBow implements ILuckyItemContainer {
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean hasEffect(ItemStack stack) { return true; }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn,
+        List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        this.luckyItem.addLuckyTooltip(stack, worldIn, tooltip, flagIn);
+    }
 }

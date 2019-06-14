@@ -4,10 +4,16 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyUtils;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemLuckySword extends ItemSword implements ILuckyItemContainer {
     private LuckyItem luckyItem = new LuckyItem(this);
@@ -53,4 +59,10 @@ public class ItemLuckySword extends ItemSword implements ILuckyItemContainer {
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean hasEffect(ItemStack stack) { return true; }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn,
+        List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        this.luckyItem.addLuckyTooltip(stack, worldIn, tooltip, flagIn);
+    }
 }

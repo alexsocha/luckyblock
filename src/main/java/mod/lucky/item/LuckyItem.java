@@ -9,10 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -33,8 +30,8 @@ public class LuckyItem {
     public DropProcessor getDropProcessor() { return this.dropProcessor; }
 
     public boolean hasLuckVariantsInGroup() { return false; }
-    public String getVeryLuckyName() { return ""; }
-    public String getUnluckyName() { return ""; }
+    public TextComponentBase getVeryLuckyName() { return null; }
+    public TextComponentBase getUnluckyName() { return null; }
 
     @OnlyIn(Dist.CLIENT)
     public void addLuckyTooltip(
@@ -47,24 +44,22 @@ public class LuckyItem {
         ITextComponent luckComponent =
             luck == 0 ? new TextComponentString("" + luck)
                 .applyTextStyle(TextFormatting.GOLD)
-            : luck < 0 ? new TextComponentString("-" + luck)
+            : luck < 0 ? new TextComponentString("" + luck)
                 .applyTextStyle(TextFormatting.RED)
             : new TextComponentString("+" + luck)
                 .applyTextStyle(TextFormatting.GREEN);
 
-        tooltip.add(new TextComponentTranslation("item.luckyBlock.luck")
+        tooltip.add(new TextComponentTranslation("item.lucky.lucky_block.luck")
             .appendText(": ")
             .appendSibling(luckComponent));
 
         String[] drops = this.getRawDrops(stack);
         if (drops != null && drops.length != 0)
-            tooltip.add(new TextComponentTranslation("item.luckyBlock.customDrop")
+            tooltip.add(new TextComponentTranslation("item.lucky.lucky_block.customDrop")
                 .applyTextStyles(TextFormatting.GRAY, TextFormatting.ITALIC));
     }
 
-    public void addLuckySubItems(ItemGroup group, NonNullList<ItemStack> items) {
-        if (this.getContainerItem().getGroup() != group) return;
-
+    public void addLuckySubItems(NonNullList<ItemStack> items) {
         ItemStack normalItemStack = new ItemStack(this.getContainerItem(), 1);
         items.add(normalItemStack);
 
@@ -77,12 +72,12 @@ public class LuckyItem {
 
             ItemStack luckyItemStack = new ItemStack(this.getContainerItem(), 1);
             luckyItemStack.setTag(luckyTag);
-            luckyItemStack.setDisplayName(new TextComponentString(this.getVeryLuckyName()));
+            luckyItemStack.setDisplayName(this.getVeryLuckyName());
             items.add(luckyItemStack);
 
             ItemStack unluckyItemStack = new ItemStack(this.getContainerItem(), 1);
             unluckyItemStack.setTag(unluckyTag);
-            unluckyItemStack.setDisplayName(new TextComponentString(this.getUnluckyName()));
+            unluckyItemStack.setDisplayName(this.getUnluckyName());
             items.add(unluckyItemStack);
         }
     }
