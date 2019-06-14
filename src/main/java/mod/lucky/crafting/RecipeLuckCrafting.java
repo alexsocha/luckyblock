@@ -3,10 +3,12 @@ package mod.lucky.crafting;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import mod.lucky.Lucky;
 import mod.lucky.init.SetupCommon;
 import mod.lucky.item.ILuckyItemContainer;
 import mod.lucky.item.ItemLuckyPotion;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeHidden;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -50,19 +52,23 @@ public class RecipeLuckCrafting extends IRecipeHidden {
         ItemStack luckyStack = findLuckyStack(table);
         if (luckyStack == null) return false;
 
+        ArrayList<LuckCraftingModifier> luckModifiers =
+            LUCK_MODIFIERS.get(luckyStack.getItem());
+        if (luckModifiers == null) return false;
+
         boolean foundModifier = false;
         for (int i = 0; i < table.getSizeInventory(); i++) {
             ItemStack stack = table.getStackInSlot(i);
             if (stack.isEmpty()) continue;
+            if (stack == luckyStack) continue;
 
-            boolean isModifier = LUCK_MODIFIERS.get(luckyStack.getItem()).stream()
+            boolean isModifier = luckModifiers.stream()
                 .anyMatch(l -> l.getItem() == stack.getItem());
             if (!isModifier) return false;
             else foundModifier = true;
         }
 
-        if (!foundModifier) return false;
-        else return true;
+        return foundModifier;
     }
 
     @Override
@@ -114,7 +120,7 @@ public class RecipeLuckCrafting extends IRecipeHidden {
     }
 
     @Override
-    public IRecipeSerializer getSerializer() {
+    public IRecipeSerializer<?> getSerializer() {
         return SetupCommon.LUCK_CRAFTING_SERIALIZER;
     }
 }

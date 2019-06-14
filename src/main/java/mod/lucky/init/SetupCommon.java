@@ -16,8 +16,11 @@ import mod.lucky.structure.Structure;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.block.Block;
+import net.minecraft.data.CustomRecipeBuilder;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeSerializers;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
@@ -34,10 +37,9 @@ public class SetupCommon {
         TileEntityType.register("lucky:lucky_block",
             TileEntityType.Builder.create(TileEntityLuckyBlock::new));
 
-    public static final RecipeSerializers.
-        SimpleSerializer<RecipeLuckCrafting> LUCK_CRAFTING_SERIALIZER =
-            RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
-                "lucky:luck_crafting", RecipeLuckCrafting::new));
+    public static final IRecipeSerializer<RecipeLuckCrafting> LUCK_CRAFTING_SERIALIZER =
+        RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
+            "lucky:crafting_luck", RecipeLuckCrafting::new));
 
     public static final EntityType<EntityLuckyPotion> LUCKY_POTION_TYPE =
         EntityType.register("lucky:potion",
@@ -109,8 +111,6 @@ public class SetupCommon {
         DropFunction.registerFunctions();
 
         //Lucky.resourceManager.registerPlugins();
-        Lucky.resourceManager.extractDefaultResources();
-        Lucky.resourceManager.loadAllResources(false);
     }
 
     public static Structure getStructure(String id) {
@@ -119,5 +119,8 @@ public class SetupCommon {
             .findFirst().get();
     }
 
-    public static void setup() {}
+    public static void setup() {
+        Lucky.resourceManager.extractDefaultResources();
+        Lucky.resourceManager.loadAllResources(false);
+    }
 }

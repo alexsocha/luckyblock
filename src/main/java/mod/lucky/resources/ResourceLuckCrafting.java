@@ -1,5 +1,6 @@
 package mod.lucky.resources;
 
+import mod.lucky.Lucky;
 import mod.lucky.crafting.LuckCraftingModifier;
 import mod.lucky.crafting.RecipeLuckCrafting;
 import mod.lucky.drop.value.ValueParser;
