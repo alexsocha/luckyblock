@@ -8,11 +8,12 @@ import mod.lucky.drop.DropBase;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.DropGroup;
 import mod.lucky.drop.DropSingle;
-import mod.lucky.world.DelayLuckyDrop;
 
 public class DropProcessor {
     private ArrayList<DropFull> drops;
-    private int debugDropIndex = 0;
+
+    public static boolean DEBUG = true;
+    private int debugDropIndex = 50;
     private int debugIndexMin = 0;
     private int debugIndexMax = 1000;
 
@@ -27,6 +28,7 @@ public class DropProcessor {
             this.processDrop(((DropFull) processDrop).getDrop(), processData);
         if (processDrop instanceof DropGroup) {
             DropGroup group = ((DropGroup) processDrop);
+            // group is already shuffled
             for (int i = 0; i < group.getAmount(); i++) {
                 this.processDrop(group.getDrops().get(i), processData);
             }
@@ -37,10 +39,9 @@ public class DropProcessor {
             DropFunction dropFunction = DropFunction.getDropFunction(properties);
 
             if (dropFunction == null)
-                System.err.println(
-                    "Lucky Block: Error processing drop type '"
-                        + properties.getPropertyString("type")
-                        + "'. Drop type does not exist.");
+                Lucky.error(null, "Drop type'"
+                    + properties.getPropertyString("type")
+                    + "' does not exist.");
             else {
                 int amount = properties.getPropertyInt("amount");
                 boolean reinitialize = properties.getPropertyBoolean("reinitialize");
@@ -112,7 +113,7 @@ public class DropProcessor {
     public void processRandomDrop(
         DropProcessData processData, int luck, boolean output, boolean debug) {
         DropFull drop = this.selectRandomDrop(this.drops, luck);
-        if (debug) {
+        if (debug || DEBUG) {
             if (this.debugDropIndex >= this.drops.size() || this.debugDropIndex > this.debugIndexMax)
                 this.debugDropIndex = this.debugIndexMin;
             drop = this.drops.get(this.debugDropIndex);

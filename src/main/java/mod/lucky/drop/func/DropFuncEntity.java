@@ -58,6 +58,7 @@ public class DropFuncEntity extends DropFunction {
         double posX,
         double posY,
         double posZ) {
+
         Entity entity = EntityType.create(nbtTagCompound, world);
         if (entity == null) return null;
 

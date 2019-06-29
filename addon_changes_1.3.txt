@@ -1,4 +1,4 @@
-Lucky Block for Minecraft 1.3 Add-on changes
+Lucky Block for Minecraft 1.13 Add-on changes
 The following assumes you have an add-on named "Lucky Block Red"
 
 ----
@@ -18,3 +18,10 @@ assets/lang/en_US.lang
 data/lucky/recipes/lucky_block_red.json
     Create this file to add a custom crafting recipe
     Use the default lucky block recipe file as an example
+
+=== DROPS ===
+
+Change IDs to 1.13 format - no more 'damage' value
+Change NBT tags to 1.13 format where necessary (e.g. display names, books, signs)
+Use #randSpawnEgg to get a random spawn egg ID
+Use #json to easily convert Lucky Block NBT syntax to JSON (and #jsonStr to escape all quotes, useful for custom display names)

@@ -9,15 +9,19 @@ import java.util.Random;
 import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.util.LuckyUtils;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -29,60 +33,60 @@ import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraft.world.storage.loot.functions.LootFunctionManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class CustomNBTTags {
-    public static final NBTTagCompound protection = getEnchantment(0, 4);
-    public static final NBTTagCompound fireProtection = getEnchantment(1, 4);
-    public static final NBTTagCompound featherFalling = getEnchantment(2, 4);
-    public static final NBTTagCompound blastProtection = getEnchantment(3, 4);
-    public static final NBTTagCompound projectileProtection = getEnchantment(4, 4);
-    public static final NBTTagCompound respiration = getEnchantment(5, 3);
-    public static final NBTTagCompound aquaAffinity = getEnchantment(6, 1);
-    public static final NBTTagCompound thorns = getEnchantment(7, 3);
+    public static final NBTTagCompound protection = getEnchantment(Enchantments.PROTECTION, 4);
+    public static final NBTTagCompound fireProtection = getEnchantment(Enchantments.FIRE_PROTECTION, 4);
+    public static final NBTTagCompound featherFalling = getEnchantment(Enchantments.FEATHER_FALLING, 4);
+    public static final NBTTagCompound blastProtection = getEnchantment(Enchantments.BLAST_PROTECTION, 4);
+    public static final NBTTagCompound projectileProtection = getEnchantment(Enchantments.PROJECTILE_PROTECTION, 4);
+    public static final NBTTagCompound respiration = getEnchantment(Enchantments.RESPIRATION, 3);
+    public static final NBTTagCompound aquaAffinity = getEnchantment(Enchantments.AQUA_AFFINITY, 1);
+    public static final NBTTagCompound thorns = getEnchantment(Enchantments.THORNS, 3);
 
-    public static final NBTTagCompound sharpness = getEnchantment(16, 5);
-    public static final NBTTagCompound smite = getEnchantment(17, 5);
-    public static final NBTTagCompound baneOfArthroponds = getEnchantment(18, 5);
-    public static final NBTTagCompound knockBack = getEnchantment(19, 2);
-    public static final NBTTagCompound fireAspect = getEnchantment(20, 2);
-    public static final NBTTagCompound looting = getEnchantment(21, 3);
+    public static final NBTTagCompound sharpness = getEnchantment(Enchantments.SHARPNESS, 5);
+    public static final NBTTagCompound smite = getEnchantment(Enchantments.SMITE, 5);
+    public static final NBTTagCompound baneOfArthroponds = getEnchantment(Enchantments.BANE_OF_ARTHROPODS, 5);
+    public static final NBTTagCompound knockBack = getEnchantment(Enchantments.KNOCKBACK, 2);
+    public static final NBTTagCompound fireAspect = getEnchantment(Enchantments.FIRE_ASPECT, 2);
+    public static final NBTTagCompound looting = getEnchantment(Enchantments.LOOTING, 3);
 
-    public static final NBTTagCompound efficiency = getEnchantment(32, 5);
-    public static final NBTTagCompound silkTouch = getEnchantment(33, 1);
-    public static final NBTTagCompound unbreaking = getEnchantment(34, 3);
-    public static final NBTTagCompound fortune = getEnchantment(35, 3);
+    public static final NBTTagCompound efficiency = getEnchantment(Enchantments.EFFICIENCY, 5);
+    public static final NBTTagCompound silkTouch = getEnchantment(Enchantments.SILK_TOUCH, 1);
+    public static final NBTTagCompound unbreaking = getEnchantment(Enchantments.UNBREAKING, 3);
+    public static final NBTTagCompound fortune = getEnchantment(Enchantments.FORTUNE, 3);
 
-    public static final NBTTagCompound power = getEnchantment(48, 5);
-    public static final NBTTagCompound punch = getEnchantment(49, 2);
-    public static final NBTTagCompound flame = getEnchantment(50, 1);
-    public static final NBTTagCompound infinity = getEnchantment(51, 1);
+    public static final NBTTagCompound power = getEnchantment(Enchantments.POWER, 5);
+    public static final NBTTagCompound punch = getEnchantment(Enchantments.PUNCH, 2);
+    public static final NBTTagCompound flame = getEnchantment(Enchantments.FLAME, 1);
+    public static final NBTTagCompound infinity = getEnchantment(Enchantments.INFINITY, 1);
+public static final NBTTagCompound luckOfTheSea = getEnchantment(Enchantments.LUCK_OF_THE_SEA, 3);
+    public static final NBTTagCompound lure = getEnchantment(Enchantments.LURE, 3);
 
-    public static final NBTTagCompound luckOfTheSea = getEnchantment(61, 3);
-    public static final NBTTagCompound lure = getEnchantment(62, 3);
-
-    public static final NBTTagCompound speed = getPotionEffect(1, 3, 9600);
-    public static final NBTTagCompound slowness = getPotionEffect(2, 3, 9600);
-    public static final NBTTagCompound haste = getPotionEffect(3, 3, 9600);
-    public static final NBTTagCompound miningFatigue = getPotionEffect(4, 3, 9600);
-    public static final NBTTagCompound strength = getPotionEffect(5, 3, 9600);
-    public static final NBTTagCompound instantHealth = getPotionEffect(6, 3, 0);
-    public static final NBTTagCompound instantDamage = getPotionEffect(7, 3, 0);
-    public static final NBTTagCompound jumpBoost = getPotionEffect(8, 3, 9600);
-    public static final NBTTagCompound nausea = getPotionEffect(9, 0, 9600);
-    public static final NBTTagCompound regeneration = getPotionEffect(10, 3, 9600);
-    public static final NBTTagCompound resistance = getPotionEffect(11, 3, 9600);
-    public static final NBTTagCompound fireResistance = getPotionEffect(12, 0, 9600);
-    public static final NBTTagCompound waterBreathing = getPotionEffect(13, 0, 9600);
-    public static final NBTTagCompound invisibility = getPotionEffect(14, 0, 9600);
-    public static final NBTTagCompound blindness = getPotionEffect(15, 0, 9600);
-    public static final NBTTagCompound nightVision = getPotionEffect(16, 0, 9600);
-    public static final NBTTagCompound hunger = getPotionEffect(17, 3, 9600);
-    public static final NBTTagCompound weakness = getPotionEffect(18, 3, 9600);
-    public static final NBTTagCompound poison = getPotionEffect(19, 3, 9600);
-    public static final NBTTagCompound wither = getPotionEffect(20, 3, 9600);
-    public static final NBTTagCompound healthBoost = getPotionEffect(21, 3, 9600);
-    public static final NBTTagCompound absorbtion = getPotionEffect(22, 3, 9600);
-    public static final NBTTagCompound saturation = getPotionEffect(23, 3, 9600);
+    public static final NBTTagCompound speed = getPotionEffect(MobEffects.SPEED, 3, 9600);
+    public static final NBTTagCompound slowness = getPotionEffect(MobEffects.SLOWNESS, 3, 9600);
+    public static final NBTTagCompound haste = getPotionEffect(MobEffects.HASTE, 3, 9600);
+    public static final NBTTagCompound miningFatigue = getPotionEffect(MobEffects.MINING_FATIGUE, 3, 9600);
+    public static final NBTTagCompound strength = getPotionEffect(MobEffects.STRENGTH, 3, 9600);
+    public static final NBTTagCompound instantHealth = getPotionEffect(MobEffects.INSTANT_HEALTH, 3, 0);
+    public static final NBTTagCompound instantDamage = getPotionEffect(MobEffects.INSTANT_DAMAGE, 3, 0);
+    public static final NBTTagCompound jumpBoost = getPotionEffect(MobEffects.JUMP_BOOST, 3, 9600);
+    public static final NBTTagCompound nausea = getPotionEffect(MobEffects.NAUSEA, 0, 9600);
+    public static final NBTTagCompound regeneration = getPotionEffect(MobEffects.REGENERATION, 3, 9600);
+    public static final NBTTagCompound resistance = getPotionEffect(MobEffects.RESISTANCE, 3, 9600);
+    public static final NBTTagCompound fireResistance = getPotionEffect(MobEffects.FIRE_RESISTANCE, 0, 9600);
+    public static final NBTTagCompound waterBreathing = getPotionEffect(MobEffects.WATER_BREATHING, 0, 9600);
+    public static final NBTTagCompound invisibility = getPotionEffect(MobEffects.INVISIBILITY, 0, 9600);
+    public static final NBTTagCompound blindness = getPotionEffect(MobEffects.BLINDNESS, 0, 9600);
+    public static final NBTTagCompound nightVision = getPotionEffect(MobEffects.NIGHT_VISION, 0, 9600);
+    public static final NBTTagCompound hunger = getPotionEffect(MobEffects.HUNGER, 3, 9600);
+    public static final NBTTagCompound weakness = getPotionEffect(MobEffects.WEAKNESS, 3, 9600);
+    public static final NBTTagCompound poison = getPotionEffect(MobEffects.POISON, 3, 9600);
+    public static final NBTTagCompound wither = getPotionEffect(MobEffects.WITHER, 3, 9600);
+    public static final NBTTagCompound healthBoost = getPotionEffect(MobEffects.HEALTH_BOOST, 3, 9600);
+    public static final NBTTagCompound absorbtion = getPotionEffect(MobEffects.ABSORPTION, 3, 9600);
+    public static final NBTTagCompound saturation = getPotionEffect(MobEffects.SATURATION, 3, 9600);
 
     private static final Gson GSON_INSTANCE =
         (new GsonBuilder())
@@ -97,19 +101,19 @@ public class CustomNBTTags {
             .create();
     public static Random random = new Random();
 
-    public static NBTTagCompound getEnchantment(int id, int maxLevel) {
+    public static NBTTagCompound getEnchantment(Enchantment enchantment, int maxLevel) {
         NBTTagCompound nbttag = new NBTTagCompound();
 
-        nbttag.setShort("id", (short) id);
+        nbttag.setString("id", ForgeRegistries.ENCHANTMENTS.getKey(enchantment).toString());
         nbttag.setShort("lvl", (short) maxLevel);
 
         return nbttag;
     }
 
-    public static NBTTagCompound getPotionEffect(int id, int amplifier, int duration) {
+    public static NBTTagCompound getPotionEffect(Potion potion, int amplifier, int duration) {
         NBTTagCompound nbttag = new NBTTagCompound();
 
-        nbttag.setByte("Id", (byte) id);
+        nbttag.setString("Id", ForgeRegistries.POTIONS.getKey(potion).toString());
         nbttag.setByte("Amplifier", (byte) amplifier);
         nbttag.setInt("Duration", duration);
 

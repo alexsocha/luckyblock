@@ -45,7 +45,6 @@ public class BlockLuckyBlock extends BlockContainer {
             .sound(SoundType.STONE)
             .hardnessAndResistance(0.2f, 6000000.0f));
 
-
         this.dropProcessor = new DropProcessor();
         this.worldGenerator = new LuckyGenerator(this);
     }

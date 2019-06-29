@@ -1,7 +1,11 @@
 package mod.lucky.util;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -22,7 +26,6 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -30,22 +33,27 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 
 public class LuckyUtils {
-    public static int[] potionEffectListGood = {1, 5, 6, 8, 10, 12, 13, 14, 16, 14};
-    public static int[] potionEffectListBad = {2, 7, 18, 19};
-
     private static Random random = new Random();
 
-    private static ArrayList<String> potionNames = new ArrayList<>();
+    private static List<String> potionIds;
+    private static List<String> spawnEggIds;
+    private static List<String> colorNames = Arrays.asList("black", "blue", "brown", "cyan", "gray", "green", "green", "light_blue", "light_gray", "lime", "magenta", "orange", "pink", "purple", "red", "white", "yellow");
 
     static {
-        for (ResourceLocation resource : ForgeRegistries.POTION_TYPES.getKeys()) {
-            String potion = resource.getPath();
-            if (!potion.equals("empty")
-                && !potion.equals("water")
-                && !potion.equals("mundane")
-                && !potion.equals("thick")
-                && !potion.equals("awkward")) potionNames.add(potion);
-        }
+        potionIds = ForgeRegistries.POTIONS.getKeys().stream()
+            .filter(k -> k.getNamespace().equals("minecraft")
+                && !k.getPath().equals("empty")
+                && !k.getPath().equals("water")
+                && !k.getPath().equals("mundane")
+                && !k.getPath().equals("thick")
+                && !k.getPath().equals("awkward"))
+            .map(k -> k.toString()).collect(Collectors.toList());
+
+        spawnEggIds =  ForgeRegistries.ITEMS.getKeys().stream()
+            .filter(k -> k.getNamespace().equals("minecraft")
+                && k.getPath().endsWith("_spawn_egg"))
+            .map(k -> k.toString()).collect(Collectors.toList());
+
     }
 
     public static CommandSource makeCommandSource(
@@ -103,8 +111,11 @@ public class LuckyUtils {
         int colorAmount = random.nextInt(4) + 1;
         int[] colors = new int[colorAmount];
         for (int a = 0; a < colorAmount; a++) {
-            colors[a] = EnumDyeColor.values()[random.nextInt(
-                EnumDyeColor.values().length)].getId();
+            float[] c = EnumDyeColor.values()[
+                random.nextInt(EnumDyeColor.values().length)]
+                .getColorComponentValues();
+            Color color = new Color(c[0], c[1], c[2]);
+            colors[a] = color.getRGB();
         }
         explosionTag.setIntArray("Colors", colors);
 
@@ -120,31 +131,16 @@ public class LuckyUtils {
         return mainTag;
     }
 
-    public static int getRandomPotionDamage() {
-        return calculatePotionDamage(getRandomPotionEffect(), 0);
+    public static String getRandomPotionId() {
+        return potionIds.get(random.nextInt(potionIds.size()));
     }
 
-    public static int calculatePotionDamage(int effect, int isSplash) {
-        // determines whether to leave the tier and duration, increase the
-        // duration by 8/3, or change the tier (halving the duration)
-        int tier = 0;
-        int extended = 0;
-        int i = random.nextInt(3);
-        if (i == 1) tier = 32;
-        if (i == 2) extended = 64;
-
-        // determines if this is a splash potion
-        int splash = 0;
-        if (isSplash == 0) {
-            if (random.nextInt(2) == 0) splash = 16384;
-        } else if (isSplash == 1) splash = 0;
-        else if (isSplash == 2) splash = 16384;
-
-        return effect + tier + extended + splash;
+    public static String getRandomSpawnEggId() {
+        return spawnEggIds.get(random.nextInt(spawnEggIds.size()));
     }
 
-    public static String getRandomPotionName() {
-        return potionNames.get(random.nextInt(potionNames.size()));
+    public static String getRandomColor() {
+        return colorNames.get(random.nextInt(colorNames.size()));
     }
 
     @Nullable
@@ -153,44 +149,6 @@ public class LuckyUtils {
         if (ForgeRegistries.ENTITIES.containsKey(rl))
             return ForgeRegistries.ENTITIES.getValue(rl).create(world);
         else return null;
-    }
-
-    @Deprecated
-    public static int getRandomStatusEffect() {
-        return 0;
-        // return Potion.REGISTRY.getIDForObject(Potion.REGISTRY.getRandomObject(random));
-    }
-
-    public static int getRandomPotionEffect() {
-        return random.nextInt(14) + 1;
-    }
-
-    public static int getRandomPotionEffectGood() {
-        return potionEffectListGood[random.nextInt(potionEffectListGood.length)];
-    }
-
-    public static int getRandomPotionEffectBad() {
-        return potionEffectListBad[random.nextInt(potionEffectListBad.length)];
-    }
-
-    @Deprecated
-    public static int getRandomMobEggID() {
-        return 0;
-        /*
-        Object[] values = EntityList.ENTITY_EGGS.values().toArray();
-        EntityList.EntityEggInfo egg = (EntityList.EntityEggInfo) values[random.nextInt(values.sizeX)];
-        return EntityList.getID(EntityList.getClass(egg.spawnedID));
-        */
-    }
-
-    @Deprecated
-    public static String getRandomMobEggName() {
-        return "";
-        /*
-        Object[] values = EntityList.ENTITY_EGGS.values().toArray();
-        EntityList.EntityEggInfo egg = (EntityList.EntityEggInfo) values[random.nextInt(values.sizeX)];
-        return egg.spawnedID.toString();
-        */
     }
 
     public static int getPlayerDirection(EntityPlayer player, int accuracy) {

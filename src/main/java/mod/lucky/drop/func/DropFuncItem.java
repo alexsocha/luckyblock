@@ -1,5 +1,6 @@
 package mod.lucky.drop.func;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -13,6 +14,10 @@ public class DropFuncItem extends DropFunction {
         DropSingle drop = processData.getDropSingle();
         String itemId = drop.getPropertyString("ID");
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemId));
+        if (item == null) {
+            Lucky.error(null, "Invalid item ID: '" + itemId + "'");
+            return;
+        }
 
         ItemStack itemStack;
         itemStack = new ItemStack(item, 1);

@@ -5,6 +5,9 @@ import java.util.Random;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropProcessData;
@@ -19,10 +22,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class HashVariables {
     private static String[] hashVariables = {
-        "#randPotionDamage",
         "#randPotion",
-        "#randPotionParticle",
-        "#randSpawnEggDamage",
         "#randSpawnEgg",
         "#bPosX",
         "#bPosY",
@@ -62,7 +62,8 @@ public class HashVariables {
         "#bowPosX",
         "#bowPosY",
         "#bowPosZ",
-        "#bowPos"
+        "#bowPos",
+        "#randColor"
     };
     private static String[] bracketHashVariables = {
         "#rand(",
@@ -75,7 +76,8 @@ public class HashVariables {
         "#sPos(",
         "#drop(",
         "#eval(",
-        "#randPotionDamage("
+        "#json(",
+        "#jsonStr("
     };
 
     private static Random random = new Random();
@@ -87,15 +89,9 @@ public class HashVariables {
 
         string = processBracketHash(string, processData);
 
-        string =
-            string.replace("#randPotionDamage", String.valueOf(LuckyUtils.getRandomPotionDamage()));
-        string =
-            string.replace(
-                "#randPotionParticle", String.valueOf(LuckyUtils.getRandomStatusEffect()));
-        string = string.replace("#randPotion", LuckyUtils.getRandomPotionName());
-        string =
-            string.replace("#randSpawnEggDamage", String.valueOf(LuckyUtils.getRandomMobEggID()));
-        string = string.replace("#randSpawnEgg", LuckyUtils.getRandomMobEggName());
+        string = string.replace("#randPotion", LuckyUtils.getRandomPotionId());
+        string = string.replace("#randSpawnEgg", LuckyUtils.getRandomSpawnEggId());
+        string = string.replace("#randColor", LuckyUtils.getRandomColor());
 
         if (processData != null) {
             Vec3d harvestPos = processData.getHarvestPos();
@@ -267,9 +263,11 @@ public class HashVariables {
                     if (type.equals("#randPosNeg") && random.nextInt(2) == 0) num *= -1;
                     return String.valueOf(num);
                 }
+
             } else if (type.equals("#randList")) {
                 int index = random.nextInt(properties.length);
                 return ValueParser.getString(properties[index], processData);
+
             } else if (type.equals("#circleOffset")) {
                 int min = 0;
                 int max = 0;
@@ -285,6 +283,7 @@ public class HashVariables {
                 int length = (int) Math.round(radius * Math.sin(Math.toRadians(angle)));
                 int width = (int) Math.round(radius * Math.cos(Math.toRadians(angle)));
                 return "(" + length + "," + 0 + "," + width + ")";
+
             } else if (type.equals("#eval")) {
                 Object value = scriptEngine.eval(processString(properties[0], processData));
                 String result = String.valueOf(value);
@@ -293,6 +292,31 @@ public class HashVariables {
                     result = result.substring(0, result.length() - 2);
                 else result = String.valueOf(value);
                 return fixBackslash(result);
+
+            } else if (type.equals("#json") || type.equals("#jsonStr")) {
+                String nbtStr = properties[0];
+                if (Character.isLetter(nbtStr.toCharArray()[0]))
+                    nbtStr = "(" + nbtStr + ")";
+
+                try {
+                    String jsonString = ValueParser.getNBTTag(nbtStr).toString();
+
+                    JsonParser parser = new JsonParser();
+                    JsonElement jsonEl = parser.parse(jsonString);
+
+                    if (type.equals("#json")) return jsonEl.toString();
+                    else {
+                        JsonObject jsonObj = new JsonObject();
+                        jsonObj.addProperty("", jsonEl.toString());
+
+                        String jsonObjStr = jsonObj.toString();
+                        return jsonObjStr.substring("{\"\":".length(),
+                            jsonObjStr.length() - 1);
+                    }
+                } catch (Exception e) {
+                    Lucky.error(e, "Error evaluating NBT as JSON: " + nbtStr);
+                }
+
             } else if (processData != null
                 && processData.getProcessType() == DropProcessData.EnumProcessType.LUCKY_STRUCT
                 && processData.getDropSingle() != null
@@ -364,6 +388,7 @@ public class HashVariables {
                                     + Math.round(worldPos.getZ())
                                     + ")"));
                 }
+
             } else if (processData != null
                 && processData.getProcessType() == DropProcessData.EnumProcessType.LUCKY_STRUCT
                 && processData.getDropSingle() != null
@@ -371,6 +396,7 @@ public class HashVariables {
                 String name = properties[0];
                 return processData.getDropSingle().getProperty(name).toString();
             }
+
         } catch (Exception e) {
             Lucky.error(e, "Error processing hash variable: " + string);
         }

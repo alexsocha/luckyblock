@@ -2,6 +2,7 @@ package mod.lucky.drop.func;
 
 import com.google.common.collect.Lists;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.mojang.brigadier.StringReader;
@@ -26,9 +27,12 @@ public class DropFuncParticle extends DropFunction {
         boolean isEvent = false;
         int eventId = 0;
 
+        ResourceLocation particleResLoc = new ResourceLocation(particleId);
+
+        ParticleType particleType = null;
         // particle registry
-        ParticleType particleType = IRegistry.field_212632_u.get(
-            new ResourceLocation(particleId));
+        if (IRegistry.field_212632_u.func_212607_c(particleResLoc))
+            particleType = IRegistry.field_212632_u.get(particleResLoc);
 
         if (particleType == null) {
             if (ValueParser.getString(
@@ -66,7 +70,6 @@ public class DropFuncParticle extends DropFunction {
                         .deserialize(particleType, new StringReader(particleArgs));
                 } catch (CommandSyntaxException e) {
                     Lucky.error(e, "Failed to process particle: " + particleId);
-                    Lucky.error(e, e.getMessage());
                     return;
                 }
 
