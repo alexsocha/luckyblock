@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
-import mod.lucky.drop.func.DropFunction;
+import mod.lucky.drop.func.DropFunc;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.ValueParser;
@@ -73,7 +73,7 @@ public class LuckyStructure extends Structure {
             }
             entityDrop.setVecPos(StructureUtils.getWorldPos(
                 originalPos, this.centerPos, harvestPos, rotation));
-            DropFunction.getDropFunction("entity").process(entityProcessData);
+            DropFunc.getDropFunction("entity").process(entityProcessData);
         }
 
         if (this.blockUpdate) blockPlacer.update();

@@ -4,24 +4,19 @@ import mod.lucky.drop.DropSingle;
 import mod.lucky.entity.EntityLuckyProjectile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 
 import java.util.UUID;
 
-public class DropFuncEntity extends DropFunction {
+public class DropFuncEntity extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
@@ -51,40 +46,22 @@ public class DropFuncEntity extends DropFunction {
         }
     }
 
-    private static Entity spawnEntity(
-        DropProcessData processData,
-        NBTTagCompound nbtTagCompound,
-        World world,
-        double posX,
-        double posY,
-        double posZ) {
+    private static Entity spawnEntity(DropProcessData processData, NBTTagCompound tag,
+        World world, double posX, double posY, double posZ) {
 
-        Entity entity = EntityType.create(nbtTagCompound, world);
+        if (!tag.hasKey("Pos")) {
+            NBTTagList posList = new NBTTagList();
+            posList.add(new NBTTagDouble(posX));
+            posList.add(new NBTTagDouble(posY));
+            posList.add(new NBTTagDouble(posZ));
+            tag.setTag("Pos", posList);
+        }
+
+        Entity entity = AnvilChunkLoader.readWorldEntity(tag, world, true);
         if (entity == null) return null;
 
-        if (entity instanceof EntityTippedArrow
-            && !nbtTagCompound.hasKey("Potion")
-            && !nbtTagCompound.hasKey("CustomPotionEffects"))
-            ((EntityTippedArrow) entity).setPotionEffect(new ItemStack(Items.ARROW));
-
-        boolean hasPos = nbtTagCompound.hasKey("Pos");
-        boolean hasMotion = nbtTagCompound.hasKey("Motion");
-        boolean hasRotation = nbtTagCompound.hasKey("Rotation");
-        if (!hasPos) {
-            entity.posX = posX;
-            entity.posY = posY;
-            entity.posZ = posZ;
-        }
-        if (entity instanceof EntityThrowable && !hasRotation && hasMotion) {
-            float sqrt =
-                MathHelper.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ);
-            entity.rotationYaw = (float) (Math.atan2(entity.motionX, entity.motionZ) * 180.0D / Math.PI);
-            entity.rotationPitch = (float) (Math.atan2(entity.motionY, sqrt) * 180.0D / Math.PI);
-            entity.velocityChanged = true;
-        }
-
         UUID playerUUID = processData.getPlayer().getUniqueID();
-        if (entity instanceof EntityFallingBlock && !nbtTagCompound.hasKey("Time"))
+        if (entity instanceof EntityFallingBlock && !tag.hasKey("Time"))
             ((EntityFallingBlock) entity).fallTime = 1;
         else if (entity instanceof EntityLuckyProjectile)
             ((EntityLuckyProjectile) entity).shootingEntity = playerUUID;
@@ -100,37 +77,18 @@ public class DropFuncEntity extends DropFunction {
                 break;
             }
         }
-        entity.setLocationAndAngles(
-            entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
 
-        if (entity instanceof EntityLiving) {
-            if (processData.getProcessType() != DropProcessData.EnumProcessType.LUCKY_STRUCT) {
-                ((EntityLiving) entity)
-                    .onInitialSpawn(
-                        world.getDifficultyForLocation(new BlockPos(entity)),
-                        null, null);
-            }
-            entity.read(nbtTagCompound);
+        // randomize entity
+        if (entity instanceof EntityLiving
+            && processData.getProcessType() != DropProcessData.EnumProcessType.LUCKY_STRUCT) {
+
+            ((EntityLiving) entity).onInitialSpawn(
+                world.getDifficultyForLocation(new BlockPos(entity)),
+                null, null);
+            entity.read(tag);
         }
 
-        if (!world.spawnEntity(entity)) {
-            return null;
-        } else {
-            if (nbtTagCompound.hasKey("Passengers")) {
-                NBTTagList nbttaglist = nbtTagCompound.getList(
-                    "Passengers", Constants.NBT.TAG_COMPOUND);
-
-                for (int i = 0; i < nbttaglist.size(); ++i) {
-                    Entity entity1 = spawnEntity(processData,
-                        nbttaglist.getCompound(i),
-                        world,
-                        posX, posY, posZ);
-                    if (entity1 != null) entity1.startRiding(entity, true);
-                }
-            }
-
-            return entity;
-        }
+        return entity;
     }
 
     @Override

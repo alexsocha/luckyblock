@@ -13,7 +13,7 @@ public class DropProcessor {
     private ArrayList<DropFull> drops;
 
     public static boolean DEBUG = true;
-    private int debugDropIndex = 50;
+    private int debugDropIndex = 80;
     private int debugIndexMin = 0;
     private int debugIndexMax = 1000;
 
@@ -36,7 +36,7 @@ public class DropProcessor {
         if (processDrop instanceof DropSingle) {
             DropSingle originalDrop = (DropSingle) drop;
             DropSingle properties = (DropSingle) processDrop;
-            DropFunction dropFunction = DropFunction.getDropFunction(properties);
+            DropFunc dropFunction = DropFunc.getDropFunction(properties);
 
             if (dropFunction == null)
                 Lucky.error(null, "Drop type'"
@@ -80,7 +80,7 @@ public class DropProcessor {
     public void processDelayDrop(DropProcessData processData) {
         DropSingle originalDrop = processData.getDropSingle();
         DropSingle properties = processData.getDropSingle();
-        DropFunction dropFunction = DropFunction.getDropFunction(properties);
+        DropFunc dropFunction = DropFunc.getDropFunction(properties);
         if (dropFunction == null)
             System.err.println(
                 "Lucky Block: Error processing drop type '"

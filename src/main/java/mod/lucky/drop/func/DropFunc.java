@@ -5,7 +5,7 @@ import java.util.HashMap;
 import mod.lucky.drop.DropSingle;
 import net.minecraft.nbt.NBTTagCompound;
 
-public abstract class DropFunction {
+public abstract class DropFunc {
     public abstract void process(DropProcessData processData);
 
     public abstract String getType();
@@ -45,7 +45,7 @@ public abstract class DropFunction {
         DropSingle.setDefaultProperty("all", "NBTTag", NBTTagCompound.class, null);
     }
 
-    private static HashMap<String, DropFunction> dropFunctions = new HashMap<String, DropFunction>();
+    private static HashMap<String, DropFunc> dropFunctions = new HashMap<String, DropFunc>();
 
     public static void registerFunctions() {
         registerDropFunction(new DropFuncBlock());
@@ -65,15 +65,15 @@ public abstract class DropFunction {
         registerGlobalProperties();
     }
 
-    public static DropFunction getDropFunction(DropSingle dropSingle) {
+    public static DropFunc getDropFunction(DropSingle dropSingle) {
         return getDropFunction(dropSingle.getPropertyString("type"));
     }
 
-    public static DropFunction getDropFunction(String type) {
+    public static DropFunc getDropFunction(String type) {
         return dropFunctions.get(type);
     }
 
-    public static void registerDropFunction(DropFunction dropFunction) {
+    public static void registerDropFunction(DropFunc dropFunction) {
         dropFunctions.put(dropFunction.getType(), dropFunction);
         dropFunction.registerProperties();
     }

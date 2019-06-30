@@ -2,7 +2,7 @@ package mod.lucky.drop.func;
 
 import net.minecraft.util.text.TextComponentString;
 
-public class DropFuncMessage extends DropFunction {
+public class DropFuncMessage extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         processData

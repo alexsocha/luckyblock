@@ -15,7 +15,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class DropFuncEffect extends DropFunction {
+public class DropFuncEffect extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();

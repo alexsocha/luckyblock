@@ -2,7 +2,7 @@ package mod.lucky.drop.func;
 
 import mod.lucky.drop.DropSingle;
 
-public class DropFuncExplosion extends DropFunction {
+public class DropFuncExplosion extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();

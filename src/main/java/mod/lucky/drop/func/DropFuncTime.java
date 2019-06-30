@@ -2,10 +2,8 @@ package mod.lucky.drop.func;
 
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 
-public class DropFuncTime extends DropFunction {
+public class DropFuncTime extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();

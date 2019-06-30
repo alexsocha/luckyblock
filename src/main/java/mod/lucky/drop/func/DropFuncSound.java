@@ -9,7 +9,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class DropFuncSound extends DropFunction {
+public class DropFuncSound extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();

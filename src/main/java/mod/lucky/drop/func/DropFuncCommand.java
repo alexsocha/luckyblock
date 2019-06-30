@@ -7,7 +7,7 @@ import mod.lucky.util.LuckyUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.world.WorldServer;
 
-public class DropFuncCommand extends DropFunction {
+public class DropFuncCommand extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();

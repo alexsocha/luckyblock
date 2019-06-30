@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import mod.lucky.drop.DropSingle;
-import mod.lucky.drop.func.DropFunction;
+import mod.lucky.drop.func.DropFunc;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.ValueParser;
@@ -115,7 +115,7 @@ public class Structure {
 
             drop.setProperty("ID", this.overlayStruct);
             drop.setProperty("applyBlockMode", "overlay");
-            DropFunction.getDropFunction(drop).process(processData);
+            DropFunc.getDropFunction(drop).process(processData);
             drop.setProperty("ID", oldId);
             drop.setProperty("applyBlockMode", oldBlockMode);
         }

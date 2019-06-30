@@ -5,7 +5,7 @@ import mod.lucky.drop.DropSingle;
 import mod.lucky.init.SetupCommon;
 import mod.lucky.structure.Structure;
 
-public class DropFuncStructure extends DropFunction {
+public class DropFuncStructure extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();

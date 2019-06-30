@@ -4,7 +4,7 @@ import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
 import net.minecraft.world.EnumDifficulty;
 
-public class DropFuncDifficulty extends DropFunction {
+public class DropFuncDifficulty extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();

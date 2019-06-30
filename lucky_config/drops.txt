@@ -57,7 +57,7 @@ ID=saddle,amount=2@luck=0
 ID=cake@luck=0
 ID=rotten_flesh@luck=-1
 ID=nether_star@luck=2
-ID=poppy,NBTTag=(display=(Name=#jsonStr(text="Romantic Rose\",\"color\":\"dark_red"))))@luck=-1
+ID=poppy,NBTTag=(display=(Name=(text=#jsonStr(text="Romantic Rose",color=dark_red))))@luck=-1
 ID=rabbit_stew,amount=#rand(5,7)@luck=1
 
 / ========== GROUPS ==========
@@ -92,8 +92,8 @@ ID=#randSpawnEgg,amount=#rand(4,8)@luck=1
 / heads
 group:#rand(1,3):(ID=skeleton_skull;ID=wither_skeleton_skull;ID=zombie_head;ID=player_head;ID=creeper_head)@luck=0
 
-/ jukebox music discs
-group(ID=jukebox;ID=#rand(2256,2267),amount=#rand(1,3))@luck=1
+/ jukebox and music discs
+group(ID=jukebox;ID=#randList(music_disc_11,music_disc_13,music_disc_blocks,music_disc_chirp,music_disc_far,music_disc_mall,music_disc_mellohi,music_disc_stal,music_disc_strad,music_disc_wait,music_disc_ward),amount=#rand(1,3))@luck=1
 
 / brewing
 group(ID=ender_pearl,amount=#rand(1,3);ID=blaze_rod,amount=#rand(1,3);ID=ghast_tear,amount=#rand(1,3);ID=gold_nugget,amount=#rand(1,3);ID=nether_wart,amount=#rand(1,3);ID=spider_eye,amount=#rand(1,3);ID=fermented_spider_eye,amount=#rand(1,3);ID=blaze_powder,amount=#rand(1,3);ID=magma_cream,amount=#rand(1,3);ID=ender_eye,amount=#rand(1,3);ID=glistering_melon_slice,amount=#rand(1,3);ID=rabbit_foot,amount=#rand(1,3);type=particle,ID=splashpotion,potion="fire_resistance")@luck=2
@@ -117,7 +117,7 @@ group(ID=fishing_rod;ID=#randList(cod,pufferfish,salmon,tropical_fish),amount=#r
 group:1:(ID=clock,NBTTag=(display=(Name=#jsonStr(text="You're wasting your time")));ID=tropical_fish,NBTTag=(display=(Name=#jsonStr(text="I'm funny")));ID=pufferfish,NBTTag=(display=(Name=#jsonStr(text="Oooooh!"))))@luck=-1
 
 / flowers
-#randList(dandelion,poppy,blue_orchid,allium,azure_bluet,pink_tulip,oxeye_daisy),amount=64@luck=0
+ID=#randList(dandelion,poppy,blue_orchid,allium,azure_bluet,pink_tulip,oxeye_daisy),amount=64@luck=0
 
 / enchantment books
 ID=enchanted_book,NBTTag=(StoredEnchantments=#randEnchantment),amount=#rand(7,10)@luck=1
@@ -128,10 +128,10 @@ group(ID=prismarine,amount=#rand(4,8);ID=prismarine,damage=1,amount=#rand(4,8);I
 / ========== ENTITIES ==========
 
 / lucky mobs
-group:1:(type=entity,ID=pig,NBTTag=(CustomName=(text="$e$lLucky Pig"),CustomNameVisible=true);type=entity,ID=cow,NBTTag=(CustomName=(text="$e$lLucky Cow"),CustomNameVisible=true);type=entity,ID=chicken,NBTTag=(CustomName=(text="$e$lLucky Chicken"),CustomNameVisible=true);type=entity,ID=sheep,NBTTag=(CustomName=(text="$e$lLucky Sheep"),CustomNameVisible=true);type=entity,ID=rabbit,NBTTag=(CustomName=(text="$e$lLucky Rabbit"),CustomNameVisible=true);type=entity,ID=squid,NBTTag=(CustomName=(text="$e$lUnlucky Squid"),CustomNameVisible=true))@luck=0
+group:1:(type=entity,ID=pig,NBTTag=(CustomName=#jsonStr(text="Lucky Pig",color=yellow,bold=true),CustomNameVisible=true);type=entity,ID=cow,NBTTag=(CustomName=#jsonStr(text="Lucky Cow",color=yellow,bold=true),CustomNameVisible=true);type=entity,ID=chicken,NBTTag=(CustomName=#jsonStr(text="Lucky Chicken",color=yellow,bold=true),CustomNameVisible=true);type=entity,ID=sheep,NBTTag=(CustomName=#jsonStr(text="Lucky Sheep",color=yellow,bold=true),CustomNameVisible=true);type=entity,ID=rabbit,NBTTag=(CustomName=#jsonStr(text="Lucky Rabbit",color=yellow,bold=true),CustomNameVisible=true);type=entity,ID=squid,NBTTag=(CustomName=#jsonStr(text="Unlucky Squid",color=yellow,bold=true),CustomNameVisible=true))@luck=0
 
 / colored sheep
-type=entity,ID=sheep,NBTTag=(CustomName=(text="$cM$6r. $eR$aa$2i$bn$3b$5o$dw"),CustomNameVisible=true,Color=#rand(0,15)),posOffset=#circleOffset(4),amount=16@luck=1
+type=entity,ID=sheep,NBTTag=(CustomName=#jsonStr(text="$cM$6r. $eR$aa$2i$bn$3b$5o$dw")),CustomNameVisible=true,Color=#rand(0,15)),posOffset=#circleOffset(4),amount=16@luck=1
 
 / eggs + diamonds
 group(type=entity,ID=egg,NBTTag=(Motion=#randLaunchMotion(0.6,15)),amount=40;type=entity,ID=item,NBTTag=(Item=(id=diamond,Count=1),Motion=#randLaunchMotion(0.7,18)),amount=20)@luck=2
@@ -154,69 +154,82 @@ group(type=difficulty,ID=hard;type=entity,ID=ghast)@chance=0.2@luck=-2
 group(type=difficulty,ID=hard;type=entity,ID=guardian,NBTTag=(Elder=1)))@chance=0.5@luck=-2
 / killer rabbit
 group(type=difficulty,ID=hard;type=entity,ID=rabbit,NBTTag=(RabbitType=99))@luck=-1
+
 / bob zombie
-group(type=difficulty,ID=hard;type=entity,ID=zombie,NBTTag=(HandItems=[(id=diamond_sword,Count=1,tag=(ench=#luckySwordEnchantments))],ArmorItems=[(id=diamond_boots,Count=1,tag=(ench=#luckyBootsEnchantments)),(id=diamond_leggings,Count=1,tag=(ench=#luckyLeggingsEnchantments)),(id=diamond_chestplate,Count=1,tag=(ench=#luckyChestplateEnchantments)),(id=diamond_helmet,Count=1,tag=(ench=#luckyHelmetEnchantments))],HandDropChances=[0.5f,0f],ArmorDropChances=[0.3f,0.3f,0.3f,0.3f],CustomName=(text="$9$lBob"),CustomNameVisible=true))@luck=-2
+group(type=difficulty,ID=hard;type=entity,ID=zombie,NBTTag=(HandItems=[(id=diamond_sword,Count=1,tag=(Enchantments=#luckySwordEnchantments))],ArmorItems=[(id=diamond_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments)),(id=diamond_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments)),(id=diamond_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments)),(id=diamond_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments))],HandDropChances=[0.5f,0f],ArmorDropChances=[0.3f,0.3f,0.3f,0.3f],CustomName=#jsonStr(text="Bob",color=blue,bold=true),CustomNameVisible=true))@luck=-2
+
 / ghostly horseman skeleton
-group(type=difficulty,ID=hard;type=entity,ID=Bat,NBTTag=(Silent=true,ActiveEffects=[(Id=14,Duration=100000,Amplifier=1,ShowParticles=false)],Passengers=[(id=skeleton_horse,Tame=true,Type=4,Passengers=[(id=Skeleton,HandItems=[(id=bow,Count=1,tag=(ench=#luckyBowEnchantments))],ArmorItems=[(id=chainmail_boots,Count=1,tag=(ench=#luckyBootsEnchantments)),(id=chainmail_leggings,Count=1,tag=(ench=#luckyLeggingsEnchantments)),(id=chainmail_chestplate,Count=1,tag=(ench=#luckyChestplateEnchantments)),(id=chainmail_helmet,Count=1,tag=(ench=#luckyHelmetEnchantments))],HandDropChances=[0.5f,0f],ArmorDropChances=[0.3f,0.3f,0.3f,0.3f],CustomName=(text="$7$lGhostly Horseman"),CustomNameVisible=true)])]))@luck=-2
+group(type=difficulty,ID=hard;type=entity,ID=bat,NBTTag=(Silent=true,ActiveEffects=[(Id=14,Duration=100000,Amplifier=1,ShowParticles=false)],Passengers=[(id=skeleton_horse,Tame=true,Type=4,Passengers=[(id=skeleton,HandItems=[(id=bow,Count=1,tag=(Enchantments=#luckyBowEnchantments))],ArmorItems=[(id=chainmail_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments)),(id=chainmail_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments)),(id=chainmail_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments)),(id=chainmail_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments))],HandDropChances=[0.5f,0f],ArmorDropChances=[0.3f,0.3f,0.3f,0.3f],CustomName=#jsonStr(text="$7$lGhostly Horseman"),CustomNameVisible=true)])]))@luck=-2
 
 / stacked villager and pigs
-type=entity,ID=Pig,NBTTag=(Passengers=[(id=Pig,Passengers=[(id=Pig,Passengers=[(id=Pig,Passengers=[(id=Pig,Passengers=[(id=Pig,Passengers=[(id=Pig,Passengers=[(id=Pig,Passengers=[(id=Villager)])])])])])])])])@luck=0
+type=entity,ID=pig,NBTTag=(Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=villager)])])])])])])])])@luck=0
 
 / horses
 type=entity,ID=#randList(horse,skeleton_horse,zombie_horse),amount=12,posOffset=#circleOffset(4),NBTTag=(Tame=true,OwnerUUID=#pUUID)@luck=1
 
 / llamas
-type=entity,ID=llama,amount=8,posOffset=#circleOffset(4),NBTTag=(CustomName=(text="#randList(\"Llaura\",\"Llauretta\",\"Llavender\",\"Llinda\",\"Llisa\",\"Llouise\",\"Llucy\",\"Llydia\"),\"color\":\"dark_purple\",\"bold\":true}",Variant=#rand(0,3),CustomNameVisible=true)@luck=0
+type=entity,ID=llama,amount=8,posOffset=#circleOffset(4),NBTTag=(CustomName=#jsonStr(text=#randList(Llaura,Llauretta,Llavender,Llinda,Llisa,Llouise,Llucy,Llydia),color=dark_purple,bold=true),Variant=#rand(0,3),CustomNameVisible=true)@luck=0
 
 / witch with bats
-group(type=difficulty,ID=hard;type=entity,ID=Witch;type=entity,ID=Bat,posY=#bPosY+#rand(0,2),posOffset=#circleOffset(0,1),amount=64)@luck=-1
+group(type=difficulty,ID=hard;type=entity,ID=witch;type=entity,ID=bat,posY=#bPosY+#rand(0,2),posOffset=#circleOffset(0,1),amount=64)@luck=-1
 / huge slime and magma cube
-group:1:(type=entity,ID=Slime,NBTTag=(Size=10);type=entity,ID=magma_cube,NBTTag=(Size=10))@luck=-2
+group:1:(type=entity,ID=slime,NBTTag=(Size=10);type=entity,ID=magma_cube,NBTTag=(Size=10))@luck=-2
 
 / pet wolves
-group(type=entity,ID=Wolf,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(CollarColor=#rand(0,14),OwnerUUID=#pUUID,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
+group(type=entity,ID=wolf,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(CollarColor=#rand(0,14),OwnerUUID=#pUUID,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
 / pet cats
 group(type=entity,ID=ocelot,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(CatType=#rand(0,3),OwnerUUID=#pUUID,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
 / pet rabbits
-group(type=entity,ID=Rabbit,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(RabbitType=#rand(0,5),OwnerUUID=#pUUID,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
+group(type=entity,ID=rabbit,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(RabbitType=#rand(0,5),OwnerUUID=#pUUID,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
 
 / hero villagers
-type=entity,ID=Villager,NBTTag=(Offers=(Recipes=[(buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_sword,Count=1,tag=(ench=#luckySwordEnchantments,display=(Name="$9$lHero's Sword"))),maxUses=1),(buy=(id=diamond,Count=#rand(20,25)),sell=(id=bow,Count=1,tag=(ench=#luckyBowEnchantments,display=(Name="$9$lHero's Bow"))),maxUses=1),(buy=(id=diamond,Count=#rand(10,15)),sell=(id=fishing_rod,Count=1,tag=(ench=#luckyFishingRodEnchantments,display=(Name="$9$lHero's Fishing Rod"))),maxUses=1),(buy=(id=diamond,Count=#rand(10,15)),sell=(id=potion,Count=1,tag=(Potion="fire_resistance",CustomPotionEffects=#luckyPotionEffects,display=(Name="$9$lHero's Potion"))),maxUses=1),(buy=(id=diamond,Count=#rand(7,12)),sell=(id=splash_potion,Count=1,tag=(Potion="harming",CustomPotionEffects=#unluckyPotionEffects,display=(Name="$4$lEvil Potion"))),maxUses=1)]),CustomName="$9$lHero Villager",CustomNameVisible=true)@luck=1
+type=entity,ID=villager,NBTTag=(Offers=(Recipes=[(buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_sword,Count=1,tag=(Enchantments=#luckySwordEnchantments,display=(Name=#jsonStr(text="Hero's Sword",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(20,25)),sell=(id=bow,Count=1,tag=(Enchantments=#luckyBowEnchantments,display=(Name=#jsonStr(text="Hero's Bow",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(10,15)),sell=(id=fishing_rod,Count=1,tag=(Enchantments=#luckyFishingRodEnchantments,display=(Name=#jsonStr(text="Hero's Fishing Rod",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(10,15)),sell=(id=potion,Count=1,tag=(Potion="fire_resistance",CustomPotionEffects=#luckyPotionEffects,display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(7,12)),sell=(id=splash_potion,Count=1,tag=(Potion="harming",CustomPotionEffects=#unluckyPotionEffects,display=(Name=#jsonStr(text="Evil Potion",color=blue,bold=true)))),maxUses=1)]),CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true)@luck=1
 
-type=entity,ID=Villager,NBTTag=(Offers=(Recipes=[(buy=(id=diamond,Count=#rand(12,17)),sell=(id=diamond_helmet,Count=1,tag=(ench=#luckyHelmetEnchantments,display=(Name="$9$lHero's Helmet"))),maxUses=1),(buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_chestplate,Count=1,tag=(ench=#luckyChestplateEnchantments,display=(Name="$9$lHero's Chestplate"))),maxUses=1),(buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_leggings,Count=1,tag=(ench=#luckyLeggingsEnchantments,display=(Name="$9$lHero's Leggings"))),maxUses=1),(buy=(id=diamond,Count=#rand(12,17)),sell=(id=diamond_boots,Count=1,tag=(ench=#luckyBootsEnchantments,display=(Name="$9$lHero's Boots"))),maxUses=1)]),CustomName="$9$lHero Villager",CustomNameVisible=true)@luck=1
+type=entity,ID=villager,NBTTag=(Offers=(Recipes=[(buy=(id=diamond,Count=#rand(12,17)),sell=(id=diamond_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments,display=(Name=#jsonStr(text="Hero's Helmet",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments,display=(Name=#jsonStr(text="Hero's Chestplate",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments,display=(Name=#jsonStr(text="Hero's Leggings",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(12,17)),sell=(id=diamond_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments,display=(Name=#jsonStr(text="Hero's Boots",color=blue,bold=true)))),maxUses=1)]),CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true)@luck=1
 
-type=entity,ID=Villager,NBTTag=(Offers=(Recipes=[(buy=(id=diamond,Count=#rand(10,15)),sell=(id=diamond_shovel,Count=1,tag=(ench=#luckyToolEnchantments,display=(Name="$9$lHero's Shovel"))),maxUses=1),(buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_pickaxe,Count=1,tag=(ench=#luckyToolEnchantments,display=(Name="$9$lHero's Pickaxe"))),maxUses=1),(buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_axe,Count=1,tag=(ench=#luckyAxeEnchantments,display=(Name="$9$lHero's Axe"))),maxUses=1),(buy=(id=diamond,Count=#rand(10,15)),sell=(id=diamond_hoe,Count=1,tag=(ench=#luckyToolEnchantments,display=(Name="$9$lHero's Hoe"))),maxUses=1)]),CustomName="$9$lHero Villager",CustomNameVisible=true)@luck=1
+type=entity,ID=villager,NBTTag=(Offers=(Recipes=[(buy=(id=diamond,Count=#rand(10,15)),sell=(id=diamond_shovel,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Shovel",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_pickaxe,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Pickaxe",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_axe,Count=1,tag=(Enchantments=#luckyAxeEnchantments,display=(Name=#jsonStr(text="Hero's Axe",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(10,15)),sell=(id=diamond_hoe,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Hoe",color=blue,bold=true)))),maxUses=1)]),CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true)@luck=1
+
+/ [[[[[[[[[ test ]]]]]]]]]
+
+type=structure,ID=test
 
 / falling blocks (iron, gold, diamond, emerald)
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(Block=iron_block);type=particle,ID=largesmoke,size=(1,2,1),particleAmount=500;type=sound,ID=block.fire.extinguish)@luck=0
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(Block=gold_block);type=particle,ID=flame,size=(1,2,1),particleAmount=500;type=sound,ID=entity.ghast.shoot)@luck=0
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(Block=diamond_block);type=entity,ID=LightningBolt)@luck=1
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(Block=emerald_block);type=particle,ID=happyVillager,size=(1,2,1),particleAmount=500;type=sound,ID=block.grass.break)@luck=0
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(Block=lapis_block);type=particle,ID=splash,size=(1,2,1),particleAmount=1000;type=sound,ID=entity.player.swim)@luck=0
+group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=iron_block));type=particle,ID=large_smoke,size=(1,2,1),particleAmount=500;type=sound,ID=block.fire.extinguish)@luck=0
+
+group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=gold_block));type=particle,ID=flame,size=(1,2,1),particleAmount=500;type=sound,ID=entity.ghast.shoot)@luck=0
+
+group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=diamond_block));type=entity,ID=LightningBolt)@luck=1
+
+group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=emerald_block));type=particle,ID=happy_villager,size=(1,2,1),particleAmount=500;type=sound,ID=block.grass.break)@luck=0
+
+group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=lapis_block));type=particle,ID=splash,size=(1,2,1),particleAmount=1000;type=sound,ID=entity.player.swim)@luck=0
 
 / colorful pole
-group(type=fill,ID=air,size=(1,51,1);group(NBTTag=(Block=stained_hardened_clay,Data=14),posY=#bPosY+5;NBTTag=(Block=stained_hardened_clay,Data=1),posY=#bPosY+10;NBTTag=(Block=stained_hardened_clay,Data=4),posY=#bPosY+15;NBTTag=(Block=stained_hardened_clay,Data=5),posY=#bPosY+20;NBTTag=(Block=stained_hardened_clay,Data=3),posY=#bPosY+25;NBTTag=(Block=stained_hardened_clay,Data=11),posY=#bPosY+30;NBTTag=(Block=stained_hardened_clay,Data=10),posY=#bPosY+35;NBTTag=(Block=stained_hardened_clay,Data=2),posY=#bPosY+40;NBTTag=(Block=stained_hardened_clay,Data=6),posY=#bPosY+45),type=entity,ID=falling_block;type=entity,ID=falling_block,NBTTag=(Block=diamond_block),posY=#bPosY+50;type=entity,ID=LightningBolt,posY=#bPosY+10,delay=5.3)@luck=2
+group(type=fill,ID=air,size=(1,51,1);group(NBTTag=(BlockState=(Name=red_glazed_terracotta)),posY=#bPosY+5;NBTTag=(BlockState=(Name=orange_glazed_terracotta)),posY=#bPosY+10;NBTTag=(BlockState=(Name=yellow_glazed_terracotta)),posY=#bPosY+15;NBTTag=(BlockState=(Name=lime_glazed_terracotta)),posY=#bPosY+20;NBTTag=(BlockState=(Name=light_blue_glazed_terracotta)),posY=#bPosY+25;NBTTag=(BlockState=(Name=blue_glazed_terracotta)),posY=#bPosY+30;NBTTag=(BlockState=(Name=purple_glazed_terracotta)),posY=#bPosY+35;NBTTag=(BlockState=(Name=magenta_glazed_terracotta)),posY=#bPosY+40;NBTTag=(BlockState=(Name=pink_glazed_terracotta)),posY=#bPosY+45),type=entity,ID=falling_block;type=entity,ID=falling_block,NBTTag=(BlockState=(Name=diamond_block)),posY=#bPosY+50;type=entity,ID=LightningBolt,posY=#bPosY+10,delay=5.3)@luck=2
 
 / tnt pole
-group(type=fill,ID=air,size=(1,51,1);type=entity,ID=falling_block,NBTTag=(Block=redstone_block),posY=#bPosY+5;group(posY=#bPosY+10;posY=#bPosY+15;posY=#bPosY+20;posY=#bPosY+25;posY=#bPosY+30;posY=#bPosY+35;posY=#bPosY+40;posY=#bPosY+45;posY=#bPosY+50),type=entity,ID=falling_block,NBTTag=(Block=tnt))@luck=2
+group(type=fill,ID=air,size=(1,51,1);type=entity,ID=falling_block,NBTTag=(BlockState=(Name=redstone_block)),posY=#bPosY+5;group(posY=#bPosY+10;posY=#bPosY+15;posY=#bPosY+20;posY=#bPosY+25;posY=#bPosY+30;posY=#bPosY+35;posY=#bPosY+40;posY=#bPosY+45;posY=#bPosY+50),type=entity,ID=falling_block,NBTTag=(BlockState=(Name=tnt)))@luck=2
 
 / baby player
-type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,HandItems=[(id=stone_pickaxe,Count=1)],ArmorItems=[(id=leather_boots,Count=1,tag=(display=(color=#rand(0,16777215)))),(id=leather_leggings,Count=1,tag=(display=(color=#rand(0,16777215)))),(id=leather_chestplate,Count=1,tag=(display=(color=#rand(0,16777215)))),(id=skull,Damage=3,Count=1,tag=(SkullOwner=#pName))],Rotation=[#pYaw+180f,0f],CustomName="Baby #pName",CustomNameVisible=true)@luck=0
+type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,RightArm=(id=stone_pickaxe,Count=1),ArmorItems=[(id=leather_boots,Count=1,tag=(display=(color=#randColor))),(id=leather_leggings,Count=1,tag=(display=(color=#randColor))),(id=leather_chestplate,Count=1,tag=(display=(color=#randColor))),(id=player_head,Count=1,tag=(SkullOwner=#pName))],Rotation=[#pYaw+180f,0f],CustomName=#jsonStr(text="Baby #pName"),CustomNameVisible=true)@luck=0
 
 / ==== Monster Apocalyple ====
+
 / sword, difficulty, time, potion effects
 group(ID=wooden_sword;type=difficulty,ID=hard;type=time,ID=18750;type=effect,ID=slowness,duration=30,amplifier=4;type=effect,ID=blindness,duration=30; \
+
 / zombies, creepers, spiders & cave spiders, silverfish & endermites, guardians
-group:1:(type=entity,ID=Zombie,amount=#rand(20,50);type=entity,ID=Creeper,amount=#rand(10,30);group(type=entity,ID=Spider,amount=#rand(15,45);type=entity,ID=CaveSpider,amount=#rand(5,10));group(type=entity,ID=Silverfish,amount=#rand(15,45);type=entity,ID=Endermite,amount=#rand(5,10));type=entity,ID=Guardian,amount=#rand(10,30); \
+group:1:(type=entity,ID=zombie,amount=#rand(20,50);type=entity,ID=creeper,amount=#rand(10,30);group(type=entity,ID=spider,amount=#rand(15,45);type=entity,ID=cave_spider,amount=#rand(5,10));group(type=entity,ID=silverfish,amount=#rand(15,45);type=entity,ID=endermite,amount=#rand(5,10));type=entity,ID=guardian,amount=#rand(10,30); \
+
 / all
-group(type=entity,ID=Zombie,amount=#rand(20,50);type=entity,ID=Creeper,amount=#rand(10,30);group(type=entity,ID=Spider,amount=#rand(15,45);type=entity,ID=CaveSpider,amount=#rand(5,10);type=entity,ID=Silverfish,amount=#rand(15,45);type=entity,ID=Endermite,amount=#rand(5,10);type=entity,ID=Guardian,amount=#rand(10,30)))),posOffset=#circleOffset(8,10))@luck=-2
+group(type=entity,ID=zombie,amount=#rand(20,50);type=entity,ID=creeper,amount=#rand(10,30);group(type=entity,ID=spider,amount=#rand(15,45);type=entity,ID=cave_spider,amount=#rand(5,10);type=entity,ID=silverfish,amount=#rand(15,45);type=entity,ID=endermite,amount=#rand(5,10);type=entity,ID=guardian,amount=#rand(10,30)))),posOffset=#circleOffset(8,10))@luck=-2
 
 / ========== STRUCTURES ==========
 
 / traps
 type=structure,ID=anvil_trap,pos=#pPos,rotation=#pDirect@luck=-2
 type=structure,ID=lava_trap,pos=#pPos,rotation=#pDirect@luck=-2
-type=structure,ID=water_trap,pos=#pPos@luck=-2  
+type=structure,ID=water_trap,pos=#pPos@luck=-2
 type=structure,ID=pit_trap,pos=#pPos@luck=-2
 
 / lucky fort and temple
@@ -233,8 +246,10 @@ group(type=difficulty,ID=hard;type=explosion,radius=6)@luck=-2
 group:1:(type=structure,ID=lucky_choice_left,rotation=#pDirect;type=structure,ID=lucky_choice_right,rotation=#pDirect)@luck=0
 
 / wishing wells
-group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget 1 0 {display:{Name:\"$6Coin\"}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$bYour wish came true!\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;type=entity,ID=fireworks_rocket,NBTTag=(LifeTime=20,FireworksItem=(id=fireworks,Count=1,tag='#'randFireworksRocket)),amount=20,posY='#'bPosY+3,posOffset='#'circleOffset(2);ID=gold_ingot,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=diamond,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=emerald,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=dye,damage=4,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2))"]))@luck=2
+group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget{display:{Name:\"$6Coin\"}} 1 0";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$bYour wish came true!\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;type=entity,ID=fireworks_rocket,NBTTag=(LifeTime=20,FireworksItem=(id=fireworks,Count=1,tag='#'randFireworksRocket)),amount=20,posY='#'bPosY+3,posOffset='#'circleOffset(2);ID=gold_ingot,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=diamond,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=emerald,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=dye,damage=4,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2))"]))@luck=2
+
 group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget 1 0 {display:{Name:\"$6Coin\"}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$eYour wish came true! (If you like potatoes)\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;ID=potato,amount=128,posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=baked_potato,amount=64,posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=poisonous_potato,amount=32,posY='#'bPosY+10,posOffset='#'circleOffset(2))"]))@luck=1
+
 group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget 1 0 {display:{Name:\"$6Coin\"}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$4Your death wish came true!\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;type=entity,ID=tnt,NBTTag=(Fuse=50b,Motion='#'randLaunchMotion),posY='#'bPosY+7,amount=20)"]))@luck=-2
 
 / bouncing castle
@@ -247,22 +262,29 @@ type=structure,ID=giant_lucky_block_bad,rotation=#pDirect@luck=-2
 / ========== ENCHANTED + LUCKY ITEMS ==========
 
 / hero sword
-ID=diamond_sword,NBTTag=(ench=#luckySwordEnchantments,display=(Name="$9$lHero's Sword"))@luck=2
+ID=diamond_sword,NBTTag=(Enchantments=#luckySwordEnchantments,display=(Name=#jsonStr(text="Hero's Sword",color=blue,bold=true)))@luck=2
+
 / hero bow
-ID=bow,NBTTag=(ench=#luckyBowEnchantments,display=(Name="$9$lHero's Bow"))@luck=2
+ID=bow,NBTTag=(Enchantments=#luckyBowEnchantments,display=(Name=#jsonStr(text="Hero's Bow",color=blue,bold=true)))@luck=2
+
 / hero fishing rod
-ID=fishing_rod,NBTTag=(ench=#luckyFishingRodEnchantments,display=(Name="$9$lHero's Fishing Rod"))@luck=2
+ID=fishing_rod,NBTTag=(Enchantments=#luckyFishingRodEnchantments,display=(Name=#jsonStr(text="$9$lHero's Fishing Rod",color=blue,bold=true)))@luck=2
+
 / hero tools
-group:#rand(1,2):(ID=diamond_shovel,NBTTag=(ench=#luckyToolEnchantments,display=(Name="$9$lHero's Shovel"));ID=diamond_pickaxe,NBTTag=(ench=#luckyToolEnchantments,display=(Name="$9$lHero's Pickaxe"));ID=diamond_axe,NBTTag=(ench=#luckyAxeEnchantments,display=(Name="$9$lHero's Axe"));ID=diamond_hoe,NBTTag=(ench=#luckyToolEnchantments,display=(Name="$9$lHero's Hoe")))@luck=2
+group:#rand(1,2):(ID=diamond_shovel,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Shovel",color=blue,bold=true)));ID=diamond_pickaxe,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Pickaxe",color=blue,bold=true)));ID=diamond_axe,NBTTag=(Enchantments=#luckyAxeEnchantments,display=(Name=#jsonStr(text="Hero's Axe",color=blue,bold=true)));ID=diamond_hoe,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Hoe",color=blue,bold=true))))@luck=2
+
 / hero armor
-group:#rand(1,2):(ID=diamond_helmet,NBTTag=(ench=#luckyHelmetEnchantments,display=(Name="$9$lHero's Helmet"));ID=diamond_chestplate,NBTTag=(ench=#luckyChestplateEnchantments,display=(Name="$9$lHero's Chestplate"));ID=diamond_leggings,NBTTag=(ench=#luckyLeggingsEnchantments,display=(Name="$9$lHero's Leggings"));ID=diamond_boots,NBTTag=(ench=#luckyBootsEnchantments,display=(Name="$9$lHero's Boots")))@luck=2
+group:#rand(1,2):(ID=diamond_helmet,NBTTag=(Enchantments=#luckyHelmetEnchantments,display=(Name=#jsonStr(text="Hero's Helmet",color=blue,bold=true)));ID=diamond_chestplate,NBTTag=(Enchantments=#luckyChestplateEnchantments,display=(Name=#jsonStr(text="Hero's Chestplate",color=blue,bold=true)));ID=diamond_leggings,NBTTag=(Enchantments=#luckyLeggingsEnchantments,display=(Name=#jsonStr(text="Hero's Leggings",color=blue,bold=true));ID=diamond_boots,NBTTag=(Enchantments=#luckyBootsEnchantments,display=(Name=#jsonStr(text="Hero's Boots",color=blue,bold=true))))@luck=2
+
 / hero potion
-ID=potion,NBTTag=(Potion="fire_resistance",CustomPotionEffects=#luckyPotionEffects,display=(Name="$9$lHero's Potion"))@luck=2
+ID=potion,NBTTag=(Potion="fire_resistance",CustomPotionEffects=#luckyPotionEffects,display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true)))@luck=2
+
 / unlucky potion
-ID=splash_potion,NBTTag=(Potion="harming",CustomPotionEffects=#unluckyPotionEffects,display=(Name="$4$lEvil Potion"))@luck=1
+ID=splash_potion,NBTTag=(Potion="harming",CustomPotionEffects=#unluckyPotionEffects,display=(Name=#jsonStr(text="Evil Potion",color=dard_red,bold=true)))@luck=1
 
 / lucky items
 type=item,ID=lucky:lucky_sword@chance=1.5@luck=2
 type=item,ID=lucky:lucky_bow@chance=1.5@luck=2
 type=item,ID=lucky:lucky_potion,NBTTag=(Luck=#randList(100,-100)),amount=#rand(10,15)@chance=1.5@luck=2
+
 group(type=item,ID=lucky:lucky_sword;type=item,ID=lucky:lucky_bow;type=item,ID=lucky:lucky_potion,NBTTag=(Luck=#randList(100,-100)),amount=#rand(10,15);type=entity,ID=fireworks_rocket,NBTTag=(LifeTime=20,FireworksItem=(id=fireworks,Count=1,tag=#randFireworksRocket)),amount=20,posOffset=#circleOffset(0,2))@luck=2

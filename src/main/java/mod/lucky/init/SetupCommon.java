@@ -3,7 +3,7 @@ package mod.lucky.init;
 import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
 import mod.lucky.crafting.RecipeLuckCrafting;
-import mod.lucky.drop.func.DropFunction;
+import mod.lucky.drop.func.DropFunc;
 import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
 import mod.lucky.item.ItemLuckyBlock;
@@ -16,10 +16,8 @@ import mod.lucky.structure.Structure;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.block.Block;
-import net.minecraft.data.CustomRecipeBuilder;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeSerializers;
 import net.minecraft.tileentity.TileEntityType;
@@ -108,7 +106,7 @@ public class SetupCommon {
         Lucky.tickHandler = new LuckyTickHandler();
         //MinecraftForge.EVENT_BUS.register(Lucky.tickHandler);
 
-        DropFunction.registerFunctions();
+        DropFunc.registerFunctions();
 
         //Lucky.resourceManager.registerPlugins();
     }

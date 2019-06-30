@@ -2,7 +2,6 @@ package mod.lucky.drop.func;
 
 import com.google.common.collect.Lists;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.mojang.brigadier.StringReader;
@@ -19,7 +18,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.WorldServer;
 
-public class DropFuncParticle extends DropFunction {
+public class DropFuncParticle extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
@@ -32,7 +31,7 @@ public class DropFuncParticle extends DropFunction {
         ParticleType particleType = null;
         // particle registry
         if (IRegistry.field_212632_u.func_212607_c(particleResLoc))
-            particleType = IRegistry.field_212632_u.get(particleResLoc);
+            particleType = IRegistry.field_212632_u.func_212608_b(particleResLoc);
 
         if (particleType == null) {
             if (ValueParser.getString(

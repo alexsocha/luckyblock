@@ -42,22 +42,20 @@ public class TemplateStructure extends Structure {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
-        int rotationInt = drop.getPropertyInt("rotation");
         BlockPlacer blockPlacer = new BlockPlacer(processData.getWorld());
 
         Rotation rotation = StructureUtils.parseRotation(drop.getPropertyInt("rotation"));
-        boolean ignoreEntities = drop.getPropertyBoolean("ignoreEntities");
 
         PlacementSettings placementSettings = new PlacementSettings()
             .setRotation(rotation)
-            .setIgnoreEntities(ignoreEntities)
+            .setIgnoreEntities(false)
             .setChunk(null)
             .setReplacedBlock(null)
             .setIgnoreStructureBlock(true);
 
         ITemplateProcessor processor = this.createProcessor();
         this.template.addBlocksToWorld(processData.getWorld(), drop.getBlockPos(),
-            processor, placementSettings, 0);
+            processor, placementSettings, 2);
 
         if (this.blockUpdate) blockPlacer.update();
         this.processOverlay(processData);
@@ -73,7 +71,7 @@ public class TemplateStructure extends Structure {
             tag = CompressedStreamTools.read(dataInputStream);
             dataInputStream.close();
         } catch (Exception e) {
-            Lucky.error(e, "Error loading structure '" + this.id + "'");
+            Lucky.error(e, "Error loading structure '" + this.fileName + "'");
         }
 
         this.template = new Template();

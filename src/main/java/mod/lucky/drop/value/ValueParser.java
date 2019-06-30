@@ -5,6 +5,11 @@ import com.google.common.collect.HashBiMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -45,7 +50,7 @@ public class ValueParser {
         if (value.getClass() == Boolean.class)
             return new NBTTagByte((byte) ((Boolean) value == true ? 1 : 0));
         if (value.getClass() == Float.class) return new NBTTagFloat((Float) value);
-        if (value.getClass() == NBTTagCompound.class) return (NBTTagCompound) value;
+        if (value instanceof INBTBase) return (INBTBase) value;
         return null;
     }
 
@@ -55,8 +60,7 @@ public class ValueParser {
         if (nbtBase.getClass() == NBTTagByte.class)
             return ((NBTTagByte) nbtBase).getByte() == 1 ? true : false;
         if (nbtBase.getClass() == NBTTagFloat.class) return ((NBTTagFloat) nbtBase).getFloat();
-        if (nbtBase.getClass() == NBTTagCompound.class) return nbtBase;
-        return null;
+        return nbtBase;
     }
 
     public static String getString(String string) throws NumberFormatException {
@@ -151,7 +155,7 @@ public class ValueParser {
         throws NumberFormatException {
         string = HashVariables.processString(string, processData);
         if (!string.equals("true") && !string.equals("false"))
-            throw new NumberFormatException("Lucky Block: Unknown boolean format: " + string);
+            throw new NumberFormatException("Unknown boolean format: " + string);
         return Boolean.valueOf(string);
     }
 
@@ -183,11 +187,15 @@ public class ValueParser {
         throws Exception {
         Object tagBase = getNBTTagValue(string, processData);
         if (tagBase instanceof NBTTagCompound) return (NBTTagCompound) tagBase;
-        else throw new Exception();
+        else throw new Exception("Not a valid compound NBT tag: " + string);
     }
 
     public static Object getNBTTagValue(String string, DropProcessData processData) throws Exception {
         return getNBTTagValue(string, processData, null, null);
+    }
+
+    public static INBTBase getNBTBase(String string, DropProcessData processData) throws Exception {
+        return getNBTBaseFromValue(getNBTTagValue(string, processData, null, null));
     }
 
     private static ArrayList<String> DROP_TAGS =
@@ -304,6 +312,25 @@ public class ValueParser {
             if (tagValue instanceof NBTTagCompound) tagList.add((NBTTagCompound) tagValue);
             if (tagValue instanceof NBTTagList) tagList.add((NBTTagList) tagValue);
         }
+    }
+
+    public static JsonElement nbtToJson(INBTBase nbt) {
+        if (nbt instanceof NBTTagCompound) {
+            JsonObject json = new JsonObject();
+            ((NBTTagCompound) nbt).keySet().forEach(k ->
+                json.add(k, nbtToJson(((NBTTagCompound) nbt).getTag(k))));
+            return json;
+
+        } else if (nbt instanceof NBTTagCollection) {
+            JsonArray json = new JsonArray();
+            ((NBTTagCollection<?>) nbt).forEach(v ->
+                json.add(nbtToJson(v)));
+            return json;
+
+        } else if (nbt instanceof NBTTagByte && ((NBTTagByte) nbt).getByte() < 2) {
+            return new JsonPrimitive(new Boolean(((NBTTagByte) nbt).getByte() == 1 ? true : false));
+
+        } else return new JsonPrimitive(nbt.getString());
     }
 
     public static Item getItem(String name, DropProcessData processData) {

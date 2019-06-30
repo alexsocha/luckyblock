@@ -1,6 +1,6 @@
 package mod.lucky.drop.func;
 
-public class DropFuncNothing extends DropFunction {
+public class DropFuncNothing extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
     }

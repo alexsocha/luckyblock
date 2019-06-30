@@ -17,6 +17,8 @@ import mod.lucky.structure.StructureUtils;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityTippedArrow;
+import net.minecraft.nbt.INBTBase;
+import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -24,60 +26,27 @@ public class HashVariables {
     private static String[] hashVariables = {
         "#randPotion",
         "#randSpawnEgg",
-        "#bPosX",
-        "#bPosY",
-        "#bPosZ",
-        "#bPos",
-        "#bExactPosX",
-        "#bExactPosY",
-        "#bExactPosZ",
-        "#bExactPos",
-        "#ePosX",
-        "#ePosY",
-        "#ePosZ",
-        "#ePos",
-        "#eExactPosX",
-        "#eExactPosY",
-        "#eExactPosZ",
-        "#eExactPos",
+        "#randColor",
         "#time",
-        "#pPosX",
-        "#pPosY",
-        "#pPosZ",
-        "#pPos",
-        "#pExactPosX",
-        "#pExactPosY",
-        "#pExactPosZ",
-        "#pExactPos",
-        "#pName",
-        "#pUUID",
-        "#pDirect",
-        "#pYaw",
-        "#pPitch",
-        "#posX",
-        "#posY",
-        "#posZ",
-        "#pos",
+        "#bPosX", "#bPosY", "#bPosZ", "#bPos",
+        "#bExactPosX", "#bExactPosY", "#bExactPosZ", "#bExactPos",
+        "#ePosX", "#ePosY", "#ePosZ", "#ePos",
+        "#eExactPosX", "#eExactPosY", "#eExactPosZ", "#eExactPos",
+        "#pPosX", "#pPosY", "#pPosZ", "#pPos",
+        "#pExactPosX", "#pExactPosY", "#pExactPosZ", "#pExactPos",
+        "#pName", "#pUUID", "#pDirect", "#pYaw", "#pPitch",
+        "#posX", "#posY", "#posZ", "#pos",
         "#rotation",
-        "#bowPosX",
-        "#bowPosY",
-        "#bowPosZ",
-        "#bowPos",
-        "#randColor"
+        "#bowPosX", "#bowPosY", "#bowPosZ", "#bowPos"
     };
     private static String[] bracketHashVariables = {
-        "#rand(",
-        "#randPosNeg(",
+        "#rand(", "#randPosNeg(",
         "#randList(",
         "#circleOffset(",
-        "#sPosX(",
-        "#sPosY(",
-        "#sPosZ(",
-        "#sPos(",
+        "#sPosX(", "#sPosY(", "#sPosZ(", "#sPos(",
         "#drop(",
         "#eval(",
-        "#json(",
-        "#jsonStr("
+        "#json(", "#jsonStr("
     };
 
     private static Random random = new Random();
@@ -98,18 +67,10 @@ public class HashVariables {
             string = string.replace("#bPosX", String.valueOf(Math.floor(harvestPos.x)));
             string = string.replace("#bPosY", String.valueOf(Math.floor(harvestPos.y)));
             string = string.replace("#bPosZ", String.valueOf(Math.floor(harvestPos.z)));
-            string =
-                string.replace(
-                    "#bPos",
-                    String.valueOf(
-                        "("
-                            + Math.floor(harvestPos.x)
-                            + ","
-                            + Math.floor(harvestPos.y)
-                            + ","
-                            + Math.floor(harvestPos.z)
-                            + ")"));
-
+            string = string.replace("#bPos", "("
+                + Math.floor(harvestPos.x)
+                + "," + Math.floor(harvestPos.y)
+                + "," + Math.floor(harvestPos.z) + ")");
             string = string.replace("#bExactPosX", String.valueOf(harvestPos.x));
             string = string.replace("#bExactPosY", String.valueOf(harvestPos.y));
             string = string.replace("#bExactPosZ", String.valueOf(harvestPos.z));
@@ -123,17 +84,10 @@ public class HashVariables {
                 string = string.replace("#ePosX", String.valueOf(Math.floor(entityPos.x)));
                 string = string.replace("#ePosY", String.valueOf(Math.floor(entityPos.y)));
                 string = string.replace("#ePosZ", String.valueOf(Math.floor(entityPos.z)));
-                string =
-                    string.replace(
-                        "#ePos",
-                        String.valueOf(
-                            "("
-                                + Math.floor(entityPos.x)
-                                + ","
-                                + Math.floor(entityPos.y)
-                                + ","
-                                + Math.floor(entityPos.z)
-                                + ")"));
+                string = string.replace("#ePos", "("
+                    + Math.floor(entityPos.x)
+                    + "," + Math.floor(entityPos.y)
+                    + "," + Math.floor(entityPos.z) + ")");
 
                 string = string.replace("#eExactPosX", String.valueOf(entityPos.x));
                 string = string.replace("#eExactPosY", String.valueOf(entityPos.y));
@@ -180,7 +134,7 @@ public class HashVariables {
                                 + ")"));
 
                 string =
-                    string.replace("#pName", processData.getPlayer().getDisplayName().getUnformattedComponentText());
+                    string.replace("#pName", processData.getPlayer().getName().getUnformattedComponentText());
                 string = string.replace("#pUUID", processData.getPlayer().getUniqueID().toString());
                 int playerRotation =
                     (int) Math.round((processData.getPlayer().getRotationYawHead() + 180.0D) / 90.0D) % 4;
@@ -294,22 +248,20 @@ public class HashVariables {
                 return fixBackslash(result);
 
             } else if (type.equals("#json") || type.equals("#jsonStr")) {
-                String nbtStr = properties[0];
+                String nbtStr = String.join(",", properties);
                 if (Character.isLetter(nbtStr.toCharArray()[0]))
                     nbtStr = "(" + nbtStr + ")";
 
                 try {
-                    String jsonString = ValueParser.getNBTTag(nbtStr).toString();
-
-                    JsonParser parser = new JsonParser();
-                    JsonElement jsonEl = parser.parse(jsonString);
+                    INBTBase nbt = ValueParser.getNBTBase(nbtStr, processData);
+                    JsonElement jsonEl = ValueParser.nbtToJson(nbt);
 
                     if (type.equals("#json")) return jsonEl.toString();
                     else {
                         JsonObject jsonObj = new JsonObject();
                         jsonObj.addProperty("", jsonEl.toString());
-
                         String jsonObjStr = jsonObj.toString();
+
                         return jsonObjStr.substring("{\"\":".length(),
                             jsonObjStr.length() - 1);
                     }
