@@ -23,5 +23,10 @@ data/lucky/recipes/lucky_block_red.json
 
 Change IDs to 1.13 format - no more 'damage' value
 Change NBT tags to 1.13 format where necessary (e.g. display names, books, signs)
+
 Use #randSpawnEgg to get a random spawn egg ID
-Use #json to easily convert Lucky Block NBT syntax to JSON (and #jsonStr to escape all quotes, useful for custom display names)
+
+Use #json(...) to easily convert Lucky Block NBT syntax to JSON (and #jsonStr(...) to escape all quotes, useful for custom display names)
+
+Use the 'state' property to set block states (in Lucky Block NBT format)
+The 5th propety for each block in .luckystruct files is now an NBT tag in the same format as 'state'. Numbers can still be provided, but will have no effect.

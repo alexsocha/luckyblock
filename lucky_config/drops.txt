@@ -191,7 +191,8 @@ type=entity,ID=villager,NBTTag=(Offers=(Recipes=[(buy=(id=diamond,Count=#rand(10
 
 / [[[[[[[[[ test ]]]]]]]]]
 
-type=structure,ID=test
+
+type=structure,ID=cage
 
 / falling blocks (iron, gold, diamond, emerald)
 group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=iron_block));type=particle,ID=large_smoke,size=(1,2,1),particleAmount=500;type=sound,ID=block.fire.extinguish)@luck=0
@@ -226,13 +227,19 @@ group(type=entity,ID=zombie,amount=#rand(20,50);type=entity,ID=creeper,amount=#r
 
 / ========== STRUCTURES ==========
 
-/ traps
-type=structure,ID=anvil_trap,pos=#pPos,rotation=#pDirect@luck=-2
-type=structure,ID=lava_trap,pos=#pPos,rotation=#pDirect@luck=-2
-type=structure,ID=water_trap,pos=#pPos@luck=-2
-type=structure,ID=pit_trap,pos=#pPos@luck=-2
+/ anvil cage
+group(type=structure,ID=cage,pos=#pPos,rotation=#pDirect;type=fill,ID=air,size=(1,70,1),pos=#pPos;type=fill,ID=anvil,size=(1,2,1),pos=(#pPosX,#pPosY+70,#pPosZ))@luck=-2
 
-/ lucky fort and temple
+/ lava cage
+group(type=structure,ID=cage,pos=#pPos,rotation=#pDirect;type=block,ID=lava,pos=(#pPosX,#pPosY+3,#pPosZ))@luck=-2
+
+/ water cage
+type=structure,ID=water_cage,pos=#pPos@luck=-2
+
+/ lava pit
+group(type=fill,ID=air,size=(3,20,3),pos=(#pPosX-1,#pPosY-20,#pPosZ-1);type=fill,ID=lava,size=(3,1,3),pos=(#pPosX-1,#pPosY-20,#pPosZ-1);type=fill,ID=cobweb,size=(3,1,3),pos=(#pPosX-1,#pPosY-19,#pPosZ-1))@lucky=-2
+
+/ lucky buildings
 type=structure,ID=lucky_fort,pos=#pPos@luck=2
 type=structure,ID=lucky_temple,pos=#pPos@chance=0.4@luck=2
 
@@ -240,13 +247,15 @@ type=structure,ID=lucky_temple,pos=#pPos@chance=0.4@luck=2
 type=structure,ID=bedrock_problem,rotation=#pDirect@luck=-1
 
 / explosion
-group(type=difficulty,ID=hard;type=explosion,radius=6)@luck=-2
+/ group(type=difficulty,ID=hard;type=explosion,radius=6)@luck=-2
+
+type=structure,ID=giant_block_break_stage_1
 
 / choice of 2 lucky blocks
 group:1:(type=structure,ID=lucky_choice_left,rotation=#pDirect;type=structure,ID=lucky_choice_right,rotation=#pDirect)@luck=0
 
 / wishing wells
-group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget{display:{Name:\"$6Coin\"}} 1 0";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$bYour wish came true!\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;type=entity,ID=fireworks_rocket,NBTTag=(LifeTime=20,FireworksItem=(id=fireworks,Count=1,tag='#'randFireworksRocket)),amount=20,posY='#'bPosY+3,posOffset='#'circleOffset(2);ID=gold_ingot,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=diamond,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=emerald,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=dye,damage=4,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2))"]))@luck=2
+group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget{display:{Name:#escStr(#jsonStr(text="Coin",color=gold))}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$bYour wish came true!\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;type=entity,ID=firework_rocket,NBTTag=(LifeTime=20,FireworksItem=(id=firework_rocket,Count=1,tag='#'randFireworksRocket)),amount=20,posY='#'bPosY+3,posOffset='#'circleOffset(2);ID=gold_ingot,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=diamond,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=emerald,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=dye,damage=4,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2))"]))@luck=2
 
 group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget 1 0 {display:{Name:\"$6Coin\"}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$eYour wish came true! (If you like potatoes)\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;ID=potato,amount=128,posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=baked_potato,amount=64,posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=poisonous_potato,amount=32,posY='#'bPosY+10,posOffset='#'circleOffset(2))"]))@luck=1
 
@@ -287,4 +296,4 @@ type=item,ID=lucky:lucky_sword@chance=1.5@luck=2
 type=item,ID=lucky:lucky_bow@chance=1.5@luck=2
 type=item,ID=lucky:lucky_potion,NBTTag=(Luck=#randList(100,-100)),amount=#rand(10,15)@chance=1.5@luck=2
 
-group(type=item,ID=lucky:lucky_sword;type=item,ID=lucky:lucky_bow;type=item,ID=lucky:lucky_potion,NBTTag=(Luck=#randList(100,-100)),amount=#rand(10,15);type=entity,ID=fireworks_rocket,NBTTag=(LifeTime=20,FireworksItem=(id=fireworks,Count=1,tag=#randFireworksRocket)),amount=20,posOffset=#circleOffset(0,2))@luck=2
+group(type=item,ID=lucky:lucky_sword;type=item,ID=lucky:lucky_bow;type=item,ID=lucky:lucky_potion,NBTTag=(Luck=#randList(100,-100)),amount=#rand(10,15);type=entity,ID=firework_rocket,NBTTag=(LifeTime=20,FireworksItem=(id=firework_rocket,Count=1,tag=#randFireworksRocket)),amount=20,posOffset=#circleOffset(0,2))@luck=2

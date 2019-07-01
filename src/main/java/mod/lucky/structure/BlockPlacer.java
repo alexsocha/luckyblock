@@ -28,10 +28,10 @@ public class BlockPlacer {
 
     public void update() {
         for (int i = 0; i < this.updatePos.size(); i++) {
-            this.world.markAndNotifyBlock(
-                this.updatePos.get(i),
-                this.world.getChunk(this.updatePos.get(i)),
-                this.world.getBlockState(this.updatePos.get(i)),
+            BlockPos pos = this.updatePos.get(i);
+            this.world.markAndNotifyBlock(pos,
+                this.world.getChunk(pos),
+                this.world.getBlockState(pos),
                 this.updateState.get(i),
                 3);
         }

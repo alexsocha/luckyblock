@@ -106,15 +106,6 @@ public class LuckyStructure extends Structure {
                     if (name.equals("length")) sizeX = ValueParser.getInteger(value);
                     if (name.equals("width")) sizeZ = ValueParser.getInteger(value);
                     if (name.equals("height")) sizeY = ValueParser.getInteger(value);
-
-                    int size = sizeX * sizeZ * sizeY;
-                    if (size > STRUCTURE_BLOCK_LIMIT) {
-                        Lucky.LOGGER.error("Error loading structure. The structure '"
-                            + id + "' (" + size + " blockDrops) exceeds the "
-                            + STRUCTURE_BLOCK_LIMIT + " block limit");
-                        reader.close();
-                        return;
-                    }
                 }
                 if (section.equals(">blocks")) {
                     DropSingle drop = new DropSingle();
@@ -125,7 +116,16 @@ public class LuckyStructure extends Structure {
                     drop.setRawProperty("posY", properties[1]);
                     drop.setRawProperty("posZ", properties[2]);
                     drop.setRawProperty("ID", properties[3]);
-                    if (properties.length > 4) drop.setRawProperty("meta", properties[4]);
+                    if (properties.length > 4) {
+                        String stateProp = properties[4];
+                        if (!stateProp.trim().equals("")) {
+                            try { Integer.parseInt(stateProp); }
+                            catch (NumberFormatException e) {
+                                // only set blockstate properties if the value is not an integer
+                                drop.setRawProperty("state", stateProp);
+                            }
+                        }
+                    }
                     if (properties.length > 5) drop.setRawProperty("tileEntity", properties[5]);
                     this.blockDrops.add(drop);
                 }

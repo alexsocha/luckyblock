@@ -3,6 +3,7 @@ package mod.lucky.structure;
 import java.io.InputStream;
 import java.util.HashMap;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropFunc;
 import mod.lucky.drop.func.DropProcessData;
@@ -32,8 +33,6 @@ public class Structure {
         public String toString() { return this.name; }
         public static BlockMode fromString(String s) { return lookup.get(s); }
     }
-
-    public static final int STRUCTURE_BLOCK_LIMIT = 100000;
 
     protected BlockPos size;
 
@@ -95,16 +94,16 @@ public class Structure {
     public Structure newTypeInstance() {
         if (this.fileName.endsWith(".luckystruct")) {
             return new LuckyStructure().copyProperties(this);
+        } else if (this.fileName.endsWith(".schematic")) {
+            return new LegacySchematicStructure().copyProperties(this);
         } else {
             return new TemplateStructure().copyProperties(this);
         }
     }
 
-    public void readFromFile() {
-    }
+    public void readFromFile() {}
 
-    public void process(DropProcessData processData) {
-    }
+    public void process(DropProcessData processData) {}
 
     protected void processOverlay(DropProcessData processData) {
         if (this.overlayStruct != null) {
@@ -141,6 +140,7 @@ public class Structure {
         this.id = structure.id;
         this.overlayStruct = structure.overlayStruct;
         this.centerPos = structure.centerPos;
+        this.explicitCenter = structure.explicitCenter;
         this.blockMode = structure.blockMode;
         this.blockUpdate = structure.blockUpdate;
         this.size = structure.size;

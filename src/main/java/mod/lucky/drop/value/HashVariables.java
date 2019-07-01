@@ -7,7 +7,6 @@ import javax.script.ScriptEngineManager;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropProcessData;
@@ -18,7 +17,6 @@ import mod.lucky.util.LuckyUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.nbt.INBTBase;
-import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 

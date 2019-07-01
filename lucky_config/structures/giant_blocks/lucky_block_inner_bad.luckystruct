@@ -5,7 +5,7 @@ width=8
 
 >blocks
 
-/ all one lucky block
+/ === lucky block ===
 
 4,3,6,lucky:lucky_block,0,(Drops=["group( \
 
@@ -23,3 +23,6 @@ type=fill,ID=air,pos=[#]sPos(0,0,0),pos2=[#]sPos(7,7,7),delay=5; \
 
 / tnt
 type=entity,ID=tnt,pos=[#]sPos(4,4,4),NBTTag=(Fuse=50b,Motion=#randLaunchMotion),amount=15,delay=5)"])
+
+/ === lever ===
+4,3,8,lever,(facing=south)

@@ -89,8 +89,8 @@ public class DropSingle extends DropBase {
     public IBlockState getBlockState() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setString("Name", this.getPropertyString("ID"));
-        if (this.hasProperty("properties"))
-            tag.setTag("Properties", this.getPropertyNBT("properties"));
+        if (this.hasProperty("state"))
+            tag.setTag("Properties", this.getPropertyNBT("state"));
 
         return NBTUtil.readBlockState(tag);
     }

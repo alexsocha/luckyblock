@@ -49,6 +49,14 @@ public class DropFuncEntity extends DropFunc {
     private static Entity spawnEntity(DropProcessData processData, NBTTagCompound tag,
         World world, double posX, double posY, double posZ) {
 
+        // adjust height
+        for (int y = 0; y < 10; y++) {
+            if (processData.getWorld().isAirBlock(new BlockPos(posX, posY + y, posZ))) {
+                posY += y;
+                break;
+            }
+        }
+
         if (!tag.hasKey("Pos")) {
             NBTTagList posList = new NBTTagList();
             posList.add(new NBTTagDouble(posX));
@@ -68,15 +76,6 @@ public class DropFuncEntity extends DropFunc {
         else if (entity instanceof EntityArrow)
             ((EntityArrow) entity).shootingEntity = playerUUID;
 
-        // adjust height
-        for (int y = 0; y < 10; y++) {
-            if (processData.getWorld().isAirBlock(
-                new BlockPos(entity.posX, entity.posY + y, entity.posZ))) {
-
-                entity.posY += y;
-                break;
-            }
-        }
 
         // randomize entity
         if (entity instanceof EntityLiving

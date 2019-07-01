@@ -6,7 +6,6 @@ import java.util.zip.GZIPInputStream;
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropProcessData;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,21 +16,20 @@ import net.minecraft.world.gen.feature.template.ITemplateProcessor;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
 
-import javax.annotation.Nullable;
-
 public class TemplateStructure extends Structure {
     private Template template;
 
     private ITemplateProcessor createProcessor() {
         BlockMode blockMode = this.blockMode;
         return new ITemplateProcessor() {
-            @Nullable
             @Override
             public Template.BlockInfo processBlock(
                 IBlockReader worldIn, BlockPos pos, Template.BlockInfo blockInfo) {
 
                 IBlockState blockState = StructureUtils.applyBlockMode(
                     blockMode, blockInfo.blockState);
+                if (blockState == null) blockState = worldIn.getBlockState(pos);
+
                 return new Template.BlockInfo(blockInfo.pos,
                     blockState, blockInfo.tileentityData);
 
@@ -48,13 +46,17 @@ public class TemplateStructure extends Structure {
 
         PlacementSettings placementSettings = new PlacementSettings()
             .setRotation(rotation)
+            .setCenterOffset(new BlockPos(this.centerPos))
             .setIgnoreEntities(false)
             .setChunk(null)
             .setReplacedBlock(null)
             .setIgnoreStructureBlock(true);
 
+        BlockPos adjustedPos = drop.getBlockPos().subtract(new BlockPos(this.centerPos));
+
         ITemplateProcessor processor = this.createProcessor();
-        this.template.addBlocksToWorld(processData.getWorld(), drop.getBlockPos(),
+        this.template.getDataBlocks(adjustedPos, placementSettings);
+        this.template.addBlocksToWorld(processData.getWorld(), adjustedPos,
             processor, placementSettings, 2);
 
         if (this.blockUpdate) blockPlacer.update();
