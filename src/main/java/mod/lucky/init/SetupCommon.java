@@ -10,17 +10,20 @@ import mod.lucky.item.ItemLuckyBlock;
 import mod.lucky.item.ItemLuckyBow;
 import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.item.ItemLuckySword;
-import mod.lucky.resources.loader.PluginLoader;
-import mod.lucky.resources.loader.ResourceManager;
+import mod.lucky.resources.loader.PluginLoader; import mod.lucky.resources.loader.ResourceManager;
 import mod.lucky.structure.Structure;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeSerializers;
+import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,23 +34,13 @@ import java.util.ArrayList;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupCommon {
-    public static final TileEntityType<TileEntityLuckyBlock> LUCKY_BLOCK_TE_TYPE =
-        TileEntityType.register("lucky:lucky_block",
-            TileEntityType.Builder.create(TileEntityLuckyBlock::new));
-
     public static final IRecipeSerializer<RecipeLuckCrafting> LUCK_CRAFTING_SERIALIZER =
         RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
             "lucky:crafting_luck", RecipeLuckCrafting::new));
 
-    public static final EntityType<EntityLuckyPotion> LUCKY_POTION_TYPE =
-        EntityType.register("lucky:potion",
-            EntityType.Builder.create(
-                EntityLuckyPotion.class, EntityLuckyPotion::new));
-
-    public static final EntityType<EntityLuckyProjectile> LUCKY_PROJECTILE_TYPE =
-        EntityType.register("lucky:projectile",
-            EntityType.Builder.create(
-                EntityLuckyProjectile.class, EntityLuckyProjectile::new));
+    public static EntityType<EntityLuckyPotion> ENTITY_LUCKY_POTION;
+    public static EntityType<EntityLuckyProjectile> ENTITY_LUCKY_PROJECTILE;
+    public static TileEntityType<TileEntityLuckyBlock> TE_LUCKY_BLOCK;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -78,13 +71,31 @@ public class SetupCommon {
         Lucky.resourceManager.loadAllResources(true);
     }
 
-    public static void setupEntities() {
-        ForgeRegistries.ENTITIES.register(LUCKY_POTION_TYPE);
-        ForgeRegistries.ENTITIES.register(LUCKY_PROJECTILE_TYPE);
+    @SubscribeEvent
+    public static void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
+        ENTITY_LUCKY_POTION = (EntityType<EntityLuckyPotion>)
+            EntityType.Builder.create(EntityLuckyPotion.class, EntityLuckyPotion::new)
+                .tracker(100, 1, true)
+                .build("lucky_potion")
+                .setRegistryName(new ResourceLocation("lucky:lucky_potion"));
+        ENTITY_LUCKY_PROJECTILE = (EntityType<EntityLuckyProjectile>)
+            EntityType.Builder.create(EntityLuckyProjectile.class, EntityLuckyProjectile::new)
+                .tracker(100, 1, true)
+                .build("lucky_projectile")
+                .setRegistryName(new ResourceLocation("lucky:lucky_projectile"));
 
-        ForgeRegistries.TILE_ENTITIES.register(
-            TileEntityType.register("lucky:lucky_block",
-                TileEntityType.Builder.create(TileEntityLuckyBlock::new)));
+        event.getRegistry().register(ENTITY_LUCKY_POTION);
+        event.getRegistry().register(ENTITY_LUCKY_PROJECTILE);
+    }
+
+    @SubscribeEvent
+    public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
+        TE_LUCKY_BLOCK = (TileEntityType<TileEntityLuckyBlock>)
+            TileEntityType.Builder.create(TileEntityLuckyBlock::new)
+                .build(null)
+                .setRegistryName(new ResourceLocation("lucky:lucky_block"));
+
+        event.getRegistry().register(TE_LUCKY_BLOCK);
     }
 
     public static void setupStatic() {
@@ -100,11 +111,9 @@ public class SetupCommon {
         Lucky.structures = new ArrayList<>();
         Lucky.luckyBlockPlugins = new ArrayList<>();
 
-        //SetupCommon.setupEntities();
-
         Lucky.resourceManager = new ResourceManager(new File("."));
         Lucky.tickHandler = new LuckyTickHandler();
-        //MinecraftForge.EVENT_BUS.register(Lucky.tickHandler);
+        MinecraftForge.EVENT_BUS.register(Lucky.tickHandler);
 
         DropFunc.registerFunctions();
 

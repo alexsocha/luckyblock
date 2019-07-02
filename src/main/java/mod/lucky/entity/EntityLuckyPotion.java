@@ -31,8 +31,21 @@ public class EntityLuckyPotion extends EntityThrowable {
     private int luck = 0;
     private String[] customDrops = null;
 
+    public void init(ItemLuckyPotion itemLuckyPotion,
+         DropProcessor impactDropProcessor,
+         int luck, String[] customDrops) {
+
+
+        Lucky.LOGGER.info("===new entity!");
+        this.setItemStack(new ItemStack(itemLuckyPotion, 1));
+        this.impactDropProcessor = impactDropProcessor;
+        this.luck = luck;
+        this.customDrops = customDrops;
+    }
+
     public EntityLuckyPotion(World world) {
-        this(world, null, Lucky.luckyPotion, new DropProcessor(), 0, null);
+        super(SetupCommon.ENTITY_LUCKY_POTION, world);
+        this.init(Lucky.luckyPotion, new DropProcessor(), 0, null);
     }
 
     public EntityLuckyPotion(World world,
@@ -41,12 +54,8 @@ public class EntityLuckyPotion extends EntityThrowable {
         DropProcessor impactDropProcessor,
         int luck, String[] customDrops) {
 
-        super(SetupCommon.LUCKY_POTION_TYPE, thrower, world);
-
-        this.setItemStack(new ItemStack(itemLuckyPotion, 1));
-        this.impactDropProcessor = impactDropProcessor;
-        this.luck = luck;
-        this.customDrops = customDrops;
+        super(SetupCommon.ENTITY_LUCKY_POTION, thrower, world);
+        this.init(itemLuckyPotion, impactDropProcessor, luck, customDrops);
     }
 
     @Override

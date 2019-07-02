@@ -1,32 +1,40 @@
-Lucky Block for Minecraft 1.13 Add-on changes
-The following assumes you have an add-on named "Lucky Block Red"
+Lucky Block for Minecraft 1.13 Add-on changes.
+The following assumes you have an add-on named "Lucky Block Red".
 
 ----
 
 === ASSETS ===
 
 assets/blockstates/lucky_block_red.json
-    Change variant "normal" to ""
-    Change "lucky:lucky_block_red" to "lucky:block/lucky_block_red"
+    Change variant "normal" to "".
+    Change "lucky:lucky_block_red" to "lucky:block/lucky_block_red".
 
 assets/lang/en_US.lang
-    Change to json format
+    Change to json format.
     Change block and item name formats, e.g.
         tile.luckyBlockRed.name -> block.lucky.lucky_block_red
         item.luckySwordRed.name -> item.lucky.lucky_sword_red
 
 data/lucky/recipes/lucky_block_red.json
-    Create this file to add a custom crafting recipe
-    Use the default lucky block recipe file as an example
+    Create this file to add a custom crafting recipe.
+    Use the default lucky block recipe file as an example.
 
 === DROPS ===
 
-Change IDs to 1.13 format - no more 'damage' value
-Change NBT tags to 1.13 format where necessary (e.g. display names, books, signs)
+Change IDs to 1.13 format - no more 'damage' value.
+Change NBT tags to 1.13 format where necessary (e.g. display names, books, signs).
 
-Use #randSpawnEgg to get a random spawn egg ID
+Use #randSpawnEgg to get a random spawn egg ID.
 
-Use #json(...) to easily convert Lucky Block NBT syntax to JSON (and #jsonStr(...) to escape all quotes, useful for custom display names)
+Use #json(...) to easily convert Lucky Block NBT syntax to JSON (and #jsonStr(...) to escape all quotes, useful for custom display names).
 
-Use the 'state' property to set block states (in Lucky Block NBT format)
+Use the 'state' property to set block states (in Lucky Block NBT format).
 The 5th propety for each block in .luckystruct files is now an NBT tag in the same format as 'state'. Numbers can still be provided, but will have no effect.
+
+Change structures to Minecraft's new .nbt format, using structure blocks. Old .shematic structures will continue work, but some block states may by invalid.
+
+Rename 'lucky:LuckyProjectile' to 'lucky:lucky_projectile'.
+
+=== OTHER ===
+
+Use 'showUpdateMessage=false' in the properties.txt file to disabe update messages.

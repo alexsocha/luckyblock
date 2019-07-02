@@ -35,11 +35,12 @@ public class EntityLuckyProjectile extends EntityArrow {
     private DropProcessor dropProcessorImpact;
 
     public EntityLuckyProjectile(World world) {
-        super(SetupCommon.LUCKY_PROJECTILE_TYPE, world);
+        super(SetupCommon.ENTITY_LUCKY_PROJECTILE, world);
     }
 
     @Override
     protected void registerData() {
+        super.registerData();
         this.getDataManager().register(ITEM_STACK, ItemStack.EMPTY);
         this.dropProcessorTrail = new DropProcessor();
         this.dropProcessorImpact = new DropProcessor();

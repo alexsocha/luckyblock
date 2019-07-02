@@ -3,6 +3,7 @@ package mod.lucky.resources;
 import mod.lucky.drop.value.ValueParser;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.util.LuckyReader;
+import mod.lucky.world.LuckyTickHandler;
 
 public class ResourceProperties extends BaseResource {
     @Override
@@ -15,6 +16,8 @@ public class ResourceProperties extends BaseResource {
 
                 if (name.equals("doDropsOnCreativeMode"))
                     loader.getBlock().setDoCreativeDrops(ValueParser.getBoolean(value));
+                if (name.equals("showUpdateMessage"))
+                    LuckyTickHandler.setShowUpdateMessage(ValueParser.getBoolean(value));
             }
         } catch (Exception e) { this.logError(e); }
     }

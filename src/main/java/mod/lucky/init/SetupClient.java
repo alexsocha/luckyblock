@@ -3,44 +3,33 @@ package mod.lucky.init;
 import java.util.List;
 
 import mod.lucky.Lucky;
-import mod.lucky.client.ClientEventHandler;
-import mod.lucky.client.RenderLuckyPotion;
 import mod.lucky.client.RenderLuckyProjectile;
 import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
 import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceManager;
-import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderSprite;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 @OnlyIn(Dist.CLIENT)
 public class SetupClient {
-    private static void registerEntityRenderers() {
-        RenderingRegistry.registerEntityRenderingHandler(EntityLuckyProjectile.class,
-            new IRenderFactory<EntityLuckyProjectile>() {
-                @Override
-                public Render<EntityLuckyProjectile> createRenderFor(RenderManager manager) {
-                    return new RenderLuckyProjectile(manager);
-                }
-            });
-        RenderingRegistry.registerEntityRenderingHandler(EntityLuckyPotion.class,
-            new IRenderFactory<EntityLuckyPotion>() {
-                @Override
-                public Render<EntityLuckyPotion> createRenderFor(RenderManager manager) {
-                    return new RenderLuckyPotion(manager,
-                        Minecraft.getInstance().getItemRenderer());
-                }
-            });
+
+    public static void registerEntityRenderers() {
+        RenderingRegistry.registerEntityRenderingHandler(
+            EntityLuckyProjectile.class, RenderLuckyProjectile::new);
+        RenderingRegistry.registerEntityRenderingHandler(
+            EntityLuckyPotion.class, manager ->
+                new RenderSprite<EntityLuckyPotion>(manager, Lucky.luckyPotion,
+                    Minecraft.getInstance().getItemRenderer()));
+
     }
 
     private static void registerPluginResources() {
@@ -82,14 +71,22 @@ public class SetupClient {
         }
     }
 
-    public static void setup() {
-        /*
+    /*
+    @SubscribeEvent
+    public static void registerEntities(FMLLoadCompleteEvent event) {
         registerEntityRenderers();
+    }
+     */
+
+    public static void setup() {
+        registerEntityRenderers();
+        //registerEntityRenderers();
+        //MinecraftForge.EVENT_BUS.register(Lucky.tickHandler);
+        /*
         registerPluginResources();
         registerAllItemModels();
 
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-        MinecraftForge.EVENT_BUS.register(new LuckyTickHandler());
          */
     }
 }

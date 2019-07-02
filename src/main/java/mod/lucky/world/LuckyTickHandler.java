@@ -2,6 +2,7 @@ package mod.lucky.world;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +17,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.world.ChunkDataEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -23,7 +25,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class LuckyTickHandler {
     private ConcurrentHashMap<Integer, Object> delayDrops;
-    private boolean shownUpdateVersion = true;
+    private boolean alreadyShownMessage = false;
+    private static boolean showUpdateMessage = true;
 
     public LuckyTickHandler() {
         try {
@@ -31,15 +34,33 @@ public class LuckyTickHandler {
         } catch (Exception e) {}
     }
 
+    public static void setShowUpdateMessage(boolean showUpdateMessage) {
+        LuckyTickHandler.showUpdateMessage = showUpdateMessage;
+    }
+
+    public static String versionLog = "" +
+      "" +
+        "7.8.0|1.14.0|[\"\",{\"text\":\"Lucky Block > \",\"color\":\"gold\"},{\"text\":\"A new version is available for Minecraft 1.14. You can download it \",\"color\":\"gold\"},{\"text\":\"here!\",\"color\":\"blue\",\"underlined\":true,\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http://www.minecraftascending.com/projects/lucky_block/lucky_block.html\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Download Lucky Block\",\"color\":\"blue\"}]}}}]\r\n" +
+      "" +
+      "7.5.0|1.12.0|[\"\",{\"text\":\"Lucky Block > \",\"color\":\"gold\"},{\"text\":\"A new version is available for Minecraft 1.12. You can download it \",\"color\":\"gold\"},{\"text\":\"here!\",\"color\":\"blue\",\"underlined\":true,\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http://www.minecraftascending.com/projects/lucky_block/lucky_block.html\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Download Lucky Block\",\"color\":\"blue\"}]}}}]\r\n" +
+        "" +
+        "" +
+        "" +
+        "7.3.0|1.10.2|[\"\",{\"text\":\"Lucky Block > \",\"color\":\"gold\"},{\"text\":\"A new version is available for Minecraft 1.10.2. You can download it \",\"color\":\"gold\"},{\"text\":\"here!\",\"color\":\"blue\",\"underlined\":true,\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http://www.minecraftascending.com/projects/lucky_block/lucky_block.html\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Download Lucky Block\",\"color\":\"blue\"}]}}}]\r\n7.0.2|1.8.0|[\"\",{\"text\":\"Lucky Block > \",\"color\":\"gold\"},{\"text\":\"A new version is available for Minecraft 1.8.9 and 1.9. You can download it \",\"color\":\"gold\"},{\"text\":\"here!\",\"color\":\"blue\",\"underlined\":true,\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http://www.minecraftascending.com/projects/lucky_block/lucky_block.html\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Download Lucky Block\",\"color\":\"blue\"}]}}}]\r\n7.0.1|1.8.0|[\"\",{\"text\":\"Lucky Block > \",\"color\":\"gold\"},{\"text\":\"A new version fixes several issues. You can download it \",\"color\":\"gold\"},{\"text\":\"here!\",\"color\":\"blue\",\"underlined\":true,\"clickEvent\":{\"action\":\"open_url\",\"value\":\"http://www.minecraftascending.com/projects/lucky_block/lucky_block.html\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Download Lucky Block\",\"color\":\"blue\"}]}}}]";
+
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void onClientTick(TickEvent.ClientTickEvent event) {
         try {
-            if (Minecraft.getInstance().player != null && this.shownUpdateVersion) {
-                this.shownUpdateVersion = false;
+            if (LuckyTickHandler.showUpdateMessage
+                && Minecraft.getInstance().player != null
+                && !this.alreadyShownMessage) {
+
+                this.alreadyShownMessage = true;
 
                 URL url = new URL("http://www.minecraftascending.com/projects/lucky_block/download/version/version_log.txt");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                reader = new BufferedReader(new StringReader(versionLog));
 
                 int curLuckyVersion = Integer.valueOf(Lucky.VERSION.replace(".", ""));
                 int curMinecraftVersion = Integer.valueOf(Lucky.MC_VERSION.replace(".", ""));
@@ -50,9 +71,13 @@ public class LuckyTickHandler {
                     int luckyVersion = Integer.valueOf(split[0].replace(".", ""));
                     int minecraftVersion = Integer.valueOf(split[1].replace(".", ""));
 
+                    Lucky.LOGGER.info(luckyVersion + ", " + minecraftVersion);
+                    Lucky.LOGGER.info("> " + curLuckyVersion + ", " + curMinecraftVersion);
+
                     if (minecraftVersion >= curMinecraftVersion && luckyVersion > curLuckyVersion) {
                         String message = split[2];
                         ITextComponent textComponent = ITextComponent.Serializer.fromJson(message);
+                        Lucky.LOGGER.info("ATTEMPT MESSAGE: " + textComponent);
                         Minecraft.getInstance().player.sendMessage(textComponent);
                         break;
                     }
@@ -62,7 +87,7 @@ public class LuckyTickHandler {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void onServerTick(TickEvent.ServerTickEvent event) {
         try {
             for (int i = 0; i > -1; i++) {

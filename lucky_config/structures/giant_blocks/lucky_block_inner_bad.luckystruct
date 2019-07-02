@@ -7,7 +7,7 @@ width=8
 
 / === lucky block ===
 
-4,3,6,lucky:lucky_block,0,(Drops=["group( \
+4,3,6,lucky:lucky_block,(),(Drops=["group( \
 
 / break stages
 group( \

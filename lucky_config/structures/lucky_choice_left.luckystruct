@@ -4,6 +4,6 @@ height=1
 width=1
 
 >blocks
-0,0,0,lucky:lucky_block,0,(Luck=100)
-1,0,0,oak_sign,0,(Text1=#jsonStr(text=""),Text2=#jsonStr(text="One is lucky."),Text3=#jsonStr(text="One is not."),Text4=#jsonStr(text=""))
-2,0,0,lucky:lucky_block,0,(Luck=-100)
+0,0,0,lucky:lucky_block,(),(Luck=100)
+1,0,0,sign,(),(Text1=#jsonStr(text=""),Text2=#jsonStr(text="One is lucky."),Text3=#jsonStr(text="One is not."),Text4=#jsonStr(text=""))
+2,0,0,lucky:lucky_block,(),(Luck=-100)

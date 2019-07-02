@@ -13,7 +13,7 @@ public class DropProcessor {
     private ArrayList<DropFull> drops;
 
     public static boolean DEBUG = true;
-    private int debugDropIndex = 95;
+    private int debugDropIndex = 0;
     private int debugIndexMin = 0;
     private int debugIndexMax = 1000;
 

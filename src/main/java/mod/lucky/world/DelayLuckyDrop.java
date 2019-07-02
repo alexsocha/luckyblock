@@ -1,5 +1,6 @@
 package mod.lucky.world;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,23 +28,14 @@ public class DelayLuckyDrop {
                 this.finished = true;
             }
         } catch (Exception e) {
-            System.err.println(
-                "Lucky Block: Error processing delay drop: "
+            Lucky.error(e, "Error processing delay drop: "
                     + this.processData.getDropSingle().toString());
             this.finished = true;
         }
     }
 
-    public void setDropprocessor(DropProcessor dropProcessor) {
-        this.dropProcessor = dropProcessor;
-    }
-
     public DropProcessData getProcessData() {
         return this.processData;
-    }
-
-    public long getTicksRemaining() {
-        return this.ticksRemaining;
     }
 
     public boolean finished() {

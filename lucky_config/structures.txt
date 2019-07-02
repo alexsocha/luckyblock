@@ -1,5 +1,6 @@
 / cages
-ID=cage,file=cage.nbt,centerY=1
+ID=cage_sign,file=cage_sign.luckystruct,blockMode=overlay
+ID=cage,file=cage.nbt,centerY=1,overlayStruct=cage_sign
 ID=water_cage,file=water_cage.nbt,centerY=1
 
 / lucky buildings

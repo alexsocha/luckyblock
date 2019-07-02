@@ -2,9 +2,11 @@ package mod.lucky.drop.func;
 
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
+import net.minecraft.block.BlockSign;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 

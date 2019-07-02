@@ -17,7 +17,7 @@ public class TileEntityLuckyBlock extends TileEntity implements ITickable {
     private int luck = 0;
 
     public TileEntityLuckyBlock() {
-        super(SetupCommon.LUCKY_BLOCK_TE_TYPE);
+        super(SetupCommon.TE_LUCKY_BLOCK);
     }
 
     @Override
