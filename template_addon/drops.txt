@@ -1,0 +1,5 @@
+/ lucky drop: iron tools
+group(ID=iron_shovel;ID=iron_pickaxe;ID=iron_axe;ID=iron_sword;ID=iron_hoe)@luck=2
+
+/ unlucky drop: explosion
+type=explosion,radius=4,fire=true@luck=-2

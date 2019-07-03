@@ -1,5 +1,6 @@
 package mod.lucky.drop.func;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.entity.EntityLuckyProjectile;
 import net.minecraft.client.Minecraft;
@@ -14,6 +15,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.UUID;
 
@@ -58,15 +60,15 @@ public class DropFuncEntity extends DropFunc {
             }
         }
 
-        if (!tag.hasKey("Pos")) {
-            NBTTagList posList = new NBTTagList();
-            posList.add(new NBTTagDouble(posX));
-            posList.add(new NBTTagDouble(posY));
-            posList.add(new NBTTagDouble(posZ));
-            tag.setTag("Pos", posList);
+        if (tag.hasKey("Pos")) {
+            NBTTagList posList = tag.getList("Pos", Constants.NBT.TAG_DOUBLE);
+            posX = posList.getDouble(0);
+            posY = posList.getDouble(1);
+            posZ = posList.getDouble(2);
         }
 
-        Entity entity = AnvilChunkLoader.readWorldEntity(tag, world, true);
+        Lucky.LOGGER.info(tag);
+        Entity entity = AnvilChunkLoader.readWorldEntityPos(tag, world, posX, posY, posZ, true);
         if (entity == null) return null;
 
         UUID playerUUID = processData.getPlayer().getUniqueID();
@@ -80,12 +82,13 @@ public class DropFuncEntity extends DropFunc {
 
         // randomize entity
         if (entity instanceof EntityLiving
-            && processData.getProcessType() != DropProcessData.EnumProcessType.LUCKY_STRUCT) {
+            && processData.getProcessType() != DropProcessData.EnumProcessType.LUCKY_STRUCT
+            && !tag.hasKey("Passengers")) {
 
             ((EntityLiving) entity).onInitialSpawn(
                 world.getDifficultyForLocation(new BlockPos(entity)),
                 null, null);
-            entity.read(tag);
+            ((EntityLiving) entity).readAdditional(tag);
         }
 
         return entity;

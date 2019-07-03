@@ -22,6 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -112,12 +113,8 @@ public static final NBTTagCompound luckOfTheSea = getEnchantment(Enchantments.LU
 
     public static NBTTagCompound getPotionEffect(Potion potion, int amplifier, int duration) {
         NBTTagCompound nbttag = new NBTTagCompound();
-
-        nbttag.setString("Id", ForgeRegistries.POTIONS.getKey(potion).toString());
-        nbttag.setByte("Amplifier", (byte) amplifier);
-        nbttag.setInt("Duration", duration);
-
-        return nbttag;
+        PotionEffect effect = new PotionEffect(potion, duration, amplifier);
+        return effect.write(nbttag);
     }
 
     public static ArrayList<NBTTagCompound> getRandomList(
@@ -193,18 +190,16 @@ public static final NBTTagCompound luckOfTheSea = getEnchantment(Enchantments.LU
 
     public static INBTBase getNBTTagFromString(String name, DropProcessData processData) {
         if (name.equals("#luckySwordEnchantments"))
-            return getRandomEnchantmentList(
-                4, 6, sharpness, smite, baneOfArthroponds, knockBack, fireAspect, looting, unbreaking);
+            return getRandomEnchantmentList(4, 6,
+                sharpness, smite, baneOfArthroponds, knockBack, fireAspect, looting, unbreaking);
         if (name.equals("#luckyAxeEnchantments"))
-            return getRandomEnchantmentList(
-                4, 6, sharpness, smite, baneOfArthroponds, efficiency, unbreaking, fortune);
+            return getRandomEnchantmentList(4, 6,
+                sharpness, smite, baneOfArthroponds, efficiency, unbreaking, fortune);
         if (name.equals("#luckyToolEnchantments"))
             return getRandomEnchantmentList(2, 3, efficiency, unbreaking, fortune);
 
         if (name.equals("#luckyHelmetEnchantments"))
-            return getRandomEnchantmentList(
-                4,
-                6,
+            return getRandomEnchantmentList(4, 6,
                 protection,
                 fireProtection,
                 blastProtection,
@@ -213,9 +208,7 @@ public static final NBTTagCompound luckOfTheSea = getEnchantment(Enchantments.LU
                 aquaAffinity,
                 unbreaking);
         if (name.equals("#luckyChestplateEnchantments"))
-            return getRandomEnchantmentList(
-                4,
-                6,
+            return getRandomEnchantmentList(4, 6,
                 protection,
                 fireProtection,
                 blastProtection,
@@ -223,9 +216,7 @@ public static final NBTTagCompound luckOfTheSea = getEnchantment(Enchantments.LU
                 thorns,
                 unbreaking);
         if (name.equals("#luckyLeggingsEnchantments"))
-            return getRandomEnchantmentList(
-                4,
-                6,
+            return getRandomEnchantmentList(4, 6,
                 protection,
                 fireProtection,
                 blastProtection,
@@ -233,9 +224,7 @@ public static final NBTTagCompound luckOfTheSea = getEnchantment(Enchantments.LU
                 thorns,
                 unbreaking);
         if (name.equals("#luckyBootsEnchantments"))
-            return getRandomEnchantmentList(
-                4,
-                6,
+            return getRandomEnchantmentList(4, 6,
                 protection,
                 fireProtection,
                 featherFalling,
@@ -250,9 +239,7 @@ public static final NBTTagCompound luckOfTheSea = getEnchantment(Enchantments.LU
             return getRandomEnchantmentList(2, 3, unbreaking, luckOfTheSea, lure);
 
         if (name.equals("#randEnchantment"))
-            return getRandomEnchantmentList(
-                1,
-                1,
+            return getRandomEnchantmentList(1, 1,
                 protection,
                 fireProtection,
                 featherFalling,
@@ -277,9 +264,7 @@ public static final NBTTagCompound luckOfTheSea = getEnchantment(Enchantments.LU
                 lure);
 
         if (name.equals("#luckyPotionEffects"))
-            return getRandomPotionEffectList(
-                7,
-                10,
+            return getRandomPotionEffectList(7, 10,
                 speed,
                 haste,
                 strength,
@@ -296,9 +281,7 @@ public static final NBTTagCompound luckOfTheSea = getEnchantment(Enchantments.LU
                 saturation);
 
         if (name.equals("#unluckyPotionEffects"))
-            return getRandomPotionEffectList(
-                5,
-                7,
+            return getRandomPotionEffectList(5, 7,
                 slowness,
                 miningFatigue,
                 instantDamage,

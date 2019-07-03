@@ -117,7 +117,7 @@ public class SetupCommon {
 
         DropFunc.registerFunctions();
 
-        //Lucky.resourceManager.registerPlugins();
+        Lucky.resourceManager.registerPlugins();
     }
 
     public static Structure getStructure(String id) {

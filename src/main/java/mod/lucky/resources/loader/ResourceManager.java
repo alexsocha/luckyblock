@@ -3,10 +3,12 @@ package mod.lucky.resources.loader;
 import java.io.File;
 import java.util.ArrayList;
 
+import mod.lucky.Lucky;
 import mod.lucky.resources.*;
 
 public class ResourceManager {
-    private static File PLUGIN_DIR = new File("/addons/luckyBlock");
+    private static File PLUGIN_DIR_OLD = new File("/addons/luckyBlock");
+    private static File PLUGIN_DIR = new File("/addons/lucky_block");
 
     private boolean isClient;
     private File minecraftDir;
@@ -32,8 +34,14 @@ public class ResourceManager {
     public void resetLoaders() {
         this.defaultLoader = new DefaultLoader(this.minecraftDir);
         this.pluginLoaders = new ArrayList<PluginLoader>();
+
         File fullPluginDir = new File(this.minecraftDir.getPath() + PLUGIN_DIR.getPath());
-        if (!fullPluginDir.exists()) fullPluginDir.mkdirs();
+        if (!fullPluginDir.exists()) {
+            File oldFullPluginDir = new File(this.minecraftDir.getPath() + PLUGIN_DIR_OLD.getPath());
+            if (!oldFullPluginDir.exists()) fullPluginDir.mkdirs();
+            else fullPluginDir = oldFullPluginDir;
+        }
+
         File[] pluginFiles = fullPluginDir.listFiles();
         for (File plugin : pluginFiles) {
             if (plugin.isDirectory()
@@ -49,8 +57,7 @@ public class ResourceManager {
     }
 
     public void extractDefaultResources() {
-        this.defaultLoader.extractDefaultResources();
-    }
+        this.defaultLoader.extractDefaultResources(); }
 
     public DefaultLoader getDefaultLoader() {
         return this.defaultLoader;

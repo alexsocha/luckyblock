@@ -1,0 +1,5 @@
+/ Knockback
+group(type=effect,ID=special_knockback,range=6,excludePlayer=true,power=1.8,pos=#pPos,delay=0.1;type=particle,ID=explode,size=(1.0,0.3,1.0),particleAmount=500,pos=#pExactPos)@luck=2
+
+/ Nothing
+type=nothing@luck=0@chance=2

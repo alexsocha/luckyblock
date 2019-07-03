@@ -1,0 +1,2 @@
+/ house
+ID=house,file=house.schematic

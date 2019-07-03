@@ -1,0 +1,5 @@
+/ Health + Regeneration
+group(type=effect,ID=6,range=4,amplifier=3;type=effect,ID=10,range=4,amplifier=1,duration=300;type=particle,ID=splashpotion,damage=8197;type=particle,ID=heart,size=(1.5,0.5,1.5),particleAmount=300)@luck=2
+
+/ Poison
+group(type=effect,ID=19,range=4,duration=30;type=particle,ID=splashpotion,damage=8260;type=difficulty,ID=hard;type=entity,ID=CaveSpider;type=item,ID=#randList(rotten_flesh,spider_eye,fermented_spider_eye),posOffset=#circleOffset(0.0,2.0),amount=30)@luck=-2

@@ -10,16 +10,6 @@ import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.util.LuckyReader;
 
 public class ResourcePluginInit extends BaseResource {
-    /*
-    private static String camelFromUnderscore(String string) {
-        String upperCamel = Stream.of(string.split("_"))
-            .map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
-            .collect(Collectors.joining());
-
-        return upperCamel.substring(0, 1).toLowerCase() + upperCamel.substring(1);
-    }
-    */
-
     @Override
     public void process(LuckyReader reader, BaseLoader loader) {
         try {

@@ -1,7 +1,9 @@
-Lucky Block for Minecraft 1.13 Add-on changes.
+Lucky Block for Minecraft 1.13 changes.
 The following assumes you have an add-on named "Lucky Block Red".
 
 ----
+
+Add-ons should now be placed in '.minecraft/addons/lucky_block'. However, the old 'addons/luckyBlock' folder will continue to work.
 
 === ASSETS ===
 
@@ -39,4 +41,4 @@ Rename 'lucky:LuckyProjectile' to 'lucky:lucky_projectile'.
 
 === OTHER ===
 
-Use 'showUpdateMessage=false' in the properties.txt file to disabe update messages.
+Use 'showUpdateMessage=false' in the properties.txt file to disable update messages.

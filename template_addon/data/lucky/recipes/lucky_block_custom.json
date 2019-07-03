@@ -1,0 +1,16 @@
+{
+  "type": "crafting_shaped",
+  "pattern": [
+    "###",
+    "#D#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:gray_dye"
+    }
+  },
+  "result": {
+    "item": "lucky:lucky_block_custom"
+  }
+}

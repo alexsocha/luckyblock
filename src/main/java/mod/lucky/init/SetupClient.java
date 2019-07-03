@@ -1,6 +1,8 @@
 package mod.lucky.init;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import mod.lucky.Lucky;
 import mod.lucky.client.RenderLuckyProjectile;
@@ -10,7 +12,14 @@ import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderSprite;
+import net.minecraft.client.resources.ResourcePackInfoClient;
 import net.minecraft.item.Item;
+import net.minecraft.resources.IPackFinder;
+import net.minecraft.resources.IResourcePack;
+import net.minecraft.resources.ResourcePackInfo;
+import net.minecraft.resources.ResourcePackList;
+import net.minecraft.resources.data.PackMetadataSection;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -35,12 +44,45 @@ public class SetupClient {
     private static void registerPluginResources() {
         try {
             ResourceManager resourceLoader = new ResourceManager(Minecraft.getInstance().gameDir);
-            List defaultResourcePacks =
-                ObfuscationReflectionHelper.getPrivateValue(
-                    ResourcePackLoader.class, new ResourcePackLoader(), "resourcePackList");
+
+            ResourcePackList defaultResourcePacks = Minecraft.getInstance().getResourcePackList();
 
             for (PluginLoader pluginLoader : resourceLoader.getPluginLoaders()) {
-                defaultResourcePacks.add(pluginLoader.getResourcePack());
+                IResourcePack pack = pluginLoader.getResourcePack();
+                String name = "mod:lucky:" + pluginLoader.getPluginName();
+
+                IPackFinder packFinder = new IPackFinder() {
+                    @Override
+                    public <T extends ResourcePackInfo> void addPackInfosToMap(
+                        Map<String, T> nameToPackMap,
+                        ResourcePackInfo.IFactory<T> packInfoFactory) {
+
+                        ResourcePackInfoClient packInfo = new ResourcePackInfoClient(
+                            name,
+                            true, // enabled by default?
+                            () -> pack,
+                            pack,
+                            new PackMetadataSection(
+                                new TextComponentString(pluginLoader.getPluginName()), 1),
+                            ResourcePackInfo.Priority.TOP,
+                            true);
+
+                        try { nameToPackMap.put(name, (T) packInfo); }
+                        catch (Exception e) {
+                            Lucky.error(e, "Error loading resource pack for add-on: "
+                                + pluginLoader.getPluginName());
+                        }
+
+                    }
+                };
+
+                ResourcePackList<ResourcePackInfo> resourcePacks
+                    = new ResourcePackList<>(ResourcePackInfo::new);
+                resourcePacks.addPackFinder(packFinder);
+
+                //ResourcePackLoader.loadResourcePacks(resourcePacks);
+                defaultResourcePacks.addPackFinder(packFinder);
+                defaultResourcePacks.reloadPacksFromFinders();
             }
 
         } catch (Exception e) {
@@ -48,45 +90,8 @@ public class SetupClient {
         }
     }
 
-    private static void registerItemModel(Item item) {
-        /*
-        Minecraft.getInstance()
-            .getItemRenderer()
-            .getItemModelMesher()
-            .register(item, new ModelResourceLocation(item.getRegistryName().toString()));
-         */
-    }
-
-    public static void registerAllItemModels() {
-        registerItemModel(Item.BLOCK_TO_ITEM.get(Lucky.luckyBlock));
-        registerItemModel(Lucky.luckySword);
-        registerItemModel(Lucky.luckyPotion);
-        registerItemModel(Lucky.luckyBow);
-
-        for (PluginLoader loader : Lucky.luckyBlockPlugins) {
-            registerItemModel(Item.BLOCK_TO_ITEM.get(loader.getBlock()));
-            if (loader.getSword() != null) registerItemModel(loader.getSword());
-            if (loader.getPotion() != null) registerItemModel(loader.getPotion());
-            if (loader.getBow() != null) registerItemModel(loader.getBow());
-        }
-    }
-
-    /*
-    @SubscribeEvent
-    public static void registerEntities(FMLLoadCompleteEvent event) {
-        registerEntityRenderers();
-    }
-     */
-
     public static void setup() {
         registerEntityRenderers();
-        //registerEntityRenderers();
-        //MinecraftForge.EVENT_BUS.register(Lucky.tickHandler);
-        /*
         registerPluginResources();
-        registerAllItemModels();
-
-        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-         */
     }
 }
