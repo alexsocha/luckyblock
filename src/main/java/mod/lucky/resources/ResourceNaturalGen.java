@@ -3,11 +3,15 @@ package mod.lucky.resources;
 import mod.lucky.drop.DropFull;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.util.LuckyReader;
+import mod.lucky.world.LuckyGenerator;
 
 public class ResourceNaturalGen extends BaseResource {
     @Override
     public void process(LuckyReader reader, BaseLoader loader) {
         try {
+            LuckyGenerator generator = LuckyGenerator.registerNew(loader.getBlock());
+            loader.getBlock().setWorldGenerator(generator);
+
             String section = "";
             String curLine;
             while ((curLine = reader.readLine()) != null) {

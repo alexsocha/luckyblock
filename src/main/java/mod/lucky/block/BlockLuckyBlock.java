@@ -29,6 +29,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ToolType;
@@ -46,7 +47,7 @@ public class BlockLuckyBlock extends BlockContainer {
             .hardnessAndResistance(0.2f, 6000000.0f));
 
         this.dropProcessor = new DropProcessor();
-        this.worldGenerator = new LuckyGenerator(this);
+        //this.worldGenerator = new LuckyGenerator(this);
     }
 
     public boolean removeLuckyBlock(
@@ -144,8 +145,10 @@ public class BlockLuckyBlock extends BlockContainer {
         return 0;
     }
 
-    private boolean canPlaceOnBlock(Block soil) {
-        return soil == Blocks.GRASS_PATH
+    private boolean canPlaceOnBlock(IBlockState soil) {
+        return soil.isTopSolid();
+            /*
+            || soit == Blocks.GRASS
             || soil == Blocks.DIRT
             || soil == Blocks.SAND
             || soil == Blocks.STONE
@@ -154,9 +157,10 @@ public class BlockLuckyBlock extends BlockContainer {
             || soil == Blocks.SOUL_SAND
             || soil == Blocks.NETHER_BRICKS
             || soil == Blocks.END_STONE;
+             */
     }
 
-    public boolean canPlaceAt(World world, BlockPos pos) {
+    public boolean canPlaceAt(IWorld world, BlockPos pos) {
         IBlockState curState = world.getBlockState(pos);
         IBlockState soilState = world.getBlockState(
             new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ()));
@@ -164,7 +168,7 @@ public class BlockLuckyBlock extends BlockContainer {
         return (curState.getMaterial().isReplaceable()
             && !curState.getMaterial().isLiquid()
             && (world.getLight(pos) >= 8 || world.canBlockSeeSky(pos))
-            && (this.canPlaceOnBlock(soilState.getBlock())));
+            && (this.canPlaceOnBlock(soilState)));
     }
 
     @Override
@@ -204,10 +208,10 @@ public class BlockLuckyBlock extends BlockContainer {
 
     public DropProcessor getDropProcessor() { return this.dropProcessor; }
     public LuckyGenerator getWorldGenerator() { return this.worldGenerator; }
+    public void setWorldGenerator(LuckyGenerator gen) { this.worldGenerator = gen; }
 
-    public void setDoCreativeDrops(boolean doCreativeDrops) {
-        this.doCreativeDrops = doCreativeDrops;
-    }
+    public void setDoCreativeDrops(boolean flag) { this.doCreativeDrops = flag; }
+
     public BlockLuckyBlock setBlockRecipe(IForgeRegistryEntry<IRecipe> recipe) {
         this.blockRecipe = recipe;
         return this;

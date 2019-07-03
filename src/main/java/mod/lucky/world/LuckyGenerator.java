@@ -8,14 +8,19 @@ import mod.lucky.block.BlockLuckyBlock;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.IChunkGenerator;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.placement.ChanceConfig;
+import net.minecraftforge.registries.ForgeRegistries;
 
-public class LuckyGenerator implements IWorldGenerator {
+public class LuckyGenerator extends Feature<NoFeatureConfig> {
     private BlockLuckyBlock block;
     private ArrayList<DropFull> surfaceDrops;
     private ArrayList<DropFull> netherDrops;
@@ -28,59 +33,48 @@ public class LuckyGenerator implements IWorldGenerator {
         this.endDrops = new ArrayList<DropFull>();
     }
 
-    @Override
-    public void generate(
-        Random random,
-        int chunkX,
-        int chunkZ,
-        World world,
-        IChunkGenerator chunkGenerator,
-        IChunkProvider chunkProvider) {
-        try {
-            Dimension dim = world.getDimension();
-            if (dim.isNether()) {
-                for (DropFull drop : this.netherDrops)
-                    if (random.nextInt((int) drop.getChance()) == 0)
-                        this.generateNether(world, random, chunkX * 16, chunkZ * 16, drop);
+    public static LuckyGenerator registerNew(BlockLuckyBlock block) {
+        LuckyGenerator generator = new LuckyGenerator(block);
 
-            } else if (dim.isSurfaceWorld()) {
-                for (DropFull drop : this.surfaceDrops)
-                    if (random.nextInt((int) drop.getChance()) == 0)
-                        this.generateSurface(world, random, chunkX * 16, chunkZ * 16, drop);
+        ForgeRegistries.BIOMES.forEach(biome ->
+            biome.addFeature(
+                GenerationStage.Decoration.SURFACE_STRUCTURES,
+                Biome.createCompositeFeature(
+                    generator,
+                    IFeatureConfig.NO_FEATURE_CONFIG,
+                    Biome.AT_SURFACE_WITH_CHANCE,
+                    new ChanceConfig(1))));
 
-            } else {
-                for (DropFull drop : this.endDrops)
-                    if (random.nextInt((int) drop.getChance()) == 0)
-                        this.generateEnd(world, random, chunkX * 16, chunkZ * 16, drop);
+        return generator;
+    }
+
+    private void generate(IWorld world, Random rand, BlockPos pos, ArrayList<DropFull> drops) {
+        int initIndex = rand.nextInt(drops.size());
+        for (int i = 0; i < drops.size(); i++) {
+            DropFull drop = drops.get((initIndex + i) % drops.size());
+            if (rand.nextInt((int) drop.getChance()) == 0) {
+                Lucky.LOGGER.info("Generated at " + pos);
+                DropProcessData processData = new DropProcessData(world, null, pos);
+                this.block.getDropProcessor().processRandomDrop(drops, processData, 0);
             }
-        } catch (Exception e) {
-            Lucky.error(e, "Error during natural generation");
-            Lucky.error(e, e.getMessage());
         }
     }
 
-    private void generateNether(World world, Random random, int x, int z, DropFull drop) {
-        x += (random.nextInt(16) + 8);
-        z += (random.nextInt(16) + 8);
-        this.generate(world, new BlockPos(x, 64, z), drop);
-    }
+    private boolean generate(IWorld world, Random rand, BlockPos pos) {
+        try {
+            if (this.block.canPlaceAt(world, pos)) {
+                Dimension dim = world.getDimension();
 
-    private void generateSurface(World world, Random random, int x, int z, DropFull drop) {
-        x += (random.nextInt(16) + 8);
-        z += (random.nextInt(16) + 8);
-        this.generate(world, new BlockPos(x, 128, z), drop);
-    }
+                if (dim.isNether()) this.generate(world, rand, pos, this.netherDrops);
+                else if (dim.isSurfaceWorld()) this.generate(world, rand, pos, this.surfaceDrops);
+                else this.generate(world, rand, pos, this.endDrops);
 
-    private void generateEnd(World world, Random random, int x, int z, DropFull drop) {
-        x += (random.nextInt(16) + 8);
-        z += (random.nextInt(16) + 8);
-        this.generate(world, new BlockPos(x, 100, z), drop);
-    }
-
-    private void generate(World world, BlockPos pos, DropFull drop) {
-        pos = this.getSurfacePos(world, pos);
-        if (pos != null)
-            this.block.getDropProcessor().processDrop(drop, new DropProcessData(world, null, pos));
+                return true;
+            }
+        } catch (Exception e) {
+            Lucky.error(e, "Error during natural generation");
+        }
+        return false;
     }
 
     public void addSurfacedDrop(DropFull drop) {
@@ -100,18 +94,10 @@ public class LuckyGenerator implements IWorldGenerator {
         list.add(drop);
     }
 
-    private BlockPos getSurfacePos(World world, BlockPos pos) {
-        int newPosY = pos.getY();
-        boolean canAdjust = false;
-        do {
-            BlockPos newPos = new BlockPos(pos.getX(), newPosY, pos.getZ());
-            if (this.block.canPlaceAt(world, newPos)) {
-                canAdjust = true;
-                break;
-            }
-            newPosY--;
-        } while (newPosY > 0);
+    @Override
+    public boolean func_212245_a(IWorld world, IChunkGenerator<?> chunkGen,
+        Random rand, BlockPos pos, NoFeatureConfig config) {
 
-        return canAdjust == false ? null : new BlockPos(pos.getX(), newPosY, pos.getZ());
+        return this.generate(world, rand, pos);
     }
 }

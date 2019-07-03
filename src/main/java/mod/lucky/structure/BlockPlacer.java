@@ -5,15 +5,17 @@ import java.util.ArrayList;
 import mod.lucky.drop.func.DropFuncBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public class BlockPlacer {
-    private World world;
+    private IWorld world;
     private ArrayList<BlockPos> updatePos;
     private ArrayList<IBlockState> updateState;
 
 
-    public BlockPlacer(World world) {
+    public BlockPlacer(IWorld world) {
         this.world = world;
         this.updatePos = new ArrayList<BlockPos>();
         this.updateState = new ArrayList<IBlockState>();
@@ -29,13 +31,16 @@ public class BlockPlacer {
     public void update() {
         for (int i = 0; i < this.updatePos.size(); i++) {
             BlockPos pos = this.updatePos.get(i);
-            this.world.markAndNotifyBlock(pos,
-                this.world.getChunk(pos),
-                this.world.getBlockState(pos),
-                this.updateState.get(i),
-                3);
+            if (world instanceof World) {
+                World fullWorld = (World) this.world;
+                fullWorld.markAndNotifyBlock(pos,
+                    fullWorld.getChunk(pos),
+                    fullWorld.getBlockState(pos),
+                    this.updateState.get(i),
+                    3);
+            }
         }
     }
 
-    public World getWorld() { return this.world; }
+    public IWorld getWorld() { return this.world; }
 }

@@ -35,8 +35,6 @@ public class EntityLuckyPotion extends EntityThrowable {
          DropProcessor impactDropProcessor,
          int luck, String[] customDrops) {
 
-
-        Lucky.LOGGER.info("===new entity!");
         this.setItemStack(new ItemStack(itemLuckyPotion, 1));
         this.impactDropProcessor = impactDropProcessor;
         this.luck = luck;

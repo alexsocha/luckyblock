@@ -4,7 +4,7 @@
 type=block,ID=lucky:lucky_block@chance=600
 
 / lucky acropolis
-group(type=structure,ID=gen_good;type=block,ID=lucky:lucky_block,posy=#bPosY+1,tileEntity=(Luck=75))@chance=600
+group(type=structure,ID=gen_acropolis;type=block,ID=lucky:lucky_block,posY=#bPosY+1,tileEntity=(Luck=75))@chance=600
 
 / ==== unlucky ruins ====
 / bottom layer

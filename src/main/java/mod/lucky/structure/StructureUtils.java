@@ -1,5 +1,6 @@
 package mod.lucky.structure;
 
+import mod.lucky.drop.func.DropFuncBlock;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -12,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -94,33 +96,11 @@ public class StructureUtils {
         }
     }
 
-    public static void setTileEntity(World world, NBTTagCompound tileEntity,
+    public static void setTileEntity(IWorld world, NBTTagCompound tileEntity,
         BlockPos structPos, Vec3d structCenter, Vec3d harvestPos, int rotation) {
 
         BlockPos pos = getWorldPos(structPos, structCenter, harvestPos, rotation);
-        IBlockState blockState = world.getBlockState(pos);
-
-        world.removeTileEntity(pos);
-
-        TileEntity blockTileEntity = blockState.getBlock().createTileEntity(blockState, world);
-        blockTileEntity.read(tileEntity);
-        blockTileEntity.setPos(pos);
-        blockTileEntity.setWorld(world);
-        blockTileEntity.rotate(parseRotation(rotation));
-
-        world.setTileEntity(pos, blockTileEntity);
-        blockTileEntity.updateContainingBlockInfo();
-    }
-
-    public static void setTileEntity(World world, TileEntity tileEntity,
-        Vec3d structCenter, Vec3d harvestPos, int rotation) {
-
-        BlockPos pos = getWorldPos(tileEntity.getPos(), structCenter, harvestPos, rotation);
-        world.removeTileEntity(pos);
-        tileEntity.setPos(pos);
-        tileEntity.setWorld(world);
-        tileEntity.rotate(parseRotation(rotation));
-        world.setTileEntity(pos, tileEntity);
+        DropFuncBlock.setTileEntity(world, world.getBlockState(pos), pos, tileEntity);
     }
 
     public static void setEntity(World world, Entity entity,

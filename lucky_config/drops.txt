@@ -143,7 +143,7 @@ type=entity,ID=experience_bottle,NBTTag=(Motion=#randLaunchMotion),amount=#rand(
 type=entity,ID=tnt,NBTTag=(Fuse=50b,Motion=#randLaunchMotion),amount=15@luck=-2
 
 / lightning creeper
-group(type=difficulty,ID=hard;type=entity,ID=creeper;type=entity,ID=LightningBolt)@luck=-2
+group(type=difficulty,ID=hard;type=entity,ID=creeper;type=entity,ID=lightning_bolt)@luck=-2
 / giant
 group(type=difficulty,ID=hard;type=entity,ID=giant)@luck=-2
 / wither
@@ -199,14 +199,14 @@ group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,N
 
 group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=gold_block));type=particle,ID=flame,size=(1,2,1),particleAmount=500;type=sound,ID=entity.ghast.shoot)@luck=0
 
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=diamond_block));type=entity,ID=LightningBolt)@luck=1
+group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=diamond_block));type=entity,ID=lightning_bolt)@luck=1
 
 group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=emerald_block));type=particle,ID=happy_villager,size=(1,2,1),particleAmount=500;type=sound,ID=block.grass.break)@luck=0
 
 group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=lapis_block));type=particle,ID=splash,size=(1,2,1),particleAmount=1000;type=sound,ID=entity.player.swim)@luck=0
 
 / colorful pole
-group(type=fill,ID=air,size=(1,51,1);group(NBTTag=(BlockState=(Name=red_glazed_terracotta)),posY=#bPosY+5;NBTTag=(BlockState=(Name=orange_glazed_terracotta)),posY=#bPosY+10;NBTTag=(BlockState=(Name=yellow_glazed_terracotta)),posY=#bPosY+15;NBTTag=(BlockState=(Name=lime_glazed_terracotta)),posY=#bPosY+20;NBTTag=(BlockState=(Name=light_blue_glazed_terracotta)),posY=#bPosY+25;NBTTag=(BlockState=(Name=blue_glazed_terracotta)),posY=#bPosY+30;NBTTag=(BlockState=(Name=purple_glazed_terracotta)),posY=#bPosY+35;NBTTag=(BlockState=(Name=magenta_glazed_terracotta)),posY=#bPosY+40;NBTTag=(BlockState=(Name=pink_glazed_terracotta)),posY=#bPosY+45),type=entity,ID=falling_block;type=entity,ID=falling_block,NBTTag=(BlockState=(Name=diamond_block)),posY=#bPosY+50;type=entity,ID=LightningBolt,posY=#bPosY+10,delay=5.3)@luck=2
+group(type=fill,ID=air,size=(1,51,1);group(NBTTag=(BlockState=(Name=red_glazed_terracotta)),posY=#bPosY+5;NBTTag=(BlockState=(Name=orange_glazed_terracotta)),posY=#bPosY+10;NBTTag=(BlockState=(Name=yellow_glazed_terracotta)),posY=#bPosY+15;NBTTag=(BlockState=(Name=lime_glazed_terracotta)),posY=#bPosY+20;NBTTag=(BlockState=(Name=light_blue_glazed_terracotta)),posY=#bPosY+25;NBTTag=(BlockState=(Name=blue_glazed_terracotta)),posY=#bPosY+30;NBTTag=(BlockState=(Name=purple_glazed_terracotta)),posY=#bPosY+35;NBTTag=(BlockState=(Name=magenta_glazed_terracotta)),posY=#bPosY+40;NBTTag=(BlockState=(Name=pink_glazed_terracotta)),posY=#bPosY+45),type=entity,ID=falling_block;type=entity,ID=falling_block,NBTTag=(BlockState=(Name=diamond_block)),posY=#bPosY+50;type=entity,ID=lightning_bolt,posY=#bPosY+10,delay=5.3)@luck=2
 
 / tnt pole
 group(type=fill,ID=air,size=(1,51,1);type=entity,ID=falling_block,NBTTag=(BlockState=(Name=redstone_block)),posY=#bPosY+5;group(posY=#bPosY+10;posY=#bPosY+15;posY=#bPosY+20;posY=#bPosY+25;posY=#bPosY+30;posY=#bPosY+35;posY=#bPosY+40;posY=#bPosY+45;posY=#bPosY+50),type=entity,ID=falling_block,NBTTag=(BlockState=(Name=tnt)))@luck=2

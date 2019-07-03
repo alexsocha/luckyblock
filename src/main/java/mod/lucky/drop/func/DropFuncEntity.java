@@ -2,6 +2,7 @@ package mod.lucky.drop.func;
 
 import mod.lucky.drop.DropSingle;
 import mod.lucky.entity.EntityLuckyProjectile;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -34,7 +35,7 @@ public class DropFuncEntity extends DropFunc {
                 : drop.getPropertyNBT("NBTTag");
 
         String id = drop.getPropertyString("ID");
-        if (id.equals("LightningBolt")) {
+        if (id.equals("lightning_bolt") || id.equals("LightningBolt")) {
             processData
                 .getWorld()
                 .addWeatherEffect(

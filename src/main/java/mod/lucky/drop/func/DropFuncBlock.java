@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 public class DropFuncBlock extends DropFunc {
@@ -16,14 +17,11 @@ public class DropFuncBlock extends DropFunc {
         DropSingle drop = processData.getDropSingle();
         IBlockState blockState = drop.getBlockState();
         if (drop.getPropertyBoolean("blockUpdate"))
-            processData.getWorld().setBlockState(drop.getBlockPos(), blockState, 3);
+            processData.getRawWorld().setBlockState(drop.getBlockPos(), blockState, 3);
         else
-            setBlock(processData.getWorld(), blockState, drop.getBlockPos(),
+            setBlock(processData.getRawWorld(), blockState, drop.getBlockPos(),
                 drop.getPropertyNBT("NBTTag"),
                 drop.getPropertyBoolean("blockUpdate"));
-
-        setTileEntity(processData.getWorld(), blockState, drop.getBlockPos(),
-            drop.getPropertyNBT("NBTTag"));
     }
 
     @Override
@@ -39,27 +37,39 @@ public class DropFuncBlock extends DropFunc {
         return "block";
     }
 
-    public static void setBlock(World world, IBlockState state, BlockPos pos, boolean update) {
+    public static void setBlock(IWorld world, IBlockState state, BlockPos pos, boolean update) {
         setBlock(world, state, pos, null, update);
     }
 
-    public static void setBlock(World world, IBlockState state, BlockPos pos,
-        NBTTagCompound tileEntity, boolean update) {
+    public static void setBlock(IWorld world, IBlockState state, BlockPos pos,
+                                NBTTagCompound tileEntity, boolean update) {
 
         if (world.getBlockState(pos) != state)
             world.setBlockState(pos, state, 2);
 
-        if (update) world.markAndNotifyBlock(pos, world.getChunk(pos),
-            world.getBlockState(pos), state, 3);
+        if (update && world instanceof World)
+            ((World) world).markAndNotifyBlock(pos, ((World) world).getChunk(pos),
+                world.getBlockState(pos), state, 3);
 
         if (tileEntity != null && state.getBlock().hasTileEntity(state)) {
             setTileEntity(world, state, pos, tileEntity);
         }
     }
 
-    public static void setTileEntity(World world, IBlockState state,
+    public static void setTileEntity(IWorld world, IBlockState state,
         BlockPos pos, NBTTagCompound tileEntityData) {
 
+        Lucky.LOGGER.info("tile entity: " + tileEntityData);
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if (tileEntity != null) {
+            tileEntity.handleUpdateTag(tileEntityData);
+            if (world instanceof World)
+                ((World) world).setTileEntity(pos, tileEntity);
+        } else {
+            Lucky.error(null, "Error setting tile entity for block: " + state);
+        }
+
+        /*
         if (tileEntityData != null && state.getBlock().hasTileEntity(state)) {
             world.removeTileEntity(pos);
 
@@ -75,5 +85,6 @@ public class DropFuncBlock extends DropFunc {
             world.setTileEntity(pos, tileEntity);
             tileEntity.updateContainingBlockInfo();
         }
+         */
     }
 }

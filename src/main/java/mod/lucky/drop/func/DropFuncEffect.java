@@ -3,6 +3,7 @@ package mod.lucky.drop.func;
 import java.util.Iterator;
 import java.util.List;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
 import net.minecraft.entity.Entity;
@@ -45,6 +46,10 @@ public class DropFuncEffect extends DropFunc {
                 potionEffectId = ValueParser.getInteger(effectID);
             } catch (Exception e) {
                 Potion potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectID));
+                if (potion == null) {
+                    Lucky.error(null, "Invalid potion effect: " + effectID);
+                    return;
+                }
                 potionEffectId = Potion.getIdFromPotion(potion);
             }
         }

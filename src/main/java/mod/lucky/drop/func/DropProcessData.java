@@ -12,12 +12,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.dimension.DimensionType;
 
+import javax.annotation.Nullable;
+
 public class DropProcessData {
-    private World world;
+    private IWorld world;
     private Entity player;
     private Entity hitEntity;
     private float bowPower = 1;
@@ -27,31 +30,31 @@ public class DropProcessData {
     private DropSingle dropSingle;
     private EnumProcessType processType;
 
-    public DropProcessData(World world) {
+    public DropProcessData(IWorld world) {
         this.world = world;
     }
 
-    public DropProcessData(World world, Entity player, Vec3d harvestPos) {
+    public DropProcessData(IWorld world, Entity player, Vec3d harvestPos) {
         this(world, player, harvestPos, null);
     }
 
-    public DropProcessData(World world, Entity player, BlockPos harvestPos) {
+    public DropProcessData(IWorld world, Entity player, BlockPos harvestPos) {
         this(world, player,
             new Vec3d(harvestPos.getX() + 0.5, harvestPos.getY(), harvestPos.getZ() + 0.5),
             null);
     }
 
-    public DropProcessData(World world, Entity player, Vec3d harvestPos,
+    public DropProcessData(IWorld world, Entity player, Vec3d harvestPos,
         DropSingle dropSingle) {
         this(world, player, harvestPos, dropSingle, EnumProcessType.NORMAL);
     }
 
-    public DropProcessData(World world, Entity player, Vec3d harvestPos,
+    public DropProcessData(IWorld world, Entity player, Vec3d harvestPos,
                            DropSingle dropSingle, EnumProcessType processType) {
         this(world, player, harvestPos, dropSingle, processType, null);
     }
 
-    public DropProcessData(World world, Entity player, Vec3d harvestPos,
+    public DropProcessData(IWorld world, Entity player, Vec3d harvestPos,
                            DropSingle dropSingle, EnumProcessType processType, Entity hitEntity) {
         this.world = world;
         this.player = player;
@@ -61,7 +64,13 @@ public class DropProcessData {
         this.hitEntity = hitEntity;
     }
 
+    @Nullable
     public World getWorld() {
+        if (this.world instanceof World) return (World) this.world;
+        return null;
+    }
+
+    public IWorld getRawWorld() {
         return this.world;
     }
 

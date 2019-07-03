@@ -31,8 +31,10 @@ public class TileEntityLuckyBlock extends TileEntity implements ITickable {
     @Override
     public void read(NBTTagCompound nbttag) {
         super.read(nbttag);
-        this.drops = LuckyUtils.strArrayFromTagList((NBTTagList) nbttag.getTag("Drops"));
-        this.luck = nbttag.getInt("Luck");
+        if (nbttag.hasKey("Drops"))
+            this.drops = LuckyUtils.strArrayFromTagList((NBTTagList) nbttag.getTag("Drops"));
+        if (nbttag.hasKey("Luck"))
+            this.luck = nbttag.getInt("Luck");
     }
 
     @Override

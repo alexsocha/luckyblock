@@ -22,7 +22,8 @@ public class DropFuncParticle extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
-        String particleId = drop.getPropertyString("ID");
+        String particleIdFull = drop.getPropertyString("ID");
+        String particleId = particleIdFull.split("\\.")[0];
         boolean isEvent = false;
         int eventId = 0;
 
@@ -59,14 +60,15 @@ public class DropFuncParticle extends DropFunc {
                 String particleArgs = "";
                 IParticleData particleData;
 
-                String[] splitArgs = particleId.split("_");
+                String[] splitArgs = particleIdFull.split("\\.");
                 for (int i = 1; i < splitArgs.length; i++) {
-                    if (i > 1) particleArgs += " ";
-                    particleArgs += splitArgs[i];
+                    particleArgs += " " + splitArgs[i];
                 }
                 try {
+                    StringReader argReader = new StringReader(particleArgs);
+                    argReader.setCursor(0);
                     particleData = particleType.getDeserializer()
-                        .deserialize(particleType, new StringReader(particleArgs));
+                        .deserialize(particleType, argReader);
                 } catch (CommandSyntaxException e) {
                     Lucky.error(e, "Failed to process particle: " + particleId);
                     return;

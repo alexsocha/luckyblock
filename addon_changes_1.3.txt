@@ -26,6 +26,8 @@ Change NBT tags to 1.13 format where necessary (e.g. display names, books, signs
 
 Use #randSpawnEgg to get a random spawn egg ID.
 
+Use a dot '.' to specify particle arguments (e.g. 'block.dirt').
+
 Use #json(...) to easily convert Lucky Block NBT syntax to JSON (and #jsonStr(...) to escape all quotes, useful for custom display names).
 
 Use the 'state' property to set block states (in Lucky Block NBT format).

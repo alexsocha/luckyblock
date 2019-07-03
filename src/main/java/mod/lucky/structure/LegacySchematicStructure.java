@@ -62,14 +62,6 @@ public class LegacySchematicStructure extends Structure {
             }
         }
 
-        for (NBTTagCompound tileEntity : this.tileEntities)
-            StructureUtils.setTileEntity(
-                processData.getWorld(),
-                TileEntity.create(tileEntity),
-                this.centerPos,
-                harvestPos,
-                rotation);
-
         for (NBTTagCompound entity : this.entities)
             StructureUtils.setEntity(
                 processData.getWorld(),

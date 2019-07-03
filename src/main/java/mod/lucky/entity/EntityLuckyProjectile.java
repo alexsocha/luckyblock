@@ -109,6 +109,7 @@ public class EntityLuckyProjectile extends EntityArrow {
                     hitEntity != null
                         ? hitEntity.getPositionVector()
                         : this.getPositionVector());
+                if (hitEntity != null) dropData.setHitEntity(hitEntity);
 
                 this.dropProcessorImpact.processRandomDrop(dropData, 0);
             }

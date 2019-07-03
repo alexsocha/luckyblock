@@ -40,7 +40,7 @@ public class TemplateStructure extends Structure {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
-        BlockPlacer blockPlacer = new BlockPlacer(processData.getWorld());
+        BlockPlacer blockPlacer = new BlockPlacer(processData.getRawWorld());
 
         Rotation rotation = StructureUtils.parseRotation(drop.getPropertyInt("rotation"));
 
@@ -56,7 +56,7 @@ public class TemplateStructure extends Structure {
 
         ITemplateProcessor processor = this.createProcessor();
         this.template.getDataBlocks(adjustedPos, placementSettings);
-        this.template.addBlocksToWorld(processData.getWorld(), adjustedPos,
+        this.template.addBlocksToWorld(processData.getRawWorld(), adjustedPos,
             processor, placementSettings, 2);
 
         if (this.blockUpdate) blockPlacer.update();

@@ -24,7 +24,7 @@ public class LuckyStructure extends Structure {
         DropSingle drop = processData.getDropSingle();
         Vec3d harvestPos = drop.getVecPos();
         int rotation = drop.getPropertyInt("rotation");
-        BlockPlacer blockPlacer = new BlockPlacer(processData.getWorld());
+        BlockPlacer blockPlacer = new BlockPlacer(processData.getRawWorld());
 
         if (this.blockMode == BlockMode.REPLACE) {
             StructureUtils.fillWithAir(blockPlacer, this.size,
@@ -49,7 +49,7 @@ public class LuckyStructure extends Structure {
 
                 if (this.blockMode != BlockMode.AIR && blockDrop.hasProperty("tileEntity")) {
                     StructureUtils.setTileEntity(
-                        blockProcessData.getWorld(),
+                        blockProcessData.getRawWorld(),
                         blockDrop.getPropertyNBT("tileEntity"),
                         blockPos, this.centerPos,
                         harvestPos, rotation);

@@ -181,6 +181,6 @@ public class DropProcessor {
     public ArrayList<DropFull> getDrops() { return this.drops; }
 
     public static String errorMessage() {
-        return "Error performing Lucky Block function.";
+        return "Error performing Lucky Block function";
     }
 }
