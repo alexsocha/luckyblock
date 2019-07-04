@@ -1,6 +1,3 @@
-/ hero potion
-ID=potion,NBTTag=(Potion="fire_resistance",CustomPotionEffects=#luckyPotionEffects,display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true)))@luck=2
-
 / ========== TOOLS & ARMOR ==========
 
 / all wood, stone and gold tools
@@ -60,7 +57,7 @@ ID=saddle,amount=2@luck=0
 ID=cake@luck=0
 ID=rotten_flesh@luck=-1
 ID=nether_star@luck=2
-ID=poppy,NBTTag=(display=(Name=(text=#jsonStr(text="Romantic Rose",color=dark_red))))@luck=-1
+ID=poppy,NBTTag=(display=(Name=#jsonStr(text="Romantic Rose",color=dark_red)))@luck=-1
 ID=rabbit_stew,amount=#rand(5,7)@luck=1
 
 / ========== GROUPS ==========
@@ -134,7 +131,7 @@ group(ID=prismarine,amount=#rand(4,8);ID=prismarine,damage=1,amount=#rand(4,8);I
 group:1:(type=entity,ID=pig,NBTTag=(CustomName=#jsonStr(text="Lucky Pig",color=yellow,bold=true),CustomNameVisible=true);type=entity,ID=cow,NBTTag=(CustomName=#jsonStr(text="Lucky Cow",color=yellow,bold=true),CustomNameVisible=true);type=entity,ID=chicken,NBTTag=(CustomName=#jsonStr(text="Lucky Chicken",color=yellow,bold=true),CustomNameVisible=true);type=entity,ID=sheep,NBTTag=(CustomName=#jsonStr(text="Lucky Sheep",color=yellow,bold=true),CustomNameVisible=true);type=entity,ID=rabbit,NBTTag=(CustomName=#jsonStr(text="Lucky Rabbit",color=yellow,bold=true),CustomNameVisible=true);type=entity,ID=squid,NBTTag=(CustomName=#jsonStr(text="Unlucky Squid",color=yellow,bold=true),CustomNameVisible=true))@luck=0
 
 / colored sheep
-type=entity,ID=sheep,NBTTag=(CustomName=#jsonStr(text="$cM$6r. $eR$aa$2i$bn$3b$5o$dw")),CustomNameVisible=true,Color=#rand(0,15)),posOffset=#circleOffset(4),amount=16@luck=1
+type=entity,ID=sheep,NBTTag=(CustomName=#jsonStr(text="$cM$6r. $eR$aa$2i$bn$3b$5o$dw"),CustomNameVisible=true,Color=#rand(0,15)),posOffset=#circleOffset(4),amount=16@luck=1
 
 / eggs + diamonds
 group(type=entity,ID=egg,NBTTag=(Motion=#randLaunchMotion(0.6,15)),amount=40;type=entity,ID=item,NBTTag=(Item=(id=diamond,Count=1),Motion=#randLaunchMotion(0.7,18)),amount=20)@luck=2
@@ -191,11 +188,6 @@ type=entity,ID=villager,NBTTag=(Offers=(Recipes=[(buy=(id=diamond,Count=#rand(20
 type=entity,ID=villager,NBTTag=(Offers=(Recipes=[(buy=(id=diamond,Count=#rand(12,17)),sell=(id=diamond_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments,display=(Name=#jsonStr(text="Hero's Helmet",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments,display=(Name=#jsonStr(text="Hero's Chestplate",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments,display=(Name=#jsonStr(text="Hero's Leggings",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(12,17)),sell=(id=diamond_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments,display=(Name=#jsonStr(text="Hero's Boots",color=blue,bold=true)))),maxUses=1)]),CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true)@luck=1
 
 type=entity,ID=villager,NBTTag=(Offers=(Recipes=[(buy=(id=diamond,Count=#rand(10,15)),sell=(id=diamond_shovel,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Shovel",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_pickaxe,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Pickaxe",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_axe,Count=1,tag=(Enchantments=#luckyAxeEnchantments,display=(Name=#jsonStr(text="Hero's Axe",color=blue,bold=true)))),maxUses=1),(buy=(id=diamond,Count=#rand(10,15)),sell=(id=diamond_hoe,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Hoe",color=blue,bold=true)))),maxUses=1)]),CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true)@luck=1
-
-/ [[[[[[[[[ test ]]]]]]]]]
-
-
-type=structure,ID=cage
 
 / falling blocks (iron, gold, diamond, emerald)
 group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=iron_block));type=particle,ID=large_smoke,size=(1,2,1),particleAmount=500;type=sound,ID=block.fire.extinguish)@luck=0
@@ -256,11 +248,11 @@ group(type=difficulty,ID=hard;type=explosion,radius=6)@luck=-2
 group:1:(type=structure,ID=lucky_choice_left,rotation=#pDirect;type=structure,ID=lucky_choice_right,rotation=#pDirect)@luck=0
 
 / wishing wells
-group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget{display:{name:"{\\"text\\":\\"coin\\",\\"color\\"=\\"gold\\"}"}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$bYour wish came true!\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;type=entity,ID=firework_rocket,NBTTag=(LifeTime=20,FireworksItem=(id=firework_rocket,Count=1,tag='#'randFireworksRocket)),amount=20,posY='#'bPosY+3,posOffset='#'circleOffset(2);ID=gold_ingot,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=diamond,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=emerald,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=dye,damage=4,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2))"]))@luck=2
+group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget{display:{Name:"{\\"text\\":\\"Coin\\",\\"color\\":\\"gold\\"}"}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$bYour wish came true!\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;type=entity,ID=firework_rocket,NBTTag=(LifeTime=20,FireworksItem=(id=firework_rocket,Count=1,tag='#'randFireworksRocket)),amount=20,posY='#'bPosY+3,posOffset='#'circleOffset(2);ID=gold_ingot,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=diamond,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=emerald,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=dye,damage=4,amount=#rand(20,30),posY='#'bPosY+10,posOffset='#'circleOffset(2))"]))@luck=2
 
-group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget{display:{name:"{\\"text\\":\\"coin\\",\\"color\\"=\\"gold\\"}"}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$eYour wish came true! (If you like potatoes)\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;ID=potato,amount=128,posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=baked_potato,amount=64,posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=poisonous_potato,amount=32,posY='#'bPosY+10,posOffset='#'circleOffset(2))"]))@luck=1
+group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget{display:{Name:"{\\"text\\":\\"Coin\\",\\"color\\":\\"gold\\"}"}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$eYour wish came true! (If you like potatoes)\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;ID=potato,amount=128,posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=baked_potato,amount=64,posY='#'bPosY+10,posOffset='#'circleOffset(2);ID=poisonous_potato,amount=32,posY='#'bPosY+10,posOffset='#'circleOffset(2))"]))@luck=1
 
-group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget{display:{name:"{\\"text\\":\\"coin\\",\\"color\\"=\\"gold\\"}"}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$4Your death wish came true!\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;type=entity,ID=tnt,NBTTag=(Fuse=50b,Motion='#'randLaunchMotion),posY='#'bPosY+7,amount=20)"]))@luck=-2
+group(type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";type=command,ID="/give #pName gold_nugget{display:{Name:"{\\"text\\":\\"Coin\\",\\"color\\":\\"gold\\"}"}}";type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(Drops=["group(type=message,ID=\"$4Your death wish came true!\";type=block,ID=air,posY='#'bPosY+3;type=block,ID=beacon,posY='#'bPosY+2;type=entity,ID=tnt,NBTTag=(Fuse=50b,Motion='#'randLaunchMotion),posY='#'bPosY+7,amount=20)"]))@luck=-2
 
 / bouncing castle
 type=structure,ID=bouncing_castle,pos=#pPos,rotation=#pDirect

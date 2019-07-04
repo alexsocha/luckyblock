@@ -2,6 +2,7 @@ package mod.lucky.init;
 
 import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
+import mod.lucky.crafting.RecipeAddons;
 import mod.lucky.crafting.RecipeLuckCrafting;
 import mod.lucky.drop.func.DropFunc;
 import mod.lucky.entity.EntityLuckyPotion;
@@ -15,29 +16,24 @@ import mod.lucky.structure.Structure;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeSerializers;
-import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.File;
 import java.util.ArrayList;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupCommon {
-    public static final IRecipeSerializer<RecipeLuckCrafting> LUCK_CRAFTING_SERIALIZER =
-        RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
-            "lucky:crafting_luck", RecipeLuckCrafting::new));
-
     public static EntityType<EntityLuckyPotion> ENTITY_LUCKY_POTION;
     public static EntityType<EntityLuckyProjectile> ENTITY_LUCKY_PROJECTILE;
     public static TileEntityType<TileEntityLuckyBlock> TE_LUCKY_BLOCK;
@@ -69,6 +65,23 @@ public class SetupCommon {
         }
 
         Lucky.resourceManager.loadAllResources(true);
+    }
+
+
+    public static IRecipeSerializer<RecipeLuckCrafting> LUCK_CRAFTING =
+        RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
+            "lucky:crafting_luck", RecipeLuckCrafting::new));
+
+    public static IRecipeSerializer<RecipeAddons> ADDON_CRAFTING =
+        RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
+            "lucky:crafting_addons", RecipeAddons::new));
+
+    public static void registerRecipes() {
+        for (PluginLoader plugin : Lucky.luckyBlockPlugins) {
+            for (IRecipe recipe : plugin.getRecipes()) {
+                // ...
+            }
+        }
     }
 
     @SubscribeEvent

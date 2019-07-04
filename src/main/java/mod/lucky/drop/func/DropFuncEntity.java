@@ -67,7 +67,6 @@ public class DropFuncEntity extends DropFunc {
             posZ = posList.getDouble(2);
         }
 
-        Lucky.LOGGER.info(tag);
         Entity entity = AnvilChunkLoader.readWorldEntityPos(tag, world, posX, posY, posZ, true);
         if (entity == null) return null;
 

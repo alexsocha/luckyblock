@@ -3,6 +3,7 @@ package mod.lucky.resources.loader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -12,8 +13,6 @@ import mod.lucky.resources.ResourcePluginInit;
 import net.minecraft.resources.FilePack;
 import net.minecraft.resources.FolderPack;
 import net.minecraft.resources.IResourcePack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PluginLoader extends BaseLoader {
     private File pluginFile;
@@ -27,18 +26,6 @@ public class PluginLoader extends BaseLoader {
     public void registerPlugin() {
         this.loadResource(new ResourcePluginInit());
     }
-
-    /*
-    public void initializePlugin() {
-        try {
-            GameRegistry.registerWorldGenerator(this.getBlock().getWorldGenerator(), 1);
-        } catch (Exception e) {
-            System.err.println(
-                "Lucky Block Addons: Error initializing generation for add-on: " + this.pluginFile != null
-                    ? this.pluginFile.toString()
-                    : "unknown");
-        }
-    }*/
 
     @Override
     public InputStream getResourceStream(BaseResource resource) {
@@ -68,9 +55,7 @@ public class PluginLoader extends BaseLoader {
         return new File(this.pluginFile.getPath() + "/" + resource.getPath());
     }
 
-    @OnlyIn(Dist.CLIENT)
     public IResourcePack getResourcePack() {
-        IResourcePack pack = null;
         if (this.pluginFile.isDirectory()) return new FolderPack(this.pluginFile);
         else return new FilePack(this.pluginFile);
     }

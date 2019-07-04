@@ -12,7 +12,7 @@ import mod.lucky.drop.DropSingle;
 public class DropProcessor {
     private ArrayList<DropFull> drops;
 
-    public static boolean DEBUG = true;
+    private static boolean DEBUG = false;
     private int debugDropIndex = 0;
     private int debugIndexMin = 0;
     private int debugIndexMax = 1000;

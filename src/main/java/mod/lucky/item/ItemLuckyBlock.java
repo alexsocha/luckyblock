@@ -1,6 +1,5 @@
 package mod.lucky.item;
 
-import mod.lucky.Lucky;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
@@ -46,8 +45,7 @@ public class ItemLuckyBlock extends ItemBlock implements ILuckyItemContainer {
 
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        if (this.getBlock() == Lucky.luckyBlock && this.isInGroup(group))
-            this.luckyItem.addLuckySubItems(items);
+        if (this.isInGroup(group)) this.luckyItem.addLuckySubItems(items);
     }
 
     @Override

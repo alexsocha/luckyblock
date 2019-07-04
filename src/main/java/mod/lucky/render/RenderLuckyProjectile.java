@@ -1,12 +1,9 @@
-package mod.lucky.client;
+package mod.lucky.render;
 
 import mod.lucky.Lucky;
 import mod.lucky.entity.EntityLuckyProjectile;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;

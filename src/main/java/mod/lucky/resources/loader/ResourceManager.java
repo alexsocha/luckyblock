@@ -8,7 +8,7 @@ import mod.lucky.resources.*;
 
 public class ResourceManager {
     private static File PLUGIN_DIR_OLD = new File("/addons/luckyBlock");
-    private static File PLUGIN_DIR = new File("/addons/lucky_block");
+    private static File PLUGIN_DIR = new File("/addons/lucky");
 
     private boolean isClient;
     private File minecraftDir;
@@ -28,6 +28,7 @@ public class ResourceManager {
         this.registerResource(new ResourceProperties());
         this.registerResource(new ResourceStructuresDir());
         this.registerResource(new ResourceStructures());
+        this.registerResource(new ResourceRecipes());
         this.resetLoaders();
     }
 

@@ -3,23 +3,21 @@ The following assumes you have an add-on named "Lucky Block Red".
 
 ----
 
-Add-ons should now be placed in '.minecraft/addons/lucky_block'. However, the old 'addons/luckyBlock' folder will continue to work.
+Add-ons should now be placed in '.minecraft/addons/lucky'. However, the old 'addons/luckyBlock' folder will continue to work.
+
+Config is now located in '.minecraft/config/lucky/version-x.x.x'
 
 === ASSETS ===
 
-assets/blockstates/lucky_block_red.json
+assets/blockstates/red_lucky_block.json
     Change variant "normal" to "".
-    Change "lucky:lucky_block_red" to "lucky:block/lucky_block_red".
+    Change "lucky:red_lucky_block" to "lucky:block/red_lucky_block".
 
 assets/lang/en_US.lang
-    Change to json format.
+    Change to json format (en_us.json).
     Change block and item name formats, e.g.
-        tile.luckyBlockRed.name -> block.lucky.lucky_block_red
-        item.luckySwordRed.name -> item.lucky.lucky_sword_red
-
-data/lucky/recipes/lucky_block_red.json
-    Create this file to add a custom crafting recipe.
-    Use the default lucky block recipe file as an example.
+        tile.redLuckyBlock.name -> block.lucky.red_lucky_block
+        item.redLuckySword.name -> item.lucky.red_lucky_sword
 
 === DROPS ===
 

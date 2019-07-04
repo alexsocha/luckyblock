@@ -12,7 +12,7 @@ public class DefaultLoader extends BaseLoader {
 
     public DefaultLoader(File minecraftDirectory) {
         this.resourceDir = new File(minecraftDirectory.getPath()
-            + "/config/lucky_block/version-" + Lucky.VERSION);
+            + "/config/lucky/version-" + Lucky.VERSION);
 
         this.setBlock(Lucky.luckyBlock);
         this.setSword(Lucky.luckySword);

@@ -53,7 +53,6 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
         for (int i = 0; i < drops.size(); i++) {
             DropFull drop = drops.get((initIndex + i) % drops.size());
             if (rand.nextInt((int) drop.getChance()) == 0) {
-                Lucky.LOGGER.info("Generated at " + pos);
                 DropProcessData processData = new DropProcessData(world, null, pos);
                 this.block.getDropProcessor().processRandomDrop(drops, processData, 0);
             }

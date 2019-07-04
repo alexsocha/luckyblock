@@ -1,10 +1,10 @@
 package mod.lucky.item;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -32,6 +32,13 @@ public class LuckyItem {
     public boolean hasLuckVariantsInGroup() { return false; }
     public TextComponentBase getVeryLuckyName() { return null; }
     public TextComponentBase getUnluckyName() { return null; }
+
+    private boolean isOriginalItem() {
+        return this.containerItem == Lucky.luckyBlock.asItem()
+            || this.containerItem == Lucky.luckySword
+            || this.containerItem == Lucky.luckyBow
+            || this.containerItem == Lucky.luckyPotion;
+    }
 
     @OnlyIn(Dist.CLIENT)
     public void addLuckyTooltip(
@@ -63,7 +70,7 @@ public class LuckyItem {
         ItemStack normalItemStack = new ItemStack(this.getContainerItem(), 1);
         items.add(normalItemStack);
 
-        if (this.hasLuckVariantsInGroup()) {
+        if (this.hasLuckVariantsInGroup() && this.isOriginalItem()) {
             NBTTagCompound luckyTag = new NBTTagCompound();
             luckyTag.setInt("Luck", 80);
 

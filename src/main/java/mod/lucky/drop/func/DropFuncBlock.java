@@ -2,11 +2,9 @@ package mod.lucky.drop.func;
 
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
-import net.minecraft.block.BlockSign;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -18,6 +16,11 @@ public class DropFuncBlock extends DropFunc {
         IBlockState blockState = drop.getBlockState();
         if (drop.getPropertyBoolean("blockUpdate"))
             processData.getRawWorld().setBlockState(drop.getBlockPos(), blockState, 3);
+
+            if (drop.hasProperty("NBTTag"))
+                setTileEntity(processData.getRawWorld(), blockState, drop.getBlockPos(),
+                    drop.getPropertyNBT("NBTTag"));
+
         else
             setBlock(processData.getRawWorld(), blockState, drop.getBlockPos(),
                 drop.getPropertyNBT("NBTTag"),
@@ -59,7 +62,6 @@ public class DropFuncBlock extends DropFunc {
     public static void setTileEntity(IWorld world, IBlockState state,
         BlockPos pos, NBTTagCompound tileEntityData) {
 
-        Lucky.LOGGER.info("tile entity: " + tileEntityData);
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null) {
             tileEntity.handleUpdateTag(tileEntityData);

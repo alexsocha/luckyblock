@@ -4,7 +4,6 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyUtils;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -145,29 +144,6 @@ public class ItemLuckyBow extends ItemBow implements ILuckyItemContainer {
                 }
             }
         }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining) {
-        String bowTextureName = Lucky.luckyBow.getRegistryName().toString();
-        ModelResourceLocation modelResourceLocation =
-            new ModelResourceLocation(bowTextureName, "inventory");
-
-        int useTicks = stack.getUseDuration() - useRemaining;
-
-        if (stack.getItem() == this && player.getActiveItemStack() != null) {
-            if (useTicks >= 18) {
-                modelResourceLocation =
-                    new ModelResourceLocation(bowTextureName + "_pulling_2", "inventory");
-            } else if (useTicks > 13) {
-                modelResourceLocation =
-                    new ModelResourceLocation(bowTextureName + "_pulling_1", "inventory");
-            } else if (useTicks > 0) {
-                modelResourceLocation =
-                    new ModelResourceLocation(bowTextureName + "_pulling_0", "inventory");
-            }
-        }
-        return modelResourceLocation;
     }
 
     @Override

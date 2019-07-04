@@ -1,19 +1,19 @@
 {
-  "type": "crafting_shaped",
-  "pattern": [
-    "###",
-    "#D#",
-    "###"
-  ],
-  "key": {
-    "#": {
-      "item": "minecraft:gold_ingot"
+    "type": "crafting_shaped",
+    "pattern": [
+        "###",
+        "#D#",
+        "###"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:gold_ingot"
+        },
+        "D": {
+            "item": "minecraft:dropper"
+        }
     },
-    "D": {
-      "item": "minecraft:dropper"
+    "result": {
+        "item": "lucky:lucky_block"
     }
-  },
-  "result": {
-    "item": "lucky:lucky_block"
-  }
 }

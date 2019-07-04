@@ -1,7 +1,7 @@
 def luckyConfigDir = "$projectDir/lucky_config"
-def luckyRunConfigDir = "$projectDir/run/config/lucky_block/version-${project.version}"
+def luckyRunConfigDir = "$projectDir/run/config/lucky/version-${project.version}"
 def luckyAddonDir = "$projectDir/template_addon"
-def luckyRunAddonDir = "$projectDir/run/addons/lucky_block/lucky_block_custom"
+def luckyRunAddonDir = "$projectDir/run/addons/lucky/lucky_block_custom"
 def distDir = "$buildDir/libs"
 
 task luckyCopyRunConfig(type: Copy) {
@@ -39,7 +39,7 @@ task luckyPackage(type: Zip) {
 
 task luckyClient {
     group = 'Lucky Block'
-    description = 'Runs Minecraft client with the Lucky Block.'
+    description = 'Runs Minecraft render with the Lucky Block.'
     dependsOn luckyCopyRunConfig
     dependsOn luckyCopyTemplateAddon
     dependsOn 'runClient'

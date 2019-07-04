@@ -10,6 +10,7 @@ import mod.lucky.item.*;
 import mod.lucky.resources.BaseResource;
 import mod.lucky.util.LuckyReader;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
 
 import javax.annotation.Nullable;
 
@@ -18,6 +19,8 @@ public abstract class BaseLoader {
     private ItemLuckySword luckySword;
     private ItemLuckyBow luckyBow;
     private ItemLuckyPotion luckyPotion;
+
+    private ArrayList<IRecipe> recipes = new ArrayList<>();
 
     public abstract InputStream getResourceStream(BaseResource resource);
 
@@ -58,4 +61,7 @@ public abstract class BaseLoader {
 
         return result;
     }
+
+    public void addRecipe(IRecipe recipe) { this.recipes.add(recipe); }
+    public ArrayList<IRecipe> getRecipes() { return this.recipes; }
 }

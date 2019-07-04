@@ -1,4 +1,4 @@
-block_id=lucky_block_custom
+block_id=custom_lucky_block
 sword_id=custom_lucky_sword
 bow_id=custom_lucky_bow
 potion_id=custom_lucky_potion
