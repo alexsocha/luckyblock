@@ -62,8 +62,9 @@ public class DefaultLoader extends BaseLoader {
             if (file.isDirectory()) return null;
             return new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            Lucky.LOGGER.error("Lucky Block: Error getting default resource '"
-                + resource.getPath() + "'");
+            if (!resource.isOptional())
+                Lucky.error(e, "Lucky Block: Error getting default resource: "
+                    + resource.getPath());
             return null;
         }
     }
