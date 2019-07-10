@@ -30,7 +30,7 @@ task luckyPackage(type: Zip) {
     group = 'Lucky Block'
     description = 'Combines build archive with Lucky Block configuration and generates the final zip.'
     destinationDir = file(distDir)
-    archiveName = "${project.jarName}.zip" 
+    archiveName = "${project.jarName}.jar"
     from zipTree("$distDir/${project.jarNameRaw}.jar")
     from("$distDir/default_config.zip") {
         into ('mod/lucky')

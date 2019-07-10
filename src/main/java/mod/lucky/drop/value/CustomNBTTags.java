@@ -5,15 +5,12 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.google.gson.JsonParser;
-import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.nbt.*;
 import net.minecraft.nbt.INBT;
@@ -25,9 +22,7 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.storage.loot.*;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -85,10 +80,6 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
     public static final CompoundNBT absorbtion = getEffectInstance(Effects.ABSORPTION, 3, 9600);
     public static final CompoundNBT saturation = getEffectInstance(Effects.SATURATION, 3, 9600);
 
-    // make sure that this exists
-    private static final Class lootManagerCls = LootTableManager.class;
-    private static final Gson GSON_INSTANCE = ObfuscationReflectionHelper.getPrivateValue(
-        LootTableManager.class, new LootTableManager(), "GSON_INSTANCE");
     public static Random random = new Random();
 
     public static CompoundNBT getEnchantment(Enchantment enchantment, int maxLevel) {
@@ -173,8 +164,7 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
         "#randLaunchMotion",
         "#motionFromDirection",
         "#bowMotion",
-        "#chestLootTable",
-        "#customChestLootTable"
+        "#chestLootTable"
     };
 
     public static INBT getNBTTagFromString(String name, DropProcessData processData) {
@@ -398,37 +388,6 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
             name.replace(
                 "#chestDungeonChest",
                 "#chestLootTable(" + LootTables.CHESTS_SIMPLE_DUNGEON.getPath() + ")");
-
-        if (name.startsWith("#customChestLootTable(")) {
-            try {
-                String contents =
-                    ValueParser.getString(name.substring(name.indexOf('(') + 1, name.lastIndexOf(')')));
-                LootTable.Serializer serializer = new LootTable.Serializer();
-                LootTable lootTable =
-                    ForgeHooks.loadLootTable(
-                        GSON_INSTANCE,
-                        LootTables.CHESTS_SPAWN_BONUS_CHEST,
-                        (new JsonParser()).parse(contents).getAsJsonObject(),
-                        true,
-                        processData.getWorld().getServer().getLootTableManager());
-
-                ChestTileEntity tileEntityChest = new ChestTileEntity();
-                LootContext.Builder contextBuilder =
-                    new LootContext.Builder((ServerWorld) processData.getWorld());
-                if (processData.getPlayer() != null && processData.getPlayer() instanceof PlayerEntity)
-                    contextBuilder.withLuck(((PlayerEntity) processData.getPlayer()).getLuck());
-
-                lootTable.fillInventory(tileEntityChest,
-                    contextBuilder.build(new LootParameterSet.Builder().build()));
-
-                CompoundNBT tagCompound = new CompoundNBT();
-                tileEntityChest.write(tagCompound);
-                return tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND);
-
-            } catch (Exception e) {
-                Lucky.error(e, "Error creating chest from .json loot table");
-            }
-        }
 
         if (name.startsWith("#chestLootTable(")) {
             ChestTileEntity tileEntityChest = new ChestTileEntity();
