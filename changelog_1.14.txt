@@ -1,1 +1,4 @@
 Lucky Block for Minecraft 1.14 changes.
+---
+
+Removed custom loot tables (sorry!).
