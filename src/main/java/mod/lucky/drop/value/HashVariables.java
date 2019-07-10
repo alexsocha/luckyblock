@@ -14,9 +14,9 @@ import mod.lucky.init.SetupCommon;
 import mod.lucky.structure.Structure;
 import mod.lucky.structure.StructureUtils;
 import mod.lucky.util.LuckyUtils;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.nbt.INBTBase;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.nbt.INBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -142,14 +142,14 @@ public class HashVariables {
                     string.replace("#pYaw", String.valueOf(processData.getPlayer().getRotationYawHead()));
                 string = string.replace("#pPitch", String.valueOf(processData.getPlayer().rotationPitch));
 
-                EntityTippedArrow entityArrow;
-                if (processData.getPlayer() instanceof EntityLivingBase)
+                ArrowEntity entityArrow;
+                if (processData.getPlayer() instanceof LivingEntity)
                     entityArrow =
-                        new EntityTippedArrow(
-                            processData.getWorld(), (EntityLivingBase) processData.getPlayer());
+                        new ArrowEntity(
+                            processData.getWorld(), (LivingEntity) processData.getPlayer());
                 else
                     entityArrow =
-                        new EntityTippedArrow(
+                        new ArrowEntity(
                             processData.getWorld(),
                             processData.getPlayer().posX,
                             processData.getPlayer().posY,
@@ -251,7 +251,7 @@ public class HashVariables {
                     nbtStr = "(" + nbtStr + ")";
 
                 try {
-                    INBTBase nbt = ValueParser.getNBTBase(nbtStr, processData);
+                    INBT nbt = ValueParser.getNBTBase(nbtStr, processData);
                     JsonElement jsonEl = ValueParser.nbtToJson(nbt);
 
                     if (type.equals("#json")) return jsonEl.toString();

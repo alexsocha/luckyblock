@@ -10,7 +10,7 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
@@ -96,7 +96,7 @@ public class LuckyTickHandler {
         try {
             if (this.delayDrops.size() > 0) {
                 boolean saved = false;
-                NBTTagList dropTags = new NBTTagList();
+                ListNBT dropTags = new ListNBT();
 
                 for (int i = 0; i > -1; i++) {
                     if (this.delayDrops.containsKey(i)
@@ -105,7 +105,7 @@ public class LuckyTickHandler {
 
                         BlockPos harvestPos = delayDrop.getProcessData().getHarvestBlockPos();
                         ChunkPos harvestChunkPos = event.getChunk().getWorldForge()
-                            .getChunkDefault(harvestPos).getPos();
+                            .getChunk(harvestPos).getPos();
 
                         if (harvestChunkPos == event.getChunk().getPos()) {
                             dropTags.add(delayDrop.writeToNBT());
@@ -115,7 +115,7 @@ public class LuckyTickHandler {
                     if (!this.delayDrops.containsKey(i)) break;
                 }
 
-                if (saved) event.getData().setTag("LuckyBlockDelayDrops", dropTags);
+                if (saved) event.getData().put("LuckyBlockDelayDrops", dropTags);
             }
         } catch (Exception e) {
             Lucky.error(e, "Error saving chunk properties");
@@ -126,8 +126,8 @@ public class LuckyTickHandler {
     @SubscribeEvent
     public void onChunkLoad(ChunkDataEvent.Load event) {
         try {
-            if (event.getData().hasKey("LuckyBlockDelayDrops")) {
-                NBTTagList delayDropTags = event.getData().getList("LuckyBlockDelayDrops", 10);
+            if (event.getData().contains("LuckyBlockDelayDrops")) {
+                ListNBT delayDropTags = event.getData().getList("LuckyBlockDelayDrops", 10);
                 for (int i = 0; i < delayDropTags.size(); i++) {
                     DelayLuckyDrop delayDrop =
                         new DelayLuckyDrop(Lucky.luckyBlock.getDropProcessor(), null, 0);

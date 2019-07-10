@@ -7,7 +7,7 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.ValueParser;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public class DropFull extends DropBase {
     private String rawDrop;
@@ -155,11 +155,11 @@ public class DropFull extends DropBase {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
     }
 
     @Override
-    public NBTTagCompound writeToNBT() {
+    public CompoundNBT writeToNBT() {
         return null;
     }
 

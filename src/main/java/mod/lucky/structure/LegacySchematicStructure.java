@@ -7,13 +7,11 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropProcessData;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.datafix.fixes.ItemIntIDToString;
 import net.minecraft.util.datafix.fixes.ItemStackDataFlattening;
@@ -24,11 +22,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class LegacySchematicStructure extends Structure {
     // Blocks stored [y][z][x]
-    private IBlockState[][][] blocks;
+    private BlockState[][][] blocks;
     private int[][][] blockData;
 
-    private NBTTagCompound[] entities;
-    private NBTTagCompound[] tileEntities;
+    private CompoundNBT[] entities;
+    private CompoundNBT[] tileEntities;
 
     @Override
     public void process(DropProcessData processData) {
@@ -40,10 +38,10 @@ public class LegacySchematicStructure extends Structure {
         for (int y = 0; y < this.size.getY(); y++) {
             for (int z = 0; z < this.size.getZ(); z++) {
                 for (int x = 0; x < this.size.getX(); x++) {
-                    IBlockState blockStateInit = this.blocks[y][z][x];
+                    BlockState blockStateInit = this.blocks[y][z][x];
                     BlockPos blockPos = new BlockPos(x, y, z);
 
-                    IBlockState blockState = StructureUtils.applyBlockMode(
+                    BlockState blockState = StructureUtils.applyBlockMode(
                         this.blockMode, blockStateInit);
                     if (blockState != null) {
                         StructureUtils.setBlock(blockPlacer, blockState,
@@ -62,10 +60,10 @@ public class LegacySchematicStructure extends Structure {
             }
         }
 
-        for (NBTTagCompound entity : this.entities)
+        for (CompoundNBT entityNbt : this.entities)
             StructureUtils.setEntity(
                 processData.getWorld(),
-                EntityType.create(entity, processData.getWorld()),
+                EntityType.func_220335_a(entityNbt, processData.getWorld(), e -> e),
                 this.centerPos,
                 harvestPos,
                 rotation);
@@ -76,7 +74,7 @@ public class LegacySchematicStructure extends Structure {
 
     @Override
     public void readFromFile() {
-        NBTTagCompound nbt = null;
+        CompoundNBT nbt = null;
         DataInputStream dataInputStream;
         try {
             dataInputStream = new DataInputStream(new GZIPInputStream(this.openFileStream()));
@@ -119,13 +117,13 @@ public class LegacySchematicStructure extends Structure {
             }
         }
 
-        NBTTagList entityList = nbt.getList("Entities", Constants.NBT.TAG_COMPOUND);
-        this.entities = new NBTTagCompound[entityList.size()];
+        ListNBT entityList = nbt.getList("Entities", Constants.NBT.TAG_COMPOUND);
+        this.entities = new CompoundNBT[entityList.size()];
         for (int i = 0; i < entityList.size(); i++)
             this.entities[i] = entityList.getCompound(i);
 
-        NBTTagList tileEntityList = nbt.getList("TileEntities", Constants.NBT.TAG_COMPOUND);
-        this.tileEntities = new NBTTagCompound[tileEntityList.size()];
+        ListNBT tileEntityList = nbt.getList("TileEntities", Constants.NBT.TAG_COMPOUND);
+        this.tileEntities = new CompoundNBT[tileEntityList.size()];
         for (int i = 0; i < tileEntityList.size(); i++)
             this.tileEntities[i] = tileEntityList.getCompound(i);
 

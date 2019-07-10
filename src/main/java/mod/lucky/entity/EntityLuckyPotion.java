@@ -8,32 +8,39 @@ import mod.lucky.init.SetupCommon;
 import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.IRendersAsItem;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
-public class EntityLuckyPotion extends EntityThrowable {
+@OnlyIn(value = Dist.CLIENT, _interface = IRendersAsItem.class)
+public class EntityLuckyPotion extends ThrowableEntity implements IRendersAsItem {
     private static final DataParameter<ItemStack> ITEM_STACK =
-        EntityDataManager.createKey(EntityLuckyPotion.class, DataSerializers.ITEM_STACK);
+        EntityDataManager.createKey(EntityLuckyPotion.class, DataSerializers.ITEMSTACK);
 
     private DropProcessor impactDropProcessor;
     private int luck = 0;
     private String[] customDrops = null;
 
     public void init(ItemLuckyPotion itemLuckyPotion,
-         DropProcessor impactDropProcessor,
-         int luck, String[] customDrops) {
+        DropProcessor impactDropProcessor,
+        int luck, String[] customDrops) {
 
         this.setItemStack(new ItemStack(itemLuckyPotion, 1));
         this.impactDropProcessor = impactDropProcessor;
@@ -41,13 +48,17 @@ public class EntityLuckyPotion extends EntityThrowable {
         this.customDrops = customDrops;
     }
 
-    public EntityLuckyPotion(World world) {
-        super(SetupCommon.ENTITY_LUCKY_POTION, world);
+    public EntityLuckyPotion(EntityType<? extends EntityLuckyPotion> entityType, World world) {
+        super(entityType, world);
         this.init(Lucky.luckyPotion, new DropProcessor(), 0, null);
     }
 
+    public EntityLuckyPotion(World world) {
+        this(SetupCommon.ENTITY_LUCKY_POTION, world);
+    }
+
     public EntityLuckyPotion(World world,
-        EntityLivingBase thrower,
+        LivingEntity thrower,
         ItemLuckyPotion itemLuckyPotion,
         DropProcessor impactDropProcessor,
         int luck, String[] customDrops) {
@@ -100,36 +111,48 @@ public class EntityLuckyPotion extends EntityThrowable {
     }
 
     @Override
-    protected void onImpact(RayTraceResult rayTraceResult) {
+    protected void onImpact(RayTraceResult rayTrace) {
         if (!this.world.isRemote) {
-            this.luckyImpact(rayTraceResult.entity);
+            Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY
+                ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
+            this.luckyImpact(hitEntity);
             this.remove();
         }
     }
 
     @Override
-    public void writeAdditional(NBTTagCompound tagCompound) {
+    public void writeAdditional(CompoundNBT tagCompound) {
         super.writeAdditional(tagCompound);
-        NBTTagList drops = new NBTTagList();
+        ListNBT drops = new ListNBT();
         for (int i = 0; i < this.impactDropProcessor.getDrops().size(); i++) {
             String dropString = this.impactDropProcessor.getDrops().get(i).toString();
-            drops.add(new NBTTagString(dropString));
+            drops.add(new StringNBT(dropString));
         }
-        tagCompound.setTag("impact", drops);
-        tagCompound.setTag("itemLuckyPotion",
-            this.getItemStack().write(new NBTTagCompound()));
+        tagCompound.put("impact", drops);
+        tagCompound.put("itemLuckyPotion",
+            this.getItemStack().write(new CompoundNBT()));
     }
 
     @Override
-    public void readAdditional(NBTTagCompound tag) {
+    public void readAdditional(CompoundNBT tag) {
         super.readAdditional(tag);
-        NBTTagList drops = tag.getList("impact", new NBTTagString().getId());
+        ListNBT drops = tag.getList("impact", new StringNBT().getId());
         for (int i = 0; i < drops.size(); i++) {
             DropFull drop = new DropFull();
             drop.readFromString(drops.getString(i));
             this.impactDropProcessor.registerDrop(drop);
         }
-        if (tag.hasKey("itemLuckyPotion"))
+        if (tag.contains("itemLuckyPotion"))
             this.setItemStack(ItemStack.read(tag.getCompound("itemLuckyPotion")));
+    }
+
+    @Override
+    public ItemStack getItem() {
+        return this.getItemStack();
+    }
+
+    @Override
+    public IPacket<?> createSpawnPacket() {
+        return new SpawnPacket(this);
     }
 }

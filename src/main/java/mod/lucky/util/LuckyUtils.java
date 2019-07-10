@@ -15,19 +15,19 @@ import net.minecraft.command.ICommandSource;
 import net.minecraft.command.arguments.EntitySelector;
 import net.minecraft.command.arguments.EntitySelectorParser;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.DyeColor;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -57,7 +57,7 @@ public class LuckyUtils {
     }
 
     public static CommandSource makeCommandSource(
-        WorldServer world, Vec3d pos, boolean doOutput, String name) {
+        ServerWorld world, Vec3d pos, boolean doOutput, String name) {
 
         ICommandSource source = new ICommandSource() {
             @Override
@@ -74,16 +74,16 @@ public class LuckyUtils {
             Vec2f.ZERO, // pitchYaw
             world,
             2, // permission level
-            name, new TextComponentString(name),
+            name, new StringTextComponent(name),
             world.getServer(),
             null); // entity type
     }
     public static CommandSource makeCommandSource(
-        WorldServer world, Vec3d pos, boolean doOutput) {
+        ServerWorld world, Vec3d pos, boolean doOutput) {
         return makeCommandSource(world, pos, doOutput, "Lucky Block");
     }
 
-    public static EntityPlayer getNearestPlayer(WorldServer world, Vec3d pos) {
+    public static PlayerEntity getNearestPlayer(ServerWorld world, Vec3d pos) {
         try {
             EntitySelector selector = new EntitySelectorParser(
                 new StringReader("@p")).parse();
@@ -96,38 +96,38 @@ public class LuckyUtils {
         return new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
     }
 
-    public static NBTTagCompound getRandomFireworksRocket() {
+    public static CompoundNBT getRandomFireworksRocket() {
         Random random = new Random();
 
-        NBTTagCompound mainTag = new NBTTagCompound();
-        NBTTagCompound fireworksTag = new NBTTagCompound();
-        NBTTagCompound explosionTag = new NBTTagCompound();
-        NBTTagList explosionList = new NBTTagList();
+        CompoundNBT mainTag = new CompoundNBT();
+        CompoundNBT fireworksTag = new CompoundNBT();
+        CompoundNBT explosionTag = new CompoundNBT();
+        ListNBT explosionList = new ListNBT();
 
         // set explosion properties
-        explosionTag.setByte("Type", (byte) random.nextInt(5));
-        explosionTag.setBoolean("Flicker", random.nextBoolean());
-        explosionTag.setBoolean("Trail", random.nextBoolean());
+        explosionTag.putByte("Type", (byte) random.nextInt(5));
+        explosionTag.putBoolean("Flicker", random.nextBoolean());
+        explosionTag.putBoolean("Trail", random.nextBoolean());
         int colorAmount = random.nextInt(4) + 1;
         int[] colors = new int[colorAmount];
         for (int a = 0; a < colorAmount; a++) {
-            float[] c = EnumDyeColor.values()[
-                random.nextInt(EnumDyeColor.values().length)]
+            float[] c = DyeColor.values()[
+                random.nextInt(DyeColor.values().length)]
                 .getColorComponentValues();
             Color color = new Color(c[0], c[1], c[2]);
             colors[a] = color.getRGB();
         }
-        explosionTag.setIntArray("Colors", colors);
+        explosionTag.putIntArray("Colors", colors);
 
         // set explosion list
         explosionList.add(explosionTag);
 
         // set fireworks rocket properties
-        fireworksTag.setTag("Explosions", explosionList);
-        fireworksTag.setByte("Flight", (byte) (random.nextInt(2) + 1));
+        fireworksTag.put("Explosions", explosionList);
+        fireworksTag.putByte("Flight", (byte) (random.nextInt(2) + 1));
 
         // set main properties
-        mainTag.setTag("Fireworks", fireworksTag);
+        mainTag.put("Fireworks", fireworksTag);
         return mainTag;
     }
 
@@ -151,7 +151,7 @@ public class LuckyUtils {
         else return null;
     }
 
-    public static int getPlayerDirection(EntityPlayer player, int accuracy) {
+    public static int getPlayerDirection(PlayerEntity player, int accuracy) {
         int yaw = (int) player.rotationYaw;
         int angle = 360 / accuracy;
         if (yaw < 0) yaw += 360;
@@ -186,15 +186,15 @@ public class LuckyUtils {
         }
     }
 
-    public static NBTTagList tagListFromStrArray(String[] array) {
-        NBTTagList nbttagList = new NBTTagList();
+    public static ListNBT tagListFromStrArray(String[] array) {
+        ListNBT nbttagList = new ListNBT();
         for (String element : array) {
-            nbttagList.add(new NBTTagString(element));
+            nbttagList.add(new StringNBT(element));
         }
         return nbttagList;
     }
 
-    public static String[] strArrayFromTagList(NBTTagList nbttagList) {
+    public static String[] strArrayFromTagList(ListNBT nbttagList) {
         String[] array = new String[nbttagList == null ? 0 : nbttagList.size()];
         for (int a = 0; a < array.length; a++) {
             array[a] = nbttagList.getString(a);

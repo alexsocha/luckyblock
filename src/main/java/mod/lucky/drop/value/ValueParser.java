@@ -28,7 +28,7 @@ public class ValueParser {
         classTypeToString.put("int", Integer.class);
         classTypeToString.put("boolean", Boolean.class);
         classTypeToString.put("float", Float.class);
-        classTypeToString.put("nbt", NBTTagCompound.class);
+        classTypeToString.put("nbt", CompoundNBT.class);
     }
 
     public static Object getObject(String string, Class objectType, DropProcessData processData)
@@ -40,26 +40,26 @@ public class ValueParser {
         if (objectType == Double.class) return getDouble(string, processData);
         if (objectType == Short.class) return getShort(string, processData);
         if (objectType == Byte.class) return getByte(string, processData);
-        if (objectType == NBTTagCompound.class) return getNBTTag(string, processData);
+        if (objectType == CompoundNBT.class) return getNBTTag(string, processData);
         return null;
     }
 
-    public static INBTBase getNBTBaseFromValue(Object value) {
-        if (value.getClass() == String.class) return new NBTTagString((String) value);
-        if (value.getClass() == Integer.class) return new NBTTagInt((Integer) value);
+    public static INBT getNBTBaseFromValue(Object value) {
+        if (value.getClass() == String.class) return new StringNBT((String) value);
+        if (value.getClass() == Integer.class) return new IntNBT((Integer) value);
         if (value.getClass() == Boolean.class)
-            return new NBTTagByte((byte) ((Boolean) value == true ? 1 : 0));
-        if (value.getClass() == Float.class) return new NBTTagFloat((Float) value);
-        if (value instanceof INBTBase) return (INBTBase) value;
+            return new ByteNBT((byte) ((Boolean) value == true ? 1 : 0));
+        if (value.getClass() == Float.class) return new FloatNBT((Float) value);
+        if (value instanceof INBT) return (INBT) value;
         return null;
     }
 
-    public static Object getValueFromNBTBase(INBTBase nbtBase) {
-        if (nbtBase.getClass() == NBTTagString.class) return ((NBTTagString) nbtBase).getString();
-        if (nbtBase.getClass() == NBTTagInt.class) return ((NBTTagInt) nbtBase).getInt();
-        if (nbtBase.getClass() == NBTTagByte.class)
-            return ((NBTTagByte) nbtBase).getByte() == 1 ? true : false;
-        if (nbtBase.getClass() == NBTTagFloat.class) return ((NBTTagFloat) nbtBase).getFloat();
+    public static Object getValueFromNBTBase(INBT nbtBase) {
+        if (nbtBase.getClass() == StringNBT.class) return ((StringNBT) nbtBase).getString();
+        if (nbtBase.getClass() == IntNBT.class) return ((IntNBT) nbtBase).getInt();
+        if (nbtBase.getClass() == ByteNBT.class)
+            return ((ByteNBT) nbtBase).getByte() == 1 ? true : false;
+        if (nbtBase.getClass() == FloatNBT.class) return ((FloatNBT) nbtBase).getFloat();
         return nbtBase;
     }
 
@@ -179,14 +179,14 @@ public class ValueParser {
         return calculateNum(string).byteValue();
     }
 
-    public static NBTTagCompound getNBTTag(String string) throws Exception {
+    public static CompoundNBT getNBTTag(String string) throws Exception {
         return getNBTTag(string, null);
     }
 
-    public static NBTTagCompound getNBTTag(String string, DropProcessData processData)
+    public static CompoundNBT getNBTTag(String string, DropProcessData processData)
         throws Exception {
         Object tagBase = getNBTTagValue(string, processData);
-        if (tagBase instanceof NBTTagCompound) return (NBTTagCompound) tagBase;
+        if (tagBase instanceof CompoundNBT) return (CompoundNBT) tagBase;
         else throw new Exception("Not a valid compound NBT tag: " + string);
     }
 
@@ -194,7 +194,7 @@ public class ValueParser {
         return getNBTTagValue(string, processData, null, null);
     }
 
-    public static INBTBase getNBTBase(String string, DropProcessData processData) throws Exception {
+    public static INBT getNBTBase(String string, DropProcessData processData) throws Exception {
         return getNBTBaseFromValue(getNBTTagValue(string, processData, null, null));
     }
 
@@ -202,13 +202,13 @@ public class ValueParser {
         new ArrayList<String>(Arrays.asList("drops", "impact"));
 
     public static Object getNBTTagValue(
-        String string, DropProcessData processData, INBTBase parentTag, String parentTagName)
+        String string, DropProcessData processData, INBT parentTag, String parentTagName)
         throws Exception {
 
         if (string.startsWith("(") && string.endsWith(")")) {
             String[] tagContents =
                 DropStringUtils.splitBracketString(string.substring(1, string.length() - 1), ',');
-            NBTTagCompound tagCompound = new NBTTagCompound();
+            CompoundNBT tagCompound = new CompoundNBT();
             for (String tag : tagContents) {
                 if (tag == null || tag.equals("")) continue;
                 String tagName = tag.substring(0, tag.indexOf("="));
@@ -221,7 +221,7 @@ public class ValueParser {
         if (string.startsWith("[") && string.endsWith("]")) {
             String[] tagContents =
                 DropStringUtils.splitBracketString(string.substring(1, string.length() - 1), ',');
-            NBTTagList tagList = new NBTTagList();
+            ListNBT tagList = new ListNBT();
             for (String tag : tagContents) {
                 if (tag == null || tag.equals("")) continue;
                 setNBTTagValue(tagList, null, getNBTTagValue(tag, processData, tagList, parentTagName));
@@ -231,7 +231,7 @@ public class ValueParser {
 
         if (string.startsWith("\"") && string.endsWith("\"")) {
             if (parentTag != null
-                && parentTag instanceof NBTTagList
+                && parentTag instanceof ListNBT
                 && parentTagName != null
                 && DROP_TAGS.contains(parentTagName.toLowerCase())) {
                 // Auto cancel hash
@@ -240,7 +240,7 @@ public class ValueParser {
             return getString(string, processData);
         }
         if (string.startsWith("#")) {
-            INBTBase tagBase = CustomNBTTags.getNBTTagFromString(string, processData);
+            INBT tagBase = CustomNBTTags.getNBTTagFromString(string, processData);
             if (tagBase != null) return tagBase;
         }
 
@@ -283,52 +283,52 @@ public class ValueParser {
         return string;
     }
 
-    public static void setNBTTagValue(INBTBase curTag, String tagName, Object tagValue) {
-        if (curTag instanceof NBTTagCompound) {
-            NBTTagCompound tagCompound = (NBTTagCompound) curTag;
-            if (tagValue instanceof String) tagCompound.setString(tagName, (String) tagValue);
-            if (tagValue instanceof Boolean) tagCompound.setBoolean(tagName, (Boolean) tagValue);
-            if (tagValue instanceof Integer) tagCompound.setInt(tagName, (Integer) tagValue);
-            if (tagValue instanceof Float) tagCompound.setFloat(tagName, (Float) tagValue);
-            if (tagValue instanceof Double) tagCompound.setDouble(tagName, (Double) tagValue);
-            if (tagValue instanceof Short) tagCompound.setShort(tagName, (Short) tagValue);
-            if (tagValue instanceof Byte) tagCompound.setByte(tagName, (Byte) tagValue);
-            if (tagValue instanceof int[]) tagCompound.setIntArray(tagName, (int[]) tagValue);
-            if (tagValue instanceof byte[]) tagCompound.setByteArray(tagName, (byte[]) tagValue);
-            if (tagValue instanceof NBTTagCompound)
-                tagCompound.setTag(tagName, (NBTTagCompound) tagValue);
-            if (tagValue instanceof NBTTagList) tagCompound.setTag(tagName, (NBTTagList) tagValue);
+    public static void setNBTTagValue(INBT curTag, String tagName, Object tagValue) {
+        if (curTag instanceof CompoundNBT) {
+            CompoundNBT tagCompound = (CompoundNBT) curTag;
+            if (tagValue instanceof String) tagCompound.putString(tagName, (String) tagValue);
+            if (tagValue instanceof Boolean) tagCompound.putBoolean(tagName, (Boolean) tagValue);
+            if (tagValue instanceof Integer) tagCompound.putInt(tagName, (Integer) tagValue);
+            if (tagValue instanceof Float) tagCompound.putFloat(tagName, (Float) tagValue);
+            if (tagValue instanceof Double) tagCompound.putDouble(tagName, (Double) tagValue);
+            if (tagValue instanceof Short) tagCompound.putShort(tagName, (Short) tagValue);
+            if (tagValue instanceof Byte) tagCompound.putByte(tagName, (Byte) tagValue);
+            if (tagValue instanceof int[]) tagCompound.putIntArray(tagName, (int[]) tagValue);
+            if (tagValue instanceof byte[]) tagCompound.putByteArray(tagName, (byte[]) tagValue);
+            if (tagValue instanceof CompoundNBT)
+                tagCompound.put(tagName, (CompoundNBT) tagValue);
+            if (tagValue instanceof ListNBT) tagCompound.put(tagName, (ListNBT) tagValue);
         }
-        if (curTag instanceof NBTTagList) {
-            NBTTagList tagList = (NBTTagList) curTag;
-            if (tagValue instanceof String) tagList.add(new NBTTagString((String) tagValue));
-            if (tagValue instanceof Integer) tagList.add(new NBTTagInt((Integer) tagValue));
-            if (tagValue instanceof Float) tagList.add(new NBTTagFloat((Float) tagValue));
-            if (tagValue instanceof Double) tagList.add(new NBTTagDouble((Double) tagValue));
-            if (tagValue instanceof Short) tagList.add(new NBTTagShort((Short) tagValue));
-            if (tagValue instanceof Byte) tagList.add(new NBTTagByte((Byte) tagValue));
-            if (tagValue instanceof int[]) tagList.add(new NBTTagIntArray((int[]) tagValue));
-            if (tagValue instanceof byte[]) tagList.add(new NBTTagByteArray((byte[]) tagValue));
-            if (tagValue instanceof NBTTagCompound) tagList.add((NBTTagCompound) tagValue);
-            if (tagValue instanceof NBTTagList) tagList.add((NBTTagList) tagValue);
+        if (curTag instanceof ListNBT) {
+            ListNBT tagList = (ListNBT) curTag;
+            if (tagValue instanceof String) tagList.add(new StringNBT((String) tagValue));
+            if (tagValue instanceof Integer) tagList.add(new IntNBT((Integer) tagValue));
+            if (tagValue instanceof Float) tagList.add(new FloatNBT((Float) tagValue));
+            if (tagValue instanceof Double) tagList.add(new DoubleNBT((Double) tagValue));
+            if (tagValue instanceof Short) tagList.add(new ShortNBT((Short) tagValue));
+            if (tagValue instanceof Byte) tagList.add(new ByteNBT((Byte) tagValue));
+            if (tagValue instanceof int[]) tagList.add(new IntArrayNBT((int[]) tagValue));
+            if (tagValue instanceof byte[]) tagList.add(new ByteArrayNBT((byte[]) tagValue));
+            if (tagValue instanceof CompoundNBT) tagList.add((CompoundNBT) tagValue);
+            if (tagValue instanceof ListNBT) tagList.add((ListNBT) tagValue);
         }
     }
 
-    public static JsonElement nbtToJson(INBTBase nbt) {
-        if (nbt instanceof NBTTagCompound) {
+    public static JsonElement nbtToJson(INBT nbt) {
+        if (nbt instanceof CompoundNBT) {
             JsonObject json = new JsonObject();
-            ((NBTTagCompound) nbt).keySet().forEach(k ->
-                json.add(k, nbtToJson(((NBTTagCompound) nbt).getTag(k))));
+            ((CompoundNBT) nbt).keySet().forEach(k ->
+                json.add(k, nbtToJson(((CompoundNBT) nbt).get(k))));
             return json;
 
-        } else if (nbt instanceof NBTTagCollection) {
+        } else if (nbt instanceof CollectionNBT) {
             JsonArray json = new JsonArray();
-            ((NBTTagCollection<?>) nbt).forEach(v ->
+            ((CollectionNBT<?>) nbt).forEach(v ->
                 json.add(nbtToJson(v)));
             return json;
 
-        } else if (nbt instanceof NBTTagByte && ((NBTTagByte) nbt).getByte() < 2) {
-            return new JsonPrimitive(new Boolean(((NBTTagByte) nbt).getByte() == 1 ? true : false));
+        } else if (nbt instanceof ByteNBT && ((ByteNBT) nbt).getByte() < 2) {
+            return new JsonPrimitive(new Boolean(((ByteNBT) nbt).getByte() == 1 ? true : false));
 
         } else return new JsonPrimitive(nbt.getString());
     }

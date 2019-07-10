@@ -2,8 +2,8 @@ package mod.lucky.drop.func;
 
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -13,7 +13,7 @@ public class DropFuncBlock extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
-        IBlockState blockState = drop.getBlockState();
+        BlockState blockState = drop.getBlockState();
         if (drop.getPropertyBoolean("blockUpdate"))
             processData.getRawWorld().setBlockState(drop.getBlockPos(), blockState, 3);
 
@@ -29,9 +29,9 @@ public class DropFuncBlock extends DropFunc {
 
     @Override
     public void registerProperties() {
-        DropSingle.setDefaultProperty(this.getType(), "tileEntity", NBTTagCompound.class, null);
+        DropSingle.setDefaultProperty(this.getType(), "tileEntity", CompoundNBT.class, null);
         DropSingle.setDefaultProperty(this.getType(), "blockUpdate", Boolean.class, true);
-        DropSingle.setDefaultProperty(this.getType(), "state", NBTTagCompound.class, true);
+        DropSingle.setDefaultProperty(this.getType(), "state", CompoundNBT.class, true);
         DropSingle.setReplaceProperty("tileEntity", "NBTTag");
     }
 
@@ -40,18 +40,18 @@ public class DropFuncBlock extends DropFunc {
         return "block";
     }
 
-    public static void setBlock(IWorld world, IBlockState state, BlockPos pos, boolean update) {
+    public static void setBlock(IWorld world, BlockState state, BlockPos pos, boolean update) {
         setBlock(world, state, pos, null, update);
     }
 
-    public static void setBlock(IWorld world, IBlockState state, BlockPos pos,
-                                NBTTagCompound tileEntity, boolean update) {
+    public static void setBlock(IWorld world, BlockState state, BlockPos pos,
+                                CompoundNBT tileEntity, boolean update) {
 
         if (world.getBlockState(pos) != state)
             world.setBlockState(pos, state, 2);
 
         if (update && world instanceof World)
-            ((World) world).markAndNotifyBlock(pos, ((World) world).getChunk(pos),
+            ((World) world).markAndNotifyBlock(pos, ((World) world).getChunkAt(pos),
                 world.getBlockState(pos), state, 3);
 
         if (tileEntity != null && state.getBlock().hasTileEntity(state)) {
@@ -59,8 +59,8 @@ public class DropFuncBlock extends DropFunc {
         }
     }
 
-    public static void setTileEntity(IWorld world, IBlockState state,
-        BlockPos pos, NBTTagCompound tileEntityData) {
+    public static void setTileEntity(IWorld world, BlockState state,
+        BlockPos pos, CompoundNBT tileEntityData) {
 
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null) {

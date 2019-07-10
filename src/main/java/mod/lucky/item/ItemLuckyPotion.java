@@ -2,16 +2,15 @@ package mod.lucky.item;
 
 import mod.lucky.entity.EntityLuckyPotion;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentBase;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -22,11 +21,11 @@ import java.util.List;
 public class ItemLuckyPotion extends Item implements ILuckyItemContainer {
     private LuckyItem luckyItem = new LuckyItem(this) {
         @Override public boolean hasLuckVariantsInGroup() { return true; }
-        @Override public TextComponentBase getVeryLuckyName() {
-            return new TextComponentTranslation("item.lucky.lucky_potion.veryLucky");
+        @Override public TextComponent getVeryLuckyName() {
+            return new TranslationTextComponent("item.lucky.lucky_potion.veryLucky");
         }
-        @Override public TextComponentBase getUnluckyName() {
-            return new TextComponentTranslation("item.lucky.lucky_potion.unlucky");
+        @Override public TextComponent getUnluckyName() {
+            return new TranslationTextComponent("item.lucky.lucky_potion.unlucky");
         }
     };
 
@@ -40,7 +39,7 @@ public class ItemLuckyPotion extends Item implements ILuckyItemContainer {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(
-            World world, EntityPlayer player, EnumHand hand) {
+            World world, PlayerEntity player, Hand hand) {
 
         ItemStack stack = player.getHeldItem(hand);
         if (!player.isCreative()) {
@@ -48,7 +47,7 @@ public class ItemLuckyPotion extends Item implements ILuckyItemContainer {
         }
 
         world.playSound(
-            (EntityPlayer) null,
+            (PlayerEntity) null,
             player.posX,
             player.posY,
             player.posZ,
@@ -71,11 +70,11 @@ public class ItemLuckyPotion extends Item implements ILuckyItemContainer {
                 0.5F,
                 1.0F);
 
-            world.spawnEntity(luckyPotion);
+            world.addEntity(luckyPotion);
         }
 
-        player.addStat(StatList.ITEM_USED.get(this));
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        player.addStat(Stats.ITEM_USED.get(this));
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
     @Override

@@ -11,30 +11,27 @@ import mod.lucky.item.LuckyItem;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.util.LuckyUtils;
 import mod.lucky.world.LuckyGenerator;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Enchantments;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-public class BlockLuckyBlock extends BlockContainer {
+public class BlockLuckyBlock extends ContainerBlock {
     private DropProcessor dropProcessor;
     private LuckyGenerator worldGenerator;
     private IForgeRegistryEntry<IRecipe> blockRecipe;
@@ -48,8 +45,8 @@ public class BlockLuckyBlock extends BlockContainer {
         this.dropProcessor = new DropProcessor();
     }
 
-    public boolean removeLuckyBlock(
-        World world, EntityPlayer player, BlockPos harvestPos, boolean removedByRedstone) {
+    public boolean removeLuckyBlock(World world, PlayerEntity player,
+        BlockPos harvestPos, boolean removedByRedstone) {
 
         try {
             int luck = 0;
@@ -73,12 +70,12 @@ public class BlockLuckyBlock extends BlockContainer {
                 world.removeTileEntity(harvestPos);
             }
 
-            if (!world.removeBlock(harvestPos)) return false;
+            if (!world.removeBlock(harvestPos, false)) return false;
 
             if (!world.isRemote) {
                 if (removedByRedstone) {
                     player = LuckyUtils.getNearestPlayer(
-                        (WorldServer) world, LuckyUtils.toVec3d(harvestPos));
+                        (ServerWorld) world, LuckyUtils.toVec3d(harvestPos));
                 }
 
                 if (player.isCreative() && !this.doCreativeDrops && !removedByRedstone) {
@@ -88,13 +85,13 @@ public class BlockLuckyBlock extends BlockContainer {
                     && !removedByRedstone) {
 
                     ItemStack stack = new ItemStack(this);
-                    NBTTagCompound tag = new NBTTagCompound();
+                    CompoundNBT tag = new CompoundNBT();
 
-                    if (luck != 0) tag.setInt("Luck", luck);
+                    if (luck != 0) tag.putInt("Luck", luck);
                     if (customDrops != null)
-                        tag.setTag("Drops",
+                        tag.put("Drops",
                             LuckyUtils.tagListFromStrArray(customDropsRaw));
-                    if (tag.hasKey("Luck") || customDrops != null)
+                    if (tag.contains("Luck") || customDrops != null)
                         stack.setTag(tag);
 
                     Block.spawnAsEntity(world, harvestPos, stack);
@@ -117,13 +114,8 @@ public class BlockLuckyBlock extends BlockContainer {
     }
 
     @Override
-    public void onBlockAdded(IBlockState state, World world, BlockPos pos, IBlockState oldState) {
-        world.markAndNotifyBlock(pos, null, state, state, 3);
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World world,
-        BlockPos pos, Block block, BlockPos fromPos) {
+    public void neighborChanged(BlockState state, World world,
+        BlockPos pos, Block block, BlockPos fromPos, boolean flag) {
 
         if (!world.isRemote) {
             if (world.isBlockPowered(pos)) {
@@ -133,34 +125,27 @@ public class BlockLuckyBlock extends BlockContainer {
     }
 
     @Override
-    public void harvestBlock(World world, EntityPlayer player, BlockPos harvestPos,
-        IBlockState state, TileEntity tileEntity, ItemStack stack) {
+    public void harvestBlock(World world, PlayerEntity player, BlockPos harvestPos,
+        BlockState state, TileEntity tileEntity, ItemStack stack) {
         this.removeLuckyBlock(world, player, harvestPos, false);
     }
 
-    public int getItemsToDropCount(IBlockState state, int fortune, World worldIn,
-        BlockPos pos, Random random) {
-        return 0;
+    @Override
+    public boolean removedByPlayer(BlockState state, World world,
+        BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+
+        if (player.isCreative() && this.doCreativeDrops)
+            this.removeLuckyBlock(world, player, pos, false);
+        return true;
     }
 
-    private boolean canPlaceOnBlock(IBlockState soil) {
-        return soil.isTopSolid();
-            /*
-            || soit == Blocks.GRASS
-            || soil == Blocks.DIRT
-            || soil == Blocks.SAND
-            || soil == Blocks.STONE
-            || soil == Blocks.GRAVEL
-            || soil == Blocks.NETHERRACK
-            || soil == Blocks.SOUL_SAND
-            || soil == Blocks.NETHER_BRICKS
-            || soil == Blocks.END_STONE;
-             */
+    private boolean canPlaceOnBlock(BlockState soil) {
+        return soil.isSolid();
     }
 
     public boolean canPlaceAt(IWorld world, BlockPos pos) {
-        IBlockState curState = world.getBlockState(pos);
-        IBlockState soilState = world.getBlockState(
+        BlockState curState = world.getBlockState(pos);
+        BlockState soilState = world.getBlockState(
             new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ()));
 
         return (curState.getMaterial().isReplaceable()
@@ -170,12 +155,12 @@ public class BlockLuckyBlock extends BlockContainer {
     }
 
     @Override
-    public ToolType getHarvestTool(IBlockState state) {
+    public ToolType getHarvestTool(BlockState state) {
         return ToolType.PICKAXE;
     }
 
     @Override
-    public int getHarvestLevel(IBlockState state) {
+    public int getHarvestLevel(BlockState state) {
         return 0;
     }
 
@@ -186,7 +171,7 @@ public class BlockLuckyBlock extends BlockContainer {
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos,
-        IBlockState state, EntityLivingBase player, ItemStack itemStack) {
+        BlockState state, LivingEntity player, ItemStack itemStack) {
 
         TileEntityLuckyBlock tileEntityLuck = (TileEntityLuckyBlock) world.getTileEntity(pos);
         if (tileEntityLuck == null) return;
@@ -208,7 +193,7 @@ public class BlockLuckyBlock extends BlockContainer {
     public LuckyGenerator getWorldGenerator() { return this.worldGenerator; }
     public void setWorldGenerator(LuckyGenerator gen) { this.worldGenerator = gen; }
 
-    public void setDoCreativeDrops(boolean flag) { this.doCreativeDrops = flag; }
+    public void setDoCreativeDrops(boolean doDrops) { this.doCreativeDrops = doDrops; }
 
     public BlockLuckyBlock setBlockRecipe(IForgeRegistryEntry<IRecipe> recipe) {
         this.blockRecipe = recipe;
@@ -217,7 +202,7 @@ public class BlockLuckyBlock extends BlockContainer {
     public IForgeRegistryEntry<IRecipe> getBlockRecipe() { return this.blockRecipe; }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.MODEL;
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
     }
 }

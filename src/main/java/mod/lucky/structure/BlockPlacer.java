@@ -3,25 +3,24 @@ package mod.lucky.structure;
 import java.util.ArrayList;
 
 import mod.lucky.drop.func.DropFuncBlock;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 public class BlockPlacer {
     private IWorld world;
     private ArrayList<BlockPos> updatePos;
-    private ArrayList<IBlockState> updateState;
+    private ArrayList<BlockState> updateState;
 
 
     public BlockPlacer(IWorld world) {
         this.world = world;
         this.updatePos = new ArrayList<BlockPos>();
-        this.updateState = new ArrayList<IBlockState>();
+        this.updateState = new ArrayList<BlockState>();
     }
 
-    public void add(IBlockState blockState, BlockPos blockPos) {
+    public void add(BlockState blockState, BlockPos blockPos) {
         if (blockPos.getY() <= 0) return;
         DropFuncBlock.setBlock(this.world, blockState, blockPos, false);
         this.updatePos.add(blockPos);
@@ -34,7 +33,7 @@ public class BlockPlacer {
             if (world instanceof World) {
                 World fullWorld = (World) this.world;
                 fullWorld.markAndNotifyBlock(pos,
-                    fullWorld.getChunk(pos),
+                    fullWorld.getChunkAt(pos),
                     fullWorld.getBlockState(pos),
                     this.updateState.get(i),
                     3);

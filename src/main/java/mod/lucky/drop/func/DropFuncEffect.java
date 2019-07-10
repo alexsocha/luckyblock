@@ -7,9 +7,9 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -45,12 +45,12 @@ public class DropFuncEffect extends DropFunc {
             try {
                 potionEffectId = ValueParser.getInteger(effectID);
             } catch (Exception e) {
-                Potion potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectID));
+                Effect potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(effectID));
                 if (potion == null) {
                     Lucky.error(null, "Invalid potion effect: " + effectID);
                     return;
                 }
-                potionEffectId = Potion.getIdFromPotion(potion);
+                potionEffectId = Effect.getId(potion);
             }
         }
 
@@ -60,26 +60,26 @@ public class DropFuncEffect extends DropFunc {
                 this.specialEffectKnockback(processData, target);
             else this.potionEffect(processData, target, potionEffectId);
         } else if (effectBox != null) {
-            List list1 = processData.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, effectBox);
+            List list1 = processData.getWorld().getEntitiesWithinAABB(LivingEntity.class, effectBox);
             if (!list1.isEmpty()) {
                 Iterator iterator = list1.iterator();
 
                 while (iterator.hasNext()) {
-                    EntityLivingBase entityLivingBase = (EntityLivingBase) iterator.next();
+                    LivingEntity entity = (LivingEntity) iterator.next();
                     if (processData.getDropSingle().getPropertyBoolean("excludePlayer")
-                        && entityLivingBase == processData.getPlayer()) continue;
+                        && entity == processData.getPlayer()) continue;
                     double distance =
                         processData
                             .getDropSingle()
                             .getVecPos()
-                            .distanceTo(entityLivingBase.getPositionVector());
+                            .distanceTo(entity.getPositionVector());
 
                     if (distance <= drop.getPropertyFloat("range")) {
                         if (effectID.equals("special_fire"))
-                            this.specialEffectFire(processData, entityLivingBase);
+                            this.specialEffectFire(processData, entity);
                         else if (effectID.equals("special_knockback"))
-                            this.specialEffectKnockback(processData, entityLivingBase);
-                        else this.potionEffect(processData, entityLivingBase, potionEffectId);
+                            this.specialEffectKnockback(processData, entity);
+                        else this.potionEffect(processData, entity, potionEffectId);
                     }
                 }
             }
@@ -87,15 +87,15 @@ public class DropFuncEffect extends DropFunc {
     }
 
     private void potionEffect(DropProcessData processData, Entity entity, int potionEffectId) {
-        Potion potion = Potion.getPotionById(potionEffectId);
+        Effect potion = Effect.get(potionEffectId);
         int duration = (int) (processData.getDropSingle().getPropertyFloat("duration") * 20.0);
         if (potion.isInstant()) duration = 1;
 
-        PotionEffect potionEffect =
-            new PotionEffect(
+        EffectInstance potionEffect =
+            new EffectInstance(
                 potion, duration, processData.getDropSingle().getPropertyInt("amplifier"));
-        if (entity instanceof EntityLivingBase)
-            ((EntityLivingBase) entity).addPotionEffect(potionEffect);
+        if (entity instanceof LivingEntity)
+            ((LivingEntity) entity).addPotionEffect(potionEffect);
     }
 
     private void specialEffectFire(DropProcessData processData, Entity entity) {
@@ -118,15 +118,16 @@ public class DropFuncEffect extends DropFunc {
             power *= 0.5;
         }
 
-        entity.motionX =
+        entity.setMotion(new Vec3d(
             -MathHelper.sin(yawAngle / 180.0F * (float) Math.PI)
                 * MathHelper.cos(pitchAngle / 180.0F * (float) Math.PI)
-                * power;
-        entity.motionZ =
+                * power,
+
+            -MathHelper.sin(pitchAngle / 180.0F * (float) Math.PI) * power,
+
             MathHelper.cos(yawAngle / 180.0F * (float) Math.PI)
                 * MathHelper.cos(pitchAngle / 180.0F * (float) Math.PI)
-                * power;
-        entity.motionY = -MathHelper.sin(pitchAngle / 180.0F * (float) Math.PI) * power;
+                * power));
         entity.velocityChanged = true;
     }
 

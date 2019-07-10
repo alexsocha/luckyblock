@@ -5,7 +5,7 @@ import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemLuckySword extends ItemSword implements ILuckyItemContainer {
+public class ItemLuckySword extends SwordItem implements ILuckyItemContainer {
     private LuckyItem luckyItem = new LuckyItem(this);
 
     public ItemLuckySword() {
@@ -32,7 +32,7 @@ public class ItemLuckySword extends ItemSword implements ILuckyItemContainer {
 
     @Override
     public boolean hitEntity(
-        ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
+        ItemStack stack, LivingEntity target, LivingEntity attacker) {
 
         try {
             int luck = LuckyItem.getLuck(stack);

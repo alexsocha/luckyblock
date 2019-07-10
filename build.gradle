@@ -34,7 +34,7 @@ minecraft {
 }
 
 ext {
-    forgeVersion = '1.14.3-27.0.23'
+    forgeVersion = '1.14.3-27.0.47'
     mcversion = project.forgeVersion.split('-')[0]
     jarNameRaw = 'luckyblock-build'
     jarName = "luckyblock-${project.mcversion}-$version"

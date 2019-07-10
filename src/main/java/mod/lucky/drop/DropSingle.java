@@ -9,8 +9,8 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.DropValue;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -59,8 +59,8 @@ public class DropSingle extends DropBase {
         return (Float) this.getProperty(name);
     }
 
-    public NBTTagCompound getPropertyNBT(String name) {
-        return (NBTTagCompound) this.getProperty(name);
+    public CompoundNBT getPropertyNBT(String name) {
+        return (CompoundNBT) this.getProperty(name);
     }
 
     public BlockPos getBlockPos() {
@@ -86,11 +86,11 @@ public class DropSingle extends DropBase {
         this.setProperty("posZ", pos.z);
     }
 
-    public IBlockState getBlockState() {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("Name", this.getPropertyString("ID"));
+    public BlockState getBlockState() {
+        CompoundNBT tag = new CompoundNBT();
+        tag.putString("Name", this.getPropertyString("ID"));
         if (this.hasProperty("state"))
-            tag.setTag("Properties", this.getPropertyNBT("state"));
+            tag.put("Properties", this.getPropertyNBT("state"));
 
         return NBTUtil.readBlockState(tag);
     }
@@ -233,11 +233,11 @@ public class DropSingle extends DropBase {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        NBTTagCompound propertiesTag = tagCompound.getCompound("properties");
+    public void readFromNBT(CompoundNBT tagCompound) {
+        CompoundNBT propertiesTag = tagCompound.getCompound("properties");
         for (Object key : propertiesTag.keySet()) {
             DropValue dropValue = new DropValue(null);
-            dropValue.readFromNBT((NBTTagCompound) propertiesTag.getTag((String) key));
+            dropValue.readFromNBT(propertiesTag.getCompound((String) key));
             this.properties.put((String) key, dropValue);
         }
 
@@ -250,15 +250,15 @@ public class DropSingle extends DropBase {
     }
 
     @Override
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound mainTag = new NBTTagCompound();
+    public CompoundNBT writeToNBT() {
+        CompoundNBT mainTag = new CompoundNBT();
 
-        NBTTagCompound propertiesTag = new NBTTagCompound();
+        CompoundNBT propertiesTag = new CompoundNBT();
         for (String key : this.properties.keySet())
-            propertiesTag.setTag(key, this.properties.get(key).writeToNBT());
+            propertiesTag.put(key, this.properties.get(key).writeToNBT());
 
-        mainTag.setTag("properties", propertiesTag);
-        mainTag.setBoolean("needsInitialize", this.needsInitialize);
+        mainTag.put("properties", propertiesTag);
+        mainTag.putBoolean("needsInitialize", this.needsInitialize);
 
         return mainTag;
     }

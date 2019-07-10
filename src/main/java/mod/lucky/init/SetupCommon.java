@@ -7,6 +7,7 @@ import mod.lucky.crafting.RecipeLuckCrafting;
 import mod.lucky.drop.func.DropFunc;
 import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
+import mod.lucky.entity.SpawnPacket;
 import mod.lucky.item.ItemLuckyBlock;
 import mod.lucky.item.ItemLuckyBow;
 import mod.lucky.item.ItemLuckyPotion;
@@ -16,27 +17,35 @@ import mod.lucky.structure.Structure;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.RecipeSerializers;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import net.minecraftforge.fml.network.FMLPlayMessages;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupCommon {
     public static EntityType<EntityLuckyPotion> ENTITY_LUCKY_POTION;
     public static EntityType<EntityLuckyProjectile> ENTITY_LUCKY_PROJECTILE;
     public static TileEntityType<TileEntityLuckyBlock> TE_LUCKY_BLOCK;
+
+    public static IRecipeSerializer<RecipeLuckCrafting> LUCK_CRAFTING;
+    public static IRecipeSerializer<RecipeAddons> ADDON_CRAFTING;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -67,35 +76,39 @@ public class SetupCommon {
         Lucky.resourceManager.loadAllResources(true);
     }
 
+    @SubscribeEvent
+    public static void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event) {
+        LUCK_CRAFTING = (IRecipeSerializer<RecipeLuckCrafting>)
+            new SpecialRecipeSerializer<>(RecipeLuckCrafting::new)
+            .setRegistryName(new ResourceLocation("lucky:crafting_luck"));
 
-    public static IRecipeSerializer<RecipeLuckCrafting> LUCK_CRAFTING =
-        RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
-            "lucky:crafting_luck", RecipeLuckCrafting::new));
+        ADDON_CRAFTING = (IRecipeSerializer<RecipeAddons>)
+            new SpecialRecipeSerializer<>(RecipeAddons::new)
+                .setRegistryName(new ResourceLocation("lucky:crafting_addons"));
 
-    public static IRecipeSerializer<RecipeAddons> ADDON_CRAFTING =
-        RecipeSerializers.register(new RecipeSerializers.SimpleSerializer<>(
-            "lucky:crafting_addons", RecipeAddons::new));
-
-    public static void registerRecipes() {
-        for (PluginLoader plugin : Lucky.luckyBlockPlugins) {
-            for (IRecipe recipe : plugin.getRecipes()) {
-                // ...
-            }
-        }
+        event.getRegistry().register(LUCK_CRAFTING);
+        event.getRegistry().register(ADDON_CRAFTING);
     }
 
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityType<?>> event) {
         ENTITY_LUCKY_POTION = (EntityType<EntityLuckyPotion>)
-            EntityType.Builder.create(EntityLuckyPotion.class, EntityLuckyPotion::new)
-                .tracker(100, 1, true)
-                .build("lucky_potion")
-                .setRegistryName(new ResourceLocation("lucky:lucky_potion"));
+            EntityType.Builder.<EntityLuckyPotion>create(
+                EntityLuckyPotion::new, EntityClassification.MISC)
+                    .setTrackingRange(100)
+                    .setUpdateInterval(20)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build("lucky_potion")
+                    .setRegistryName(new ResourceLocation("lucky:lucky_potion"));
+
         ENTITY_LUCKY_PROJECTILE = (EntityType<EntityLuckyProjectile>)
-            EntityType.Builder.create(EntityLuckyProjectile.class, EntityLuckyProjectile::new)
-                .tracker(100, 1, true)
-                .build("lucky_projectile")
-                .setRegistryName(new ResourceLocation("lucky:lucky_projectile"));
+            EntityType.Builder.<EntityLuckyProjectile>create(
+                EntityLuckyProjectile::new, EntityClassification.MISC)
+                    .setTrackingRange(100)
+                    .setUpdateInterval(20)
+                    .setShouldReceiveVelocityUpdates(true)
+                    .build("lucky_projectile")
+                    .setRegistryName(new ResourceLocation("lucky:lucky_projectile"));
 
         event.getRegistry().register(ENTITY_LUCKY_POTION);
         event.getRegistry().register(ENTITY_LUCKY_PROJECTILE);
@@ -103,10 +116,15 @@ public class SetupCommon {
 
     @SubscribeEvent
     public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event) {
+        List<Block> validBlocks = Lucky.luckyBlockPlugins.stream()
+            .map(p -> p.getBlock()).collect(Collectors.toList());
+        validBlocks.add(Lucky.luckyBlock);
+
         TE_LUCKY_BLOCK = (TileEntityType<TileEntityLuckyBlock>)
-            TileEntityType.Builder.create(TileEntityLuckyBlock::new)
-                .build(null)
-                .setRegistryName(new ResourceLocation("lucky:lucky_block"));
+            TileEntityType.Builder.create(TileEntityLuckyBlock::new,
+                validBlocks.toArray(new Block[validBlocks.size()]))
+                    .build(null)
+                    .setRegistryName(new ResourceLocation("lucky:lucky_block"));
 
         event.getRegistry().register(TE_LUCKY_BLOCK);
     }

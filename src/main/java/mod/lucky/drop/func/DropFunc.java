@@ -3,7 +3,7 @@ package mod.lucky.drop.func;
 import java.util.HashMap;
 
 import mod.lucky.drop.DropSingle;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public abstract class DropFunc {
     public abstract void process(DropProcessData processData);
@@ -42,7 +42,7 @@ public abstract class DropFunc {
         DropSingle.setDefaultProperty("all", "displayCommandOutput", Boolean.class, false);
         DropSingle.setDefaultProperty("all", "commandSender", String.class, "@");
         DropSingle.setDefaultProperty("all", "duration", Integer.class, 200);
-        DropSingle.setDefaultProperty("all", "NBTTag", NBTTagCompound.class, null);
+        DropSingle.setDefaultProperty("all", "NBTTag", CompoundNBT.class, null);
     }
 
     private static HashMap<String, DropFunc> dropFunctions = new HashMap<String, DropFunc>();

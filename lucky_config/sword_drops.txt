@@ -9,8 +9,8 @@ type=entity,ID=egg,pos=#pExactPos,posOffsetY=1.5,NBTTag=(Motion=#motionFromDirec
 / tnt
 type=entity,ID=tnt,pos=#pExactPos,posOffsetY=1.5,NBTTag=(Fuse=40b,Motion=#motionFromDirection(#pYaw,#pPitch,0.8))@luck=2
 
-/ web
-type=entity,ID=lucky:lucky_projectile,pos=#pExactPos,posOffsetY=1.5,NBTTag=(Motion=#motionFromDirection(#pYaw,#pPitch,1.5),item=(id=web,Count=1),impact=["type=fill,ID=web,size=(2,2,2)"])@luck=2@chance=0.5
+/ cobweb
+type=entity,ID=lucky:lucky_projectile,pos=#pExactPos,posOffsetY=1.5,NBTTag=(Motion=#motionFromDirection(#pYaw,#pPitch,1.5),item=(id=cobweb,Count=1),impact=["type=fill,ID=cobweb,size=(2,2,2)"])@luck=2@chance=0.5
 
 / flames
 type=entity,ID=lucky:lucky_projectile,pos=#pExactPos,posOffsetY=1.5,NBTTag=(Motion=#motionFromDirection(#pYaw+#rand(-10,10),#pPitch+#rand(-10,10),1.0),item=(id=blaze_powder,Count=1),impact=["type=effect,ID=special_fire,target=hitEntity,duration=5"],damage=0.0),amount=50,delay=#rand(0.0,2.0)@luck=2

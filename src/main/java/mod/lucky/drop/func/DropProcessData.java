@@ -9,12 +9,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.command.arguments.EntitySelector;
 import net.minecraft.command.arguments.EntitySelectorParser;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
 
 import javax.annotation.Nullable;
@@ -75,18 +75,18 @@ public class DropProcessData {
     }
 
     public Entity getPlayer() {
-        if (this.player == null && this.world instanceof WorldServer) {
-            this.player = ((WorldServer) this.world).getEntityFromUuid(this.playerUUID);
+        if (this.player == null && this.world instanceof ServerWorld) {
+            this.player = ((ServerWorld) this.world).getEntityByUuid(this.playerUUID);
         }
-        if (this.player == null && this.world instanceof WorldServer) {
-            this.player = LuckyUtils.getNearestPlayer((WorldServer) this.world, this.harvestPos);
+        if (this.player == null && this.world instanceof ServerWorld) {
+            this.player = LuckyUtils.getNearestPlayer((ServerWorld) this.world, this.harvestPos);
         }
         return this.player;
     }
 
     public Entity getHitEntity() {
-        if (this.hitEntity == null && this.world instanceof WorldServer) {
-            this.hitEntity = ((WorldServer) this.world).getEntityFromUuid(this.hitEntityUUID);
+        if (this.hitEntity == null && this.world instanceof ServerWorld) {
+            this.hitEntity = ((ServerWorld) this.world).getEntityByUuid(this.hitEntityUUID);
         }
         return this.hitEntity;
     }
@@ -137,7 +137,7 @@ public class DropProcessData {
         this.harvestPos = harvestPos;
     }
 
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         this.dropSingle = new DropSingle();
         this.dropSingle.readFromNBT(tagCompound.getCompound("drop"));
         this.harvestPos =
@@ -146,26 +146,27 @@ public class DropProcessData {
                 tagCompound.getDouble("harvestPosY"),
                 tagCompound.getDouble("harvestPosZ"));
         this.bowPower = tagCompound.getFloat("bowPower");
-        if (tagCompound.hasKey("playerUUID"))
+        if (tagCompound.contains("playerUUID"))
             this.playerUUID = UUID.fromString(tagCompound.getString("playerUUID"));
-        if (tagCompound.hasKey("hitEntityUUID"))
+        if (tagCompound.contains("hitEntityUUID"))
             this.hitEntityUUID = UUID.fromString(tagCompound.getString("hitEntityUUID"));
-        this.world = Minecraft.getInstance().getIntegratedServer().getWorld(DimensionType.OVERWORLD);
+        this.world = Minecraft.getInstance().getIntegratedServer()
+            .getWorld(DimensionType.field_223227_a_); // overworld
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound mainTag = new NBTTagCompound();
-        mainTag.setTag("drop", this.dropSingle.writeToNBT());
-        mainTag.setDouble("harvestPosX", this.harvestPos.x);
-        mainTag.setDouble("harvestPosY", this.harvestPos.y);
-        mainTag.setDouble("harvestPosZ", this.harvestPos.z);
-        mainTag.setFloat("bowPower", this.bowPower);
+    public CompoundNBT writeToNBT() {
+        CompoundNBT mainTag = new CompoundNBT();
+        mainTag.put("drop", this.dropSingle.writeToNBT());
+        mainTag.putDouble("harvestPosX", this.harvestPos.x);
+        mainTag.putDouble("harvestPosY", this.harvestPos.y);
+        mainTag.putDouble("harvestPosZ", this.harvestPos.z);
+        mainTag.putFloat("bowPower", this.bowPower);
         if (this.player != null || this.playerUUID != null)
-            mainTag.setString(
+            mainTag.putString(
                 "playerUUID",
                 this.player == null ? this.playerUUID.toString() : this.player.getUniqueID().toString());
         if (this.hitEntity != null || this.hitEntityUUID != null)
-            mainTag.setString(
+            mainTag.putString(
                 "hitEntityUUID",
                 this.hitEntity == null
                     ? this.hitEntityUUID.toString()

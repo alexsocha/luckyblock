@@ -5,7 +5,7 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.command.CommandSource;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 
 public class DropFuncCommand extends DropFunc {
     @Override
@@ -17,7 +17,7 @@ public class DropFuncCommand extends DropFunc {
         String name = drop.getPropertyString("commandSender");
 
         CommandSource commandSource = LuckyUtils.makeCommandSource(
-            (WorldServer) processData.getWorld(),
+            (ServerWorld) processData.getWorld(),
             LuckyUtils.toVec3d(drop.getBlockPos()),
             displayOutput, name);
 

@@ -2,7 +2,7 @@ package mod.lucky.drop.func;
 
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
-import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.Difficulty;
 
 public class DropFuncDifficulty extends DropFunc {
     @Override
@@ -10,19 +10,20 @@ public class DropFuncDifficulty extends DropFunc {
         DropSingle drop = processData.getDropSingle();
         String id = drop.getPropertyString("ID");
 
-        EnumDifficulty enumDifficulty;
+        Difficulty enumDifficulty;
         if (id.equalsIgnoreCase("peaceful") || id.equalsIgnoreCase("p"))
-            enumDifficulty = EnumDifficulty.PEACEFUL;
+            enumDifficulty = Difficulty.PEACEFUL;
         else if (id.equalsIgnoreCase("easy") || id.equalsIgnoreCase("e"))
-            enumDifficulty = EnumDifficulty.EASY;
+            enumDifficulty = Difficulty.EASY;
         else if (id.equalsIgnoreCase("normal") || id.equalsIgnoreCase("n"))
-            enumDifficulty = EnumDifficulty.NORMAL;
+            enumDifficulty = Difficulty.NORMAL;
         else if (id.equalsIgnoreCase("hard") || id.equalsIgnoreCase("h"))
-            enumDifficulty = EnumDifficulty.HARD;
+            enumDifficulty = Difficulty.HARD;
         else
-            enumDifficulty = EnumDifficulty.byId(ValueParser.getInteger(id));
+            enumDifficulty = Difficulty.byId(ValueParser.getInteger(id));
 
-        processData.getWorld().getServer().setDifficultyForAllWorlds(enumDifficulty);
+        processData.getWorld().getServer().setDifficultyForAllWorlds(
+            enumDifficulty, false /* don't force */);
     }
 
     @Override

@@ -11,12 +11,12 @@ import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleType;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.potion.PotionType;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class DropFuncParticle extends DropFunc {
     @Override
@@ -30,9 +30,8 @@ public class DropFuncParticle extends DropFunc {
         ResourceLocation particleResLoc = new ResourceLocation(particleId);
 
         ParticleType particleType = null;
-        // particle registry
-        if (IRegistry.field_212632_u.func_212607_c(particleResLoc))
-            particleType = IRegistry.field_212632_u.func_212608_b(particleResLoc);
+        if (ForgeRegistries.PARTICLE_TYPES.containsKey(particleResLoc))
+            particleType = ForgeRegistries.PARTICLE_TYPES.getValue(particleResLoc);
 
         if (particleType == null) {
             if (ValueParser.getString(
@@ -53,8 +52,8 @@ public class DropFuncParticle extends DropFunc {
             return;
         }
 
-        if (processData.getWorld() instanceof WorldServer) {
-            WorldServer worldServer = (WorldServer) processData.getWorld();
+        if (processData.getWorld() instanceof ServerWorld) {
+            ServerWorld worldServer = (ServerWorld) processData.getWorld();
 
             if (!isEvent) {
                 String particleArgs = "";
@@ -90,9 +89,9 @@ public class DropFuncParticle extends DropFunc {
                 int damage = 0;
                 if (eventId == 2002) {
                     if (drop.hasProperty("potion")) {
-                        List<PotionEffect> effectList = Lists.<PotionEffect>newArrayList();
-                        PotionType potionType =
-                            PotionType.getPotionTypeForName(drop.getPropertyString("potion"));
+                        List<EffectInstance> effectList = Lists.<EffectInstance>newArrayList();
+                        Potion potionType = Potion.getPotionTypeForName(
+                            drop.getPropertyString("potion"));
                         effectList.addAll(potionType.getEffects());
                         damage = PotionUtils.getPotionColorFromEffectList(effectList);
                     } else damage = drop.getPropertyInt("damage");

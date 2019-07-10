@@ -1,17 +1,16 @@
 package mod.lucky.drop.func;
 
 import mod.lucky.drop.DropSingle;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
 public class DropFuncFill extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
-        IBlockState blockState = drop.getBlockState();
+        BlockState blockState = drop.getBlockState();
         BlockPos dropPos = drop.getBlockPos();
-        // String applyBlockMode = drop.getPropertyString("applyBlockMode");
 
         int length = drop.getPropertyInt("length");
         int height = drop.getPropertyInt("height");
@@ -53,9 +52,8 @@ public class DropFuncFill extends DropFunc {
         DropSingle.setDefaultProperty(this.getType(), "pos2Y", Integer.class, 0);
         DropSingle.setDefaultProperty(this.getType(), "pos2Z", Integer.class, 0);
         DropSingle.setDefaultProperty(this.getType(), "pos2", String.class, "(0,0,0)");
-        DropSingle.setDefaultProperty(this.getType(), "tileEntity", NBTTagCompound.class, null);
+        DropSingle.setDefaultProperty(this.getType(), "tileEntity", CompoundNBT.class, null);
         DropSingle.setDefaultProperty(this.getType(), "blockUpdate", Boolean.class, true);
-        DropSingle.setDefaultProperty(this.getType(), "applyBlockMode", String.class, "replace");
         DropSingle.setReplaceProperty("tileEntity", "NBTTag");
     }
 

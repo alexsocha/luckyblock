@@ -2,7 +2,7 @@ package mod.lucky.drop.value;
 
 import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public class DropValue {
     private String rawValue = null;
@@ -68,8 +68,8 @@ public class DropValue {
         return (Float) this.value;
     }
 
-    public NBTTagCompound getValueNBT() {
-        return (NBTTagCompound) this.value;
+    public CompoundNBT getValueNBT() {
+        return (CompoundNBT) this.value;
     }
 
     public Class getValueType() {
@@ -80,21 +80,21 @@ public class DropValue {
         this.value = object;
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound mainTag = new NBTTagCompound();
-        if (this.value != null) mainTag.setTag("value", ValueParser.getNBTBaseFromValue(this.value));
-        if (this.rawValue != null) mainTag.setString("rawValue", this.rawValue);
+    public CompoundNBT writeToNBT() {
+        CompoundNBT mainTag = new CompoundNBT();
+        if (this.value != null) mainTag.put("value", ValueParser.getNBTBaseFromValue(this.value));
+        if (this.rawValue != null) mainTag.putString("rawValue", this.rawValue);
         if (this.valueType != null)
-            mainTag.setString("valueType", ValueParser.classTypeToString.inverse().get(this.valueType));
-        mainTag.setBoolean("needsInitialize", this.needsInitialize);
+            mainTag.putString("valueType", ValueParser.classTypeToString.inverse().get(this.valueType));
+        mainTag.putBoolean("needsInitialize", this.needsInitialize);
         return mainTag;
     }
 
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        if (tagCompound.hasKey("value"))
-            this.value = ValueParser.getValueFromNBTBase(tagCompound.getTag("value"));
-        if (tagCompound.hasKey("rawValue")) this.rawValue = tagCompound.getString("rawValue");
-        if (tagCompound.hasKey("valueType"))
+    public void readFromNBT(CompoundNBT tagCompound) {
+        if (tagCompound.contains("value"))
+            this.value = ValueParser.getValueFromNBTBase(tagCompound.get("value"));
+        if (tagCompound.contains("rawValue")) this.rawValue = tagCompound.getString("rawValue");
+        if (tagCompound.contains("valueType"))
             this.valueType = ValueParser.classTypeToString.get(tagCompound.getString("valueType"));
         this.needsInitialize = tagCompound.getBoolean("needsInitialize");
     }

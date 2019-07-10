@@ -2,18 +2,18 @@ package mod.lucky.structure;
 
 import mod.lucky.drop.func.DropFuncBlock;
 import mod.lucky.util.LuckyUtils;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagFloat;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.DoubleNBT;
+import net.minecraft.nbt.FloatNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -60,7 +60,7 @@ public class StructureUtils {
     }
 
     @Nullable
-    public static IBlockState applyBlockMode(Structure.BlockMode mode, IBlockState state) {
+    public static BlockState applyBlockMode(Structure.BlockMode mode, BlockState state) {
         if (mode == Structure.BlockMode.AIR && state.getBlock() != Blocks.AIR)
             return Blocks.AIR.getDefaultState();
         else if (mode == Structure.BlockMode.OVERLAY && state.getBlock() != Blocks.AIR)
@@ -70,12 +70,12 @@ public class StructureUtils {
         return null;
     }
 
-    public static void setBlock(BlockPlacer blockPlacer, IBlockState blockState,
+    public static void setBlock(BlockPlacer blockPlacer, BlockState blockState,
         BlockPos posInStruct, Vec3d structCenter, Vec3d harvestPos, int rotation) {
 
         BlockPos pos = StructureUtils.getWorldPos(
             posInStruct, structCenter, harvestPos, rotation);
-        IBlockState newBlockState = blockState.rotate(
+        BlockState newBlockState = blockState.rotate(
             blockPlacer.getWorld(), pos, parseRotation(rotation));
 
         blockPlacer.add(newBlockState, pos);
@@ -96,7 +96,7 @@ public class StructureUtils {
         }
     }
 
-    public static void setTileEntity(IWorld world, NBTTagCompound tileEntity,
+    public static void setTileEntity(IWorld world, CompoundNBT tileEntity,
         BlockPos structPos, Vec3d structCenter, Vec3d harvestPos, int rotation) {
 
         BlockPos pos = getWorldPos(structPos, structCenter, harvestPos, rotation);
@@ -106,48 +106,50 @@ public class StructureUtils {
     public static void setEntity(World world, Entity entity,
         Vec3d structCenter, Vec3d harvestPos, int rotation) {
 
+        if (!(world instanceof ServerWorld)) return;
+
         Vec3d pos = getWorldPos(entity.getPositionVector(), structCenter, harvestPos, rotation);
         entity.setPosition(pos.x, pos.y, pos.z);
         entity.rotationYaw = entity.getRotatedYaw(parseRotation(rotation));
-        world.spawnEntity(entity);
+        ((ServerWorld) world).summonEntity(entity);
     }
 
-    public static NBTTagCompound rotateEntityNBT(
-        NBTTagCompound entityTag, Vec3d centerPos, int rotation) {
+    public static CompoundNBT rotateEntityNBT(
+        CompoundNBT entityTag, Vec3d centerPos, int rotation) {
 
-        NBTTagCompound newTag = entityTag.copy();
+        CompoundNBT newTag = entityTag.copy();
         rotation = normalizeRotation(rotation);
-        if (entityTag.hasKey("Pos")) {
-            NBTTagList posList = entityTag.getList("Pos", Constants.NBT.TAG_DOUBLE);
+        if (entityTag.contains("Pos")) {
+            ListNBT posList = entityTag.getList("Pos", Constants.NBT.TAG_DOUBLE);
             Vec3d entityPos = new Vec3d(
                 posList.getDouble(0), posList.getDouble(1), posList.getDouble(2));
             entityPos = rotatePos(entityPos, centerPos, rotation);
-            posList = new NBTTagList();
-            posList.add(new NBTTagDouble(entityPos.x));
-            posList.add(new NBTTagDouble(entityPos.y));
-            posList.add(new NBTTagDouble(entityPos.z));
-            newTag.setTag("Pos", posList);
+            posList = new ListNBT();
+            posList.add(new DoubleNBT(entityPos.x));
+            posList.add(new DoubleNBT(entityPos.y));
+            posList.add(new DoubleNBT(entityPos.z));
+            newTag.put("Pos", posList);
         }
-        if (entityTag.hasKey("Motion")) {
-            NBTTagList motionList = entityTag.getList("Motion", Constants.NBT.TAG_DOUBLE);
+        if (entityTag.contains("Motion")) {
+            ListNBT motionList = entityTag.getList("Motion", Constants.NBT.TAG_DOUBLE);
             Vec3d entityMotion = new Vec3d(
                 motionList.getDouble(0), motionList.getDouble(1), motionList.getDouble(2));
             entityMotion = rotatePos(entityMotion, new Vec3d(0, 0, 0), rotation);
-            motionList = new NBTTagList();
-            motionList.add(new NBTTagDouble(entityMotion.x));
-            motionList.add(new NBTTagDouble(entityMotion.y));
-            motionList.add(new NBTTagDouble(entityMotion.z));
-            newTag.setTag("Motion", motionList);
+            motionList = new ListNBT();
+            motionList.add(new DoubleNBT(entityMotion.x));
+            motionList.add(new DoubleNBT(entityMotion.y));
+            motionList.add(new DoubleNBT(entityMotion.z));
+            newTag.put("Motion", motionList);
         }
-        if (entityTag.hasKey("Rotation")) {
-            NBTTagList rotationList = entityTag.getList("Rotation", Constants.NBT.TAG_FLOAT);
+        if (entityTag.contains("Rotation")) {
+            ListNBT rotationList = entityTag.getList("Rotation", Constants.NBT.TAG_FLOAT);
             float rotYaw = rotationList.getFloat(0);
             float rotPitch = rotationList.getFloat(1);
             rotYaw = (rotYaw + (rotation * 90.0F)) % 360.0F;
-            rotationList = new NBTTagList();
-            rotationList.add(new NBTTagFloat(rotYaw));
-            rotationList.add(new NBTTagFloat(rotPitch));
-            newTag.setTag("Rotation", rotationList);
+            rotationList = new ListNBT();
+            rotationList.add(new FloatNBT(rotYaw));
+            rotationList.add(new FloatNBT(rotPitch));
+            newTag.put("Rotation", rotationList);
         }
         return newTag;
     }

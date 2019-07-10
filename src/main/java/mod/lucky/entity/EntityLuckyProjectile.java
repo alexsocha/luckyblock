@@ -1,41 +1,49 @@
 package mod.lucky.entity;
 
+import afu.org.checkerframework.checker.oigj.qual.O;
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.init.SetupCommon;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.init.Items;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
 
-public class EntityLuckyProjectile extends EntityArrow {
+public class EntityLuckyProjectile extends ArrowEntity {
     private static final DataParameter<ItemStack> ITEM_STACK =
         EntityDataManager.createKey(
-            EntityLuckyProjectile.class, DataSerializers.ITEM_STACK);
+            EntityLuckyProjectile.class, DataSerializers.ITEMSTACK);
 
-    private EntityItem entityItem;
+    private ItemEntity entityItem;
     private boolean hasTrail = false;
     private float trailFrequency = 1;
     private boolean hasImpact = false;
     private DropProcessor dropProcessorTrail;
     private DropProcessor dropProcessorImpact;
 
+    public EntityLuckyProjectile(EntityType<? extends EntityLuckyProjectile> entityType, World world) {
+        super(entityType, world);
+    }
+
     public EntityLuckyProjectile(World world) {
-        super(SetupCommon.ENTITY_LUCKY_PROJECTILE, world);
+        this(SetupCommon.ENTITY_LUCKY_PROJECTILE, world);
     }
 
     @Override
@@ -54,17 +62,10 @@ public class EntityLuckyProjectile extends EntityArrow {
         this.getDataManager().set(ITEM_STACK, stack);
     }
 
-    @Nullable
-    private Entity getShooter() {
-        return this.shootingEntity != null && this.world instanceof WorldServer
-            ? ((WorldServer) this.world).getEntityFromUuid(this.shootingEntity)
-            : null;
-    }
-
     private void luckyTick() {
         try {
             if (this.entityItem == null && this.getEntityWorld().isRemote)
-                this.entityItem = new EntityItem(
+                this.entityItem = new ItemEntity(
                     this.getEntityWorld(),
                     this.posX, this.posY, this.posZ,
                     this.dataManager.get(ITEM_STACK));
@@ -77,14 +78,15 @@ public class EntityLuckyProjectile extends EntityArrow {
                 if (this.trailFrequency < 1.0 && this.trailFrequency > 0) {
                     int amount = (int) (1.0 / this.trailFrequency);
                     for (int i = 0; i < amount; i++) {
+                        Vec3d entityMotion = this.getMotion();
                         this.dropProcessorTrail.processRandomDrop(
                             new DropProcessData(
                                 this.getEntityWorld(),
                                 this.getShooter(),
                                 new Vec3d(
-                                    this.posX + this.motionX * i / amount,
-                                    this.posY + this.motionY * i / amount,
-                                    this.posZ + this.motionZ * i / amount)),
+                                    this.posX + entityMotion.x * i / amount,
+                                    this.posY + entityMotion.y * i / amount,
+                                    this.posZ + entityMotion.z * i / amount)),
                             0, false);
                     }
                 } else if ((this.ticksExisted - 2) % ((int) this.trailFrequency) == 0)
@@ -121,66 +123,74 @@ public class EntityLuckyProjectile extends EntityArrow {
 
     @Override
     public void tick() {
-        super.tick();
-        luckyTick();
+        try {
+            super.tick();
+            luckyTick();
+        } catch (Exception e) {
+            Lucky.error(e, "Error in lucky projectile tick");
+        }
     }
 
     @Override
-    protected void onHit(RayTraceResult rayTraceResult) {
-        super.onHit(rayTraceResult);
-        this.luckyHit(rayTraceResult.entity);
+    protected void onHit(RayTraceResult rayTrace) {
+        super.onHit(rayTrace);
+        if (!this.world.isRemote && rayTrace.getType() != RayTraceResult.Type.MISS) {
+            Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY
+                ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
+            this.luckyHit(hitEntity);
+        }
     }
 
     @Override
-    public void writeAdditional(NBTTagCompound tag) {
+    public void writeAdditional(CompoundNBT tag) {
         super.writeAdditional(tag);
         if (this.entityItem != null)
-            tag.setTag("item", this.entityItem.getItem().write(new NBTTagCompound()));
+            tag.put("item", this.entityItem.getItem().write(new CompoundNBT()));
 
         if (this.hasTrail) {
-            NBTTagCompound trailTag = new NBTTagCompound();
-            trailTag.setFloat("frequency", this.trailFrequency);
+            CompoundNBT trailTag = new CompoundNBT();
+            trailTag.putFloat("frequency", this.trailFrequency);
 
-            NBTTagList drops = new NBTTagList();
+            ListNBT drops = new ListNBT();
             for (int i = 0; i < this.dropProcessorTrail.getDrops().size(); i++) {
                 String dropString = this.dropProcessorTrail.getDrops().get(i).toString();
-                drops.add(new NBTTagString(dropString));
+                drops.add(new StringNBT(dropString));
             }
-            trailTag.setTag("drops", drops);
-            tag.setTag("trail", trailTag);
+            trailTag.put("drops", drops);
+            tag.put("trail", trailTag);
         }
 
         if (this.hasImpact) {
-            NBTTagList drops = new NBTTagList();
+            ListNBT drops = new ListNBT();
             for (int i = 0; i < this.dropProcessorImpact.getDrops().size(); i++) {
-                String dropString = this.dropProcessorTrail.getDrops().get(i).toString();
-                drops.add(new NBTTagString(dropString));
+                String dropString = this.dropProcessorImpact.getDrops().get(i).toString();
+                drops.add(new StringNBT(dropString));
             }
-            tag.setTag("impact", drops);
+            tag.put("impact", drops);
         }
     }
 
 
     @Override
-    public void readAdditional(NBTTagCompound tag) {
+    public void readAdditional(CompoundNBT tag) {
         ItemStack stack = null;
-        if (tag.hasKey("item")) stack = ItemStack.read(tag.getCompound("item"));
+        if (tag.contains("item")) stack = ItemStack.read(tag.getCompound("item"));
         else stack = new ItemStack(Items.STICK);
         stack.setCount(1);
 
-        this.entityItem = new EntityItem(
+        this.entityItem = new ItemEntity(
             this.getEntityWorld(),
             this.posX, this.posY, this.posZ,
             stack);
 
         this.getDataManager().set(ITEM_STACK, stack);
 
-        if (tag.hasKey("trail")) {
-            NBTTagCompound trailTag = tag.getCompound("trail");
-            if (trailTag.hasKey("frequency"))
+        if (tag.contains("trail")) {
+            CompoundNBT trailTag = tag.getCompound("trail");
+            if (trailTag.contains("frequency"))
                 this.trailFrequency = trailTag.getFloat("frequency");
-            if (trailTag.hasKey("drops")) {
-                NBTTagList drops = trailTag.getList("drops", new NBTTagString().getId());
+            if (trailTag.contains("drops")) {
+                ListNBT drops = trailTag.getList("drops", new StringNBT().getId());
                 for (int i = 0; i < drops.size(); i++) {
                     DropFull drop = new DropFull();
                     drop.readFromString(drops.getString(i));
@@ -190,8 +200,8 @@ public class EntityLuckyProjectile extends EntityArrow {
             this.hasTrail = true;
         }
 
-        if (tag.hasKey("impact")) {
-            NBTTagList drops = tag.getList("impact", new NBTTagString().getId());
+        if (tag.contains("impact")) {
+            ListNBT drops = tag.getList("impact", new StringNBT().getId());
             for (int i = 0; i < drops.size(); i++) {
                 DropFull drop = new DropFull();
                 drop.readFromString(drops.getString(i));
@@ -204,5 +214,10 @@ public class EntityLuckyProjectile extends EntityArrow {
     @Override
     protected ItemStack getArrowStack() { return ItemStack.EMPTY; }
 
-    public EntityItem getEntityItem() { return this.entityItem; }
+    public ItemEntity getItemEntity() { return this.entityItem; }
+
+    @Override
+    public IPacket<?> createSpawnPacket() {
+        return new SpawnPacket(this);
+    }
 }

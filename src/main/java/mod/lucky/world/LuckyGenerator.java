@@ -2,22 +2,24 @@ package mod.lucky.world;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.function.Function;
 
+import com.mojang.datafixers.Dynamic;
 import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.placement.ChanceConfig;
+import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class LuckyGenerator extends Feature<NoFeatureConfig> {
@@ -26,23 +28,29 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
     private ArrayList<DropFull> netherDrops;
     private ArrayList<DropFull> endDrops;
 
-    public LuckyGenerator(BlockLuckyBlock block) {
+    public LuckyGenerator(Function<Dynamic<?>, ? extends NoFeatureConfig> configFactoryIn) {
+        super(configFactoryIn);
+    }
+
+    public void init(BlockLuckyBlock block) {
         this.block = block;
         this.surfaceDrops = new ArrayList<DropFull>();
         this.netherDrops = new ArrayList<DropFull>();
         this.endDrops = new ArrayList<DropFull>();
     }
 
+
     public static LuckyGenerator registerNew(BlockLuckyBlock block) {
-        LuckyGenerator generator = new LuckyGenerator(block);
+        LuckyGenerator generator = new LuckyGenerator(NoFeatureConfig::deserialize);
+        generator.init(block);
 
         ForgeRegistries.BIOMES.forEach(biome ->
             biome.addFeature(
                 GenerationStage.Decoration.SURFACE_STRUCTURES,
-                Biome.createCompositeFeature(
+                Biome.createDecoratedFeature(
                     generator,
                     IFeatureConfig.NO_FEATURE_CONFIG,
-                    Biome.AT_SURFACE_WITH_CHANCE,
+                    Placement.CHANCE_TOP_SOLID_HEIGHTMAP,
                     new ChanceConfig(1))));
 
         return generator;
@@ -94,7 +102,7 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
     }
 
     @Override
-    public boolean func_212245_a(IWorld world, IChunkGenerator<?> chunkGen,
+    public boolean place(IWorld world, ChunkGenerator<?> chunkGen,
         Random rand, BlockPos pos, NoFeatureConfig config) {
 
         return this.generate(world, rand, pos);

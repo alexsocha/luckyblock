@@ -6,17 +6,18 @@ import java.util.HashMap;
 import mod.lucky.init.SetupCommon;
 import mod.lucky.item.ILuckyItemContainer;
 import mod.lucky.item.ItemLuckyPotion;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeHidden;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.crafting.SpecialRecipe;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class RecipeLuckCrafting extends IRecipeHidden {
+public class RecipeLuckCrafting extends SpecialRecipe {
     private static HashMap<ILuckyItemContainer, ArrayList<LuckCraftingModifier>>
         LUCK_MODIFIERS = new HashMap<>();
 
@@ -46,7 +47,7 @@ public class RecipeLuckCrafting extends IRecipeHidden {
     }
 
     @Override
-    public boolean matches(IInventory table, World world) {
+    public boolean matches(CraftingInventory table, World world) {
         ItemStack luckyStack = findLuckyStack(table);
         if (luckyStack == null) return false;
 
@@ -70,7 +71,7 @@ public class RecipeLuckCrafting extends IRecipeHidden {
     }
 
     @Override
-    public ItemStack getCraftingResult(IInventory table) {
+    public ItemStack getCraftingResult(CraftingInventory table) {
         int baseLuckLevel = 0;
         int itemLuckLevelTotal = 0;
         ItemStack luckyStack = findLuckyStack(table);
@@ -100,8 +101,8 @@ public class RecipeLuckCrafting extends IRecipeHidden {
 
         if (resultLuckLevel != 0) {
             if (result.getTag() == null)
-                result.setTag(new NBTTagCompound());
-            result.getTag().setInt("Luck", resultLuckLevel);
+                result.setTag(new CompoundNBT());
+            result.getTag().putInt("Luck", resultLuckLevel);
         } else result.setTag(null);
 
         return result;
