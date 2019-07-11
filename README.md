@@ -16,7 +16,7 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 
 ## Resources
 
-<img src="https://raw.githubusercontent.com/alexsocha/luckyblock/master/img/luckyblock_3d.png" width="180px" align="right" vspace="20px">
+<img src="img/luckyblock_3d.png" width="180px" align="right" vspace="20px">
 
 - <a href="">Download Lucky Block</a>
 - <a href="">Minecraft Forums</a>
@@ -28,7 +28,7 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 3. Run Minecraft and enjoy!
 
 ## Add-ons
-<img src="https://raw.githubusercontent.com/alexsocha/luckyblock/master/img/addons_3d.png" width="400px">
+<img src="img/addons_3d.png" width="400px">
 
 ### Installing
 1. Install the Lucky Block and run Minecraft at least once.
