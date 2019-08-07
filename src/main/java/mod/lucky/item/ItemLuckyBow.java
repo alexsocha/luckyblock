@@ -71,7 +71,7 @@ public class ItemLuckyBow extends BowItem implements ILuckyItemContainer {
 
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
-            ItemStack arrowStack = player.func_213356_f(stack); // get shootable ammo
+            ItemStack arrowStack = player.findAmmo(stack);
 
             boolean unlimitedArrows = player.isCreative()
                 || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0

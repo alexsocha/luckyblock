@@ -13,8 +13,8 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;

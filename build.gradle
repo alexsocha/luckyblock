@@ -10,14 +10,14 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle'
 
-version = '7.8.0'
+version = '7.9.0'
 group = 'mod.lucky'
 archivesBaseName = 'lucky'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190621-1.14.2'
+    mappings channel: 'snapshot', version: '20190719-1.14.3'
     
     runs {
         client {
@@ -34,7 +34,7 @@ minecraft {
 }
 
 ext {
-    forgeVersion = '1.14.3-27.0.47'
+    forgeVersion = '1.14.4-28.0.14'
     mcversion = project.forgeVersion.split('-')[0]
     jarNameRaw = 'luckyblock-build'
     jarName = "luckyblock-${project.mcversion}-$version"

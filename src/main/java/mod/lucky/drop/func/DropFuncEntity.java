@@ -2,7 +2,9 @@ package mod.lucky.drop.func;
 
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
+import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
+import mod.lucky.network.PacketHandler;
 import net.minecraft.entity.*;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.FallingBlockEntity;
@@ -11,9 +13,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.storage.ChunkLoader;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.UUID;
@@ -84,7 +85,6 @@ public class DropFuncEntity extends DropFunc {
         else if (entity instanceof ArrowEntity)
             ((ArrowEntity) entity).shootingEntity = playerUUID;
 
-
         // randomize entity
         if (entity instanceof MobEntity
             && processData.getProcessType() != DropProcessData.EnumProcessType.LUCKY_STRUCT
@@ -95,6 +95,10 @@ public class DropFuncEntity extends DropFunc {
                 SpawnReason.EVENT,
                 null, null);
             ((MobEntity) entity).readAdditional(tag);
+        }
+
+        if (entity instanceof EntityLuckyPotion || entity instanceof EntityLuckyProjectile) {
+            PacketHandler.spawnEntity(entity);
         }
 
         return entity;

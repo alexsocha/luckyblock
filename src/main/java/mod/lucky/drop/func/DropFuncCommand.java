@@ -1,11 +1,10 @@
 package mod.lucky.drop.func;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.command.CommandSource;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 
 public class DropFuncCommand extends DropFunc {
     @Override

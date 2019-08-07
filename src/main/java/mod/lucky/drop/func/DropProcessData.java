@@ -2,20 +2,17 @@ package mod.lucky.drop.func;
 
 import java.util.UUID;
 
-import com.mojang.brigadier.StringReader;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.command.arguments.EntitySelector;
-import net.minecraft.command.arguments.EntitySelectorParser;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
 
@@ -151,7 +148,7 @@ public class DropProcessData {
         if (tagCompound.contains("hitEntityUUID"))
             this.hitEntityUUID = UUID.fromString(tagCompound.getString("hitEntityUUID"));
         this.world = Minecraft.getInstance().getIntegratedServer()
-            .getWorld(DimensionType.field_223227_a_); // overworld
+            .getWorld(DimensionType.OVERWORLD);
     }
 
     public CompoundNBT writeToNBT() {

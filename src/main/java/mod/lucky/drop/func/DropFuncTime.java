@@ -2,8 +2,6 @@ package mod.lucky.drop.func;
 
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
-import net.minecraft.world.World;
-import net.minecraft.world.ServerWorld;
 
 public class DropFuncTime extends DropFunc {
     @Override

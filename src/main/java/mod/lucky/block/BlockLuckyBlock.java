@@ -1,7 +1,6 @@
 package mod.lucky.block;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropFull;
@@ -26,8 +25,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 

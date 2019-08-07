@@ -7,11 +7,11 @@ import mod.lucky.crafting.RecipeLuckCrafting;
 import mod.lucky.drop.func.DropFunc;
 import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
-import mod.lucky.entity.SpawnPacket;
 import mod.lucky.item.ItemLuckyBlock;
 import mod.lucky.item.ItemLuckyBow;
 import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.item.ItemLuckySword;
+import mod.lucky.network.PacketHandler;
 import mod.lucky.resources.loader.PluginLoader; import mod.lucky.resources.loader.ResourceManager;
 import mod.lucky.structure.Structure;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
@@ -28,10 +28,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.FMLNetworkConstants;
-import net.minecraftforge.fml.network.FMLPlayMessages;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -160,5 +156,6 @@ public class SetupCommon {
     public static void setup() {
         Lucky.resourceManager.extractDefaultResources();
         Lucky.resourceManager.loadAllResources(false);
+        PacketHandler.register();
     }
 }

@@ -15,7 +15,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class DropFuncParticle extends DropFunc {

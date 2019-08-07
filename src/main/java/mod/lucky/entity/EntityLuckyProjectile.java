@@ -1,15 +1,12 @@
 package mod.lucky.entity;
 
-import afu.org.checkerframework.checker.oigj.qual.O;
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.init.SetupCommon;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
@@ -17,7 +14,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
-import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -134,10 +130,13 @@ public class EntityLuckyProjectile extends ArrowEntity {
     @Override
     protected void onHit(RayTraceResult rayTrace) {
         super.onHit(rayTrace);
-        if (!this.world.isRemote && rayTrace.getType() != RayTraceResult.Type.MISS) {
-            Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY
-                ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
-            this.luckyHit(hitEntity);
+        if (rayTrace.getType() != RayTraceResult.Type.MISS) {
+            if (!this.world.isRemote) {
+                Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY
+                    ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
+                this.luckyHit(hitEntity);
+            }
+            this.remove();
         }
     }
 
@@ -215,9 +214,4 @@ public class EntityLuckyProjectile extends ArrowEntity {
     protected ItemStack getArrowStack() { return ItemStack.EMPTY; }
 
     public ItemEntity getItemEntity() { return this.entityItem; }
-
-    @Override
-    public IPacket<?> createSpawnPacket() {
-        return new SpawnPacket(this);
-    }
 }

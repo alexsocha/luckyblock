@@ -16,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
-import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -149,10 +148,5 @@ public class EntityLuckyPotion extends ThrowableEntity implements IRendersAsItem
     @Override
     public ItemStack getItem() {
         return this.getItemStack();
-    }
-
-    @Override
-    public IPacket<?> createSpawnPacket() {
-        return new SpawnPacket(this);
     }
 }

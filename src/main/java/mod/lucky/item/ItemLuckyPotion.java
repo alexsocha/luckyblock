@@ -1,6 +1,7 @@
 package mod.lucky.item;
 
 import mod.lucky.entity.EntityLuckyPotion;
+import mod.lucky.network.PacketHandler;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -71,6 +72,7 @@ public class ItemLuckyPotion extends Item implements ILuckyItemContainer {
                 1.0F);
 
             world.addEntity(luckyPotion);
+            PacketHandler.spawnEntity(luckyPotion);
         }
 
         player.addStat(Stats.ITEM_USED.get(this));

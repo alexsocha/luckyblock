@@ -37,3 +37,4 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 
 ## Copyright
 Copyright © 2015 Alex Socha. All Rights Reserved.
+By submitting a pull request, you agree to transfer all rights and ownership to the copyright holder.
