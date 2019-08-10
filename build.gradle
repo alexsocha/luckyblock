@@ -10,7 +10,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle'
 
-version = '7.9.0'
+version = '7.9.1'
 group = 'mod.lucky'
 archivesBaseName = 'lucky'
 
@@ -34,7 +34,7 @@ minecraft {
 }
 
 ext {
-    forgeVersion = '1.14.4-28.0.14'
+    forgeVersion = '1.14.4-28.0.45'
     mcversion = project.forgeVersion.split('-')[0]
     jarNameRaw = 'luckyblock-build'
     jarName = "luckyblock-${project.mcversion}-$version"
