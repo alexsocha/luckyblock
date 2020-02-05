@@ -33,7 +33,7 @@ public class LegacySchematicStructure extends Structure {
         DropSingle drop = processData.getDropSingle();
         Vec3d harvestPos = drop.getVecPos();
         int rotation = drop.getPropertyInt("rotation");
-        BlockPlacer blockPlacer = new BlockPlacer(processData.getWorld());
+        BlockPlacer blockPlacer = new BlockPlacer(processData.getRawWorld());
 
         for (int y = 0; y < this.size.getY(); y++) {
             for (int z = 0; z < this.size.getZ(); z++) {
