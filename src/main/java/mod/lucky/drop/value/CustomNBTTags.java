@@ -396,7 +396,9 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
             String lootId =
                 ValueParser.getString(name.substring(name.indexOf('(') + 1, name.lastIndexOf(')')));
             tileEntityChest.setLootTable(new ResourceLocation("minecraft", lootId), random.nextLong());
-            tileEntityChest.getStackInSlot(0); // For fillWithLoot()
+            // initialize tile entity
+            tileEntityChest.func_226984_a_(processData.getWorld(), processData.getHarvestBlockPos());
+            tileEntityChest.fillWithLoot(null);
 
             CompoundNBT tagCompound = new CompoundNBT();
             tileEntityChest.write(tagCompound);
