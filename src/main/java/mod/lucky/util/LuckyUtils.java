@@ -189,7 +189,7 @@ public class LuckyUtils {
     public static ListNBT tagListFromStrArray(String[] array) {
         ListNBT nbttagList = new ListNBT();
         for (String element : array) {
-            nbttagList.add(new StringNBT(element));
+            nbttagList.add(ObfHelper.createStringNBT(element));
         }
         return nbttagList;
     }

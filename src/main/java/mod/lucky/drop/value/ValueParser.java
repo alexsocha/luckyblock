@@ -9,8 +9,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
+import mod.lucky.util.ObfHelper;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -45,11 +45,11 @@ public class ValueParser {
     }
 
     public static INBT getNBTBaseFromValue(Object value) {
-        if (value.getClass() == String.class) return new StringNBT((String) value);
-        if (value.getClass() == Integer.class) return new IntNBT((Integer) value);
+        if (value.getClass() == String.class) return ObfHelper.createStringNBT((String) value);
+        if (value.getClass() == Integer.class) return ObfHelper.createIntNBT((Integer) value);
         if (value.getClass() == Boolean.class)
-            return new ByteNBT((byte) ((Boolean) value == true ? 1 : 0));
-        if (value.getClass() == Float.class) return new FloatNBT((Float) value);
+            return ObfHelper.createByteNBT((byte) ((Boolean) value ? 1 : 0));
+        if (value.getClass() == Float.class) return ObfHelper.createFloatNBT((Float) value);
         if (value instanceof INBT) return (INBT) value;
         return null;
     }
@@ -301,12 +301,12 @@ public class ValueParser {
         }
         if (curTag instanceof ListNBT) {
             ListNBT tagList = (ListNBT) curTag;
-            if (tagValue instanceof String) tagList.add(new StringNBT((String) tagValue));
-            if (tagValue instanceof Integer) tagList.add(new IntNBT((Integer) tagValue));
-            if (tagValue instanceof Float) tagList.add(new FloatNBT((Float) tagValue));
-            if (tagValue instanceof Double) tagList.add(new DoubleNBT((Double) tagValue));
-            if (tagValue instanceof Short) tagList.add(new ShortNBT((Short) tagValue));
-            if (tagValue instanceof Byte) tagList.add(new ByteNBT((Byte) tagValue));
+            if (tagValue instanceof String) tagList.add(ObfHelper.createStringNBT((String) tagValue));
+            if (tagValue instanceof Integer) tagList.add(ObfHelper.createIntNBT((Integer) tagValue));
+            if (tagValue instanceof Float) tagList.add(ObfHelper.createFloatNBT((Float) tagValue));
+            if (tagValue instanceof Double) tagList.add(ObfHelper.createDoubleNBT((Double) tagValue));
+            if (tagValue instanceof Short) tagList.add(ObfHelper.createShortNBT((Short) tagValue));
+            if (tagValue instanceof Byte) tagList.add(ObfHelper.createByteNBT((Byte) tagValue));
             if (tagValue instanceof int[]) tagList.add(new IntArrayNBT((int[]) tagValue));
             if (tagValue instanceof byte[]) tagList.add(new ByteArrayNBT((byte[]) tagValue));
             if (tagValue instanceof CompoundNBT) tagList.add((CompoundNBT) tagValue);

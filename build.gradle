@@ -1,3 +1,12 @@
+version = '7.10.0'
+ext {
+    FORGE_VERSION = '1.15.1-30.0.41'
+    MC_VERSION = '1.15.1'
+    MAPPING_VERSION = '20190719-1.14.3'
+    JAR_NAME_DEV = 'luckyblock-build'
+    JAR_NAME_PRD = "luckyblock-$MC_VERSION-$version"
+}
+
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
@@ -10,14 +19,13 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle'
 
-version = '7.9.1'
 group = 'mod.lucky'
 archivesBaseName = 'lucky'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190719-1.14.3'
+    mappings channel: 'snapshot', version: "$MAPPING_VERSION"
     
     runs {
         client {
@@ -33,21 +41,14 @@ minecraft {
     }
 }
 
-ext {
-    forgeVersion = '1.14.4-28.0.45'
-    mcversion = project.forgeVersion.split('-')[0]
-    jarNameRaw = 'luckyblock-build'
-    jarName = "luckyblock-${project.mcversion}-$version"
-}
-
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.forgeVersion}"
+    minecraft "net.minecraftforge:forge:${project.FORGE_VERSION}"
 }
 
 apply from: 'scripts/tasks.gradle' // custom tasks
 
 jar {
-    archiveName = "${project.jarNameRaw}.jar"
+    archiveName = "${project.JAR_NAME_DEV}.jar"
     manifest {
         attributes([
             'Specification-Title': 'luckyblock',

@@ -101,34 +101,35 @@ public class HashVariables {
             }
 
             if (processData.getPlayer() != null) {
-                string = string.replace("#pPosX", String.valueOf(Math.floor(processData.getPlayer().posX)));
-                string = string.replace("#pPosY", String.valueOf(Math.floor(processData.getPlayer().posY)));
-                string = string.replace("#pPosZ", String.valueOf(Math.floor(processData.getPlayer().posZ)));
+                Vec3d playerPos = processData.getPlayer().getPositionVec();
+                string = string.replace("#pPosX", String.valueOf(Math.floor(playerPos.x)));
+                string = string.replace("#pPosY", String.valueOf(Math.floor(playerPos.y)));
+                string = string.replace("#pPosZ", String.valueOf(Math.floor(playerPos.z)));
                 string =
                     string.replace(
                         "#pPos",
                         String.valueOf(
                             "("
-                                + Math.floor(processData.getPlayer().posX)
+                                + Math.floor(playerPos.x)
                                 + ","
-                                + Math.floor(processData.getPlayer().posY)
+                                + Math.floor(playerPos.y)
                                 + ","
-                                + Math.floor(processData.getPlayer().posZ)
+                                + Math.floor(playerPos.z)
                                 + ")"));
 
-                string = string.replace("#pExactPosX", String.valueOf(processData.getPlayer().posX));
-                string = string.replace("#pExactPosY", String.valueOf(processData.getPlayer().posY));
-                string = string.replace("#pExactPosZ", String.valueOf(processData.getPlayer().posZ));
+                string = string.replace("#pExactPosX", String.valueOf(playerPos.x));
+                string = string.replace("#pExactPosY", String.valueOf(playerPos.y));
+                string = string.replace("#pExactPosZ", String.valueOf(playerPos.z));
                 string =
                     string.replace(
                         "#pExactPos",
                         String.valueOf(
                             "("
-                                + processData.getPlayer().posX
+                                + playerPos.x
                                 + ","
-                                + processData.getPlayer().posY
+                                + playerPos.y
                                 + ","
-                                + processData.getPlayer().posZ
+                                + playerPos.z
                                 + ")"));
 
                 string =
@@ -151,9 +152,9 @@ public class HashVariables {
                     entityArrow =
                         new ArrowEntity(
                             processData.getWorld(),
-                            processData.getPlayer().posX,
-                            processData.getPlayer().posY,
-                            processData.getPlayer().posZ);
+                            playerPos.x,
+                            playerPos.y,
+                            playerPos.z);
                 string = string.replace("#bowPosX", String.valueOf(entityArrow.getPositionVector().x));
                 string = string.replace("#bowPosY", String.valueOf(entityArrow.getPositionVector().y));
                 string = string.replace("#bowPosZ", String.valueOf(entityArrow.getPositionVector().z));

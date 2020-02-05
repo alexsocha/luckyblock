@@ -7,6 +7,7 @@ import java.util.Random;
 
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.util.LuckyUtils;
+import mod.lucky.util.ObfHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
@@ -298,9 +299,9 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
                 float launchMotionY = -MathHelper.sin(launchPitch / 180.0F * (float) Math.PI) * launchPower;
 
                 ListNBT motionList = new ListNBT();
-                motionList.add(new DoubleNBT(launchMotionX));
-                motionList.add(new DoubleNBT(launchMotionY));
-                motionList.add(new DoubleNBT(launchMotionZ));
+                motionList.add(ObfHelper.createDoubleNBT(launchMotionX));
+                motionList.add(ObfHelper.createDoubleNBT(launchMotionY));
+                motionList.add(ObfHelper.createDoubleNBT(launchMotionZ));
                 return motionList;
             } catch (Exception e) {
             }
@@ -326,9 +327,9 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
                 float launchMotionY = -MathHelper.sin(launchPitch / 180.0F * (float) Math.PI) * launchPower;
 
                 ListNBT motionList = new ListNBT();
-                motionList.add(new DoubleNBT(launchMotionX));
-                motionList.add(new DoubleNBT(launchMotionY));
-                motionList.add(new DoubleNBT(launchMotionZ));
+                motionList.add(ObfHelper.createDoubleNBT(launchMotionX));
+                motionList.add(ObfHelper.createDoubleNBT(launchMotionY));
+                motionList.add(ObfHelper.createDoubleNBT(launchMotionZ));
                 return motionList;
             } catch (Exception e) {
             }
@@ -348,13 +349,14 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
                 }
 
                 Entity shooter = processData.getPlayer();
+                Vec3d shooterPos = shooter.getPositionVec();
                 ArrowEntity entityArrow;
                 if (shooter instanceof LivingEntity)
                     entityArrow = new ArrowEntity(processData.getWorld(), (LivingEntity) shooter);
                 else
                     entityArrow =
                         new ArrowEntity(
-                            processData.getWorld(), shooter.posX, shooter.posY, shooter.posZ);
+                            processData.getWorld(), shooterPos.z, shooterPos.y, shooterPos.z);
                 entityArrow.shoot(
                     shooter,
                     shooter.rotationPitch
@@ -369,9 +371,9 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
 
                 ListNBT motionList = new ListNBT();
                 Vec3d arrowMotion = entityArrow.getMotion();
-                motionList.add(new DoubleNBT(arrowMotion.x));
-                motionList.add(new DoubleNBT(arrowMotion.y));
-                motionList.add(new DoubleNBT(arrowMotion.z));
+                motionList.add(ObfHelper.createDoubleNBT(arrowMotion.x));
+                motionList.add(ObfHelper.createDoubleNBT(arrowMotion.y));
+                motionList.add(ObfHelper.createDoubleNBT(arrowMotion.z));
                 return motionList;
             } catch (Exception e) {}
         }
@@ -393,7 +395,6 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
             ChestTileEntity tileEntityChest = new ChestTileEntity();
             String lootId =
                 ValueParser.getString(name.substring(name.indexOf('(') + 1, name.lastIndexOf(')')));
-            tileEntityChest.setWorld(processData.getWorld());
             tileEntityChest.setLootTable(new ResourceLocation("minecraft", lootId), random.nextLong());
             tileEntityChest.getStackInSlot(0); // For fillWithLoot()
 

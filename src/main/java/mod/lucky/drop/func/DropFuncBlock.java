@@ -45,7 +45,7 @@ public class DropFuncBlock extends DropFunc {
     }
 
     public static void setBlock(IWorld world, BlockState state, BlockPos pos,
-                                CompoundNBT tileEntity, boolean update) {
+        CompoundNBT tileEntity, boolean update) {
 
         if (world.getBlockState(pos) != state)
             world.setBlockState(pos, state, 2);
@@ -70,23 +70,5 @@ public class DropFuncBlock extends DropFunc {
         } else {
             Lucky.error(null, "Error setting tile entity for block: " + state);
         }
-
-        /*
-        if (tileEntityData != null && state.getBlock().hasTileEntity(state)) {
-            world.removeTileEntity(pos);
-
-            TileEntity tileEntity = state.getBlock().createTileEntity(state, world);
-
-            if (tileEntity == null) {
-                Lucky.error(null, "Invalid tile entity '" + tileEntityData
-                    + "' for block '" + state);
-                return;
-            }
-
-            tileEntity.read(tileEntityData);
-            world.setTileEntity(pos, tileEntity);
-            tileEntity.updateContainingBlockInfo();
-        }
-         */
     }
 }

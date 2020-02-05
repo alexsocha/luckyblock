@@ -5,6 +5,7 @@ import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.init.SetupCommon;
+import mod.lucky.util.ObfHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ItemEntity;
@@ -59,11 +60,12 @@ public class EntityLuckyProjectile extends ArrowEntity {
     }
 
     private void luckyTick() {
+        Vec3d pos = this.getPositionVector();
         try {
             if (this.entityItem == null && this.getEntityWorld().isRemote)
                 this.entityItem = new ItemEntity(
                     this.getEntityWorld(),
-                    this.posX, this.posY, this.posZ,
+                    pos.x, pos.y, pos.z,
                     this.dataManager.get(ITEM_STACK));
         } catch (Exception e) {}
 
@@ -80,9 +82,9 @@ public class EntityLuckyProjectile extends ArrowEntity {
                                 this.getEntityWorld(),
                                 this.getShooter(),
                                 new Vec3d(
-                                    this.posX + entityMotion.x * i / amount,
-                                    this.posY + entityMotion.y * i / amount,
-                                    this.posZ + entityMotion.z * i / amount)),
+                                    pos.x + entityMotion.x * i / amount,
+                                    pos.y + entityMotion.y * i / amount,
+                                    pos.z + entityMotion.z * i / amount)),
                             0, false);
                     }
                 } else if ((this.ticksExisted - 2) % ((int) this.trailFrequency) == 0)
@@ -153,7 +155,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
             ListNBT drops = new ListNBT();
             for (int i = 0; i < this.dropProcessorTrail.getDrops().size(); i++) {
                 String dropString = this.dropProcessorTrail.getDrops().get(i).toString();
-                drops.add(new StringNBT(dropString));
+                drops.add(ObfHelper.createStringNBT(dropString));
             }
             trailTag.put("drops", drops);
             tag.put("trail", trailTag);
@@ -163,7 +165,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
             ListNBT drops = new ListNBT();
             for (int i = 0; i < this.dropProcessorImpact.getDrops().size(); i++) {
                 String dropString = this.dropProcessorImpact.getDrops().get(i).toString();
-                drops.add(new StringNBT(dropString));
+                drops.add(ObfHelper.createStringNBT(dropString));
             }
             tag.put("impact", drops);
         }
@@ -177,9 +179,10 @@ public class EntityLuckyProjectile extends ArrowEntity {
         else stack = new ItemStack(Items.STICK);
         stack.setCount(1);
 
+        Vec3d pos = this.getPositionVector();
         this.entityItem = new ItemEntity(
             this.getEntityWorld(),
-            this.posX, this.posY, this.posZ,
+            pos.x, pos.y, pos.z,
             stack);
 
         this.getDataManager().set(ITEM_STACK, stack);
@@ -189,7 +192,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
             if (trailTag.contains("frequency"))
                 this.trailFrequency = trailTag.getFloat("frequency");
             if (trailTag.contains("drops")) {
-                ListNBT drops = trailTag.getList("drops", new StringNBT().getId());
+                ListNBT drops = trailTag.getList("drops", ObfHelper.createStringNBT("").getId());
                 for (int i = 0; i < drops.size(); i++) {
                     DropFull drop = new DropFull();
                     drop.readFromString(drops.getString(i));
@@ -200,7 +203,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
         }
 
         if (tag.contains("impact")) {
-            ListNBT drops = tag.getList("impact", new StringNBT().getId());
+            ListNBT drops = tag.getList("impact", ObfHelper.createStringNBT("").getId());
             for (int i = 0; i < drops.size(); i++) {
                 DropFull drop = new DropFull();
                 drop.readFromString(drops.getString(i));

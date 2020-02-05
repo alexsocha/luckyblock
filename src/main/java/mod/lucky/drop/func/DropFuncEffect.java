@@ -104,11 +104,12 @@ public class DropFuncEffect extends DropFunc {
 
     private void specialEffectKnockback(DropProcessData processData, Entity entity) {
         Vec3d dropPos = processData.getDropSingle().getVecPos();
+        Vec3d entityPos = entity.getPositionVector();
         float yawAngle =
             processData.getDropSingle().hasProperty("directionYaw")
                 ? processData.getDropSingle().getPropertyFloat("directionYaw")
                 : (float)
-                Math.toDegrees(Math.atan2((entity.posX - dropPos.x) * -1, entity.posZ - dropPos.z));
+                Math.toDegrees(Math.atan2((entityPos.x - dropPos.x) * -1, entityPos.z - dropPos.z));
         float pitchAngle = processData.getDropSingle().getPropertyFloat("directionPitch");
         float power = processData.getDropSingle().getPropertyFloat("power");
 

@@ -7,6 +7,7 @@ import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.init.SetupCommon;
 import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.util.LuckyUtils;
+import mod.lucky.util.ObfHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.IRendersAsItem;
@@ -125,7 +126,7 @@ public class EntityLuckyPotion extends ThrowableEntity implements IRendersAsItem
         ListNBT drops = new ListNBT();
         for (int i = 0; i < this.impactDropProcessor.getDrops().size(); i++) {
             String dropString = this.impactDropProcessor.getDrops().get(i).toString();
-            drops.add(new StringNBT(dropString));
+            drops.add(ObfHelper.createStringNBT(dropString));
         }
         tagCompound.put("impact", drops);
         tagCompound.put("itemLuckyPotion",
@@ -135,7 +136,7 @@ public class EntityLuckyPotion extends ThrowableEntity implements IRendersAsItem
     @Override
     public void readAdditional(CompoundNBT tag) {
         super.readAdditional(tag);
-        ListNBT drops = tag.getList("impact", new StringNBT().getId());
+        ListNBT drops = tag.getList("impact", ObfHelper.createStringNBT("").getId());
         for (int i = 0; i < drops.size(); i++) {
             DropFull drop = new DropFull();
             drop.readFromString(drops.getString(i));

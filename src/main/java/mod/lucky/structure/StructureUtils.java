@@ -2,6 +2,7 @@ package mod.lucky.structure;
 
 import mod.lucky.drop.func.DropFuncBlock;
 import mod.lucky.util.LuckyUtils;
+import mod.lucky.util.ObfHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -125,9 +126,9 @@ public class StructureUtils {
                 posList.getDouble(0), posList.getDouble(1), posList.getDouble(2));
             entityPos = rotatePos(entityPos, centerPos, rotation);
             posList = new ListNBT();
-            posList.add(new DoubleNBT(entityPos.x));
-            posList.add(new DoubleNBT(entityPos.y));
-            posList.add(new DoubleNBT(entityPos.z));
+            posList.add(ObfHelper.createDoubleNBT(entityPos.x));
+            posList.add(ObfHelper.createDoubleNBT(entityPos.y));
+            posList.add(ObfHelper.createDoubleNBT(entityPos.z));
             newTag.put("Pos", posList);
         }
         if (entityTag.contains("Motion")) {
@@ -136,9 +137,9 @@ public class StructureUtils {
                 motionList.getDouble(0), motionList.getDouble(1), motionList.getDouble(2));
             entityMotion = rotatePos(entityMotion, new Vec3d(0, 0, 0), rotation);
             motionList = new ListNBT();
-            motionList.add(new DoubleNBT(entityMotion.x));
-            motionList.add(new DoubleNBT(entityMotion.y));
-            motionList.add(new DoubleNBT(entityMotion.z));
+            motionList.add(ObfHelper.createDoubleNBT(entityMotion.x));
+            motionList.add(ObfHelper.createDoubleNBT(entityMotion.y));
+            motionList.add(ObfHelper.createDoubleNBT(entityMotion.z));
             newTag.put("Motion", motionList);
         }
         if (entityTag.contains("Rotation")) {
@@ -147,8 +148,8 @@ public class StructureUtils {
             float rotPitch = rotationList.getFloat(1);
             rotYaw = (rotYaw + (rotation * 90.0F)) % 360.0F;
             rotationList = new ListNBT();
-            rotationList.add(new FloatNBT(rotYaw));
-            rotationList.add(new FloatNBT(rotPitch));
+            rotationList.add(ObfHelper.createFloatNBT(rotYaw));
+            rotationList.add(ObfHelper.createFloatNBT(rotPitch));
             newTag.put("Rotation", rotationList);
         }
         return newTag;

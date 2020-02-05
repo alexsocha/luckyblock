@@ -9,6 +9,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.*;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -47,11 +48,12 @@ public class ItemLuckyPotion extends Item implements ILuckyItemContainer {
             stack.setCount(stack.getCount() - 1);
         }
 
+        Vec3d playerPos = player.getPositionVector();
         world.playSound(
             (PlayerEntity) null,
-            player.posX,
-            player.posY,
-            player.posZ,
+            playerPos.x,
+            playerPos.y,
+            playerPos.z,
             SoundEvents.ENTITY_SPLASH_POTION_THROW,
             SoundCategory.NEUTRAL,
             0.5F,

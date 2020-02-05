@@ -14,6 +14,7 @@ import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -117,8 +118,9 @@ public class ItemLuckyBow extends BowItem implements ILuckyItemContainer {
                     }
                 }
 
+                Vec3d playerPos = player.getPositionVector();
                 world.playSound(null,
-                    player.posX, player.posY, player.posZ,
+                    playerPos.x, playerPos.y, playerPos.z,
                     SoundEvents.ENTITY_ARROW_SHOOT,
                     SoundCategory.NEUTRAL,
                     1.0F,

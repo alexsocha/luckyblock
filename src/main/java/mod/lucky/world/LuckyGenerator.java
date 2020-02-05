@@ -11,15 +11,11 @@ import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.IFeatureConfig;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
-import net.minecraft.world.gen.placement.ChanceConfig;
-import net.minecraft.world.gen.placement.Placement;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.gen.feature.*;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class LuckyGenerator extends Feature<NoFeatureConfig> {
@@ -28,8 +24,8 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
     private ArrayList<DropFull> netherDrops;
     private ArrayList<DropFull> endDrops;
 
-    public LuckyGenerator(Function<Dynamic<?>, ? extends NoFeatureConfig> configFactoryIn) {
-        super(configFactoryIn);
+    public LuckyGenerator(Function<Dynamic<?>, ? extends NoFeatureConfig> configFactory) {
+        super(configFactory);
     }
 
     public void init(BlockLuckyBlock block) {
@@ -39,19 +35,18 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
         this.endDrops = new ArrayList<DropFull>();
     }
 
-
     public static LuckyGenerator registerNew(BlockLuckyBlock block) {
         LuckyGenerator generator = new LuckyGenerator(NoFeatureConfig::deserialize);
         generator.init(block);
 
+        ConfiguredFeature<?, ?> configuredGenerator
+            = new ConfiguredFeature<NoFeatureConfig, LuckyGenerator>(
+                generator, new NoFeatureConfig());
+
         ForgeRegistries.BIOMES.forEach(biome ->
             biome.addFeature(
                 GenerationStage.Decoration.SURFACE_STRUCTURES,
-                Biome.createDecoratedFeature(
-                    generator,
-                    IFeatureConfig.NO_FEATURE_CONFIG,
-                    Placement.CHANCE_TOP_SOLID_HEIGHTMAP,
-                    new ChanceConfig(1))));
+                configuredGenerator));
 
         return generator;
     }
@@ -84,6 +79,14 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
         return false;
     }
 
+    @Override
+    public boolean place(IWorld world, ChunkGenerator<?> chunkGen,
+        Random rand, BlockPos posIn, NoFeatureConfig config) {
+
+        BlockPos pos = world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, posIn);
+        return this.generate(world, rand, pos);
+    }
+
     public void addSurfacedDrop(DropFull drop) {
         this.addDrop(this.surfaceDrops, drop);
     }
@@ -99,12 +102,5 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
     private void addDrop(ArrayList<DropFull> list, DropFull drop) {
         if (!drop.wasChanceSet()) drop.setChance(300);
         list.add(drop);
-    }
-
-    @Override
-    public boolean place(IWorld world, ChunkGenerator<?> chunkGen,
-        Random rand, BlockPos pos, NoFeatureConfig config) {
-
-        return this.generate(world, rand, pos);
     }
 }
