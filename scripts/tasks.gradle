@@ -2,7 +2,8 @@ def luckyConfigDir = "$projectDir/lucky_config"
 def luckyRunConfigDir = "$projectDir/run/config/lucky/version-${project.version}"
 def luckyAddonDir = "$projectDir/template_addon"
 def luckyRunAddonDir = "$projectDir/run/addons/lucky/lucky_block_custom"
-def distDir = "$buildDir/libs"
+def tmpDir = "$buildDir/libs"
+def distDir = "$buildDir/dist"
 
 task luckyCopyRunConfig(type: Copy) {
     group = 'Lucky Block'
@@ -21,7 +22,7 @@ task luckyCopyTemplateAddon(type: Copy) {
 task luckyZipConfig(type: Zip) {
     group = 'Lucky Block'
     description = 'Creates a Lucky Block configuration zip archive.'
-    destinationDir = file(distDir)
+    destinationDir = file(tmpDir)
     archiveName = 'default_config.zip'
     from luckyConfigDir
 }
@@ -31,8 +32,8 @@ task luckyPackage(type: Zip) {
     description = 'Combines build archive with Lucky Block configuration and generates the final zip.'
     destinationDir = file(distDir)
     archiveName = "${project.JAR_NAME_PRD}.jar"
-    from zipTree("$distDir/${project.JAR_NAME_DEV}.jar")
-    from("$distDir/default_config.zip") {
+    from zipTree("$tmpDir/${project.JAR_NAME_DEV}.jar")
+    from("$tmpDir/default_config.zip") {
         into ('mod/lucky')
     }
 }
