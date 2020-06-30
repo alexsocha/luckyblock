@@ -5,16 +5,16 @@ def luckyRunAddonDir = "$projectDir/run/addons/lucky/lucky_block_custom"
 def tmpDir = "$buildDir/libs"
 def distDir = "$buildDir/dist"
 
-task luckyCopyRunConfig(type: Copy) {
+task luckyCopyConfig(type: Copy) {
     group = 'Lucky Block'
-    description = 'Copies Lucky Block configuration to the run directory.'
+    description = 'Copies the Lucky Block configuration files to the run directory.'
     from luckyConfigDir
     into luckyRunConfigDir
 }
 
 task luckyCopyTemplateAddon(type: Copy) {
     group = 'Lucky Block'
-    description = 'Copies Lucky Block template add-on to the run directory.'
+    description = 'Copies the Lucky Block template add-on to the run directory.'
     from luckyAddonDir
     into luckyRunAddonDir
 }
@@ -29,7 +29,7 @@ task luckyZipConfig(type: Zip) {
 
 task luckyPackage(type: Zip) {
     group = 'Lucky Block'
-    description = 'Combines build archive with Lucky Block configuration and generates the final zip.'
+    description = 'Combines the build archive with the Lucky Block configuration files and generates the final zip.'
     destinationDir = file(distDir)
     archiveName = "${project.JAR_NAME_PRD}.jar"
     from zipTree("$tmpDir/${project.JAR_NAME_DEV}.jar")
@@ -40,15 +40,15 @@ task luckyPackage(type: Zip) {
 
 task luckyClient {
     group = 'Lucky Block'
-    description = 'Runs Minecraft render with the Lucky Block.'
-    dependsOn luckyCopyRunConfig
+    description = 'Runs a Minecraft client with the Lucky Block.'
+    dependsOn luckyCopyConfig
     dependsOn luckyCopyTemplateAddon
     dependsOn 'runClient'
 }
 task luckyServer {
     group = 'Lucky Block'
-    description = 'Runs Minecraft server with the Lucky Block.'
-    dependsOn luckyCopyRunConfig
+    description = 'Runs a Minecraft server with the Lucky Block.'
+    dependsOn luckyCopyConfig
     dependsOn luckyCopyTemplateAddon
     dependsOn 'runServer'
 }
