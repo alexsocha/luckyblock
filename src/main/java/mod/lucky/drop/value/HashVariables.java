@@ -18,7 +18,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class HashVariables {
     private static String[] hashVariables = {
@@ -61,7 +61,7 @@ public class HashVariables {
         string = string.replace("#randColor", LuckyUtils.getRandomColor());
 
         if (processData != null) {
-            Vec3d harvestPos = processData.getHarvestPos();
+            Vector3d harvestPos = processData.getHarvestPos();
             string = string.replace("#bPosX", String.valueOf(Math.floor(harvestPos.x)));
             string = string.replace("#bPosY", String.valueOf(Math.floor(harvestPos.y)));
             string = string.replace("#bPosZ", String.valueOf(Math.floor(harvestPos.z)));
@@ -78,7 +78,7 @@ public class HashVariables {
                     String.valueOf("(" + harvestPos.x + "," + harvestPos.y + "," + harvestPos.z + ")"));
 
             if (processData.getHitEntity() != null) {
-                Vec3d entityPos = processData.getHitEntity().getPositionVector();
+                Vector3d entityPos = processData.getHitEntity().getPositionVec();
                 string = string.replace("#ePosX", String.valueOf(Math.floor(entityPos.x)));
                 string = string.replace("#ePosY", String.valueOf(Math.floor(entityPos.y)));
                 string = string.replace("#ePosZ", String.valueOf(Math.floor(entityPos.z)));
@@ -101,7 +101,7 @@ public class HashVariables {
             }
 
             if (processData.getPlayer() != null) {
-                Vec3d playerPos = processData.getPlayer().getPositionVec();
+                Vector3d playerPos = processData.getPlayer().getPositionVec();
                 string = string.replace("#pPosX", String.valueOf(Math.floor(playerPos.x)));
                 string = string.replace("#pPosY", String.valueOf(Math.floor(playerPos.y)));
                 string = string.replace("#pPosZ", String.valueOf(Math.floor(playerPos.z)));
@@ -155,19 +155,19 @@ public class HashVariables {
                             playerPos.x,
                             playerPos.y,
                             playerPos.z);
-                string = string.replace("#bowPosX", String.valueOf(entityArrow.getPositionVector().x));
-                string = string.replace("#bowPosY", String.valueOf(entityArrow.getPositionVector().y));
-                string = string.replace("#bowPosZ", String.valueOf(entityArrow.getPositionVector().z));
+                string = string.replace("#bowPosX", String.valueOf(entityArrow.getPositionVec().x));
+                string = string.replace("#bowPosY", String.valueOf(entityArrow.getPositionVec().y));
+                string = string.replace("#bowPosZ", String.valueOf(entityArrow.getPositionVec().z));
                 string =
                     string.replace(
                         "#bowPos",
                         String.valueOf(
                             "("
-                                + entityArrow.getPositionVector().x
+                                + entityArrow.getPositionVec().x
                                 + ","
-                                + entityArrow.getPositionVector().y
+                                + entityArrow.getPositionVec().y
                                 + ","
-                                + entityArrow.getPositionVector().z
+                                + entityArrow.getPositionVec().z
                                 + ")"));
             }
         }
@@ -286,20 +286,20 @@ public class HashVariables {
                 DropSingle drop = processData.getDropSingle();
                 Structure structure = SetupCommon.getStructure(drop.getPropertyString("ID"));
                 if (structure == null) return "";
-                Vec3d harvestPos =
-                    new Vec3d(
+                Vector3d harvestPos =
+                    new Vector3d(
                         drop.getPropertyFloat("posX"),
                         drop.getPropertyFloat("posY"),
                         drop.getPropertyFloat("posZ"));
                 int rotation = drop.getPropertyInt("rotation");
 
                 if (isFloat) {
-                    Vec3d structCoordPos =
-                        new Vec3d(
+                    Vector3d structCoordPos =
+                        new Vector3d(
                             ValueParser.getFloat(properties[0], processData),
                             ValueParser.getFloat(properties[1], processData),
                             ValueParser.getFloat(properties[2], processData));
-                    Vec3d worldPos =
+                    Vector3d worldPos =
                         StructureUtils.getWorldPos(
                             structCoordPos, structure.centerPos, harvestPos, rotation);
 

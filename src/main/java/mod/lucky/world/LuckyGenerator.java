@@ -1,42 +1,40 @@
 package mod.lucky.world;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
-import java.util.function.Function;
 
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Codec;
 import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.*;
+import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class LuckyGenerator extends Feature<NoFeatureConfig> {
     private BlockLuckyBlock block;
-    private ArrayList<DropFull> surfaceDrops;
-    private ArrayList<DropFull> netherDrops;
-    private ArrayList<DropFull> endDrops;
+    private HashMap<String, ArrayList<DropFull>> dimensionDrops;
 
-    public LuckyGenerator(Function<Dynamic<?>, ? extends NoFeatureConfig> configFactory) {
-        super(configFactory);
+    public LuckyGenerator(Codec<NoFeatureConfig> codec) {
+        super(codec);
     }
 
     public void init(BlockLuckyBlock block) {
         this.block = block;
-        this.surfaceDrops = new ArrayList<DropFull>();
-        this.netherDrops = new ArrayList<DropFull>();
-        this.endDrops = new ArrayList<DropFull>();
+        this.dimensionDrops = new HashMap<>();
     }
 
     public static LuckyGenerator registerNew(BlockLuckyBlock block) {
-        LuckyGenerator generator = new LuckyGenerator(NoFeatureConfig::deserialize);
+        LuckyGenerator generator = new LuckyGenerator(NoFeatureConfig.field_236558_a_);
         generator.init(block);
 
         ConfiguredFeature<?, ?> configuredGenerator
@@ -65,13 +63,13 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
     private boolean generate(IWorld world, Random rand, BlockPos pos) {
         try {
             if (this.block.canPlaceAt(world, pos)) {
-                Dimension dim = world.getDimension();
+                ResourceLocation dimension = world.getWorld().func_234923_W_().func_240901_a_();
 
-                if (dim.isNether()) this.generate(world, rand, pos, this.netherDrops);
-                else if (dim.isSurfaceWorld()) this.generate(world, rand, pos, this.surfaceDrops);
-                else this.generate(world, rand, pos, this.endDrops);
-
-                return true;
+                if (this.dimensionDrops.containsKey(dimension.toString())) {
+                    ArrayList<DropFull> drops = this.dimensionDrops.get(dimension.toString());
+                    this.generate(world, rand, pos, drops);
+                    return true;
+                }
             }
         } catch (Exception e) {
             Lucky.error(e, "Error during natural generation");
@@ -80,27 +78,20 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
     }
 
     @Override
-    public boolean place(IWorld world, ChunkGenerator<?> chunkGen,
-        Random rand, BlockPos posIn, NoFeatureConfig config) {
-
-        BlockPos pos = world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, posIn);
-        return this.generate(world, rand, pos);
+    public boolean func_230362_a_(ISeedReader world, StructureManager structureManager, ChunkGenerator chunkGenerator, Random random, BlockPos pos, NoFeatureConfig config) {
+        BlockPos validPos = world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos);
+        return this.generate(world, random, pos);
     }
 
-    public void addSurfacedDrop(DropFull drop) {
-        this.addDrop(this.surfaceDrops, drop);
-    }
-
-    public void addNetherDrop(DropFull drop) {
-        this.addDrop(this.netherDrops, drop);
-    }
-
-    public void addEndDrop(DropFull drop) {
-        this.addDrop(this.endDrops, drop);
-    }
-
-    private void addDrop(ArrayList<DropFull> list, DropFull drop) {
+    private DropFull initDrop(ResourceLocation dimension, DropFull drop) {
         if (!drop.wasChanceSet()) drop.setChance(300);
-        list.add(drop);
+        return drop;
+    }
+
+    public void addDrop(ResourceLocation dimension, DropFull drop) {
+        if (!this.dimensionDrops.containsKey(dimension.toString())) {
+            this.dimensionDrops.put(dimension.toString(), new ArrayList<DropFull>());
+        }
+        this.dimensionDrops.get(dimension.toString()).add(this.initDrop(dimension, drop));
     }
 }

@@ -6,7 +6,8 @@ public class DropFuncMessage extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
         processData.getPlayer().sendMessage(
-            new StringTextComponent(processData.getDropSingle().getPropertyString("ID")));
+            new StringTextComponent(processData.getDropSingle().getPropertyString("ID")),
+            processData.getPlayer().getUniqueID());
     }
 
     @Override

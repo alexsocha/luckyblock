@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import mod.lucky.drop.func.DropProcessData;
-import mod.lucky.util.ObfHelper;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -44,23 +43,25 @@ public class ValueParser {
         return null;
     }
 
-    public static INBT getNBTBaseFromValue(Object value) {
-        if (value.getClass() == String.class) return ObfHelper.createStringNBT((String) value);
-        if (value.getClass() == Integer.class) return ObfHelper.createIntNBT((Integer) value);
-        if (value.getClass() == Boolean.class)
-            return ObfHelper.createByteNBT((byte) ((Boolean) value ? 1 : 0));
-        if (value.getClass() == Float.class) return ObfHelper.createFloatNBT((Float) value);
+    public static INBT getNBTFromValue(Object value) {
+        if (value.getClass() == String.class) return StringNBT.valueOf((String) value);
+        if (value.getClass() == Integer.class) return IntNBT.valueOf((Integer) value);
+        if (value.getClass() == Boolean.class) return ByteNBT.valueOf((byte) ((Boolean) value ? 1 : 0));
+        if (value.getClass() == Float.class) return FloatNBT.valueOf((Float) value);
+        if (value instanceof int[]) new IntArrayNBT((int[]) value);
+        if (value instanceof byte[]) new ByteArrayNBT((byte[]) value);
         if (value instanceof INBT) return (INBT) value;
         return null;
     }
 
-    public static Object getValueFromNBTBase(INBT nbtBase) {
-        if (nbtBase.getClass() == StringNBT.class) return ((StringNBT) nbtBase).getString();
-        if (nbtBase.getClass() == IntNBT.class) return ((IntNBT) nbtBase).getInt();
-        if (nbtBase.getClass() == ByteNBT.class)
-            return ((ByteNBT) nbtBase).getByte() == 1 ? true : false;
-        if (nbtBase.getClass() == FloatNBT.class) return ((FloatNBT) nbtBase).getFloat();
-        return nbtBase;
+    public static Object getValueFromNBT(INBT nbt) {
+        if (nbt.getClass() == StringNBT.class) return ((StringNBT) nbt).getString();
+        if (nbt.getClass() == IntNBT.class) return ((IntNBT) nbt).getInt();
+        if (nbt.getClass() == ByteNBT.class) return ((ByteNBT) nbt).getByte() == 1;
+        if (nbt.getClass() == FloatNBT.class) return ((FloatNBT) nbt).getFloat();
+        if (nbt instanceof IntArrayNBT) ((IntArrayNBT) nbt).getIntArray();
+        if (nbt instanceof ByteArrayNBT) ((ByteArrayNBT) nbt).getByteArray();
+        return nbt;
     }
 
     public static String getString(String string) throws NumberFormatException {
@@ -195,7 +196,7 @@ public class ValueParser {
     }
 
     public static INBT getNBTBase(String string, DropProcessData processData) throws Exception {
-        return getNBTBaseFromValue(getNBTTagValue(string, processData, null, null));
+        return getNBTFromValue(getNBTTagValue(string, processData, null, null));
     }
 
     private static ArrayList<String> DROP_TAGS =
@@ -301,16 +302,7 @@ public class ValueParser {
         }
         if (curTag instanceof ListNBT) {
             ListNBT tagList = (ListNBT) curTag;
-            if (tagValue instanceof String) tagList.add(ObfHelper.createStringNBT((String) tagValue));
-            if (tagValue instanceof Integer) tagList.add(ObfHelper.createIntNBT((Integer) tagValue));
-            if (tagValue instanceof Float) tagList.add(ObfHelper.createFloatNBT((Float) tagValue));
-            if (tagValue instanceof Double) tagList.add(ObfHelper.createDoubleNBT((Double) tagValue));
-            if (tagValue instanceof Short) tagList.add(ObfHelper.createShortNBT((Short) tagValue));
-            if (tagValue instanceof Byte) tagList.add(ObfHelper.createByteNBT((Byte) tagValue));
-            if (tagValue instanceof int[]) tagList.add(new IntArrayNBT((int[]) tagValue));
-            if (tagValue instanceof byte[]) tagList.add(new ByteArrayNBT((byte[]) tagValue));
-            if (tagValue instanceof CompoundNBT) tagList.add((CompoundNBT) tagValue);
-            if (tagValue instanceof ListNBT) tagList.add((ListNBT) tagValue);
+            if (tagValue instanceof String) tagList.add(getNBTFromValue(tagValue));
         }
     }
 

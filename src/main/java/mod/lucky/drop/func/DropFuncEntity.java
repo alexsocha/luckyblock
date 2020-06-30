@@ -12,7 +12,7 @@ import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
@@ -40,8 +40,10 @@ public class DropFuncEntity extends DropFunc {
         if ((id.equals("lightning_bolt") || id.equals("LightningBolt"))
             && processData.getWorld() instanceof ServerWorld) {
 
-            ((ServerWorld) processData.getWorld()).addLightningBolt(
-                new LightningBoltEntity(processData.getWorld(), posX, posY, posZ, false));
+            LightningBoltEntity lightningBolt = EntityType.LIGHTNING_BOLT.create(processData.getWorld());
+            lightningBolt.moveForced(posX, posY, posZ);
+            processData.getWorld().addEntity(lightningBolt);
+
         } else {
             nbtTagCompound.putString("id", id);
             spawnEntity(processData, nbtTagCompound, processData.getWorld(), posX, posY, posZ);
@@ -68,7 +70,7 @@ public class DropFuncEntity extends DropFunc {
             posZ = posList.getDouble(2);
         }
 
-        final Vec3d entityPos = new Vec3d(posX, posY, posZ);
+        final Vector3d entityPos = new Vector3d(posX, posY, posZ);
         Entity entity = EntityType.func_220335_a(tag, world, e -> {
             e.setLocationAndAngles(entityPos.x, entityPos.y, entityPos.z,
                 e.rotationYaw, e.rotationPitch);
@@ -76,14 +78,12 @@ public class DropFuncEntity extends DropFunc {
         });
 
         if (entity == null) return null;
-
-        UUID playerUUID = processData.getPlayer().getUniqueID();
-        if (entity instanceof FallingBlockEntity && !tag.contains("Time"))
+        else if (entity instanceof FallingBlockEntity && !tag.contains("Time"))
             ((FallingBlockEntity) entity).fallTime = 1;
         else if (entity instanceof EntityLuckyProjectile)
-            ((EntityLuckyProjectile) entity).shootingEntity = playerUUID;
+            ((EntityLuckyProjectile) entity).setShooter(processData.getPlayer());
         else if (entity instanceof ArrowEntity)
-            ((ArrowEntity) entity).shootingEntity = playerUUID;
+            ((ArrowEntity) entity).setShooter(processData.getPlayer());
 
         // randomize entity
         if (entity instanceof MobEntity
@@ -91,7 +91,7 @@ public class DropFuncEntity extends DropFunc {
             && !tag.contains("Passengers")) {
 
             ((MobEntity) entity).onInitialSpawn(world,
-                world.getDifficultyForLocation(new BlockPos(entity)),
+                world.getDifficultyForLocation(new BlockPos(entity.getPositionVec())),
                 SpawnReason.EVENT,
                 null, null);
             ((MobEntity) entity).readAdditional(tag);

@@ -60,8 +60,8 @@ public class LuckyTickHandler {
 
                     if (minecraftVersion >= curMinecraftVersion && luckyVersion > curLuckyVersion) {
                         String message = split[2];
-                        ITextComponent textComponent = ITextComponent.Serializer.fromJson(message);
-                        Minecraft.getInstance().player.sendMessage(textComponent);
+                        ITextComponent textComponent = ITextComponent.Serializer.func_240643_a_(message); // fromJson
+                        Minecraft.getInstance().player.sendMessage(textComponent, Minecraft.getInstance().player.getUniqueID());
                         break;
                     }
                 }

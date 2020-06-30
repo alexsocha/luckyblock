@@ -11,7 +11,7 @@ import mod.lucky.drop.value.ValueParser;
 import mod.lucky.resources.ResourceStructureFile;
 import mod.lucky.resources.loader.BaseLoader;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class Structure {
     public enum BlockMode {
@@ -44,7 +44,7 @@ public class Structure {
     protected boolean blockUpdate;
 
     protected boolean[] explicitCenter = { false, false, false };
-    public Vec3d centerPos = new Vec3d(0, 0, 0);
+    public Vector3d centerPos = new Vector3d(0, 0, 0);
 
     public Structure() {
         this.blockMode = BlockMode.REPLACE;
@@ -87,7 +87,7 @@ public class Structure {
             if (propertyName.equalsIgnoreCase("blockUpdate"))
                 this.blockUpdate = ValueParser.getBoolean(propertyValue);
         }
-        this.centerPos = new Vec3d(centerX, centerY, centerZ);
+        this.centerPos = new Vector3d(centerX, centerY, centerZ);
     }
 
     public Structure newTypeInstance() {
@@ -126,7 +126,7 @@ public class Structure {
             ? (int) (this.size.getZ() / 2.0) + 0.5 : this.centerPos.z;
         double centerY = !this.explicitCenter[1] ? 0 : this.centerPos.y;
 
-        this.centerPos = new Vec3d(centerX, centerY, centerZ);
+        this.centerPos = new Vector3d(centerX, centerY, centerZ);
     }
 
     public InputStream openFileStream() {

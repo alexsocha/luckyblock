@@ -82,7 +82,7 @@ public class DropValue {
 
     public CompoundNBT writeToNBT() {
         CompoundNBT mainTag = new CompoundNBT();
-        if (this.value != null) mainTag.put("value", ValueParser.getNBTBaseFromValue(this.value));
+        if (this.value != null) mainTag.put("value", ValueParser.getNBTFromValue(this.value));
         if (this.rawValue != null) mainTag.putString("rawValue", this.rawValue);
         if (this.valueType != null)
             mainTag.putString("valueType", ValueParser.classTypeToString.inverse().get(this.valueType));
@@ -92,7 +92,7 @@ public class DropValue {
 
     public void readFromNBT(CompoundNBT tagCompound) {
         if (tagCompound.contains("value"))
-            this.value = ValueParser.getValueFromNBTBase(tagCompound.get("value"));
+            this.value = ValueParser.getValueFromNBT(tagCompound.get("value"));
         if (tagCompound.contains("rawValue")) this.rawValue = tagCompound.getString("rawValue");
         if (tagCompound.contains("valueType"))
             this.valueType = ValueParser.classTypeToString.get(tagCompound.getString("valueType"));

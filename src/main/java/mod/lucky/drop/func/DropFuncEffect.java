@@ -13,7 +13,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class DropFuncEffect extends DropFunc {
@@ -72,7 +72,7 @@ public class DropFuncEffect extends DropFunc {
                         processData
                             .getDropSingle()
                             .getVecPos()
-                            .distanceTo(entity.getPositionVector());
+                            .distanceTo(entity.getPositionVec());
 
                     if (distance <= drop.getPropertyFloat("range")) {
                         if (effectID.equals("special_fire"))
@@ -103,8 +103,8 @@ public class DropFuncEffect extends DropFunc {
     }
 
     private void specialEffectKnockback(DropProcessData processData, Entity entity) {
-        Vec3d dropPos = processData.getDropSingle().getVecPos();
-        Vec3d entityPos = entity.getPositionVector();
+        Vector3d dropPos = processData.getDropSingle().getVecPos();
+        Vector3d entityPos = entity.getPositionVec();
         float yawAngle =
             processData.getDropSingle().hasProperty("directionYaw")
                 ? processData.getDropSingle().getPropertyFloat("directionYaw")
@@ -114,12 +114,12 @@ public class DropFuncEffect extends DropFunc {
         float power = processData.getDropSingle().getPropertyFloat("power");
 
         if (!processData.getDropSingle().hasProperty("target")
-            && dropPos.distanceTo(entity.getPositionVector()) < 0.01) {
+            && dropPos.distanceTo(entity.getPositionVec()) < 0.01) {
             pitchAngle = -90;
             power *= 0.5;
         }
 
-        entity.setMotion(new Vec3d(
+        entity.setMotion(new Vector3d(
             -MathHelper.sin(yawAngle / 180.0F * (float) Math.PI)
                 * MathHelper.cos(pitchAngle / 180.0F * (float) Math.PI)
                 * power,

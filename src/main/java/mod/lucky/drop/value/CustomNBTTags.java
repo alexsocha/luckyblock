@@ -1,18 +1,16 @@
 package mod.lucky.drop.value;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.Random;
 
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.util.LuckyUtils;
-import mod.lucky.util.ObfHelper;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.*;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
@@ -22,10 +20,8 @@ import net.minecraft.potion.Effects;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.storage.loot.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class CustomNBTTags {
@@ -299,9 +295,9 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
                 float launchMotionY = -MathHelper.sin(launchPitch / 180.0F * (float) Math.PI) * launchPower;
 
                 ListNBT motionList = new ListNBT();
-                motionList.add(ObfHelper.createDoubleNBT(launchMotionX));
-                motionList.add(ObfHelper.createDoubleNBT(launchMotionY));
-                motionList.add(ObfHelper.createDoubleNBT(launchMotionZ));
+                motionList.add(DoubleNBT.valueOf(launchMotionX));
+                motionList.add(DoubleNBT.valueOf(launchMotionY));
+                motionList.add(DoubleNBT.valueOf(launchMotionZ));
                 return motionList;
             } catch (Exception e) {
             }
@@ -327,9 +323,9 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
                 float launchMotionY = -MathHelper.sin(launchPitch / 180.0F * (float) Math.PI) * launchPower;
 
                 ListNBT motionList = new ListNBT();
-                motionList.add(ObfHelper.createDoubleNBT(launchMotionX));
-                motionList.add(ObfHelper.createDoubleNBT(launchMotionY));
-                motionList.add(ObfHelper.createDoubleNBT(launchMotionZ));
+                motionList.add(DoubleNBT.valueOf(launchMotionX));
+                motionList.add(DoubleNBT.valueOf(launchMotionY));
+                motionList.add(DoubleNBT.valueOf(launchMotionZ));
                 return motionList;
             } catch (Exception e) {
             }
@@ -349,7 +345,7 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
                 }
 
                 Entity shooter = processData.getPlayer();
-                Vec3d shooterPos = shooter.getPositionVec();
+                Vector3d shooterPos = shooter.getPositionVec();
                 ArrowEntity entityArrow;
                 if (shooter instanceof LivingEntity)
                     entityArrow = new ArrowEntity(processData.getWorld(), (LivingEntity) shooter);
@@ -357,8 +353,9 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
                     entityArrow =
                         new ArrowEntity(
                             processData.getWorld(), shooterPos.z, shooterPos.y, shooterPos.z);
+
+                entityArrow.setShooter(shooter);
                 entityArrow.shoot(
-                    shooter,
                     shooter.rotationPitch
                         + HashVariables.randomFloatClamp(
                         processData.getWorld().rand, -randAngle, randAngle),
@@ -370,10 +367,10 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
                     1.0F);
 
                 ListNBT motionList = new ListNBT();
-                Vec3d arrowMotion = entityArrow.getMotion();
-                motionList.add(ObfHelper.createDoubleNBT(arrowMotion.x));
-                motionList.add(ObfHelper.createDoubleNBT(arrowMotion.y));
-                motionList.add(ObfHelper.createDoubleNBT(arrowMotion.z));
+                Vector3d arrowMotion = entityArrow.getMotion();
+                motionList.add(DoubleNBT.valueOf(arrowMotion.x));
+                motionList.add(DoubleNBT.valueOf(arrowMotion.y));
+                motionList.add(DoubleNBT.valueOf(arrowMotion.z));
                 return motionList;
             } catch (Exception e) {}
         }
@@ -396,8 +393,8 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
             String lootId =
                 ValueParser.getString(name.substring(name.indexOf('(') + 1, name.lastIndexOf(')')));
             tileEntityChest.setLootTable(new ResourceLocation("minecraft", lootId), random.nextLong());
-            // initialize tile entity
-            tileEntityChest.func_226984_a_(processData.getWorld(), processData.getHarvestBlockPos());
+            if (processData.getWorld() != null)
+                tileEntityChest.setWorldAndPos(processData.getWorld(), processData.getHarvestBlockPos());
             tileEntityChest.fillWithLoot(null);
 
             CompoundNBT tagCompound = new CompoundNBT();

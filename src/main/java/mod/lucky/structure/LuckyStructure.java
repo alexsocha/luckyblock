@@ -13,7 +13,7 @@ import mod.lucky.util.LuckyReader;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class LuckyStructure extends Structure {
     private ArrayList<DropSingle> blockDrops;
@@ -22,7 +22,7 @@ public class LuckyStructure extends Structure {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
-        Vec3d harvestPos = drop.getVecPos();
+        Vector3d harvestPos = drop.getVecPos();
         int rotation = drop.getPropertyInt("rotation");
         BlockPlacer blockPlacer = new BlockPlacer(processData.getRawWorld());
 
@@ -63,7 +63,7 @@ public class LuckyStructure extends Structure {
             entityDrop = entityDrop.initialize(entityProcessData);
             entityProcessData.setDrop(entityDrop);
 
-            Vec3d originalPos = entityDrop.getVecPos();
+            Vector3d originalPos = entityDrop.getVecPos();
             if (entityDrop.getPropertyNBT("NBTTag") != null) {
                 CompoundNBT entityTag = StructureUtils.rotateEntityNBT(
                     entityDrop.getPropertyNBT("NBTTag"),

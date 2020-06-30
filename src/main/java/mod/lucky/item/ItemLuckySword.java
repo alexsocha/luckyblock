@@ -41,7 +41,7 @@ public class ItemLuckySword extends SwordItem implements ILuckyItemContainer {
             DropProcessData dropData = new DropProcessData(
                 attacker.getEntityWorld(),
                 attacker,
-                target.getPositionVector())
+                target.getPositionVec())
                     .setHitEntity(target);
 
             if (drops != null && drops.length != 0)

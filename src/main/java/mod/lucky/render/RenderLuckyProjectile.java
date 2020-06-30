@@ -6,7 +6,6 @@ import mod.lucky.entity.EntityLuckyProjectile;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.passive.fish.PufferfishEntity;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -18,13 +17,12 @@ public class RenderLuckyProjectile extends EntityRenderer<EntityLuckyProjectile>
 
     // doRender
     @Override
-    public void func_225623_a_(EntityLuckyProjectile entity, float f1, float f2, MatrixStack matrix, IRenderTypeBuffer renderType, int i1) {
+    public void render(EntityLuckyProjectile entity, float entityYaw, float particleTicks, MatrixStack matrix, IRenderTypeBuffer renderType, int i1) {
         try {
             if (entity.getItemEntity() != null) {
-                // doRender
-                this.renderManager.func_229084_a_(
+                this.renderManager.getRenderer(entity.getItemEntity()).render(
                     entity.getItemEntity(),
-                    0, -0.35, 0, f1, f2,
+                    entityYaw, particleTicks,
                     matrix, renderType, i1);
             }
         } catch (Exception e) {

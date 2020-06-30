@@ -17,7 +17,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.CompoundNBT;
@@ -74,7 +74,7 @@ public class BlockLuckyBlock extends ContainerBlock {
             if (!world.isRemote) {
                 if (removedByRedstone) {
                     player = LuckyUtils.getNearestPlayer(
-                        (ServerWorld) world, LuckyUtils.toVec3d(harvestPos));
+                        (ServerWorld) world, LuckyUtils.toVector3d(harvestPos));
                 }
 
                 if (player.isCreative() && !this.doCreativeDrops && !removedByRedstone) {
@@ -131,7 +131,7 @@ public class BlockLuckyBlock extends ContainerBlock {
 
     @Override
     public boolean removedByPlayer(BlockState state, World world,
-        BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+        BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
 
         if (player.isCreative() && this.doCreativeDrops)
             this.removeLuckyBlock(world, player, pos, false);
@@ -180,9 +180,7 @@ public class BlockLuckyBlock extends ContainerBlock {
 
         tileEntityLuck.setLuck(luck);
         if (drops != null && drops.length != 0) tileEntityLuck.setDrops(drops);
-
         tileEntityLuck.markDirty();
-        world.markAndNotifyBlock(pos, null, state, state, 3);
 
         if (world.isBlockPowered(pos) && !world.isRemote)
             this.removeLuckyBlock(world, null, pos, true);

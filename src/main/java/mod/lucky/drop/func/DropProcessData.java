@@ -7,11 +7,13 @@ import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
@@ -23,7 +25,7 @@ public class DropProcessData {
     private float bowPower = 1;
     private UUID playerUUID;
     private UUID hitEntityUUID;
-    private Vec3d harvestPos;
+    private Vector3d harvestPos;
     private DropSingle dropSingle;
     private EnumProcessType processType;
 
@@ -31,27 +33,27 @@ public class DropProcessData {
         this.world = world;
     }
 
-    public DropProcessData(IWorld world, Entity player, Vec3d harvestPos) {
+    public DropProcessData(IWorld world, Entity player, Vector3d harvestPos) {
         this(world, player, harvestPos, null);
     }
 
     public DropProcessData(IWorld world, Entity player, BlockPos harvestPos) {
         this(world, player,
-            new Vec3d(harvestPos.getX() + 0.5, harvestPos.getY(), harvestPos.getZ() + 0.5),
+            new Vector3d(harvestPos.getX() + 0.5, harvestPos.getY(), harvestPos.getZ() + 0.5),
             null);
     }
 
-    public DropProcessData(IWorld world, Entity player, Vec3d harvestPos,
+    public DropProcessData(IWorld world, Entity player, Vector3d harvestPos,
         DropSingle dropSingle) {
         this(world, player, harvestPos, dropSingle, EnumProcessType.NORMAL);
     }
 
-    public DropProcessData(IWorld world, Entity player, Vec3d harvestPos,
+    public DropProcessData(IWorld world, Entity player, Vector3d harvestPos,
                            DropSingle dropSingle, EnumProcessType processType) {
         this(world, player, harvestPos, dropSingle, processType, null);
     }
 
-    public DropProcessData(IWorld world, Entity player, Vec3d harvestPos,
+    public DropProcessData(IWorld world, Entity player, Vector3d harvestPos,
                            DropSingle dropSingle, EnumProcessType processType, Entity hitEntity) {
         this.world = world;
         this.player = player;
@@ -102,7 +104,7 @@ public class DropProcessData {
         return this;
     }
 
-    public Vec3d getHarvestPos() {
+    public Vector3d getHarvestPos() {
         return this.harvestPos;
     }
 
@@ -130,7 +132,7 @@ public class DropProcessData {
         this.player = player;
     }
 
-    public void setHarvestPos(Vec3d harvestPos) {
+    public void setHarvestPos(Vector3d harvestPos) {
         this.harvestPos = harvestPos;
     }
 
@@ -138,7 +140,7 @@ public class DropProcessData {
         this.dropSingle = new DropSingle();
         this.dropSingle.readFromNBT(tagCompound.getCompound("drop"));
         this.harvestPos =
-            new Vec3d(
+            new Vector3d(
                 tagCompound.getDouble("harvestPosX"),
                 tagCompound.getDouble("harvestPosY"),
                 tagCompound.getDouble("harvestPosZ"));
@@ -147,8 +149,10 @@ public class DropProcessData {
             this.playerUUID = UUID.fromString(tagCompound.getString("playerUUID"));
         if (tagCompound.contains("hitEntityUUID"))
             this.hitEntityUUID = UUID.fromString(tagCompound.getString("hitEntityUUID"));
+
+        ResourceLocation dimension = new ResourceLocation(tagCompound.contains("world") ? tagCompound.getString("world") : "overworld");
         this.world = Minecraft.getInstance().getIntegratedServer()
-            .getWorld(DimensionType.OVERWORLD);
+            .getWorld(RegistryKey.func_240903_a_(Registry.field_239699_ae_, dimension));
     }
 
     public CompoundNBT writeToNBT() {
@@ -168,6 +172,9 @@ public class DropProcessData {
                 this.hitEntity == null
                     ? this.hitEntityUUID.toString()
                     : this.hitEntity.getUniqueID().toString());
+
+        ResourceLocation dimension = this.world.getWorld().func_234923_W_().func_240901_a_();
+        mainTag.putString("world", dimension.toString());
         return mainTag;
     }
 

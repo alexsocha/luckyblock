@@ -2,7 +2,6 @@ package mod.lucky.structure;
 
 import mod.lucky.drop.func.DropFuncBlock;
 import mod.lucky.util.LuckyUtils;
-import mod.lucky.util.ObfHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -12,7 +11,7 @@ import net.minecraft.nbt.FloatNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -27,7 +26,7 @@ public class StructureUtils {
         return rotation;
     }
 
-    public static Vec3d rotatePos(Vec3d pos, Vec3d centerPos, int rotation) {
+    public static Vector3d rotatePos(Vector3d pos, Vector3d centerPos, int rotation) {
         rotation = normalizeRotation(rotation);
 
         double posX = pos.x - centerPos.x;
@@ -40,23 +39,23 @@ public class StructureUtils {
             posX = z;
             posZ = -x;
         }
-        return new Vec3d(posX + centerPos.x, posY + centerPos.y, centerPos.z - posZ);
+        return new Vector3d(posX + centerPos.x, posY + centerPos.y, centerPos.z - posZ);
     }
 
     public static Rotation parseRotation(int rotation) {
         return Rotation.values()[rotation];
     }
 
-    public static Vec3d getWorldPos(
-        Vec3d structPos, Vec3d structCenter, Vec3d harvestPos, int rotation) {
+    public static Vector3d getWorldPos(
+        Vector3d structPos, Vector3d structCenter, Vector3d harvestPos, int rotation) {
         return rotatePos(
             harvestPos.add(structPos).subtract(structCenter),
             harvestPos, rotation);
     }
 
     public static BlockPos getWorldPos(
-        BlockPos posInStruct, Vec3d structCenter, Vec3d harvestPos, int rotation) {
-        return new BlockPos(getWorldPos(LuckyUtils.toVec3d(posInStruct),
+        BlockPos posInStruct, Vector3d structCenter, Vector3d harvestPos, int rotation) {
+        return new BlockPos(getWorldPos(LuckyUtils.toVector3d(posInStruct),
             structCenter, harvestPos, rotation));
     }
 
@@ -72,7 +71,7 @@ public class StructureUtils {
     }
 
     public static void setBlock(BlockPlacer blockPlacer, BlockState blockState,
-        BlockPos posInStruct, Vec3d structCenter, Vec3d harvestPos, int rotation) {
+        BlockPos posInStruct, Vector3d structCenter, Vector3d harvestPos, int rotation) {
 
         BlockPos pos = StructureUtils.getWorldPos(
             posInStruct, structCenter, harvestPos, rotation);
@@ -83,7 +82,7 @@ public class StructureUtils {
     }
 
     public static void fillWithAir(BlockPlacer blockPlacer, BlockPos size,
-        Vec3d centerPos, Vec3d harvestPos, int rotation) {
+        Vector3d centerPos, Vector3d harvestPos, int rotation) {
 
         for (int x = 0; x < size.getX(); x++) {
             for (int y = 0; y < size.getY(); y++) {
@@ -98,48 +97,48 @@ public class StructureUtils {
     }
 
     public static void setTileEntity(IWorld world, CompoundNBT tileEntity,
-        BlockPos structPos, Vec3d structCenter, Vec3d harvestPos, int rotation) {
+        BlockPos structPos, Vector3d structCenter, Vector3d harvestPos, int rotation) {
 
         BlockPos pos = getWorldPos(structPos, structCenter, harvestPos, rotation);
         DropFuncBlock.setTileEntity(world, world.getBlockState(pos), pos, tileEntity);
     }
 
     public static void setEntity(World world, Entity entity,
-        Vec3d structCenter, Vec3d harvestPos, int rotation) {
+        Vector3d structCenter, Vector3d harvestPos, int rotation) {
 
         if (!(world instanceof ServerWorld)) return;
 
-        Vec3d pos = getWorldPos(entity.getPositionVector(), structCenter, harvestPos, rotation);
+        Vector3d pos = getWorldPos(entity.getPositionVec(), structCenter, harvestPos, rotation);
         entity.setPosition(pos.x, pos.y, pos.z);
         entity.rotationYaw = entity.getRotatedYaw(parseRotation(rotation));
         ((ServerWorld) world).summonEntity(entity);
     }
 
     public static CompoundNBT rotateEntityNBT(
-        CompoundNBT entityTag, Vec3d centerPos, int rotation) {
+        CompoundNBT entityTag, Vector3d centerPos, int rotation) {
 
         CompoundNBT newTag = entityTag.copy();
         rotation = normalizeRotation(rotation);
         if (entityTag.contains("Pos")) {
             ListNBT posList = entityTag.getList("Pos", Constants.NBT.TAG_DOUBLE);
-            Vec3d entityPos = new Vec3d(
+            Vector3d entityPos = new Vector3d(
                 posList.getDouble(0), posList.getDouble(1), posList.getDouble(2));
             entityPos = rotatePos(entityPos, centerPos, rotation);
             posList = new ListNBT();
-            posList.add(ObfHelper.createDoubleNBT(entityPos.x));
-            posList.add(ObfHelper.createDoubleNBT(entityPos.y));
-            posList.add(ObfHelper.createDoubleNBT(entityPos.z));
+            posList.add(DoubleNBT.valueOf(entityPos.x));
+            posList.add(DoubleNBT.valueOf(entityPos.y));
+            posList.add(DoubleNBT.valueOf(entityPos.z));
             newTag.put("Pos", posList);
         }
         if (entityTag.contains("Motion")) {
             ListNBT motionList = entityTag.getList("Motion", Constants.NBT.TAG_DOUBLE);
-            Vec3d entityMotion = new Vec3d(
+            Vector3d entityMotion = new Vector3d(
                 motionList.getDouble(0), motionList.getDouble(1), motionList.getDouble(2));
-            entityMotion = rotatePos(entityMotion, new Vec3d(0, 0, 0), rotation);
+            entityMotion = rotatePos(entityMotion, new Vector3d(0, 0, 0), rotation);
             motionList = new ListNBT();
-            motionList.add(ObfHelper.createDoubleNBT(entityMotion.x));
-            motionList.add(ObfHelper.createDoubleNBT(entityMotion.y));
-            motionList.add(ObfHelper.createDoubleNBT(entityMotion.z));
+            motionList.add(DoubleNBT.valueOf(entityMotion.x));
+            motionList.add(DoubleNBT.valueOf(entityMotion.y));
+            motionList.add(DoubleNBT.valueOf(entityMotion.z));
             newTag.put("Motion", motionList);
         }
         if (entityTag.contains("Rotation")) {
@@ -148,8 +147,8 @@ public class StructureUtils {
             float rotPitch = rotationList.getFloat(1);
             rotYaw = (rotYaw + (rotation * 90.0F)) % 360.0F;
             rotationList = new ListNBT();
-            rotationList.add(ObfHelper.createFloatNBT(rotYaw));
-            rotationList.add(ObfHelper.createFloatNBT(rotPitch));
+            rotationList.add(FloatNBT.valueOf(rotYaw));
+            rotationList.add(FloatNBT.valueOf(rotPitch));
             newTag.put("Rotation", rotationList);
         }
         return newTag;

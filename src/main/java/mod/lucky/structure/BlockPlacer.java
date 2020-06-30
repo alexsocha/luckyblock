@@ -36,7 +36,8 @@ public class BlockPlacer {
                     fullWorld.getChunkAt(pos),
                     fullWorld.getBlockState(pos),
                     this.updateState.get(i),
-                    3);
+                    3,
+                    0);
             }
         }
     }

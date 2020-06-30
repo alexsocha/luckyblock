@@ -51,20 +51,20 @@ public class LuckyItem {
         int luck = this.getLuck(stack);
         ITextComponent luckComponent =
             luck == 0 ? new StringTextComponent("" + luck)
-                .applyTextStyle(TextFormatting.GOLD)
+                .func_240699_a_(TextFormatting.GOLD) // applyTextStyle
             : luck < 0 ? new StringTextComponent("" + luck)
-                .applyTextStyle(TextFormatting.RED)
+                .func_240699_a_(TextFormatting.RED) // applyTextStyle
             : new StringTextComponent("+" + luck)
-                .applyTextStyle(TextFormatting.GREEN);
+                .func_240699_a_(TextFormatting.GREEN); // applyTextStyle
 
         tooltip.add(new TranslationTextComponent("item.lucky.lucky_block.luck")
-            .appendText(": ")
-            .appendSibling(luckComponent));
+            .func_240702_b_(": ") // appendText
+            .func_230529_a_(luckComponent)); // appendComponent
 
         String[] drops = this.getRawDrops(stack);
         if (drops != null && drops.length != 0)
             tooltip.add(new TranslationTextComponent("item.lucky.lucky_block.customDrop")
-                .applyTextStyles(TextFormatting.GRAY, TextFormatting.ITALIC));
+                .func_240701_a_(TextFormatting.GRAY, TextFormatting.ITALIC)); // applyTextStyles
     }
 
     public void addLuckySubItems(NonNullList<ItemStack> items) {

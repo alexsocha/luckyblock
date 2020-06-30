@@ -4,8 +4,6 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
-import mod.lucky.init.SetupCommon;
-import mod.lucky.util.ObfHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ItemEntity;
@@ -19,6 +17,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -39,8 +38,8 @@ public class EntityLuckyProjectile extends ArrowEntity {
         super(entityType, world);
     }
 
-    public EntityLuckyProjectile(World world) {
-        this(SetupCommon.ENTITY_LUCKY_PROJECTILE, world);
+    private Entity getShooter() {
+        return this.func_234616_v_();
     }
 
     @Override
@@ -60,7 +59,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
     }
 
     private void luckyTick() {
-        Vec3d pos = this.getPositionVector();
+        Vector3d pos = this.getPositionVec();
         try {
             if (this.entityItem == null && this.getEntityWorld().isRemote)
                 this.entityItem = new ItemEntity(
@@ -76,12 +75,12 @@ public class EntityLuckyProjectile extends ArrowEntity {
                 if (this.trailFrequency < 1.0 && this.trailFrequency > 0) {
                     int amount = (int) (1.0 / this.trailFrequency);
                     for (int i = 0; i < amount; i++) {
-                        Vec3d entityMotion = this.getMotion();
+                        Vector3d entityMotion = this.getMotion();
                         this.dropProcessorTrail.processRandomDrop(
                             new DropProcessData(
                                 this.getEntityWorld(),
                                 this.getShooter(),
-                                new Vec3d(
+                                new Vector3d(
                                     pos.x + entityMotion.x * i / amount,
                                     pos.y + entityMotion.y * i / amount,
                                     pos.z + entityMotion.z * i / amount)),
@@ -92,7 +91,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
                         new DropProcessData(
                             this.getEntityWorld(),
                             this.getShooter(),
-                            this.getPositionVector()),
+                            this.getPositionVec()),
                         0, false);
             } catch (Exception e) {
                 Lucky.error(e, DropProcessor.errorMessage());
@@ -107,8 +106,8 @@ public class EntityLuckyProjectile extends ArrowEntity {
                     this.getEntityWorld(),
                     this.getShooter(),
                     hitEntity != null
-                        ? hitEntity.getPositionVector()
-                        : this.getPositionVector());
+                        ? hitEntity.getPositionVec()
+                        : this.getPositionVec());
                 if (hitEntity != null) dropData.setHitEntity(hitEntity);
 
                 this.dropProcessorImpact.processRandomDrop(dropData, 0);
@@ -130,16 +129,14 @@ public class EntityLuckyProjectile extends ArrowEntity {
     }
 
     @Override
-    protected void onHit(RayTraceResult rayTrace) {
-        super.onHit(rayTrace);
-        if (rayTrace.getType() != RayTraceResult.Type.MISS) {
-            if (!this.world.isRemote) {
-                Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY
-                    ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
-                this.luckyHit(hitEntity);
-            }
-            this.remove();
+    protected void onEntityHit(EntityRayTraceResult rayTrace) {
+        super.onEntityHit(rayTrace);
+        if (!this.world.isRemote) {
+            Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY
+                ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
+            this.luckyHit(hitEntity);
         }
+        this.remove();
     }
 
     @Override
@@ -155,7 +152,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
             ListNBT drops = new ListNBT();
             for (int i = 0; i < this.dropProcessorTrail.getDrops().size(); i++) {
                 String dropString = this.dropProcessorTrail.getDrops().get(i).toString();
-                drops.add(ObfHelper.createStringNBT(dropString));
+                drops.add(StringNBT.valueOf(dropString));
             }
             trailTag.put("drops", drops);
             tag.put("trail", trailTag);
@@ -165,7 +162,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
             ListNBT drops = new ListNBT();
             for (int i = 0; i < this.dropProcessorImpact.getDrops().size(); i++) {
                 String dropString = this.dropProcessorImpact.getDrops().get(i).toString();
-                drops.add(ObfHelper.createStringNBT(dropString));
+                drops.add(StringNBT.valueOf(dropString));
             }
             tag.put("impact", drops);
         }
@@ -179,7 +176,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
         else stack = new ItemStack(Items.STICK);
         stack.setCount(1);
 
-        Vec3d pos = this.getPositionVector();
+        Vector3d pos = this.getPositionVec();
         this.entityItem = new ItemEntity(
             this.getEntityWorld(),
             pos.x, pos.y, pos.z,
@@ -192,7 +189,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
             if (trailTag.contains("frequency"))
                 this.trailFrequency = trailTag.getFloat("frequency");
             if (trailTag.contains("drops")) {
-                ListNBT drops = trailTag.getList("drops", ObfHelper.createStringNBT("").getId());
+                ListNBT drops = trailTag.getList("drops", StringNBT.valueOf("").getId());
                 for (int i = 0; i < drops.size(); i++) {
                     DropFull drop = new DropFull();
                     drop.readFromString(drops.getString(i));
@@ -203,7 +200,7 @@ public class EntityLuckyProjectile extends ArrowEntity {
         }
 
         if (tag.contains("impact")) {
-            ListNBT drops = tag.getList("impact", ObfHelper.createStringNBT("").getId());
+            ListNBT drops = tag.getList("impact", StringNBT.valueOf("").getId());
             for (int i = 0; i < drops.size(); i++) {
                 DropFull drop = new DropFull();
                 drop.readFromString(drops.getString(i));

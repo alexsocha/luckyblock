@@ -14,7 +14,7 @@ import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -33,6 +33,7 @@ public class ItemLuckyBow extends BowItem implements ILuckyItemContainer {
             .defaultMaxDamage(1000)
             .group(ItemGroup.COMBAT));
 
+        /*
         this.addPropertyOverride(
             new ResourceLocation("pull"),
             new IItemPropertyGetter() {
@@ -61,6 +62,7 @@ public class ItemLuckyBow extends BowItem implements ILuckyItemContainer {
                         ? 1.0F : 0.0F;
                 }
             });
+         */
     }
 
     @Override
@@ -103,7 +105,7 @@ public class ItemLuckyBow extends BowItem implements ILuckyItemContainer {
                             world, stack, player);
 
                         DropProcessData dropData =
-                            new DropProcessData(world, player, arrowEntity.getPositionVector())
+                            new DropProcessData(world, player, arrowEntity.getPositionVec())
                                 .setBowPower(power * 3.0F);
                         if (drops != null && drops.length != 0)
                             this.getLuckyItem().getDropProcessor()
@@ -118,7 +120,7 @@ public class ItemLuckyBow extends BowItem implements ILuckyItemContainer {
                     }
                 }
 
-                Vec3d playerPos = player.getPositionVector();
+                Vector3d playerPos = player.getPositionVec();
                 world.playSound(null,
                     playerPos.x, playerPos.y, playerPos.z,
                     SoundEvents.ENTITY_ARROW_SHOOT,

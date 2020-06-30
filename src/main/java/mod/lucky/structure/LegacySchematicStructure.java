@@ -16,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.datafix.fixes.ItemIntIDToString;
 import net.minecraft.util.datafix.fixes.ItemStackDataFlattening;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -31,7 +31,7 @@ public class LegacySchematicStructure extends Structure {
     @Override
     public void process(DropProcessData processData) {
         DropSingle drop = processData.getDropSingle();
-        Vec3d harvestPos = drop.getVecPos();
+        Vector3d harvestPos = drop.getVecPos();
         int rotation = drop.getPropertyInt("rotation");
         BlockPlacer blockPlacer = new BlockPlacer(processData.getRawWorld());
 

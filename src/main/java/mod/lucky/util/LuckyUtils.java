@@ -1,10 +1,8 @@
 package mod.lucky.util;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.mojang.brigadier.StringReader;
@@ -22,8 +20,8 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -57,11 +55,11 @@ public class LuckyUtils {
     }
 
     public static CommandSource makeCommandSource(
-        ServerWorld world, Vec3d pos, boolean doOutput, String name) {
+        ServerWorld world, Vector3d pos, boolean doOutput, String name) {
 
         ICommandSource source = new ICommandSource() {
             @Override
-            public void sendMessage(ITextComponent component) {}
+            public void sendMessage(ITextComponent component, UUID uuid) {}
             @Override
             public boolean shouldReceiveFeedback() { return doOutput; }
             @Override
@@ -71,7 +69,7 @@ public class LuckyUtils {
         };
         return new CommandSource(source,
             pos,
-            Vec2f.ZERO, // pitchYaw
+            Vector2f.ZERO, // pitchYaw
             world,
             2, // permission level
             name, new StringTextComponent(name),
@@ -79,11 +77,11 @@ public class LuckyUtils {
             null); // entity type
     }
     public static CommandSource makeCommandSource(
-        ServerWorld world, Vec3d pos, boolean doOutput) {
+        ServerWorld world, Vector3d pos, boolean doOutput) {
         return makeCommandSource(world, pos, doOutput, "Lucky Block");
     }
 
-    public static PlayerEntity getNearestPlayer(ServerWorld world, Vec3d pos) {
+    public static PlayerEntity getNearestPlayer(ServerWorld world, Vector3d pos) {
         try {
             EntitySelector selector = new EntitySelectorParser(
                 new StringReader("@p")).parse();
@@ -92,8 +90,8 @@ public class LuckyUtils {
         } catch (CommandSyntaxException e) { return null; }
     }
 
-    public static Vec3d toVec3d(BlockPos pos) {
-        return new Vec3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+    public static Vector3d toVector3d(BlockPos pos) {
+        return new Vector3d(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
     }
 
     public static CompoundNBT getRandomFireworksRocket() {
@@ -189,7 +187,7 @@ public class LuckyUtils {
     public static ListNBT tagListFromStrArray(String[] array) {
         ListNBT nbttagList = new ListNBT();
         for (String element : array) {
-            nbttagList.add(ObfHelper.createStringNBT(element));
+            nbttagList.add(StringNBT.valueOf(element));
         }
         return nbttagList;
     }

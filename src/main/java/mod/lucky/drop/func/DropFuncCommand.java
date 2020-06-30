@@ -17,7 +17,7 @@ public class DropFuncCommand extends DropFunc {
 
         CommandSource commandSource = LuckyUtils.makeCommandSource(
             (ServerWorld) processData.getWorld(),
-            LuckyUtils.toVec3d(drop.getBlockPos()),
+            LuckyUtils.toVector3d(drop.getBlockPos()),
             displayOutput, name);
 
         try {

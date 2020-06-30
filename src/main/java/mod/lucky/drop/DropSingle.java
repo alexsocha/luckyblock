@@ -13,7 +13,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class DropSingle extends DropBase {
     private static String[] multiPosProperties = {"pos", "pos2", "posOffset"};
@@ -67,8 +67,8 @@ public class DropSingle extends DropBase {
         return new BlockPos(this.getVecPos());
     }
 
-    public Vec3d getVecPos() {
-        return new Vec3d(
+    public Vector3d getVecPos() {
+        return new Vector3d(
             this.getPropertyFloat("posX"),
             this.getPropertyFloat("posY"),
             this.getPropertyFloat("posZ"));
@@ -80,7 +80,7 @@ public class DropSingle extends DropBase {
         this.setProperty("posZ", pos.getZ());
     }
 
-    public void setVecPos(Vec3d pos) {
+    public void setVecPos(Vector3d pos) {
         this.setProperty("posX", pos.x);
         this.setProperty("posY", pos.y);
         this.setProperty("posZ", pos.z);
