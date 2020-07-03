@@ -5,6 +5,7 @@ import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
@@ -20,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -33,36 +35,43 @@ public class ItemLuckyBow extends BowItem implements ILuckyItemContainer {
             .defaultMaxDamage(1000)
             .group(ItemGroup.COMBAT));
 
-        /*
-        this.addPropertyOverride(
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> this.registerItemModels());
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void registerItemModels() {
+        ItemModelsProperties.func_239418_a_( // registerModelProperty
+            this,
+            new ResourceLocation("pulling"),
+            new IItemPropertyGetter() {
+                @Override
+                public float call(ItemStack stack, ClientWorld world, LivingEntity entity) {
+                    return entity != null
+                        && entity.isHandActive()
+                        && entity.getActiveItemStack() == stack
+                        ? 1.0F : 0.0F;
+                }
+            }
+        );
+
+        ItemModelsProperties.func_239418_a_( // registerModelProperty
+            this,
             new ResourceLocation("pull"),
             new IItemPropertyGetter() {
                 @Override
                 @OnlyIn(Dist.CLIENT)
-                public float call(ItemStack stack, World worldIn, LivingEntity entityIn) {
-                    if (entityIn == null) {
+                public float call(ItemStack stack, ClientWorld world, LivingEntity entity) {
+                    if (entity == null) {
                         return 0.0F;
                     } else {
-                        ItemStack itemstack = entityIn.getActiveItemStack();
+                        ItemStack itemstack = entity.getActiveItemStack();
                         return itemstack != null && itemstack.getItem() instanceof ItemLuckyBow
-                            ? (stack.getUseDuration() - entityIn.getItemInUseCount()) / 20.0F
+                            ? (stack.getUseDuration() - entity.getItemInUseCount()) / 20.0F
                             : 0.0F;
                     }
                 }
-            });
-        this.addPropertyOverride(
-            new ResourceLocation("pulling"),
-            new IItemPropertyGetter() {
-                @Override
-                @OnlyIn(Dist.CLIENT)
-                public float call(ItemStack stack, World worldIn, LivingEntity entityIn) {
-                    return entityIn != null
-                        && entityIn.isHandActive()
-                        && entityIn.getActiveItemStack() == stack
-                        ? 1.0F : 0.0F;
-                }
-            });
-         */
+            }
+        );
     }
 
     @Override
@@ -107,6 +116,7 @@ public class ItemLuckyBow extends BowItem implements ILuckyItemContainer {
                         DropProcessData dropData =
                             new DropProcessData(world, player, arrowEntity.getPositionVec())
                                 .setBowPower(power * 3.0F);
+
                         if (drops != null && drops.length != 0)
                             this.getLuckyItem().getDropProcessor()
                                 .processRandomDrop(

@@ -33,21 +33,24 @@ public class ValueParser {
     public static Object getObject(String string, Class objectType, DropProcessData processData)
         throws Exception {
         if (objectType == String.class) return getString(string, processData);
-        if (objectType == Integer.class) return getInteger(string, processData);
         if (objectType == Boolean.class) return getBoolean(string, processData);
+        if (objectType == Byte.class) return getByte(string, processData);
+        if (objectType == Short.class) return getShort(string, processData);
+        if (objectType == Integer.class) return getInteger(string, processData);
         if (objectType == Float.class) return getFloat(string, processData);
         if (objectType == Double.class) return getDouble(string, processData);
-        if (objectType == Short.class) return getShort(string, processData);
-        if (objectType == Byte.class) return getByte(string, processData);
         if (objectType == CompoundNBT.class) return getNBTTag(string, processData);
         return null;
     }
 
     public static INBT getNBTFromValue(Object value) {
         if (value.getClass() == String.class) return StringNBT.valueOf((String) value);
-        if (value.getClass() == Integer.class) return IntNBT.valueOf((Integer) value);
         if (value.getClass() == Boolean.class) return ByteNBT.valueOf((byte) ((Boolean) value ? 1 : 0));
+        if (value.getClass() == Byte.class) return ByteNBT.valueOf((Byte) value);
+        if (value.getClass() == Short.class) return ShortNBT.valueOf((Short) value);
+        if (value.getClass() == Integer.class) return IntNBT.valueOf((Integer) value);
         if (value.getClass() == Float.class) return FloatNBT.valueOf((Float) value);
+        if (value.getClass() == Double.class) return DoubleNBT.valueOf((Double) value);
         if (value instanceof int[]) new IntArrayNBT((int[]) value);
         if (value instanceof byte[]) new ByteArrayNBT((byte[]) value);
         if (value instanceof INBT) return (INBT) value;
@@ -56,9 +59,11 @@ public class ValueParser {
 
     public static Object getValueFromNBT(INBT nbt) {
         if (nbt.getClass() == StringNBT.class) return ((StringNBT) nbt).getString();
-        if (nbt.getClass() == IntNBT.class) return ((IntNBT) nbt).getInt();
         if (nbt.getClass() == ByteNBT.class) return ((ByteNBT) nbt).getByte() == 1;
+        if (nbt.getClass() == ShortNBT.class) return ((ShortNBT) nbt).getShort();
+        if (nbt.getClass() == IntNBT.class) return ((IntNBT) nbt).getInt();
         if (nbt.getClass() == FloatNBT.class) return ((FloatNBT) nbt).getFloat();
+        if (nbt.getClass() == DoubleNBT.class) return ((DoubleNBT) nbt).getDouble();
         if (nbt instanceof IntArrayNBT) ((IntArrayNBT) nbt).getIntArray();
         if (nbt instanceof ByteArrayNBT) ((ByteArrayNBT) nbt).getByteArray();
         return nbt;
@@ -84,7 +89,7 @@ public class ValueParser {
         String prefixSign = "";
         if (string.startsWith("-") || string.startsWith("+")) {
             prefixSign = string.substring(0, 1);
-            string = string.substring(1, string.length());
+            string = string.substring(1);
         }
 
         char operator = string.contains("+") ? '+'
@@ -128,10 +133,6 @@ public class ValueParser {
         return calculateNum(string).intValue();
     }
 
-    public static Double getDouble(String string) throws NumberFormatException {
-        return getDouble(string, null);
-    }
-
     public static Double getDouble(String string, DropProcessData processData)
         throws NumberFormatException {
         string = HashVariables.processString(string, processData);
@@ -160,28 +161,16 @@ public class ValueParser {
         return Boolean.valueOf(string);
     }
 
-    public static Short getShort(String string) {
-        return getShort(string, null);
-    }
-
     public static Short getShort(String string, DropProcessData processData)
         throws NumberFormatException {
         string = HashVariables.processString(string, processData);
         return calculateNum(string).shortValue();
     }
 
-    public static Byte getByte(String string) throws NumberFormatException {
-        return getByte(string, null);
-    }
-
     public static Byte getByte(String string, DropProcessData processData)
         throws NumberFormatException {
         string = HashVariables.processString(string, processData);
         return calculateNum(string).byteValue();
-    }
-
-    public static CompoundNBT getNBTTag(String string) throws Exception {
-        return getNBTTag(string, null);
     }
 
     public static CompoundNBT getNBTTag(String string, DropProcessData processData)
@@ -203,8 +192,7 @@ public class ValueParser {
         new ArrayList<String>(Arrays.asList("drops", "impact"));
 
     public static Object getNBTTagValue(
-        String string, DropProcessData processData, INBT parentTag, String parentTagName)
-        throws Exception {
+        String string, DropProcessData processData, INBT parentTag, String parentTagName) {
 
         if (string.startsWith("(") && string.endsWith(")")) {
             String[] tagContents =
@@ -241,7 +229,7 @@ public class ValueParser {
             return getString(string, processData);
         }
         if (string.startsWith("#")) {
-            INBT tagBase = CustomNBTTags.getNBTTagFromString(string, processData);
+            INBT tagBase = NBTHashVariables.getNBTTagFromString(string, processData);
             if (tagBase != null) return tagBase;
         }
 
@@ -286,23 +274,9 @@ public class ValueParser {
 
     public static void setNBTTagValue(INBT curTag, String tagName, Object tagValue) {
         if (curTag instanceof CompoundNBT) {
-            CompoundNBT tagCompound = (CompoundNBT) curTag;
-            if (tagValue instanceof String) tagCompound.putString(tagName, (String) tagValue);
-            if (tagValue instanceof Boolean) tagCompound.putBoolean(tagName, (Boolean) tagValue);
-            if (tagValue instanceof Integer) tagCompound.putInt(tagName, (Integer) tagValue);
-            if (tagValue instanceof Float) tagCompound.putFloat(tagName, (Float) tagValue);
-            if (tagValue instanceof Double) tagCompound.putDouble(tagName, (Double) tagValue);
-            if (tagValue instanceof Short) tagCompound.putShort(tagName, (Short) tagValue);
-            if (tagValue instanceof Byte) tagCompound.putByte(tagName, (Byte) tagValue);
-            if (tagValue instanceof int[]) tagCompound.putIntArray(tagName, (int[]) tagValue);
-            if (tagValue instanceof byte[]) tagCompound.putByteArray(tagName, (byte[]) tagValue);
-            if (tagValue instanceof CompoundNBT)
-                tagCompound.put(tagName, (CompoundNBT) tagValue);
-            if (tagValue instanceof ListNBT) tagCompound.put(tagName, (ListNBT) tagValue);
-        }
-        if (curTag instanceof ListNBT) {
-            ListNBT tagList = (ListNBT) curTag;
-            if (tagValue instanceof String) tagList.add(getNBTFromValue(tagValue));
+            ((CompoundNBT) curTag).put(tagName, getNBTFromValue(tagValue));
+        } else if (curTag instanceof ListNBT) {
+            ((ListNBT) curTag).add(getNBTFromValue(tagValue));
         }
     }
 

@@ -2,6 +2,7 @@ package mod.lucky.init;
 
 import mod.lucky.render.RenderLuckyPotion;
 import mod.lucky.render.RenderLuckyProjectile;
+import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraftforge.api.distmarker.Dist;

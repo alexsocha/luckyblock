@@ -1,6 +1,5 @@
 package mod.lucky.drop.func;
 
-import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.entity.EntityLuckyPotion;
 import mod.lucky.entity.EntityLuckyProjectile;
@@ -17,8 +16,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.UUID;
-
 public class DropFuncEntity extends DropFunc {
     @Override
     public void process(DropProcessData processData) {
@@ -30,30 +27,27 @@ public class DropFuncEntity extends DropFunc {
 
         if (posY <= -1) return;
 
-        Entity entity;
         CompoundNBT nbtTagCompound =
             drop.getPropertyNBT("NBTTag") == null
                 ? new CompoundNBT()
                 : drop.getPropertyNBT("NBTTag");
 
         String id = drop.getPropertyString("ID");
-        if ((id.equals("lightning_bolt") || id.equals("LightningBolt"))
-            && processData.getWorld() instanceof ServerWorld) {
+        if (!processData.getWorld().isRemote()) {
+            if (id.equals("lightning_bolt") || id.equals("LightningBolt")) {
+                LightningBoltEntity lightningBolt = EntityType.LIGHTNING_BOLT.create(processData.getWorld());
+                lightningBolt.moveForced(posX, posY, posZ);
+                processData.getWorld().addEntity(lightningBolt);
 
-            LightningBoltEntity lightningBolt = EntityType.LIGHTNING_BOLT.create(processData.getWorld());
-            lightningBolt.moveForced(posX, posY, posZ);
-            processData.getWorld().addEntity(lightningBolt);
-
-        } else {
-            nbtTagCompound.putString("id", id);
-            spawnEntity(processData, nbtTagCompound, processData.getWorld(), posX, posY, posZ);
+            } else {
+                nbtTagCompound.putString("id", id);
+                spawnEntity(processData, nbtTagCompound, processData.getWorld(), posX, posY, posZ);
+            }
         }
     }
 
     private static Entity spawnEntity(DropProcessData processData, CompoundNBT tag,
         World world, double posX, double posY, double posZ) {
-
-        if (!(world instanceof ServerWorld)) return null;
 
         // adjust height
         for (int y = 0; y < 10; y++) {

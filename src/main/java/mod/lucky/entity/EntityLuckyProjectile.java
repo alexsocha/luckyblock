@@ -50,14 +50,6 @@ public class EntityLuckyProjectile extends ArrowEntity {
         this.dropProcessorImpact = new DropProcessor();
     }
 
-    public ItemStack getItemStack() {
-        return this.getDataManager().get(ITEM_STACK);
-    }
-
-    private void setItemStack(ItemStack stack) {
-        this.getDataManager().set(ITEM_STACK, stack);
-    }
-
     private void luckyTick() {
         Vector3d pos = this.getPositionVec();
         try {
@@ -129,14 +121,23 @@ public class EntityLuckyProjectile extends ArrowEntity {
     }
 
     @Override
-    protected void onEntityHit(EntityRayTraceResult rayTrace) {
-        super.onEntityHit(rayTrace);
-        if (!this.world.isRemote) {
-            Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY
-                ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
-            this.luckyHit(hitEntity);
+    protected void onImpact(RayTraceResult rayTrace) {
+        super.onImpact(rayTrace);
+        if (rayTrace.getType() != RayTraceResult.Type.MISS) {
+            if (!this.world.isRemote) {
+                Entity hitEntity = rayTrace.getType() == RayTraceResult.Type.ENTITY
+                    ? ((EntityRayTraceResult) rayTrace).getEntity() : null;
+                this.luckyHit(hitEntity);
+            }
         }
         this.remove();
+    }
+
+    @Override
+    protected void onEntityHit(EntityRayTraceResult rayTrace) {
+        if (!this.world.isRemote) {
+            this.luckyHit(rayTrace.getEntity());
+        }
     }
 
     @Override

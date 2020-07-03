@@ -9,6 +9,8 @@ import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ISeedReader;
@@ -61,26 +63,33 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
     }
 
     private boolean generate(IWorld world, Random rand, BlockPos pos) {
-        try {
-            if (this.block.canPlaceAt(world, pos)) {
-                ResourceLocation dimension = world.getWorld().func_234923_W_().func_240901_a_();
+        ResourceLocation dimension = world.getWorld().func_234923_W_().func_240901_a_();
 
-                if (this.dimensionDrops.containsKey(dimension.toString())) {
-                    ArrayList<DropFull> drops = this.dimensionDrops.get(dimension.toString());
-                    this.generate(world, rand, pos, drops);
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            Lucky.error(e, "Error during natural generation");
+        if (this.dimensionDrops.containsKey(dimension.toString())) {
+            ArrayList<DropFull> drops = this.dimensionDrops.get(dimension.toString());
+            this.generate(world, rand, pos, drops);
+            return true;
         }
         return false;
     }
 
     @Override
     public boolean func_230362_a_(ISeedReader world, StructureManager structureManager, ChunkGenerator chunkGenerator, Random random, BlockPos pos, NoFeatureConfig config) {
-        BlockPos validPos = world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos);
-        return this.generate(world, random, pos);
+        try {
+            pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, pos);
+            while (pos.getY() > 0) {
+                BlockState soilState = world.getBlockState(
+                    new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ()));
+
+                if (soilState.getBlock() == Blocks.BEDROCK || !this.block.canPlaceAt(world, pos)) pos = pos.down();
+                else return this.generate(world, random, pos);
+            }
+            return false;
+
+        } catch (Exception e) {
+            Lucky.error(e, "Error during natural generation");
+            return false;
+        }
     }
 
     private DropFull initDrop(ResourceLocation dimension, DropFull drop) {

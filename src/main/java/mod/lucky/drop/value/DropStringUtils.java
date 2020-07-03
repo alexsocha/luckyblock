@@ -1,14 +1,6 @@
 package mod.lucky.drop.value;
 
 public class DropStringUtils {
-    public static String fixBackslash(String string) {
-        string = string.replaceAll("\\\\t", "\t");
-        string = string.replaceAll("\\\\b", "\b");
-        string = string.replaceAll("\\\\n", "\n");
-        string = string.replaceAll("\\\\r", "\r");
-        string = string.replaceAll("\\\\f", "\f");
-        return string;
-    }
 
     public static boolean hasDecimalPoint(String string) {
         if (string == null) return false;

@@ -19,7 +19,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -28,12 +27,10 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class BlockLuckyBlock extends ContainerBlock {
     private DropProcessor dropProcessor;
     private LuckyGenerator worldGenerator;
-    private IForgeRegistryEntry<IRecipe> blockRecipe;
     private boolean doCreativeDrops = false;
 
     public BlockLuckyBlock() {
@@ -131,10 +128,13 @@ public class BlockLuckyBlock extends ContainerBlock {
 
     @Override
     public boolean removedByPlayer(BlockState state, World world,
-        BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
+        BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluidState) {
+
+        super.removedByPlayer(state, world, pos, player, willHarvest, fluidState);
 
         if (player.isCreative() && this.doCreativeDrops)
             this.removeLuckyBlock(world, player, pos, false);
+
         return true;
     }
 
@@ -149,7 +149,6 @@ public class BlockLuckyBlock extends ContainerBlock {
 
         return (curState.getMaterial().isReplaceable()
             && !curState.getMaterial().isLiquid()
-            && (world.getLight(pos) >= 8 || world.canBlockSeeSky(pos))
             && (this.canPlaceOnBlock(soilState)));
     }
 
@@ -191,12 +190,6 @@ public class BlockLuckyBlock extends ContainerBlock {
     public void setWorldGenerator(LuckyGenerator gen) { this.worldGenerator = gen; }
 
     public void setDoCreativeDrops(boolean doDrops) { this.doCreativeDrops = doDrops; }
-
-    public BlockLuckyBlock setBlockRecipe(IForgeRegistryEntry<IRecipe> recipe) {
-        this.blockRecipe = recipe;
-        return this;
-    }
-    public IForgeRegistryEntry<IRecipe> getBlockRecipe() { return this.blockRecipe; }
 
     @Override
     public BlockRenderType getRenderType(BlockState state) {

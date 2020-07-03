@@ -24,128 +24,8 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class CustomNBTTags {
-    public static final CompoundNBT protection = getEnchantment(Enchantments.PROTECTION, 4);
-    public static final CompoundNBT fireProtection = getEnchantment(Enchantments.FIRE_PROTECTION, 4);
-    public static final CompoundNBT featherFalling = getEnchantment(Enchantments.FEATHER_FALLING, 4);
-    public static final CompoundNBT blastProtection = getEnchantment(Enchantments.BLAST_PROTECTION, 4);
-    public static final CompoundNBT projectileProtection = getEnchantment(Enchantments.PROJECTILE_PROTECTION, 4);
-    public static final CompoundNBT respiration = getEnchantment(Enchantments.RESPIRATION, 3);
-    public static final CompoundNBT aquaAffinity = getEnchantment(Enchantments.AQUA_AFFINITY, 1);
-    public static final CompoundNBT thorns = getEnchantment(Enchantments.THORNS, 3);
-
-    public static final CompoundNBT sharpness = getEnchantment(Enchantments.SHARPNESS, 5);
-    public static final CompoundNBT smite = getEnchantment(Enchantments.SMITE, 5);
-    public static final CompoundNBT baneOfArthroponds = getEnchantment(Enchantments.BANE_OF_ARTHROPODS, 5);
-    public static final CompoundNBT knockBack = getEnchantment(Enchantments.KNOCKBACK, 2);
-    public static final CompoundNBT fireAspect = getEnchantment(Enchantments.FIRE_ASPECT, 2);
-    public static final CompoundNBT looting = getEnchantment(Enchantments.LOOTING, 3);
-
-    public static final CompoundNBT efficiency = getEnchantment(Enchantments.EFFICIENCY, 5);
-    public static final CompoundNBT silkTouch = getEnchantment(Enchantments.SILK_TOUCH, 1);
-    public static final CompoundNBT unbreaking = getEnchantment(Enchantments.UNBREAKING, 3);
-    public static final CompoundNBT fortune = getEnchantment(Enchantments.FORTUNE, 3);
-
-    public static final CompoundNBT power = getEnchantment(Enchantments.POWER, 5);
-    public static final CompoundNBT punch = getEnchantment(Enchantments.PUNCH, 2);
-    public static final CompoundNBT flame = getEnchantment(Enchantments.FLAME, 1);
-    public static final CompoundNBT infinity = getEnchantment(Enchantments.INFINITY, 1);
-public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_OF_THE_SEA, 3);
-    public static final CompoundNBT lure = getEnchantment(Enchantments.LURE, 3);
-
-    public static final CompoundNBT speed = getEffectInstance(Effects.SPEED, 3, 9600);
-    public static final CompoundNBT slowness = getEffectInstance(Effects.SLOWNESS, 3, 9600);
-    public static final CompoundNBT haste = getEffectInstance(Effects.HASTE, 3, 9600);
-    public static final CompoundNBT miningFatigue = getEffectInstance(Effects.MINING_FATIGUE, 3, 9600);
-    public static final CompoundNBT strength = getEffectInstance(Effects.STRENGTH, 3, 9600);
-    public static final CompoundNBT instantHealth = getEffectInstance(Effects.INSTANT_HEALTH, 3, 0);
-    public static final CompoundNBT instantDamage = getEffectInstance(Effects.INSTANT_DAMAGE, 3, 0);
-    public static final CompoundNBT jumpBoost = getEffectInstance(Effects.JUMP_BOOST, 3, 9600);
-    public static final CompoundNBT nausea = getEffectInstance(Effects.NAUSEA, 0, 9600);
-    public static final CompoundNBT regeneration = getEffectInstance(Effects.REGENERATION, 3, 9600);
-    public static final CompoundNBT resistance = getEffectInstance(Effects.RESISTANCE, 3, 9600);
-    public static final CompoundNBT fireResistance = getEffectInstance(Effects.FIRE_RESISTANCE, 0, 9600);
-    public static final CompoundNBT waterBreathing = getEffectInstance(Effects.WATER_BREATHING, 0, 9600);
-    public static final CompoundNBT invisibility = getEffectInstance(Effects.INVISIBILITY, 0, 9600);
-    public static final CompoundNBT blindness = getEffectInstance(Effects.BLINDNESS, 0, 9600);
-    public static final CompoundNBT nightVision = getEffectInstance(Effects.NIGHT_VISION, 0, 9600);
-    public static final CompoundNBT hunger = getEffectInstance(Effects.HUNGER, 3, 9600);
-    public static final CompoundNBT weakness = getEffectInstance(Effects.WEAKNESS, 3, 9600);
-    public static final CompoundNBT poison = getEffectInstance(Effects.POISON, 3, 9600);
-    public static final CompoundNBT wither = getEffectInstance(Effects.WITHER, 3, 9600);
-    public static final CompoundNBT healthBoost = getEffectInstance(Effects.HEALTH_BOOST, 3, 9600);
-    public static final CompoundNBT absorbtion = getEffectInstance(Effects.ABSORPTION, 3, 9600);
-    public static final CompoundNBT saturation = getEffectInstance(Effects.SATURATION, 3, 9600);
-
-    public static Random random = new Random();
-
-    public static CompoundNBT getEnchantment(Enchantment enchantment, int maxLevel) {
-        CompoundNBT nbttag = new CompoundNBT();
-
-        nbttag.putString("id", ForgeRegistries.ENCHANTMENTS.getKey(enchantment).toString());
-        nbttag.putShort("lvl", (short) maxLevel);
-
-        return nbttag;
-    }
-
-    public static CompoundNBT getEffectInstance(Effect potion, int amplifier, int duration) {
-        CompoundNBT nbttag = new CompoundNBT();
-        EffectInstance effect = new EffectInstance(potion, duration, amplifier);
-        return effect.write(nbttag);
-    }
-
-    public static ArrayList<CompoundNBT> getRandomList(
-        int minAmount, int maxAmount, CompoundNBT... elements) {
-        int amountToRemove =
-            elements.length - (random.nextInt((maxAmount + 1) - minAmount) + minAmount);
-
-        ArrayList<CompoundNBT> chosenElementList = new ArrayList<CompoundNBT>(elements.length);
-        for (CompoundNBT element : elements) {
-            chosenElementList.add(element.copy());
-        }
-
-        for (int a = 0; a < amountToRemove; a++) {
-            int index = random.nextInt(chosenElementList.size());
-            chosenElementList.remove(index);
-        }
-
-        return chosenElementList;
-    }
-
-    public static ListNBT getRandomEnchantmentList(
-        int minAmount, int maxAmount, CompoundNBT... enchantments) {
-        ArrayList<CompoundNBT> chosenEnchantments =
-            getRandomList(minAmount, maxAmount, enchantments);
-
-        ListNBT nbttaglist = new ListNBT();
-        for (CompoundNBT enchantment : chosenEnchantments) {
-            enchantment.putShort("lvl", (short) (random.nextInt(enchantment.getShort("lvl")) + 1));
-            nbttaglist.add(enchantment);
-        }
-
-        return nbttaglist;
-    }
-
-    public static ListNBT getRandomEffectInstanceList(
-        int minAmount, int maxAmount, CompoundNBT... potionEffects) {
-        ArrayList<CompoundNBT> chosenEffectInstances =
-            getRandomList(minAmount, maxAmount, potionEffects);
-
-        ListNBT nbttaglist = new ListNBT();
-        for (CompoundNBT potionEffect : chosenEffectInstances) {
-            potionEffect.putByte(
-                "Amplifier", (byte) (random.nextInt(potionEffect.getByte("Amplifier") + 1)));
-            int minDuration = (int) (potionEffect.getInt("Duration") / 3F);
-            potionEffect.putInt(
-                "Duration",
-                random.nextInt((potionEffect.getInt("Duration") + 1) - minDuration) + minDuration);
-            nbttaglist.add(potionEffect);
-        }
-
-        return nbttaglist;
-    }
-
-    public static String[] nbtHashVariables = {
+public class NBTHashVariables {
+    public static String[] NBT_HASH_VARIABLES = {
         "#luckySwordEnchantments",
         "#luckyAxeEnchantments",
         "#luckyToolEnchantments",
@@ -163,6 +43,126 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
         "#bowMotion",
         "#chestLootTable"
     };
+
+    private static final CompoundNBT protection = getEnchantment(Enchantments.PROTECTION, 4);
+    private static final CompoundNBT fireProtection = getEnchantment(Enchantments.FIRE_PROTECTION, 4);
+    private static final CompoundNBT featherFalling = getEnchantment(Enchantments.FEATHER_FALLING, 4);
+    private static final CompoundNBT blastProtection = getEnchantment(Enchantments.BLAST_PROTECTION, 4);
+    private static final CompoundNBT projectileProtection = getEnchantment(Enchantments.PROJECTILE_PROTECTION, 4);
+    private static final CompoundNBT respiration = getEnchantment(Enchantments.RESPIRATION, 3);
+    private static final CompoundNBT aquaAffinity = getEnchantment(Enchantments.AQUA_AFFINITY, 1);
+    private static final CompoundNBT thorns = getEnchantment(Enchantments.THORNS, 3);
+
+    private static final CompoundNBT sharpness = getEnchantment(Enchantments.SHARPNESS, 5);
+    private static final CompoundNBT smite = getEnchantment(Enchantments.SMITE, 5);
+    private static final CompoundNBT baneOfArthroponds = getEnchantment(Enchantments.BANE_OF_ARTHROPODS, 5);
+    private static final CompoundNBT knockBack = getEnchantment(Enchantments.KNOCKBACK, 2);
+    private static final CompoundNBT fireAspect = getEnchantment(Enchantments.FIRE_ASPECT, 2);
+    private static final CompoundNBT looting = getEnchantment(Enchantments.LOOTING, 3);
+
+    private static final CompoundNBT efficiency = getEnchantment(Enchantments.EFFICIENCY, 5);
+    private static final CompoundNBT silkTouch = getEnchantment(Enchantments.SILK_TOUCH, 1);
+    private static final CompoundNBT unbreaking = getEnchantment(Enchantments.UNBREAKING, 3);
+    private static final CompoundNBT fortune = getEnchantment(Enchantments.FORTUNE, 3);
+
+    private static final CompoundNBT power = getEnchantment(Enchantments.POWER, 5);
+    private static final CompoundNBT punch = getEnchantment(Enchantments.PUNCH, 2);
+    private static final CompoundNBT flame = getEnchantment(Enchantments.FLAME, 1);
+    private static final CompoundNBT infinity = getEnchantment(Enchantments.INFINITY, 1);
+    private static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_OF_THE_SEA, 3);
+    private static final CompoundNBT lure = getEnchantment(Enchantments.LURE, 3);
+
+    private static final CompoundNBT speed = getEffectInstance(Effects.SPEED, 3, 9600);
+    private static final CompoundNBT slowness = getEffectInstance(Effects.SLOWNESS, 3, 9600);
+    private static final CompoundNBT haste = getEffectInstance(Effects.HASTE, 3, 9600);
+    private static final CompoundNBT miningFatigue = getEffectInstance(Effects.MINING_FATIGUE, 3, 9600);
+    private static final CompoundNBT strength = getEffectInstance(Effects.STRENGTH, 3, 9600);
+    private static final CompoundNBT instantHealth = getEffectInstance(Effects.INSTANT_HEALTH, 3, 0);
+    private static final CompoundNBT instantDamage = getEffectInstance(Effects.INSTANT_DAMAGE, 3, 0);
+    private static final CompoundNBT jumpBoost = getEffectInstance(Effects.JUMP_BOOST, 3, 9600);
+    private static final CompoundNBT nausea = getEffectInstance(Effects.NAUSEA, 0, 9600);
+    private static final CompoundNBT regeneration = getEffectInstance(Effects.REGENERATION, 3, 9600);
+    private static final CompoundNBT resistance = getEffectInstance(Effects.RESISTANCE, 3, 9600);
+    private static final CompoundNBT fireResistance = getEffectInstance(Effects.FIRE_RESISTANCE, 0, 9600);
+    private static final CompoundNBT waterBreathing = getEffectInstance(Effects.WATER_BREATHING, 0, 9600);
+    private static final CompoundNBT invisibility = getEffectInstance(Effects.INVISIBILITY, 0, 9600);
+    private static final CompoundNBT blindness = getEffectInstance(Effects.BLINDNESS, 0, 9600);
+    private static final CompoundNBT nightVision = getEffectInstance(Effects.NIGHT_VISION, 0, 9600);
+    private static final CompoundNBT hunger = getEffectInstance(Effects.HUNGER, 3, 9600);
+    private static final CompoundNBT weakness = getEffectInstance(Effects.WEAKNESS, 3, 9600);
+    private static final CompoundNBT poison = getEffectInstance(Effects.POISON, 3, 9600);
+    private static final CompoundNBT wither = getEffectInstance(Effects.WITHER, 3, 9600);
+    private static final CompoundNBT healthBoost = getEffectInstance(Effects.HEALTH_BOOST, 3, 9600);
+    private static final CompoundNBT absorbtion = getEffectInstance(Effects.ABSORPTION, 3, 9600);
+    private static final CompoundNBT saturation = getEffectInstance(Effects.SATURATION, 3, 9600);
+
+    private static Random random = new Random();
+
+    private static CompoundNBT getEnchantment(Enchantment enchantment, int maxLevel) {
+        CompoundNBT nbttag = new CompoundNBT();
+
+        nbttag.putString("id", ForgeRegistries.ENCHANTMENTS.getKey(enchantment).toString());
+        nbttag.putShort("lvl", (short) maxLevel);
+
+        return nbttag;
+    }
+
+    private static CompoundNBT getEffectInstance(Effect potion, int amplifier, int duration) {
+        CompoundNBT nbttag = new CompoundNBT();
+        EffectInstance effect = new EffectInstance(potion, duration, amplifier);
+        return effect.write(nbttag);
+    }
+
+    private static ArrayList<CompoundNBT> getRandomList(
+        int minAmount, int maxAmount, CompoundNBT... elements) {
+        int amountToRemove =
+            elements.length - (random.nextInt((maxAmount + 1) - minAmount) + minAmount);
+
+        ArrayList<CompoundNBT> chosenElementList = new ArrayList<CompoundNBT>(elements.length);
+        for (CompoundNBT element : elements) {
+            chosenElementList.add(element.copy());
+        }
+
+        for (int a = 0; a < amountToRemove; a++) {
+            int index = random.nextInt(chosenElementList.size());
+            chosenElementList.remove(index);
+        }
+
+        return chosenElementList;
+    }
+
+    private static ListNBT getRandomEnchantmentList(
+        int minAmount, int maxAmount, CompoundNBT... enchantments) {
+        ArrayList<CompoundNBT> chosenEnchantments =
+            getRandomList(minAmount, maxAmount, enchantments);
+
+        ListNBT nbttaglist = new ListNBT();
+        for (CompoundNBT enchantment : chosenEnchantments) {
+            enchantment.putShort("lvl", (short) (random.nextInt(enchantment.getShort("lvl")) + 1));
+            nbttaglist.add(enchantment);
+        }
+
+        return nbttaglist;
+    }
+
+    private static ListNBT getRandomEffectInstanceList(
+        int minAmount, int maxAmount, CompoundNBT... potionEffects) {
+        ArrayList<CompoundNBT> chosenEffectInstances =
+            getRandomList(minAmount, maxAmount, potionEffects);
+
+        ListNBT nbttaglist = new ListNBT();
+        for (CompoundNBT potionEffect : chosenEffectInstances) {
+            potionEffect.putByte(
+                "Amplifier", (byte) (random.nextInt(potionEffect.getByte("Amplifier") + 1)));
+            int minDuration = (int) (potionEffect.getInt("Duration") / 3F);
+            potionEffect.putInt(
+                "Duration",
+                random.nextInt((potionEffect.getInt("Duration") + 1) - minDuration) + minDuration);
+            nbttaglist.add(potionEffect);
+        }
+
+        return nbttaglist;
+    }
 
     public static INBT getNBTTagFromString(String name, DropProcessData processData) {
         if (name.equals("#luckySwordEnchantments"))
@@ -344,30 +344,27 @@ public static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_
                     if (splitValue.length > 1) randAngle = ValueParser.getFloat(splitValue[1], processData);
                 }
 
-                Entity shooter = processData.getPlayer();
-                Vector3d shooterPos = shooter.getPositionVec();
-                ArrowEntity entityArrow;
-                if (shooter instanceof LivingEntity)
-                    entityArrow = new ArrowEntity(processData.getWorld(), (LivingEntity) shooter);
-                else
-                    entityArrow =
-                        new ArrowEntity(
-                            processData.getWorld(), shooterPos.z, shooterPos.y, shooterPos.z);
+                Entity player = processData.getPlayer();
+                Vector3d playerPos = player.getPositionVec();
 
-                entityArrow.setShooter(shooter);
-                entityArrow.shoot(
-                    shooter.rotationPitch
+                ArrowEntity arrowEntity = processData.getPlayer() instanceof LivingEntity
+                    ? new ArrowEntity(processData.getWorld(), (LivingEntity) player)
+                    : new ArrowEntity(processData.getWorld(), playerPos.x, playerPos.y, playerPos.z);
+
+                arrowEntity.func_234612_a_( // setArrowMotion
+                    player,
+                    player.rotationPitch
                         + HashVariables.randomFloatClamp(
-                        processData.getWorld().rand, -randAngle, randAngle),
-                    shooter.rotationYaw
+                            processData.getWorld().rand, -randAngle, randAngle),
+                    player.rotationYaw
                         + HashVariables.randomFloatClamp(
-                        processData.getWorld().rand, -randAngle, randAngle),
+                            processData.getWorld().rand, -randAngle, randAngle),
                     0.0F,
-                    processData.getBowPower(),
+                    processData.getBowPower() * 3.0F * bowPowerMod,
                     1.0F);
 
                 ListNBT motionList = new ListNBT();
-                Vector3d arrowMotion = entityArrow.getMotion();
+                Vector3d arrowMotion = arrowEntity.getMotion();
                 motionList.add(DoubleNBT.valueOf(arrowMotion.x));
                 motionList.add(DoubleNBT.valueOf(arrowMotion.y));
                 motionList.add(DoubleNBT.valueOf(arrowMotion.z));

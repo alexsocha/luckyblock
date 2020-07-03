@@ -10,7 +10,6 @@ public class ResourceManager {
     private static File PLUGIN_DIR_OLD = new File("/addons/luckyBlock");
     private static File PLUGIN_DIR = new File("/addons/lucky");
 
-    private boolean isClient;
     private File minecraftDir;
     private ArrayList<BaseResource> resourceList;
     private DefaultLoader defaultLoader;

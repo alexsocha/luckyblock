@@ -1,4 +1,4 @@
->surface
+>minecraft:overworld
 
 / single block
 type=block,ID=lucky:lucky_block@chance=600
@@ -18,9 +18,8 @@ type=block,ID=obsidian,posOffset=#circleOffset(#rand(0,2)),amount=#rand(0,2); \
 / lucky block
 type=block,ID=lucky:lucky_block,tileEntity=(Luck=-75))@chance=600
 
->nether
+>minecraft:the_nether
 type=block,ID=lucky:lucky_block@chance=35
 
->end
+>minecraft:the_end
 type=block,ID=lucky:lucky_block@chance=25
-

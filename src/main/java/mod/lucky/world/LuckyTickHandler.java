@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -36,6 +38,30 @@ public class LuckyTickHandler {
     public static void setShowUpdateMessage(boolean showUpdateMessage) {
         LuckyTickHandler.showUpdateMessage = showUpdateMessage;
     }
+
+    private static int compareVersions(String v1, String v2) {
+        String splitChar = v1.contains("-") || v2.contains("-") ? "-"
+            : v1.contains(".") || v2.contains(".") ? "."
+            : "";
+
+        if (!splitChar.equals("")) {
+            String[] v1Parts = v1.split(Pattern.quote(splitChar));
+            String[] v2Parts = v2.split(Pattern.quote(splitChar));
+            for (int i = 0; i < Math.max(v1Parts.length, v2Parts.length); i++) {
+                if (i >= v1Parts.length) return -1;
+                else if (i >= v2Parts.length) return 1;
+                else {
+                    int c = compareVersions(v1Parts[i], v2Parts[i]);
+                    if (c != 0) return c;
+                }
+            }
+            return 0;
+
+        } else {
+            return Integer.valueOf(v1).compareTo(Integer.valueOf(v2));
+        }
+    }
+
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void onClientTick(TickEvent.ClientTickEvent event) {
@@ -49,16 +75,13 @@ public class LuckyTickHandler {
                 URL url = new URL("http://www.minecraftascending.com/projects/lucky_block/download/version/version_log.txt");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
-                int curLuckyVersion = Integer.valueOf(Lucky.VERSION.replace(".", ""));
-                int curMinecraftVersion = Integer.valueOf(Lucky.MC_VERSION.replace(".", ""));
-
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] split = line.split("\\|");
-                    int luckyVersion = Integer.valueOf(split[0].replace(".", ""));
-                    int minecraftVersion = Integer.valueOf(split[1].replace(".", ""));
+                    String luckyVersion = split[0];
+                    String minecraftVersion = split[1];
 
-                    if (minecraftVersion >= curMinecraftVersion && luckyVersion > curLuckyVersion) {
+                    if (compareVersions(Lucky.MC_VERSION, minecraftVersion) >= 0 && compareVersions(Lucky.VERSION, luckyVersion) > 0) {
                         String message = split[2];
                         ITextComponent textComponent = ITextComponent.Serializer.func_240643_a_(message); // fromJson
                         Minecraft.getInstance().player.sendMessage(textComponent, Minecraft.getInstance().player.getUniqueID());
@@ -67,6 +90,7 @@ public class LuckyTickHandler {
                 }
             }
         } catch (Exception e) {
+            Lucky.error(e, "Error showing update message");
         }
     }
 
@@ -103,8 +127,7 @@ public class LuckyTickHandler {
                         DelayLuckyDrop delayDrop = (DelayLuckyDrop) this.delayDrops.get(i);
 
                         BlockPos harvestPos = delayDrop.getProcessData().getHarvestBlockPos();
-                        ChunkPos harvestChunkPos = event.getChunk().getWorldForge()
-                            .getChunk(harvestPos).getPos();
+                        ChunkPos harvestChunkPos = event.getWorld().getChunk(harvestPos).getPos();
 
                         if (harvestChunkPos == event.getChunk().getPos()) {
                             dropTags.add(delayDrop.writeToNBT());

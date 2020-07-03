@@ -14,6 +14,7 @@ import mod.lucky.init.SetupCommon;
 import mod.lucky.structure.Structure;
 import mod.lucky.structure.StructureUtils;
 import mod.lucky.util.LuckyUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.nbt.INBT;
@@ -101,7 +102,8 @@ public class HashVariables {
             }
 
             if (processData.getPlayer() != null) {
-                Vector3d playerPos = processData.getPlayer().getPositionVec();
+                Entity player = processData.getPlayer();
+                Vector3d playerPos = player.getPositionVec();
                 string = string.replace("#pPosX", String.valueOf(Math.floor(playerPos.x)));
                 string = string.replace("#pPosY", String.valueOf(Math.floor(playerPos.y)));
                 string = string.replace("#pPosZ", String.valueOf(Math.floor(playerPos.z)));
@@ -133,41 +135,41 @@ public class HashVariables {
                                 + ")"));
 
                 string =
-                    string.replace("#pName", processData.getPlayer().getName().getUnformattedComponentText());
-                string = string.replace("#pUUID", processData.getPlayer().getUniqueID().toString());
+                    string.replace("#pName", player.getName().getUnformattedComponentText());
+                string = string.replace("#pUUID", player.getUniqueID().toString());
                 int playerRotation =
-                    (int) Math.round((processData.getPlayer().getRotationYawHead() + 180.0D) / 90.0D) % 4;
+                    (int) Math.round((player.getRotationYawHead() + 180.0D) / 90.0D) % 4;
                 if (playerRotation < 0) playerRotation += 4;
                 string = string.replace("#pDirect", String.valueOf(playerRotation));
                 string =
-                    string.replace("#pYaw", String.valueOf(processData.getPlayer().getRotationYawHead()));
-                string = string.replace("#pPitch", String.valueOf(processData.getPlayer().rotationPitch));
+                    string.replace("#pYaw", String.valueOf(player.getRotationYawHead()));
+                string = string.replace("#pPitch", String.valueOf(player.rotationPitch));
 
-                ArrowEntity entityArrow;
-                if (processData.getPlayer() instanceof LivingEntity)
-                    entityArrow =
-                        new ArrowEntity(
-                            processData.getWorld(), (LivingEntity) processData.getPlayer());
-                else
-                    entityArrow =
-                        new ArrowEntity(
-                            processData.getWorld(),
-                            playerPos.x,
-                            playerPos.y,
-                            playerPos.z);
-                string = string.replace("#bowPosX", String.valueOf(entityArrow.getPositionVec().x));
-                string = string.replace("#bowPosY", String.valueOf(entityArrow.getPositionVec().y));
-                string = string.replace("#bowPosZ", String.valueOf(entityArrow.getPositionVec().z));
+                ArrowEntity arrowEntity = processData.getPlayer() instanceof LivingEntity
+                    ? new ArrowEntity(processData.getWorld(), (LivingEntity) player)
+                    : new ArrowEntity(processData.getWorld(), playerPos.x, playerPos.y, playerPos.z);
+
+                arrowEntity.func_234612_a_( // setArrowMotion
+                    player,
+                    player.rotationPitch,
+                    player.rotationYaw,
+                    0.0F,
+                    processData.getBowPower() * 3.0F,
+                    1.0F);
+
+                string = string.replace("#bowPosX", String.valueOf(arrowEntity.getPositionVec().x));
+                string = string.replace("#bowPosY", String.valueOf(arrowEntity.getPositionVec().y));
+                string = string.replace("#bowPosZ", String.valueOf(arrowEntity.getPositionVec().z));
                 string =
                     string.replace(
                         "#bowPos",
                         String.valueOf(
                             "("
-                                + entityArrow.getPositionVec().x
+                                + arrowEntity.getPositionVec().x
                                 + ","
-                                + entityArrow.getPositionVec().y
+                                + arrowEntity.getPositionVec().y
                                 + ","
-                                + entityArrow.getPositionVec().z
+                                + arrowEntity.getPositionVec().z
                                 + ")"));
             }
         }
@@ -438,7 +440,7 @@ public class HashVariables {
     public static boolean containsHashVariables(String string) {
         for (String hashVariable : hashVariables) if (string.contains(hashVariable)) return true;
         for (String hashVariable : bracketHashVariables) if (string.contains(hashVariable)) return true;
-        for (String hashVariable : CustomNBTTags.nbtHashVariables)
+        for (String hashVariable : NBTHashVariables.NBT_HASH_VARIABLES)
             if (string.contains(hashVariable)) return true;
         return false;
     }

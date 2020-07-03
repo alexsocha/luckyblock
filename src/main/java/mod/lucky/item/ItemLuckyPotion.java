@@ -66,7 +66,8 @@ public class ItemLuckyPotion extends Item implements ILuckyItemContainer {
                 world, player, this, this.getLuckyItem().getDropProcessor(), luck, drops);
 
             luckyPotion.setShooter(player);
-            luckyPotion.shoot(
+            luckyPotion.func_234612_a_( // setThrowableMotion
+                player,
                 player.rotationPitch,
                 player.rotationYaw,
                 -20.0F,

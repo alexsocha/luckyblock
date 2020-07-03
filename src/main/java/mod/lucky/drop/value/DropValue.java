@@ -44,36 +44,12 @@ public class DropValue {
         return this.needsInitialize;
     }
 
-    public String getRawValue() {
-        return this.rawValue;
-    }
-
     public Object getValue() {
         return this.value;
     }
 
     public int getValueInt() {
         return (Integer) this.value;
-    }
-
-    public String getValueString() {
-        return (String) this.value;
-    }
-
-    public boolean getValueBoolean() {
-        return (Boolean) this.value;
-    }
-
-    public float getValueFloat() {
-        return (Float) this.value;
-    }
-
-    public CompoundNBT getValueNBT() {
-        return (CompoundNBT) this.value;
-    }
-
-    public Class getValueType() {
-        return this.valueType;
     }
 
     public void setValue(Object object) {
