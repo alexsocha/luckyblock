@@ -1,0 +1,10 @@
+version: '3'
+services:
+  build:
+    image: openjdk:8
+    volumes:
+      - $HOME/.gradle/caches:/root/.gradle/caches
+      - $HOME/.gradle/wrapper:/root/.gradle/wrapper
+      - .:/app
+    working_dir: /app
+    command: ./gradlew luckyBuild

@@ -1,0 +1,12 @@
+language: generic
+
+services:
+  - docker
+
+script:
+  - docker-compose run build
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
