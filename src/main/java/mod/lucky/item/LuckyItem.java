@@ -58,6 +58,7 @@ public class LuckyItem {
                 .func_240699_a_(TextFormatting.GREEN); // applyTextStyle
 
         tooltip.add(new TranslationTextComponent("item.lucky.lucky_block.luck")
+            .func_240699_a_(TextFormatting.GRAY) // applyTextStyle
             .func_240702_b_(": ") // appendText
             .func_230529_a_(luckComponent)); // appendComponent
 
