@@ -66,7 +66,7 @@ public class BlockLuckyBlock extends ContainerBlock {
                 world.removeTileEntity(harvestPos);
             }
 
-            if (!world.removeBlock(harvestPos, false)) return false;
+            world.removeBlock(harvestPos, false);
 
             if (!world.isRemote) {
                 if (removedByRedstone) {
