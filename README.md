@@ -37,23 +37,29 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 
 ## Development
 
-### Updating
+### Update
 
-Edit the version constants at the top of  `build.gradle`.
+Edit the version constants at the top of  `build.gradle`, based on:
 
 - [Forge versions](http://files.minecraftforge.net/)
-- Dependency versions: [Forge repo](https://github.com/MinecraftForge/MinecraftForge) > `build.gradle` > `ext`
+- Mapping versions: [Forge repo](https://github.com/MinecraftForge/MinecraftForge) > `build.gradle` > `ext` > `MAPPING_VERSION`
 
-### Usage
+### Develop
 
 To use IntelliJ, ensure that the Gradle plugin is enabled, and import the directory as a Gradle project.
 
-- `gradle tasks`: View all available tasks
-- `gradle luckyBuild`: Build the project
-- `gradle luckyClient`: Run a Minecraft client
-- `gradle luckyServer`: Run a Minecraft server
-- `gradle luckyPackage`: Create a distributable jar file in `builds/lib`
+- `./gradlew tasks`: View all available tasks.
+- `./gradlew luckyBuild`: Build the project, and create a distributable jar file in `build/dist/{version}`.
+- `./gradlew luckyClient`: Run a Minecraft client.
+- `./gradlew luckyServer`: Run a Minecraft server.
+
+### Deploy
+
+1. Clean the `build/dist` directory.
+2. Run `./gradlew luckyBuild`.
+3. Run `./scripts/deploy.sh`.
 
 ## Copyright
-Copyright © 2015 Alex Socha. All Rights Reserved.
+Copyright © 2015-2020 Alex Socha. All Rights Reserved.
+
 By submitting a pull request, you agree to transfer all rights and ownership to the copyright holder.
