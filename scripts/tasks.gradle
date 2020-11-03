@@ -9,7 +9,7 @@ def distDir = "$buildDir/dist/$version"
 
 file("$distDir").mkdirs()
 
-SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss")
+SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"))
 
 task luckyWriteMeta() {
