@@ -1,7 +1,6 @@
 script_dir=$(dirname $0)
 dist_dir=$script_dir/../build/dist
-secret_folder=jKEbJUId
-deploy_dir=/var/www/html/projects/lucky_block/download/version/files/$secret_folder
+deploy_dir=/root/luckyblock-dist
 
-find $dist_dir -regex ".*\.jar" -exec \
-  scp {} root@minecraftascending.com:$deploy_dir \;
+find build/dist/* -maxdepth 1 -type d -exec \
+    scp -r {} root@luckyblockmod.com:$deploy_dir \;
