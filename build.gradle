@@ -1,8 +1,8 @@
-version = '1.16.1-1'
+version = '1.16.3-1'
 ext {
-    forge_version = '32.0.108'
-    mc_version = '1.16.1'
-    mapping_version = '20200514-1.16'
+    forge_version = '34.1.42'
+    mc_version = '1.16.3'
+    mapping_version = '20201028-1.16.3'
     jarname_dev = 'luckyblock-build'
     jarname_prd = "luckyblock-$version"
 }

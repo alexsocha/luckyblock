@@ -4,6 +4,7 @@ import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 public class DelayLuckyDrop {
@@ -49,7 +50,7 @@ public class DelayLuckyDrop {
         return mainTag;
     }
 
-    public void readFromNBT(CompoundNBT tagCompound, World world) {
+    public void readFromNBT(CompoundNBT tagCompound, IWorld world) {
         this.processData = new DropProcessData(world);
         this.processData.readFromNBT(tagCompound.getCompound("processData"));
         this.ticksRemaining = tagCompound.getLong("ticksRemaining");

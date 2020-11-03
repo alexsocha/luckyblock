@@ -37,7 +37,7 @@ public class SpawnPacket {
         private static void spawn(SpawnPacket msg) {
             ClientWorld world = Minecraft.getInstance().world;
 
-            Entity entity = EntityType.func_220335_a(msg.entityTag, world, e -> {
+            Entity entity = EntityType.loadEntityAndExecute(msg.entityTag, world, e -> {
                 world.addEntity(e.getEntityId(), e);
                 return e;
             });

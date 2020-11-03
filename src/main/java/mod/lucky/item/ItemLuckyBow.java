@@ -40,7 +40,7 @@ public class ItemLuckyBow extends BowItem implements ILuckyItemContainer {
 
     @OnlyIn(Dist.CLIENT)
     private void registerItemModels() {
-        ItemModelsProperties.func_239418_a_( // registerModelProperty
+        ItemModelsProperties.registerProperty(
             this,
             new ResourceLocation("pulling"),
             new IItemPropertyGetter() {
@@ -54,7 +54,7 @@ public class ItemLuckyBow extends BowItem implements ILuckyItemContainer {
             }
         );
 
-        ItemModelsProperties.func_239418_a_( // registerModelProperty
+        ItemModelsProperties.registerProperty(
             this,
             new ResourceLocation("pull"),
             new IItemPropertyGetter() {

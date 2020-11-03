@@ -152,7 +152,7 @@ public class DropProcessData {
 
         ResourceLocation dimension = new ResourceLocation(tagCompound.contains("world") ? tagCompound.getString("world") : "overworld");
         this.world = Minecraft.getInstance().getIntegratedServer()
-            .getWorld(RegistryKey.func_240903_a_(Registry.field_239699_ae_, dimension));
+            .getWorld(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, dimension));
     }
 
     public CompoundNBT writeToNBT() {
@@ -173,8 +173,9 @@ public class DropProcessData {
                     ? this.hitEntityUUID.toString()
                     : this.hitEntity.getUniqueID().toString());
 
-        ResourceLocation dimension = this.world.getWorld().func_234923_W_().func_240901_a_();
+        ResourceLocation dimension = ((World) this.world).getDimensionKey().getLocation();
         mainTag.putString("world", dimension.toString());
+
         return mainTag;
     }
 

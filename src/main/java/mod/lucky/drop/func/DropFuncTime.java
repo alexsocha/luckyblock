@@ -14,7 +14,7 @@ public class DropFuncTime extends DropFunc {
             : ValueParser.getInteger(id));
 
         if (!processData.getWorld().isRemote())
-            ((ServerWorld) processData.getWorld()).func_241114_a_(time); // setDayTime()
+            ((ServerWorld) processData.getWorld()).setDayTime(time);
     }
 
     @Override

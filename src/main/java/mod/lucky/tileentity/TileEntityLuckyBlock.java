@@ -27,10 +27,9 @@ public class TileEntityLuckyBlock extends TileEntity implements ITickableTileEnt
         return nbttag;
     }
 
-    // read
     @Override
-    public void func_230337_a_(BlockState blockState, CompoundNBT nbttag) {
-        super.func_230337_a_(blockState, nbttag);
+    public void read(BlockState blockState, CompoundNBT nbttag) {
+        super.read(blockState, nbttag);
 
         if (nbttag.contains("Drops"))
             this.drops = LuckyUtils.strArrayFromTagList(

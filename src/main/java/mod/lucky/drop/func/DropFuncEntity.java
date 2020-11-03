@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
@@ -41,13 +42,13 @@ public class DropFuncEntity extends DropFunc {
 
             } else {
                 nbtTagCompound.putString("id", id);
-                spawnEntity(processData, nbtTagCompound, processData.getWorld(), posX, posY, posZ);
+                spawnEntity(processData, nbtTagCompound, (ServerWorld) processData.getWorld(), posX, posY, posZ);
             }
         }
     }
 
     private static Entity spawnEntity(DropProcessData processData, CompoundNBT tag,
-        World world, double posX, double posY, double posZ) {
+        ServerWorld world, double posX, double posY, double posZ) {
 
         // adjust height
         for (int y = 0; y < 10; y++) {
@@ -65,10 +66,10 @@ public class DropFuncEntity extends DropFunc {
         }
 
         final Vector3d entityPos = new Vector3d(posX, posY, posZ);
-        Entity entity = EntityType.func_220335_a(tag, world, e -> {
+        Entity entity = EntityType.loadEntityAndExecute(tag, world, e -> {
             e.setLocationAndAngles(entityPos.x, entityPos.y, entityPos.z,
                 e.rotationYaw, e.rotationPitch);
-            return !((ServerWorld) world).summonEntity(e) ? null : e;
+            return !world.summonEntity(e) ? null : e;
         });
 
         if (entity == null) return null;

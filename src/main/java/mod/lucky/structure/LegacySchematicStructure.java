@@ -63,7 +63,7 @@ public class LegacySchematicStructure extends Structure {
         for (CompoundNBT entityNbt : this.entities)
             StructureUtils.setEntity(
                 processData.getWorld(),
-                EntityType.func_220335_a(entityNbt, processData.getWorld(), e -> e),
+                EntityType.loadEntityAndExecute(entityNbt, processData.getWorld(), e -> e),
                 this.centerPos,
                 harvestPos,
                 rotation);

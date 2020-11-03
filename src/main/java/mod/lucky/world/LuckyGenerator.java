@@ -15,11 +15,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.*;
-import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class LuckyGenerator extends Feature<NoFeatureConfig> {
@@ -44,9 +44,9 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
                 generator, new NoFeatureConfig());
 
         ForgeRegistries.BIOMES.forEach(biome ->
-            biome.addFeature(
-                GenerationStage.Decoration.SURFACE_STRUCTURES,
-                configuredGenerator));
+            biome.getGenerationSettings().getFeatures().get(
+                GenerationStage.Decoration.SURFACE_STRUCTURES.ordinal()
+            ).add(() -> configuredGenerator));
 
         return generator;
     }
@@ -62,8 +62,8 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
         }
     }
 
-    private boolean generate(IWorld world, Random rand, BlockPos pos) {
-        ResourceLocation dimension = world.getWorld().func_234923_W_().func_240901_a_();
+    private boolean generate(World world, Random rand, BlockPos pos) {
+        ResourceLocation dimension = world.getDimensionKey().getLocation();
 
         if (this.dimensionDrops.containsKey(dimension.toString())) {
             ArrayList<DropFull> drops = this.dimensionDrops.get(dimension.toString());
@@ -74,15 +74,18 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
     }
 
     @Override
-    public boolean func_230362_a_(ISeedReader world, StructureManager structureManager, ChunkGenerator chunkGenerator, Random random, BlockPos pos, NoFeatureConfig config) {
+    public boolean generate(ISeedReader world, ChunkGenerator chunkGenerator, Random random, BlockPos pos, NoFeatureConfig config) {
         try {
             pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, pos);
             while (pos.getY() > 0) {
                 BlockState soilState = world.getBlockState(
                     new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ()));
 
-                if (soilState.getBlock() == Blocks.BEDROCK || !this.block.canPlaceAt(world, pos)) pos = pos.down();
-                else return this.generate(world, random, pos);
+                if (soilState.getBlock() == Blocks.BEDROCK || !this.block.canPlaceAt(world, pos)) {
+                    pos = pos.down();
+                } else {
+                    if (world instanceof World) return this.generate((World) world, random, pos);
+                }
             }
             return false;
 

@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.gen.feature.template.IStructureProcessorType;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
@@ -65,11 +66,14 @@ public class TemplateStructure extends Structure {
 
         BlockPos adjustedPos = drop.getBlockPos().subtract(new BlockPos(this.centerPos));
 
-        this.template.func_237144_a_(processData.getRawWorld(),
-            adjustedPos, placementSettings, new Random());
+        if (processData.getRawWorld() instanceof IServerWorld) {
+            // place structure
+            this.template.func_237144_a_((IServerWorld) processData.getRawWorld(),
+                adjustedPos, placementSettings, new Random());
 
-        if (this.blockUpdate) blockPlacer.update();
-        this.processOverlay(processData);
+            if (this.blockUpdate) blockPlacer.update();
+            this.processOverlay(processData);
+        }
     }
 
     @Override

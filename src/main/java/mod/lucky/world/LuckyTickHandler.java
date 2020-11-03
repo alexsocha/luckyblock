@@ -100,7 +100,7 @@ public class LuckyTickHandler {
 
                     if (logVersionNumber > curVersionNumber) {
                         String message = split[2];
-                        ITextComponent textComponent = ITextComponent.Serializer.func_240643_a_(message); // fromJson
+                        ITextComponent textComponent = ITextComponent.Serializer.getComponentFromJson(message);
                         Minecraft.getInstance().player.sendMessage(textComponent, Minecraft.getInstance().player.getUniqueID());
                         writeDidShowUpdate(logVersionNumber);
                         break;
@@ -172,7 +172,7 @@ public class LuckyTickHandler {
                     DelayLuckyDrop delayDrop =
                         new DelayLuckyDrop(Lucky.luckyBlock.getDropProcessor(), null, 0);
                     delayDrop.readFromNBT(delayDropTags.getCompound(i),
-                        event.getChunk().getWorldForge().getWorld());
+                        event.getChunk().getWorldForge());
                     this.addDelayDrop(delayDrop);
                 }
             }
