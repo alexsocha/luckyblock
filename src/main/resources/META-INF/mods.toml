@@ -1,5 +1,6 @@
 modLoader="javafml"
 loaderVersion="[32,)"
+license="All rights reserved"
 
 [[mods]]
 modId="lucky"
