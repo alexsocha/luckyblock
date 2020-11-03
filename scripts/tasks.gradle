@@ -1,9 +1,29 @@
+import java.text.SimpleDateFormat;
+
 def luckyConfigDir = "$projectDir/lucky_config"
 def luckyRunConfigDir = "$projectDir/run/config/lucky/version-${project.version}"
 def luckyAddonDir = "$projectDir/template_addon"
 def luckyRunAddonDir = "$projectDir/run/addons/lucky/lucky_block_custom"
 def tmpDir = "$buildDir/libs"
-def distDir = "$buildDir/dist"
+def distDir = "$buildDir/dist/$version"
+
+file("$distDir").mkdirs()
+
+SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss")
+dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"))
+
+task luckyWriteMeta() {
+    group = 'Lucky Block'
+    description = 'Writes information about the current version to meta.yaml'
+    doLast {
+        file("$distDir/meta.yaml").text =
+            "version: $version\n" +
+            "mc_version: $mc_version\n" +
+            "forge_version: $forge_version\n" +
+            "revision: ${grgit.head().abbreviatedId}\n" +
+            "datetime: ${dateFormat.format(new Date())}\n"
+    }
+}
 
 task luckyCopyConfig(type: Copy) {
     group = 'Lucky Block'
@@ -29,12 +49,15 @@ task luckyZipConfig(type: Zip) {
 
 task luckyPackage(type: Zip) {
     group = 'Lucky Block'
-    description = 'Combines the build archive with the Lucky Block configuration files and generates the final zip.'
+    description = 'Combines the build archive with meta/configuration files to generate the final jar.'
     destinationDir = file(distDir)
-    archiveName = "${project.JAR_NAME_PRD}.jar"
-    from zipTree("$tmpDir/${project.JAR_NAME_DEV}.jar")
+    archiveName = "${jarname_prd}.jar"
+    from zipTree("$tmpDir/${jarname_dev}.jar")
     from("$tmpDir/default_config.zip") {
         into ('mod/lucky')
+    }
+    from("$distDir/meta.yaml") {
+        into ('')
     }
 }
 
@@ -57,9 +80,11 @@ task luckyBuild {
     group = 'Lucky Block'
     description = 'Builds the Lucky Block.'
     dependsOn build
+    dependsOn luckyWriteMeta
     dependsOn luckyZipConfig
     dependsOn luckyPackage
 
     luckyZipConfig.shouldRunAfter(build)
-    luckyPackage.shouldRunAfter(luckyZipConfig)
+    luckyWriteMeta.shouldRunAfter(luckyZipConfig)
+    luckyPackage.shouldRunAfter(luckyWriteMeta)
 }

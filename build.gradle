@@ -1,10 +1,10 @@
 version = '1.16.1-1'
 ext {
-    FORGE_VERSION = '1.16.1-32.0.61'
-    MC_VERSION = '1.16.1'
-    MAPPING_VERSION = '20200514-1.16'
-    JAR_NAME_DEV = 'luckyblock-build'
-    JAR_NAME_PRD = "luckyblock-$version"
+    forge_version = '32.0.61'
+    mc_version = '1.16.1'
+    mapping_version = '20200514-1.16'
+    jarname_dev = 'luckyblock-build'
+    jarname_prd = "luckyblock-$version"
 }
 
 buildscript {
@@ -15,9 +15,11 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'org.ajoberstar.grgit:grgit-gradle:4.0.2'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.ajoberstar.grgit'
 
 group = 'mod.lucky'
 archivesBaseName = 'lucky'
@@ -25,7 +27,7 @@ archivesBaseName = 'lucky'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: "$MAPPING_VERSION"
+    mappings channel: 'snapshot', version: "${project.mapping_version}"
     
     runs {
         client {
@@ -42,13 +44,13 @@ minecraft {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.FORGE_VERSION}"
+    minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
 }
 
 apply from: 'scripts/tasks.gradle' // custom tasks
 
 jar {
-    archiveName = "${project.JAR_NAME_DEV}.jar"
+    archiveName = "${project.jarname_dev}.jar"
     manifest {
         attributes([
             'Specification-Title': 'luckyblock',
