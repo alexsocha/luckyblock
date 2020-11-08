@@ -17,16 +17,14 @@ import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.*;
-import net.minecraftforge.registries.ForgeRegistries;
 
-public class LuckyGenerator extends Feature<NoFeatureConfig> {
+public class LuckyWorldFeature extends Feature<NoFeatureConfig> {
     private BlockLuckyBlock block;
     private HashMap<String, ArrayList<DropFull>> dimensionDrops;
 
-    public LuckyGenerator(Codec<NoFeatureConfig> codec) {
+    public LuckyWorldFeature(Codec<NoFeatureConfig> codec) {
         super(codec);
     }
 
@@ -35,35 +33,20 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
         this.dimensionDrops = new HashMap<>();
     }
 
-    public static LuckyGenerator registerNew(BlockLuckyBlock block) {
-        LuckyGenerator generator = new LuckyGenerator(NoFeatureConfig.field_236558_a_);
-        generator.init(block);
-
-        ConfiguredFeature<?, ?> configuredGenerator
-            = new ConfiguredFeature<NoFeatureConfig, LuckyGenerator>(
-                generator, new NoFeatureConfig());
-
-        ForgeRegistries.BIOMES.forEach(biome ->
-            biome.getGenerationSettings().getFeatures().get(
-                GenerationStage.Decoration.SURFACE_STRUCTURES.ordinal()
-            ).add(() -> configuredGenerator));
-
-        return generator;
-    }
-
     private void generate(IWorld world, Random rand, BlockPos pos, ArrayList<DropFull> drops) {
         int initIndex = rand.nextInt(drops.size());
         for (int i = 0; i < drops.size(); i++) {
             DropFull drop = drops.get((initIndex + i) % drops.size());
             if (rand.nextInt((int) drop.getChance()) == 0) {
                 DropProcessData processData = new DropProcessData(world, null, pos);
+                System.out.println("generating at: " + pos.toString());
                 this.block.getDropProcessor().processRandomDrop(drops, processData, 0);
             }
         }
     }
 
-    private boolean generate(World world, Random rand, BlockPos pos) {
-        ResourceLocation dimension = world.getDimensionKey().getLocation();
+    private boolean generate(ISeedReader world, Random rand, BlockPos pos) {
+        ResourceLocation dimension = world.getWorld().getDimensionKey().getLocation();
 
         if (this.dimensionDrops.containsKey(dimension.toString())) {
             ArrayList<DropFull> drops = this.dimensionDrops.get(dimension.toString());
@@ -84,7 +67,7 @@ public class LuckyGenerator extends Feature<NoFeatureConfig> {
                 if (soilState.getBlock() == Blocks.BEDROCK || !this.block.canPlaceAt(world, pos)) {
                     pos = pos.down();
                 } else {
-                    if (world instanceof World) return this.generate((World) world, random, pos);
+                    return this.generate(world, random, pos);
                 }
             }
             return false;

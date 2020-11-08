@@ -11,14 +11,18 @@ import mod.lucky.item.ItemLuckySword;
 import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceManager;
 import mod.lucky.structure.Structure;
+import mod.lucky.world.LuckyWorldFeature;
 import mod.lucky.world.LuckyTickHandler;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.versions.mcp.MCPVersion;
 import org.apache.logging.log4j.LogManager;
@@ -38,8 +42,9 @@ public class Lucky {
     public static ItemLuckyBow luckyBow;
     public static ItemLuckyPotion luckyPotion;
 
-    public static ArrayList<PluginLoader> luckyBlockPlugins;
-    public static ArrayList<Structure> structures;
+    public static ArrayList<PluginLoader> luckyBlockPlugins = new ArrayList<>();
+    public static ArrayList<Structure> structures = new ArrayList<>();
+    public static ArrayList<LuckyWorldFeature> worldFeatures = new ArrayList<>();
 
     public static ResourceManager resourceManager;
     public static LuckyTickHandler tickHandler;

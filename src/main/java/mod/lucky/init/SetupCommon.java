@@ -15,6 +15,7 @@ import mod.lucky.network.PacketHandler;
 import mod.lucky.resources.loader.PluginLoader; import mod.lucky.resources.loader.ResourceManager;
 import mod.lucky.structure.Structure;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
+import mod.lucky.world.LuckyWorldFeature;
 import mod.lucky.world.LuckyTickHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityClassification;
@@ -24,8 +25,13 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -125,6 +131,17 @@ public class SetupCommon {
         event.getRegistry().register(TE_LUCKY_BLOCK);
     }
 
+    public static void registerBiomeFeatures(BiomeLoadingEvent event) {
+        for (LuckyWorldFeature feature : Lucky.worldFeatures) {
+            ConfiguredFeature<?, ?> configuredGenerator
+                = new ConfiguredFeature<NoFeatureConfig, LuckyWorldFeature>(
+                feature, new NoFeatureConfig());
+
+            event.getGeneration().getFeatures(GenerationStage.Decoration.SURFACE_STRUCTURES)
+                .add(() -> configuredGenerator);
+        }
+    }
+
     public static void setupStatic() {
         Lucky.luckyBlock = (BlockLuckyBlock) new BlockLuckyBlock()
             .setRegistryName("lucky_block");
@@ -135,11 +152,10 @@ public class SetupCommon {
         Lucky.luckyPotion = (ItemLuckyPotion) new ItemLuckyPotion()
             .setRegistryName("lucky_potion");
 
-        Lucky.structures = new ArrayList<>();
-        Lucky.luckyBlockPlugins = new ArrayList<>();
-
         Lucky.resourceManager = new ResourceManager(new File("."));
         Lucky.tickHandler = new LuckyTickHandler();
+
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, SetupCommon::registerBiomeFeatures);
         MinecraftForge.EVENT_BUS.register(Lucky.tickHandler);
 
         DropFunc.registerFunctions();

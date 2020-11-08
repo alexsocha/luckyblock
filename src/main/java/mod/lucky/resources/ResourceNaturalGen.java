@@ -1,17 +1,19 @@
 package mod.lucky.resources;
 
+import mod.lucky.Lucky;
 import mod.lucky.drop.DropFull;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.util.LuckyReader;
-import mod.lucky.world.LuckyGenerator;
+import mod.lucky.world.LuckyWorldFeature;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.gen.feature.NoFeatureConfig;
 
 public class ResourceNaturalGen extends BaseResource {
     @Override
     public void process(LuckyReader reader, BaseLoader loader) {
         try {
-            LuckyGenerator generator = LuckyGenerator.registerNew(loader.getBlock());
-            loader.getBlock().setWorldGenerator(generator);
+            LuckyWorldFeature feature = new LuckyWorldFeature(NoFeatureConfig.field_236558_a_);
+            feature.init(loader.getBlock());
 
             String section = "";
             String curLine;
@@ -28,8 +30,10 @@ public class ResourceNaturalGen extends BaseResource {
 
                 DropFull drop = new DropFull();
                 drop.readFromString(curLine);
-                loader.getBlock().getWorldGenerator().addDrop(dimension, drop);
+                feature.addDrop(dimension, drop);
             }
+
+            Lucky.worldFeatures.add(feature);
         } catch (Exception e) { this.logError(e); }
     }
 

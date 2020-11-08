@@ -9,7 +9,7 @@ import mod.lucky.drop.func.DropProcessor;
 import mod.lucky.item.LuckyItem;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
 import mod.lucky.util.LuckyUtils;
-import mod.lucky.world.LuckyGenerator;
+import mod.lucky.world.LuckyWorldFeature;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -30,7 +30,7 @@ import net.minecraftforge.common.ToolType;
 
 public class BlockLuckyBlock extends ContainerBlock {
     private DropProcessor dropProcessor;
-    private LuckyGenerator worldGenerator;
+    private LuckyWorldFeature worldGenerator;
     private boolean doCreativeDrops = false;
 
     public BlockLuckyBlock() {
@@ -186,9 +186,6 @@ public class BlockLuckyBlock extends ContainerBlock {
     }
 
     public DropProcessor getDropProcessor() { return this.dropProcessor; }
-    public LuckyGenerator getWorldGenerator() { return this.worldGenerator; }
-    public void setWorldGenerator(LuckyGenerator gen) { this.worldGenerator = gen; }
-
     public void setDoCreativeDrops(boolean doDrops) { this.doCreativeDrops = doDrops; }
 
     @Override
