@@ -16,9 +16,17 @@ task luckyWriteMeta() {
     group = 'Lucky Block'
     description = 'Writes information about the current version to meta.yaml'
     doLast {
+        String[] mcv = mc_version.toString().split('\\.')
+        int luckySubversion = version.toString().split('-')[1] as Integer
+        int versionNumber = (mcv[0] as Integer) * 1000000 +
+            (mcv[1] as Integer) * 10000 +
+            (mcv[2] as Integer) * 100 +
+            luckySubversion
+
         file("$distDir/meta.yaml").text =
             "version: $version\n" +
             "mc_version: $mc_version\n" +
+            "version_number: $versionNumber\n" +
             "forge_version: $forge_version\n" +
             "revision: ${grgit.head().abbreviatedId}\n" +
             "datetime: ${dateFormat.format(new Date())}\n"

@@ -50,15 +50,14 @@ public class DefaultLoader extends BaseLoader {
         }
     }
 
-    private File getFile(BaseResource resource) {
-        return new File(this.resourceDir.getPath()
-            + "/" + resource.getPath());
+    public File getFile(String name) {
+        return new File(this.resourceDir.getPath() + "/" + name);
     }
 
     @Override
     public InputStream getResourceStream(BaseResource resource) {
         try {
-            File file = this.getFile(resource);
+            File file = this.getFile(resource.getPath());
             if (file.isDirectory()) return null;
             return new FileInputStream(file);
         } catch (FileNotFoundException e) {
