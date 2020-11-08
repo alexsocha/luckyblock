@@ -1,18 +1,21 @@
 # Lucky Block
 
+![build](https://github.com/alexsocha/luckyblock/workflows/build/badge.svg)
+
 <img src="img/icon_yellow.png" width="110px" align="left" style="margin-top: -5px">
 
 Originally created in 2015, the Lucky Block is a mod for Minecraft which has since gained over 5 million users. The mod adds a new block to the game which produces random outcomes, as well as items such as the lucky sword, bow and potion. Additionally, the mod can be customized with hundreds of community add-ons.
 
+<br>
 <div align="center">
 <img src="img/artwork.png" width="80%" style="
     display: block;
-    margin-top: 40px;
-    margin-bottom: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     border-radius: 8px;
 ">
-
 </div>
+<br>
 
 ## Resources
 
