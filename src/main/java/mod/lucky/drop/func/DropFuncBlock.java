@@ -8,6 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 public class DropFuncBlock extends DropFunc {
     @Override
@@ -48,11 +49,7 @@ public class DropFuncBlock extends DropFunc {
         CompoundNBT tileEntity, boolean update) {
 
         if (world.getBlockState(pos) != state)
-            world.setBlockState(pos, state, 2);
-
-        if (update && world instanceof World)
-            ((World) world).markAndNotifyBlock(pos, ((World) world).getChunkAt(pos),
-                world.getBlockState(pos), state, 3, 0);
+            world.setBlockState(pos, state, update ? 3 : 2);
 
         if (tileEntity != null && state.getBlock().hasTileEntity(state)) {
             setTileEntity(world, state, pos, tileEntity);
