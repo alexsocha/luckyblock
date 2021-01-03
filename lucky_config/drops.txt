@@ -206,7 +206,7 @@ group(type=fill,ID=air,size=(1,51,1);group(NBTTag=(BlockState=(Name=red_glazed_t
 group(type=fill,ID=air,size=(1,51,1);type=entity,ID=falling_block,NBTTag=(BlockState=(Name=redstone_block)),posY=#bPosY+5;group(posY=#bPosY+10;posY=#bPosY+15;posY=#bPosY+20;posY=#bPosY+25;posY=#bPosY+30;posY=#bPosY+35;posY=#bPosY+40;posY=#bPosY+45;posY=#bPosY+50),type=entity,ID=falling_block,NBTTag=(BlockState=(Name=tnt)))@luck=2
 
 / baby player
-type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,RightArm=(id=stone_pickaxe,Count=1),ArmorItems=[(id=leather_boots,Count=1,tag=(display=(color=#randColor))),(id=leather_leggings,Count=1,tag=(display=(color=#randColor))),(id=leather_chestplate,Count=1,tag=(display=(color=#randColor))),(id=player_head,Count=1,tag=(SkullOwner=#pName))],Rotation=[#pYaw+180f,0f],CustomName=#jsonStr(text="Baby #pName"),CustomNameVisible=true)@luck=0
+type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,HandItems=[(id=stone_pickaxe,Count=1)],ArmorItems=[(id=leather_boots,Count=1,tag=(display=(color=#randColor))),(id=leather_leggings,Count=1,tag=(display=(color=#randColor))),(id=leather_chestplate,Count=1,tag=(display=(color=#randColor))),(id=player_head,Count=1,tag=(SkullOwner=#pName))],Rotation=[#pYaw+180f,0f],CustomName=#jsonStr(text="Baby #pName"),CustomNameVisible=true)@luck=0
 
 / ==== Monster Apocalyple ====
 
