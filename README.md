@@ -21,13 +21,13 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 
 <img src="img/luckyblock_3d.png" width="180px" align="right" vspace="20px">
 
-- <a href="">Download Lucky Block</a>
-- <a href="">Minecraft Forums</a>
-- <a href="">Planet Minecraft</a>
+- <a href="https://www.luckyblockmod.com/">Download Lucky Block</a>
+- <a href="https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/1292247-lucky-block-mod-drops-items-spawns-mobs-structures">Minecraft Forum</a>
+- <a href="https://www.planetminecraft.com/mod/lucky-block/">Plane Minecraft</a>
 
 ## Installing
 1. Download and install <a href="https://files.minecraftforge.net/">Minecraft Forge</a>, then run Minecraft at least once.
-2. Download the Lucky Block and put it into your <a href="https://minecraft.gamepedia.com/.minecraft">.mincraft</a>/mods/</a> folder.
+2. Download the Lucky Block and put it into your <a href="https://minecraft.gamepedia.com/.minecraft">.minecraft</a>/mods/</a> folder.
 3. Run Minecraft and enjoy!
 
 ## Add-ons
@@ -35,7 +35,7 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 
 ### Installing
 1. Install the Lucky Block and run Minecraft at least once.
-2. Put add-ons into your <a href="https://minecraft.gamepedia.com/.minecraft">.mincraft</a>/addons/lucky_block/</a> folder.
+2. Put add-ons into your <a href="https://minecraft.gamepedia.com/.minecraft">.minecraft</a>/addons/lucky_block/</a> folder.
 3. Run Minecraft and enjoy!
 
 ## Development
@@ -63,6 +63,6 @@ To use IntelliJ, ensure that the Gradle plugin is enabled, and import the direct
 3. Run `./scripts/deploy.sh`.
 
 ## Copyright
-Copyright © 2015-2020 Alex Socha. All Rights Reserved.
+Copyright © 2015-2021 Alex Socha. All Rights Reserved.
 
 By submitting a pull request, you agree to transfer all rights and ownership to the copyright holder.
