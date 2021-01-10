@@ -1,5 +1,9 @@
 # Changelog
 
+## Lucky Block 1.16.4-3
+
+- Added `#luckyCrossbowEnchantments` and `#luckyTridentEnchantments`.
+
 ## Lucky Block 1.14.4-1
 
 - Removed custom loot tables (sorry!).
