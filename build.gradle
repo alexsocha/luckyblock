@@ -1,4 +1,4 @@
-version = '1.16.4-2'
+version = '1.16.4-3'
 ext {
     forge_version = '35.0.7'
     mc_version = '1.16.4'
