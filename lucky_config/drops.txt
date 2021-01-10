@@ -262,25 +262,25 @@ type=structure,ID=giant_lucky_block_bad,rotation=#pDirect@luck=-2
 
 / ========== ENCHANTED + LUCKY ITEMS ==========
 
-/ hero sword
+/ hero's sword
 ID=diamond_sword,NBTTag=(Enchantments=#luckySwordEnchantments,display=(Name=#jsonStr(text="Hero's Sword",color=blue,bold=true)))@luck=2
 
-/ hero bow
+/ hero's bow
 ID=bow,NBTTag=(Enchantments=#luckyBowEnchantments,display=(Name=#jsonStr(text="Hero's Bow",color=blue,bold=true)))@luck=2
 
-/ hero fishing rod
-ID=fishing_rod,NBTTag=(Enchantments=#luckyFishingRodEnchantments,display=(Name=#jsonStr(text="$9$lHero's Fishing Rod",color=blue,bold=true)))@luck=2
+/ hero's crossbow, trident
+group:1:(ID=crossbow,NBTTag=(Enchantments=#luckyCrossbowEnchantments,display=(Name=#jsonStr(text="$9$lHero's Crossbow",color=blue,bold=true)));ID=trident,NBTTag=(Enchantments=#luckyTridentEnchantments,display=(Name=#jsonStr(text="$9$lHero's Trident",color=blue,bold=true))))@luck=2
 
-/ hero tools
-group:#rand(1,2):(ID=diamond_shovel,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Shovel",color=blue,bold=true)));ID=diamond_pickaxe,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Pickaxe",color=blue,bold=true)));ID=diamond_axe,NBTTag=(Enchantments=#luckyAxeEnchantments,display=(Name=#jsonStr(text="Hero's Axe",color=blue,bold=true)));ID=diamond_hoe,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Hoe",color=blue,bold=true))))@luck=2
+/ hero's tools
+group:#rand(1,2):(ID=diamond_shovel,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Shovel",color=blue,bold=true)));ID=diamond_pickaxe,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Pickaxe",color=blue,bold=true)));ID=diamond_axe,NBTTag=(Enchantments=#luckyAxeEnchantments,display=(Name=#jsonStr(text="Hero's Axe",color=blue,bold=true)));ID=diamond_hoe,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Hoe",color=blue,bold=true)));ID=fishing_rod,NBTTag=(Enchantments=#luckyFishingRodEnchantments,display=(Name=#jsonStr(text="$9$lHero's Fishing Rod",color=blue,bold=true))))@luck=2
 
-/ hero armor
+/ hero's armor
 group:#rand(1,2):(ID=diamond_helmet,NBTTag=(Enchantments=#luckyHelmetEnchantments,display=(Name=#jsonStr(text="Hero's Helmet",color=blue,bold=true)));ID=diamond_chestplate,NBTTag=(Enchantments=#luckyChestplateEnchantments,display=(Name=#jsonStr(text="Hero's Chestplate",color=blue,bold=true)));ID=diamond_leggings,NBTTag=(Enchantments=#luckyLeggingsEnchantments,display=(Name=#jsonStr(text="Hero's Leggings",color=blue,bold=true)));ID=diamond_boots,NBTTag=(Enchantments=#luckyBootsEnchantments,display=(Name=#jsonStr(text="Hero's Boots",color=blue,bold=true))))@luck=2
 
-/ hero potion
+/ hero's potion
 ID=potion,NBTTag=(Potion="fire_resistance",CustomPotionEffects=#luckyPotionEffects,display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true)))@luck=2
 
-/ unlucky potion
+/ evil potion
 ID=splash_potion,NBTTag=(Potion="harming",CustomPotionEffects=#unluckyPotionEffects,display=(Name=#jsonStr(text="Evil Potion",color=dard_red,bold=true)))@luck=1
 
 / lucky items
