@@ -34,6 +34,8 @@ public class NBTHashVariables {
         "#luckyBootsEnchantments",
         "#luckyBowEnchantments",
         "#luckyFishingRodEnchantments",
+        "#luckyTridentEnchantments",
+        "#luckyCrossbowEnchantments",
         "#randEnchantment",
         "#luckyPotionEffects",
         "#unluckyPotionEffects",
@@ -71,6 +73,15 @@ public class NBTHashVariables {
     private static final CompoundNBT infinity = getEnchantment(Enchantments.INFINITY, 1);
     private static final CompoundNBT luckOfTheSea = getEnchantment(Enchantments.LUCK_OF_THE_SEA, 3);
     private static final CompoundNBT lure = getEnchantment(Enchantments.LURE, 3);
+
+    private static final CompoundNBT loyalty = getEnchantment(Enchantments.LOYALTY, 3);
+    private static final CompoundNBT channeling = getEnchantment(Enchantments.CHANNELING, 1);
+    private static final CompoundNBT riptide = getEnchantment(Enchantments.RIPTIDE, 3);
+    private static final CompoundNBT impaling = getEnchantment(Enchantments.IMPALING, 5);
+
+    private static final CompoundNBT quickCharge = getEnchantment(Enchantments.QUICK_CHARGE, 3);
+    private static final CompoundNBT multishot = getEnchantment(Enchantments.MULTISHOT, 1);
+    private static final CompoundNBT piercing = getEnchantment(Enchantments.PIERCING, 4);
 
     private static final CompoundNBT speed = getEffectInstance(Effects.SPEED, 3, 9600);
     private static final CompoundNBT slowness = getEffectInstance(Effects.SLOWNESS, 3, 9600);
@@ -213,6 +224,11 @@ public class NBTHashVariables {
             return getRandomEnchantmentList(3, 5, unbreaking, power, punch, flame, infinity);
         if (name.equals("#luckyFishingRodEnchantments"))
             return getRandomEnchantmentList(2, 3, unbreaking, luckOfTheSea, lure);
+        if (name.equals("#luckyTridentEnchantments"))
+            return getRandomEnchantmentList(3, 5, loyalty, channeling, riptide, impaling, unbreaking);
+        if (name.equals("#luckyCrossbowEnchantments"))
+            return getRandomEnchantmentList(2, 4, quickCharge, multishot, piercing, unbreaking);
+
 
         if (name.equals("#randEnchantment"))
             return getRandomEnchantmentList(1, 1,
@@ -237,7 +253,14 @@ public class NBTHashVariables {
                 flame,
                 infinity,
                 luckOfTheSea,
-                lure);
+                lure,
+                loyalty,
+                channeling,
+                riptide,
+                impaling,
+                quickCharge,
+                multishot,
+                piercing);
 
         if (name.equals("#luckyPotionEffects"))
             return getRandomEffectInstanceList(7, 10,
