@@ -52,6 +52,7 @@ Edit the version constants at the top of  `build.gradle`, based on:
 To use IntelliJ, ensure that the Gradle plugin is enabled, and import the directory as a Gradle project.
 
 - `./gradlew tasks`: View all available tasks.
+- `./gradles clean`: Clean the build folder. Always run this after updating the version number.
 - `./gradlew luckyBuild`: Build the project, and create a distributable jar file in `build/dist/{version}`.
 - `./gradlew luckyClient`: Run a Minecraft client.
 - `./gradlew luckyServer`: Run a Minecraft server.
