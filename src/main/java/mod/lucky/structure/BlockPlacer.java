@@ -1,12 +1,12 @@
 package mod.lucky.structure;
 
-import java.util.ArrayList;
-
 import mod.lucky.drop.func.DropFuncBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
 
 public class BlockPlacer {
     private IWorld world;

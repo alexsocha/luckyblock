@@ -1,8 +1,5 @@
 package mod.lucky.drop.func;
 
-import java.util.Iterator;
-import java.util.List;
-
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.value.ValueParser;
@@ -15,6 +12,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class DropFuncEffect extends DropFunc {
     @Override

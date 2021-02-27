@@ -1,10 +1,9 @@
 package mod.lucky.resources.loader;
 
+import mod.lucky.resources.*;
+
 import java.io.File;
 import java.util.ArrayList;
-
-import mod.lucky.Lucky;
-import mod.lucky.resources.*;
 
 public class ResourceManager {
     private static File PLUGIN_DIR_OLD = new File("/addons/luckyBlock");

@@ -1,9 +1,6 @@
 package mod.lucky.drop.func;
 
 import com.google.common.collect.Lists;
-
-import java.util.List;
-
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mod.lucky.Lucky;
@@ -17,6 +14,8 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.List;
 
 public class DropFuncParticle extends DropFunc {
     @Override

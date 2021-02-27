@@ -1,7 +1,6 @@
 package mod.lucky.resources;
 
 import mod.lucky.Lucky;
-import mod.lucky.init.SetupCommon;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.structure.Structure;
 import mod.lucky.util.LuckyReader;

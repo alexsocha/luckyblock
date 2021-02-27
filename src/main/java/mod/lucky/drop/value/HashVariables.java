@@ -1,10 +1,5 @@
 package mod.lucky.drop.value;
 
-import java.util.ArrayList;
-import java.util.Random;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import mod.lucky.Lucky;
@@ -20,6 +15,11 @@ import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class HashVariables {
     private static String[] hashVariables = {

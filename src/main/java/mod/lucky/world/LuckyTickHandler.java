@@ -1,10 +1,5 @@
 package mod.lucky.world;
 
-import java.io.*;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
-
 import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
@@ -15,11 +10,16 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.TickEvent;
+
+import java.io.*;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class LuckyTickHandler {

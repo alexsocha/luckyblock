@@ -1,16 +1,13 @@
 package mod.lucky.structure;
 
-import java.io.DataInputStream;
-import java.util.zip.GZIPInputStream;
-
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropProcessData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.datafix.fixes.ItemIntIDToString;
@@ -19,6 +16,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.io.DataInputStream;
+import java.util.zip.GZIPInputStream;
 
 public class LegacySchematicStructure extends Structure {
     // Blocks stored [y][z][x]

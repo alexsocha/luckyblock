@@ -1,13 +1,9 @@
 package mod.lucky.resources;
 
-import java.util.HashMap;
-
-import mod.lucky.Lucky;
 import mod.lucky.crafting.RecipeAddons;
 import mod.lucky.drop.value.ValueParser;
 import mod.lucky.resources.loader.BaseLoader;
 import mod.lucky.util.LuckyReader;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -16,6 +12,8 @@ import net.minecraft.item.crafting.ShapelessRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.HashMap;
 
 public class ResourceRecipes extends BaseResource {
 

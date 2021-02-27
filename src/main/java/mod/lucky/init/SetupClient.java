@@ -1,17 +1,16 @@
 package mod.lucky.init;
 
+import mod.lucky.Lucky;
 import mod.lucky.render.RenderLuckyPotion;
 import mod.lucky.render.RenderLuckyProjectile;
-import net.minecraft.item.ItemModelsProperties;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.SimpleReloadableResourceManager;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import mod.lucky.Lucky;
 import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourcePack;
+import net.minecraft.resources.SimpleReloadableResourceManager;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import static mod.lucky.init.SetupCommon.ENTITY_LUCKY_POTION;

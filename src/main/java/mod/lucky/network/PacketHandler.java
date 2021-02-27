@@ -1,6 +1,5 @@
 package mod.lucky.network;
 
-import mod.lucky.Lucky;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;

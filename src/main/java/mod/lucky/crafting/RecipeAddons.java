@@ -1,7 +1,5 @@
 package mod.lucky.crafting;
 
-import java.util.ArrayList;
-
 import mod.lucky.init.SetupCommon;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IInventory;
@@ -11,6 +9,8 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
 
 public class RecipeAddons extends SpecialRecipe {
     private static ArrayList<IRecipe> ADDON_RECIPES = new ArrayList<>();

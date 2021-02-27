@@ -1,8 +1,5 @@
 package mod.lucky.drop.value;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.enchantment.Enchantment;
@@ -11,7 +8,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.loot.LootTables;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.DoubleNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.Effect;
@@ -23,6 +21,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class NBTHashVariables {
     public static String[] NBT_HASH_VARIABLES = {

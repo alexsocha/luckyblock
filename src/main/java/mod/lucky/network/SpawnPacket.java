@@ -1,7 +1,5 @@
 package mod.lucky.network;
 
-import java.util.function.Supplier;
-
 import mod.lucky.Lucky;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
@@ -12,6 +10,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class SpawnPacket {
     private CompoundNBT entityTag;

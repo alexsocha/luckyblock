@@ -1,13 +1,13 @@
 package mod.lucky.drop;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
 import mod.lucky.Lucky;
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.ValueParser;
 import net.minecraft.nbt.CompoundNBT;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class DropFull extends DropBase {
     private String rawDrop;

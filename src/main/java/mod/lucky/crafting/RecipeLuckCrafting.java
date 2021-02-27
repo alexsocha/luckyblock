@@ -1,8 +1,5 @@
 package mod.lucky.crafting;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import mod.lucky.init.SetupCommon;
 import mod.lucky.item.ILuckyItemContainer;
 import mod.lucky.item.ItemLuckyPotion;
@@ -16,6 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RecipeLuckCrafting extends SpecialRecipe {
     private static HashMap<ILuckyItemContainer, ArrayList<LuckCraftingModifier>>

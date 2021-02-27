@@ -1,11 +1,11 @@
 package mod.lucky.resources.loader;
 
+import mod.lucky.Lucky;
+import mod.lucky.resources.BaseResource;
+
 import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import mod.lucky.Lucky;
-import mod.lucky.resources.BaseResource;
 
 public class DefaultLoader extends BaseLoader {
     private File resourceDir;

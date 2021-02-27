@@ -1,18 +1,17 @@
 package mod.lucky.resources.loader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import mod.lucky.Lucky;
 import mod.lucky.resources.BaseResource;
 import mod.lucky.resources.ResourcePluginInit;
 import net.minecraft.resources.FilePack;
 import net.minecraft.resources.FolderPack;
 import net.minecraft.resources.IResourcePack;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class PluginLoader extends BaseLoader {
     private File pluginFile;

@@ -12,11 +12,12 @@ import mod.lucky.item.ItemLuckyBow;
 import mod.lucky.item.ItemLuckyPotion;
 import mod.lucky.item.ItemLuckySword;
 import mod.lucky.network.PacketHandler;
-import mod.lucky.resources.loader.PluginLoader; import mod.lucky.resources.loader.ResourceManager;
+import mod.lucky.resources.loader.PluginLoader;
+import mod.lucky.resources.loader.ResourceManager;
 import mod.lucky.structure.Structure;
 import mod.lucky.tileentity.TileEntityLuckyBlock;
-import mod.lucky.world.LuckyWorldFeature;
 import mod.lucky.world.LuckyTickHandler;
+import mod.lucky.world.LuckyWorldFeature;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -36,7 +37,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

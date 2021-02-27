@@ -1,8 +1,5 @@
 package mod.lucky.structure;
 
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropFunc;
@@ -14,6 +11,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class LuckyStructure extends Structure {
     private ArrayList<DropSingle> blockDrops;

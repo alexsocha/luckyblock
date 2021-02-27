@@ -5,7 +5,6 @@ import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.func.DropProcessor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
 
 public class DelayLuckyDrop {
     private long ticksRemaining;

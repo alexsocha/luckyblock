@@ -1,15 +1,15 @@
 package mod.lucky.drop;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Locale;
-
 import mod.lucky.drop.func.DropProcessData;
 import mod.lucky.drop.value.DropStringUtils;
 import mod.lucky.drop.value.DropValue;
 import net.minecraft.nbt.CompoundNBT;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
 
 public class DropGroup extends DropBase {
     private ArrayList<DropBase> drops;

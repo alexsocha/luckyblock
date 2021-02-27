@@ -1,7 +1,5 @@
 package mod.lucky;
 
-import java.util.ArrayList;
-
 import mod.lucky.block.BlockLuckyBlock;
 import mod.lucky.init.SetupClient;
 import mod.lucky.init.SetupCommon;
@@ -11,16 +9,11 @@ import mod.lucky.item.ItemLuckySword;
 import mod.lucky.resources.loader.PluginLoader;
 import mod.lucky.resources.loader.ResourceManager;
 import mod.lucky.structure.Structure;
-import mod.lucky.world.LuckyWorldFeature;
 import mod.lucky.world.LuckyTickHandler;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
+import mod.lucky.world.LuckyWorldFeature;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -29,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 @Mod("lucky")
 public class Lucky {

@@ -1,13 +1,13 @@
 package mod.lucky.drop.func;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropBase;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.DropGroup;
 import mod.lucky.drop.DropSingle;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class DropProcessor {
     private ArrayList<DropFull> drops;

@@ -1,7 +1,5 @@
 package mod.lucky.drop.func;
 
-import java.util.UUID;
-
 import mod.lucky.drop.DropSingle;
 import mod.lucky.util.LuckyUtils;
 import net.minecraft.client.Minecraft;
@@ -17,6 +15,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class DropProcessData {
     private IWorld world;

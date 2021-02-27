@@ -1,9 +1,9 @@
 package mod.lucky.drop.func;
 
-import java.util.HashMap;
-
 import mod.lucky.drop.DropSingle;
 import net.minecraft.nbt.CompoundNBT;
+
+import java.util.HashMap;
 
 public abstract class DropFunc {
     public abstract void process(DropProcessData processData);

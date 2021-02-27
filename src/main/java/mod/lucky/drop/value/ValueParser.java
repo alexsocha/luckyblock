@@ -1,10 +1,6 @@
 package mod.lucky.drop.value;
 
 import com.google.common.collect.HashBiMap;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,6 +13,9 @@ import net.minecraft.nbt.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringEscapeUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ValueParser {
     public static HashBiMap<String, Class> classTypeToString;

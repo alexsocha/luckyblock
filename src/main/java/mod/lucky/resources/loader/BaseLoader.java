@@ -1,9 +1,5 @@
 package mod.lucky.resources.loader;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-
 import mod.lucky.Lucky;
 import mod.lucky.block.BlockLuckyBlock;
 import mod.lucky.item.*;
@@ -13,6 +9,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
 
 import javax.annotation.Nullable;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public abstract class BaseLoader {
     private BlockLuckyBlock luckyBlock;

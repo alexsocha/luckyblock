@@ -1,7 +1,5 @@
 package mod.lucky.block;
 
-import java.util.ArrayList;
-
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropFull;
 import mod.lucky.drop.func.DropProcessData;
@@ -27,6 +25,8 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
+
+import java.util.ArrayList;
 
 public class BlockLuckyBlock extends ContainerBlock {
     private DropProcessor dropProcessor;

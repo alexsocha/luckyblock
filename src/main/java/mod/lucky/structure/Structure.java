@@ -1,8 +1,5 @@
 package mod.lucky.structure;
 
-import java.io.InputStream;
-import java.util.HashMap;
-
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropFunc;
 import mod.lucky.drop.func.DropProcessData;
@@ -12,6 +9,9 @@ import mod.lucky.resources.ResourceStructureFile;
 import mod.lucky.resources.loader.BaseLoader;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+
+import java.io.InputStream;
+import java.util.HashMap;
 
 public class Structure {
     public enum BlockMode {

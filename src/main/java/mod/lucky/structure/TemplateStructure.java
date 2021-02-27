@@ -1,15 +1,11 @@
 package mod.lucky.structure;
 
-import java.io.DataInputStream;
-import java.util.Random;
-import java.util.zip.GZIPInputStream;
-
 import mod.lucky.Lucky;
 import mod.lucky.drop.DropSingle;
 import mod.lucky.drop.func.DropProcessData;
 import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IServerWorld;
@@ -18,6 +14,10 @@ import net.minecraft.world.gen.feature.template.IStructureProcessorType;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.StructureProcessor;
 import net.minecraft.world.gen.feature.template.Template;
+
+import java.io.DataInputStream;
+import java.util.Random;
+import java.util.zip.GZIPInputStream;
 
 public class TemplateStructure extends Structure {
     private Template template;
