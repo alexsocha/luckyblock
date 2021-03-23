@@ -1,0 +1,1 @@
+doDropsOnCreativeMode=false

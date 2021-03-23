@@ -1,0 +1,7 @@
+>properties
+length=1
+height=1
+width=5
+
+>blocks
+0,0,0,oak_sign,(),(Text1=#jsonStr(text=""),Text2=#jsonStr(text="Look up."),Text3=#jsonStr(text=""),Text4=#jsonStr(text=""))

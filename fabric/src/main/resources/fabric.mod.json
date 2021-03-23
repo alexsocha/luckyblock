@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "lucky",
+  "version": "${fabricModVersion}",
+
+  "name": "Lucky Block",
+  "description": "Adds a block with random outcomes",
+  "authors": [
+    "Alex Socha"
+  ],
+  "contact": {
+    "homepage": "https://luckyblockmod.com/",
+    "sources": "https://github.com/alexsocha/luckyblock"
+  },
+
+  "license": "All rights reserved",
+  "icon": "assets/lucky/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "mod.lucky.fabric.FabricMod"
+    ],
+    "client": [
+      "mod.lucky.fabric.FabricModClient"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": ">=${fabricMinLoaderVersion}",
+    "fabric": "*",
+    "minecraft": "${fabricMCTargetVersion}"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

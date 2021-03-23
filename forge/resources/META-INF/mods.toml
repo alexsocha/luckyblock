@@ -1,0 +1,24 @@
+modLoader="javafml"
+loaderVersion="[34,)"
+license="All rights reserved"
+
+[[mods]]
+modId="lucky"
+version="${version}"
+displayName="Lucky Block"
+authors="Alex Socha"
+description="Adds a block with random outcomes"
+
+[[dependencies.lucky]]
+    modId="forge"
+    mandatory=true
+    versionRange="[34,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.lucky]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.3,)"
+    ordering="NONE"
+    side="BOTH"

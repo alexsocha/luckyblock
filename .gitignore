@@ -1,13 +1,5 @@
-# eclipse
-bin
-*.launch
-.settings
-.metadata
-.classpath
-.project
-
 # idea
-out
+out/
 *.ipr
 *.iws
 *.iml
@@ -16,9 +8,9 @@ out
 # gradle
 build/
 .gradle/
-logs/
 
 # other
-eclipse
-run
-_mcsrc
+dist/
+logs/
+bedrock/
+run/
