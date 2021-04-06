@@ -202,7 +202,7 @@ group(type=entity,ID=wolf,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(
 / pet cats
 group(type=entity,ID=cat,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(CatType=#rand(0,10),CollarColor=#rand(0,15),Owner=#pUUIDArray,Sitting=true);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
 / pet rabbits
-group(type=entity,ID=rabbit,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(RabbitType=#rand(0,5),Owner=#pUUIDArray,Sitting=true);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
+group(type=entity,ID=rabbit,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(RabbitType=#rand(0,5));type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
 
 / hero villagers
 
