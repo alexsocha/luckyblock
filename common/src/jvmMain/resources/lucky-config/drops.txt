@@ -187,7 +187,7 @@ group(type=difficulty,ID=hard;type=entity,ID=bat,NBTTag=(
 type=entity,ID=pig,NBTTag=(Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=villager,VillagerData=(profession=nitwit))])])])])])])])])@luck=0
 
 / horses
-type=entity,ID=#randList(horse,skeleton_horse,zombie_horse),amount=12,posOffset=#circleOffset(4),NBTTag=(Tame=true,OwnerUUID=#pUUID)@luck=1
+type=entity,ID=#randList(horse,skeleton_horse,zombie_horse),amount=12,posOffset=#circleOffset(4),NBTTag=(Tame=true,Owner=#pUUIDArray)@luck=1
 
 / llamas
 type=entity,ID=llama,amount=8,posOffset=#circleOffset(4),NBTTag=(CustomName=#jsonStr(text=#randList(Llaura,Llauretta,Llavender,Llinda,Llisa,Llouise,Llucy,Llydia),color=dark_purple,bold=true),Variant=#rand(0,3),CustomNameVisible=true)@luck=0
@@ -198,11 +198,11 @@ group(type=difficulty,ID=hard;type=entity,ID=witch;type=entity,ID=bat,posY=#bPos
 group:1:(type=entity,ID=slime,NBTTag=(Size=10);type=entity,ID=magma_cube,NBTTag=(Size=10))@luck=-2
 
 / pet wolves
-group(type=entity,ID=wolf,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(CollarColor=#rand(0,14),OwnerUUID=#pUUID,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
+group(type=entity,ID=wolf,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(CollarColor=#rand(0,14),Owner=#pUUIDArray,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
 / pet cats
-group(type=entity,ID=ocelot,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(CatType=#rand(0,3),OwnerUUID=#pUUID,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
+group(type=entity,ID=ocelot,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(CatType=#rand(0,3),Owner=#pUUIDArray,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
 / pet rabbits
-group(type=entity,ID=rabbit,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(RabbitType=#rand(0,5),OwnerUUID=#pUUID,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
+group(type=entity,ID=rabbit,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(RabbitType=#rand(0,5),Owner=#pUUIDArray,Sitting=1);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
 
 / hero villagers
 
