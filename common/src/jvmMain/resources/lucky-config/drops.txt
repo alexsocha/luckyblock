@@ -157,7 +157,7 @@ group(type=difficulty,ID=hard;type=entity,ID=wither)@chance=0.1@luck=-2
 / ghast
 group(type=difficulty,ID=hard;type=entity,ID=ghast)@chance=0.2@luck=-2
 / elder guardian
-group(type=difficulty,ID=hard;type=entity,ID=guardian,NBTTag=(Elder=1)))@chance=0.5@luck=-2
+group(type=difficulty,ID=hard;type=entity,ID=guardian,NBTTag=(Elder=1))@chance=0.5@luck=-2
 / killer rabbit
 group(type=difficulty,ID=hard;type=entity,ID=rabbit,NBTTag=(RabbitType=99))@luck=-1
 
