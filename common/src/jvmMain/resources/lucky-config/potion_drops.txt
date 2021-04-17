@@ -1,7 +1,11 @@
 / === GOOD ===
 
 / speed
-group(type=effect,ID=1,range=4,amplifier=2,duration=600;type=particle,ID=splashpotion,potion=swiftness;type=item,ID=#randList(cookie,sugar),posOffset=#circleOffset(0.0,2.0),amount=30)@luck=2
+group(
+    type=effect,ID=speed,range=4,amplifier=2,duration=600;
+    type=particle,ID=splashpotion,potion=swiftness;
+    type=item,ID=#randList(cookie,sugar),posOffset=#circleOffset(0.0,2.0),amount=30
+)@luck=2
 
 / strenth + resistance + armor
 group(type=effect,ID=strength,range=4,amplifier=1,duration=600;type=effect,ID=resistance,range=4,amplifier=1,duration=600;type=particle,ID=splashpotion,potion=strength;type=item,ID=iron_sword,posOffset=#circleOffset(0.0,2.0);type=item,ID=iron_helmet,posOffset=#circleOffset(0.0,2.0);type=item,ID=iron_chestplate,posOffset=#circleOffset(0.0,2.0);type=item,ID=iron_leggings,posOffset=#circleOffset(0.0,2.0);type=item,ID=iron_boots,posOffset=#circleOffset(0.0,2.0))@luck=2
@@ -28,7 +32,15 @@ type=entity,ID=experience_bottle,NBTTag=(Motion=#motionFromDirection(#rand(0,360
 group(type=item,ID=anvil;ID=enchanted_book,NBTTag=(StoredEnchantments=#randEnchantment),posOffset=#circleOffset(0.0,2.0),amount=#rand(7,10);type=particle,ID=splashpotion,potion=strength)@luck=2
 
 / positive potions
-group(type=entity,ID=potion,NBTTag=(Potion=(id=splash_potion,tag=(Potion=#randList(night_vision,leaping,fire_resistance,swiftness,water_breathing,healing,regeneration,strength)),Count=1),Motion=#motionFromDirection(#rand(0,360),-70,0.4)),amount=10)@luck=2
+group(
+    type=entity,ID=potion,NBTTag=(
+        Item=(id=splash_potion,tag=(Potion=#randList(
+            night_vision,leaping,fire_resistance,swiftness,
+            water_breathing,healing,regeneration,strength
+        )),Count=1),
+        Motion=#motionFromDirection(#rand(0,360),-70,0.4)
+    ),amount=10
+)@luck=2
 
 / === BAD ===
 
@@ -60,4 +72,11 @@ group(type=effect,ID=weakness,range=4,duration=30;type=particle,ID=splashpotion,
 group(type=effect,ID=wither,range=4,duration=30;type=particle,ID=splashpotion,potion=weakness;type=item,ID=bone,posOffset=#circleOffset(0.0,2.0),amount=10;type=item,ID=bone_meal,posOffset=#circleOffset(0.0,2.0),amount=10;type=item,ID=skeleton_skull,posOffset=#circleOffset(0.0,2.0))@luck=-2
 
 / negative potions
-group(type=entity,ID=potion,NBTTag=(Potion=(id=splash_potion,tag=(Potion=#randList(slowness,harming,poison,weakness)),Count=1),Motion=#motionFromDirection(#rand(0,360),-70,0.4)),amount=10)@luck=-2
+group(
+    type=entity,ID=potion,NBTTag=(
+        Item=(id=splash_potion,tag=(Potion=#randList(
+            slowness,harming,poison,weakness
+        )),Count=1),
+        Motion=#motionFromDirection(#rand(0,360),-70,0.4)
+    ),amount=10
+)@luck=-2
