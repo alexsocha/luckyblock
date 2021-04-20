@@ -1,3 +1,0 @@
-/ craft by placing a lucky block in the center and light or dark gray dye around
-ggg,glg,ggg,g,gray_dye,l,lucky:lucky_block
-ggg,glg,ggg,g,light_gray_dye,l,lucky:lucky_block

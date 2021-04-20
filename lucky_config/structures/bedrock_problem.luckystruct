@@ -1,8 +1,0 @@
->properties
-length=1
-height=2
-width=1
-
->blocks
-0,0,0,bedrock
-0,1,0,oak_sign,(),(Text1=#jsonStr(text=""),Text2=#jsonStr(text="Well, there's"),Text3=#jsonStr(text="your problem."),Text4=#jsonStr(text=""))
