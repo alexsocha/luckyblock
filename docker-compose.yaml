@@ -7,4 +7,4 @@ services:
             - $HOME/.gradle/caches:/root/.gradle/caches
             - $HOME/.gradle/wrapper:/root/.gradle/wrapper
         working_dir: /app
-        command: ./gradlew luckyBuild
+        command: ./gradlew build
