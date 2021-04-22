@@ -20,18 +20,12 @@ repositories {
 }
 
 dependencies {
+    compile(project(":common"))
     compile(kotlin("stdlib-jdk8")) // using 'implementation' doesn't allow us to bundle this
     minecraft("com.mojang:minecraft:$fabricLatestMCVersion")
     mappings("net.fabricmc:yarn:$fabricMappingsVersion:v2")
     modImplementation("net.fabricmc:fabric-loader:[$fabricMinLoaderVersion,)")
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricAPIVersion")
-}
-
-sourceSets.main {
-    java.srcDirs(
-        "../common/src/commonMain",
-        "../common/src/jvmMain"
-    )
 }
 
 tasks.processResources {
@@ -66,8 +60,7 @@ tasks.jar {
 }
 
 tasks.getByName<Zip>("dist") {
-    // todo: copy common here
-    configurations.compile.get().filter { it.name.startsWith("kotlin-stdlib") }.forEach {
+    configurations.compile.get().filter { it.name.startsWith("kotlin-stdlib") || it.name.startsWith("common") }.forEach {
         from(zipTree(it))
     }
 }
