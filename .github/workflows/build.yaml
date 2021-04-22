@@ -14,4 +14,4 @@ jobs:
                       - /root/.gradle/wrapper/
                   key: ${{ runner.os }}-${{ hashFiles('build.gradle') }}
             - name: Build with docker-compose
-              run: HOME=/root && docker-compose run build
+              run: HOME=/root && ./docker-build.sh
