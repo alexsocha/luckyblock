@@ -49,11 +49,10 @@ val forgeModVersion: String by project
 val forgeMinForgeVersion: String by project
 
 val fabricModVersion: String by project
+val fabricMinMCVersion: String by project
 
 val bedrockModVersion: String by project
 val bedrockTemplateAddonVersion: String by project
-val minBedrockAddonMCVersion: String by project
-val minBedrockMCVersion: String by project
 
 typealias TemplateAddonVersions = Map<String, List<Map<String, String>>>
 
@@ -150,7 +149,7 @@ project(":bedrock").tasks.register<Zip>("templateAddonDist") {
     // TODO
 }
 
-fun jvmJarDist(projectName: String, modVersion: String) {
+fun jvmJarDist(projectName: String, minMCVersion: String, modVersion: String) {
     project(":$projectName").tasks.register<Zip>("dist") {
         val distName = "${rootProject.name}-$modVersion-$projectName"
         destinationDirectory.set(file("$rootDir/dist/$distName"))
@@ -161,7 +160,7 @@ fun jvmJarDist(projectName: String, modVersion: String) {
                 distDir = "$rootDir/dist/$distName",
                 version = modVersion,
                 versionNumber = getModVersionNumber(modVersion),
-                minMinecraftVersion = modVersion.split('-')[0],
+                minMinecraftVersion = minMCVersion,
                 extraInfo = if (projectName == "forge") mapOf("min_forge_version" to forgeMinForgeVersion) else emptyMap()
             )
         }
@@ -174,7 +173,7 @@ fun jvmJarDist(projectName: String, modVersion: String) {
         dependsOn(tasks.getByName("jvmProcessResources"))
     }
 }
-jvmJarDist("fabric", fabricModVersion)
+jvmJarDist("fabric", fabricMinMCVersion, fabricModVersion)
 //jvmJarDist("forge", forgeModVersion)
 
 project(":bedrock").tasks.register<Zip>("dist") {
@@ -199,6 +198,5 @@ tasks.register<Delete>("jvmCleanDist") {
     delete("$rootDir/dist")
 }
 
-tasks.getByName("jvmJar") { dependsOn(tasks.getByName("jvmTemplateAddonDist")) }
 tasks.clean { dependsOn(tasks.getByName("jvmCleanDist")) }
 

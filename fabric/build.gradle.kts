@@ -7,7 +7,7 @@ plugins {
 
 val fabricModVersion: String by project
 val fabricLatestMCVersion: String by project
-val fabricMCTargetVersion: String by project
+val fabricMinMCVersion: String by project
 val fabricAPIVersion: String by project
 val fabricMinLoaderVersion: String by project
 val fabricMappingsVersion: String by project
@@ -34,7 +34,7 @@ tasks.processResources {
     filesMatching("fabric.mod.json") {
         expand(
             "fabricModVersion" to fabricModVersion,
-            "fabricMCTargetVersion" to fabricMCTargetVersion,
+            "fabricMinMCVersion" to fabricMinMCVersion,
             "fabricMinLoaderVersion" to fabricMinLoaderVersion
         )
     }
