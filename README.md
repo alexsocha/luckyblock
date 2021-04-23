@@ -44,32 +44,33 @@ Update the version constants in `gradle.properties`.
 
 To use IntelliJ, ensure that the Gradle plugin is enabled, and import the directory as a Gradle project.
 
-- `./gradlew tasks`: View all available tasks.
-- `./gradles clean`: Clean the build folder. Always run this after updating the version number.
-- `./gradlew luckyBuild`: Build the project, and create a distributable jar file in `build/dist/{version}`.
-- `./gradlew luckyClient`: Run a Minecraft client.
-- `./gradlew luckyServer`: Run a Minecraft server.
+- `./gradlew tasks`: View all available tasks
+- `./gradlew clean`: Clean the build folder. Always run this after updating the version number.
+- `./gradlew :{forge/fabric}:build`: Build the project, and create a distributable jar file in `build/dist/{version}`
+- `./gradlew :jvmTemplateAddonDist`: Copy the latest template addon to `build/dist/{version}`
+- `./gradlew :{forge/fabric}:runClient`: Run a Minecraft client
+- `./gradlew :{forge/fabric}:runClient`: Run a Minecraft server
 
 ### Hot reloading
 
-1. Download the Java 8 [DCEVM](https://dcevm.github.io/) binary.
+1. Download the Java 8 [DCEVM](https://dcevm.github.io/) binary
 2. `sudo java -jar DCEVM-8uXXX-installer.jar`
-3. Open your Java home directory, and select "Replace by DCEVM".
-4. In IntelliJ, you may need to ignore the bedrock module: `Preferences > Build, Execution, Deployment > Compiler > Excludes` and add `~/bedrock`.
-5. Start the `runClient` task in debug mode.
-6. Edit the code. Some useful debug values are can be found in `common/src/commonMain/kotlin/drop/DropEvaluator`.
-7. Use the IntelliJ build button to reload the entire project, or Shift-Cmd-F9 to reload the current file.
+3. Open your Java home directory, and select "Replace by DCEVM"
+4. In IntelliJ, you may need to ignore the bedrock module: `Preferences > Build, Execution, Deployment > Compiler > Excludes` and add `~/bedrock`
+5. Start the `runClient` task in debug mode
+6. Edit the code. Some useful debug values are can be found in `common/src/commonMain/kotlin/drop/DropEvaluator`
+7. Use the IntelliJ build button to reload the entire project, or Shift-Cmd-F9 to reload the current file
 
 ### Minecraft server
 
-- Start the `runServer` task for the first time.
-- Accept `run/eula.txt`.
+- Start the `runServer` task for the first time
+- Accept `run/eula.txt`
 - Edit `run/server.properties` with the following:
     - `gamemode=creative`
     - `online-mode=false`
-- Start the `runServer` again.
-- Optionally, run `/op <player>`.
-- Start a Mincecraft client, and add a server with the address `:25565`.
+- Start the `runServer` again
+- Optionally, run `/op <player>`
+- Start a Mincecraft client, and add a server with the address `:25565`
 
 
 ### Deploy
