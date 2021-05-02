@@ -17,11 +17,16 @@ version = fabricModVersion
 
 repositories {
     mavenCentral()
+    maven {
+        url = "http://maven.fabricmc.net/"
+        name = "Fabric"
+    }
 }
 
 dependencies {
     compile(project(":common"))
-    compile(kotlin("stdlib-jdk8")) // using 'implementation' doesn't allow us to bundle this
+    //compile(kotlin("stdlib-jdk8")) // using 'implementation' doesn't allow us to bundle this
+    include(modImplementation(group = "net.fabricmc", name = "fabric-language-kotlin", version = "1.5.0+kotlin.1.4.31"))
     minecraft("com.mojang:minecraft:$fabricLatestMCVersion")
     mappings("net.fabricmc:yarn:$fabricMappingsVersion:v2")
     modImplementation("net.fabricmc:fabric-loader:[$fabricMinLoaderVersion,)")
