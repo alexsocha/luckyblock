@@ -169,13 +169,16 @@ fun loadAddonResources(addonFile: File): AddonResources? {
     )
 }
 
-fun findAddons(gameDir: File): List<File> {
+fun findAddonsOrMakeDir(gameDir: File): List<File> {
     val addonsDirV1 = gameDir.resolve("addons/luckyBlock")
     val addonsDirV2 = gameDir.resolve("addons/lucky")
     val addonsDir = when {
         addonsDirV2.exists() -> addonsDirV2
         addonsDirV1.exists() -> addonsDirV1
-        else -> return emptyList()
+        else -> {
+            addonsDirV2.mkdirs()
+            return emptyList()
+        }
     }
     return addonsDir.listFiles()?.toList()?.filter {
         it.isDirectory || it.extension in listOf("zip", "jar")
@@ -187,6 +190,6 @@ fun loadResources(gameDir: File): Pair<MainResources, List<AddonResources>> {
     extractDefaultConfig(configDir)
 
     val mainResources = loadMainResources(configDir)
-    val allAddonResources = findAddons(gameDir).mapNotNull { loadAddonResources(it) }
+    val allAddonResources = findAddonsOrMakeDir(gameDir).mapNotNull { loadAddonResources(it) }
     return Pair(mainResources, allAddonResources)
 }

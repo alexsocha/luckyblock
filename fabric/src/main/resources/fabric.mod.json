@@ -29,7 +29,7 @@
   "depends": {
     "fabricloader": ">=${fabricMinLoaderVersion}",
     "fabric": "*",
-    "minecraft": "${fabricMCTargetVersion}"
+    "minecraft": "^${fabricMinMCVersion}"
   },
   "suggests": {
     "another-mod": "*"
