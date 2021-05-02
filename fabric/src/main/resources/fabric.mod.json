@@ -18,20 +18,20 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "mod.lucky.fabric.FabricMod"
-    ],
-    "client": [
-      "mod.lucky.fabric.FabricModClient"
-    ]
+    "main": [{
+      "adapter": "kotlin",
+      "value":   "mod.lucky.fabric.FabricMod"
+     }],
+    "client": [{
+      "adapter": "kotlin",
+      "value":   "mod.lucky.fabric.FabricModClient"
+    }]
   },
 
   "depends": {
     "fabricloader": ">=${fabricMinLoaderVersion}",
     "fabric": "*",
-    "minecraft": "${fabricMCTargetVersion}"
-  },
-  "suggests": {
-    "another-mod": "*"
+    "minecraft": "${fabricMCTargetVersion}",
+    "fabric-language-kotlin": "*"
   }
 }
