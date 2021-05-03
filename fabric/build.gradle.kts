@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
     implementation(project(":common"))
-    implementation(kotlin("stdlib-jdk8")) // using 'implementation' doesn't allow us to bundle this
+    implementation(kotlin("stdlib-jdk8"))
     minecraft("com.mojang:minecraft:$fabricLatestMCVersion")
     mappings("net.fabricmc:yarn:$fabricMappingsVersion:v2")
     modImplementation("net.fabricmc:fabric-loader:[$fabricMinLoaderVersion,)")
