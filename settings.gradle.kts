@@ -16,7 +16,8 @@ pluginManagement {
         kotlin("jvm") version kotlinVersion
         kotlin("js") version kotlinVersion
         id("fabric-loom") version fabricLoomVersion
-        id("com.palantir.git-version") version "0.12.3"
+        id("org.ajoberstar.grgit") version "4.1.0"
+        id("com.github.johnrengelman.shadow") version "7.0.0"
     }
 }
 

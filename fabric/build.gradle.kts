@@ -1,8 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     kotlin("jvm")
     id("fabric-loom")
+    id("com.github.johnrengelman.shadow")
 }
 
 val fabricModVersion: String by project
@@ -20,12 +23,14 @@ repositories {
 }
 
 dependencies {
-    compile(project(":common"))
-    compile(kotlin("stdlib-jdk8")) // using 'implementation' doesn't allow us to bundle this
+    implementation(project(":common"))
+    implementation(kotlin("stdlib-jdk8")) // using 'implementation' doesn't allow us to bundle this
     minecraft("com.mojang:minecraft:$fabricLatestMCVersion")
     mappings("net.fabricmc:yarn:$fabricMappingsVersion:v2")
     modImplementation("net.fabricmc:fabric-loader:[$fabricMinLoaderVersion,)")
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricAPIVersion")
+
+    shadow(project(":common"))
 }
 
 tasks.processResources {
@@ -40,12 +45,13 @@ tasks.processResources {
     }
 }
 
-tasks.assemble { dependsOn(tasks.getByName("dist").mustRunAfter(tasks.remapJar)) }
-tasks.getByName("runClient") { dependsOn(tasks.getByName("copyRunResources")) }
-tasks.getByName("runServer") { dependsOn(tasks.getByName("copyRunResources")) }
+tasks.assemble { dependsOn(tasks.getByName("jarDist").mustRunAfter(tasks.remapJar)) }
+tasks.getByName("runClient").dependsOn(tasks.getByName("copyRunResources"))
+tasks.getByName("runServer").dependsOn(tasks.getByName("copyRunResources"))
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "1.8"
+
 
 tasks.withType<JavaCompile>().configureEach{
     this.options.encoding = "UTF-8"
@@ -59,8 +65,14 @@ tasks.jar {
     archiveBaseName.set(rootProject.name)
 }
 
-tasks.getByName<Zip>("dist") {
-    configurations.compile.get().filter { it.name.startsWith("kotlin-stdlib") || it.name.startsWith("common") }.forEach {
-        from(zipTree(it))
-    }
+val shadowJar by tasks.getting(ShadowJar::class) {
+    configurations = listOf(project.configurations.shadow.get())
+    relocate("kotlin", "mod.lucky.kotlin")
+    relocate("org.jetbrains", "mod.lucky.jetbrains")
+    minimize()
+}
+
+tasks.getByName<RemapJarTask>("remapJar") {
+    input.set(shadowJar.archiveFile.get())
+    dependsOn(tasks.getByName("shadowJar"))
 }

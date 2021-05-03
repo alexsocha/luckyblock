@@ -1,11 +1,11 @@
-import groovy.lang.Closure
 import java.text.SimpleDateFormat
 import java.util.TimeZone
 import java.util.Date
+import org.ajoberstar.grgit.Grgit
 
 plugins {
     kotlin("multiplatform")
-    id("com.palantir.git-version")
+    id("org.ajoberstar.grgit")
 }
 
 repositories {
@@ -22,7 +22,6 @@ kotlin {
     js {
         browser {
             useCommonJs()
-
         }
     }
 
@@ -43,6 +42,10 @@ kotlin {
 
         val jsMain by getting
     }
+}
+
+tasks.getByName<ProcessResources>("jvmProcessResources") {
+    exclude("*")
 }
 
 val forgeModVersion: String by project
@@ -66,12 +69,11 @@ fun copyJvmRuntimeResources(projectName: String, taskName: String, loaderName: S
     project(":$projectName").tasks.register<Copy>(taskName) {
         into(dir)
         into("config/lucky/$modVersion-$loaderName") {
-            from("$rootDir/common/build/processedResources/jvm/main/lucky-config")
+            from("$rootDir/common/src/jvmMain/resources/lucky-config")
         }
         into("addons/lucky/lucky-block-custom") {
             from("$rootDir/common/src/jvmMain/resources/template-addons/${latestTemplateAddon}")
         }
-        dependsOn(tasks.getByName("jvmProcessResources"))
     }
 }
 copyJvmRuntimeResources(projectName="fabric", taskName="copyRunResources", loaderName="fabric", modVersion=fabricModVersion, dir="$rootDir/run")
@@ -80,20 +82,18 @@ copyJvmRuntimeResources(projectName="fabric", taskName="copyRunResources", loade
 tasks.register<Copy>("jvmTestCopyRunResources") {
     into("build/test-run")
     into("config/lucky/0.0.0-0-test") {
-        from("$rootDir/common/build/processedResources/jvm/main/lucky-config")
+        from("$rootDir/common/src/jvmMain/resources/lucky-config")
     }
     into("addons/lucky") {
-        from("$rootDir/common/build/processedResources/jvm/main/template-addons")
+        from("$rootDir/common/src/jvmMain/resources/template-addons")
     }
-    dependsOn(tasks.getByName("jvmProcessResources"))
 }
 tasks.getByName("jvmTest").dependsOn(tasks.getByName("jvmTestCopyRunResources"))
 
 tasks.register<Zip>("jvmConfigDist") {
     archiveFileName.set("lucky-config.zip")
     destinationDirectory.set(file("$rootDir/common/build/tmp"))
-    from("build/processedResources/jvm/main/lucky-config")
-    dependsOn(tasks.getByName("jvmProcessResources"))
+    from("src/jvmMain/resources/lucky-config")
 }
 
 fun getModVersionNumber(modVersion: String): Int {
@@ -108,14 +108,14 @@ fun getModVersionNumber(modVersion: String): Int {
 fun writeMeta(distDir: String, version: String, versionNumber: Int, minMinecraftVersion: String, extraInfo: Map<String, String> = emptyMap()) {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     dateFormat.timeZone = TimeZone.getTimeZone("UTC")
-    val gitDetails = (project.ext["versionDetails"] as Closure<*>)() as com.palantir.gradle.gitversion.VersionDetails
+    val git = Grgit.open()
 
     file(distDir).mkdirs()
     val meta = mapOf(
         "version" to version,
         "version_number" to versionNumber,
         "min_minecraft_version" to minMinecraftVersion,
-        "revision" to gitDetails.gitHash,
+        "revision" to git.head().abbreviatedId,
         "datetime" to dateFormat.format(Date())
     ) + extraInfo
     file("$distDir/meta.yaml").writeText(
@@ -140,9 +140,8 @@ tasks.register<Zip>("jvmTemplateAddonDist") {
 
     archiveFileName.set("$distName.zip")
     destinationDirectory.set(file("$rootDir/dist/$distName"))
-    from("build/processedResources/jvm/main/template-addons/$distName")
+    from("src/jvmMain/resources/template-addons/$distName")
     from("dist/$distName/meta.yaml")
-    dependsOn(tasks.getByName("jvmProcessResources"))
 }
 
 project(":bedrock").tasks.register<Zip>("templateAddonDist") {
@@ -150,7 +149,7 @@ project(":bedrock").tasks.register<Zip>("templateAddonDist") {
 }
 
 fun jvmJarDist(projectName: String, minMCVersion: String, modVersion: String) {
-    project(":$projectName").tasks.register<Zip>("dist") {
+    project(":$projectName").tasks.register<Zip>("jarDist") {
         val distName = "${rootProject.name}-$modVersion-$projectName"
         destinationDirectory.set(file("$rootDir/dist/$distName"))
         archiveFileName.set("$distName.jar")
@@ -170,7 +169,6 @@ fun jvmJarDist(projectName: String, minMCVersion: String, modVersion: String) {
         from("$rootDir/dist/$distName/meta.yaml")
 
         dependsOn(tasks.getByName("jvmConfigDist"))
-        dependsOn(tasks.getByName("jvmProcessResources"))
     }
 }
 jvmJarDist("fabric", fabricMinMCVersion, fabricModVersion)
