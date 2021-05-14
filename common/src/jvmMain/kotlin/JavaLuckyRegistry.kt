@@ -83,12 +83,11 @@ object JavaLuckyRegistry {
     fun init() {
         registerJavaTemplateVars()
 
-        notificationState = ModNotificationState.fromCache()
-
         val (mainResources, allAddonResources) = loadResources(javaGameAPI.getGameDir())
         JavaLuckyRegistry.allAddonResources = allAddonResources
 
         registerMainResources(mainResources)
+
         addons.addAll(allAddonResources.map { it.addon })
         allAddonResources.forEach { registerAddon(it) }
 
@@ -103,5 +102,7 @@ object JavaLuckyRegistry {
         LuckyRegistry.sourceToAddonId.putAll(itemIds.associateBy { blockId } + addons.flatMap { addon ->
             addon.ids.getItemIds().map { it to addon.addonId }
         }.toMap())
+
+        notificationState = ModNotificationState.fromCache()
     }
 }
