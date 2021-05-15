@@ -55,7 +55,9 @@ fun readStructures(baseDir: File, configLines: List<String>): Map<String, Struct
         gameAPI.logError("Error searching for structures", e)
         emptyList()
     }
-    val structPaths = filePaths.filter { it.startsWith("structures/") || it.contains("/structures/") }
+    val structPaths = filePaths
+        .map { it.replace(File.pathSeparatorChar, '/') }
+        .filter { it.startsWith("structures/") || it.contains("/structures/") }
 
     val structures = structPaths.mapNotNull { fullPath ->
         val path = fullPath.substring(fullPath.indexOf("structures/") + "structures/".length)
