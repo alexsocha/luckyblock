@@ -18,6 +18,7 @@ import net.minecraft.world.dimension.DimensionType
 import net.minecraft.world.gen.chunk.ChunkGenerator
 import net.minecraft.world.gen.feature.DefaultFeatureConfig
 import net.minecraft.world.gen.feature.Feature
+import net.minecraft.world.gen.feature.util.FeatureContext
 import java.util.*
 
 private fun canGenerateAt(world: WorldView, pos: BlockPos): Boolean {
@@ -36,13 +37,10 @@ class LuckyWorldFeature(
     private val blockId: String = JavaLuckyRegistry.blockId,
 ) : Feature<DefaultFeatureConfig>(codec) {
 
-    override fun generate(
-        world: StructureWorldAccess,
-        chunkGenerator: ChunkGenerator,
-        random: Random,
-        pos: BlockPos,
-        config: DefaultFeatureConfig?,
-    ): Boolean {
+    override fun generate(ctx: FeatureContext<DefaultFeatureConfig>): Boolean {
+        val world = ctx.world
+        val random = ctx.random
+        val pos = ctx.origin
         return try {
             val topPos = world.getTopPosition(Heightmap.Type.WORLD_SURFACE, pos)
             val surfaceY = (topPos.y downTo 1).firstOrNull {

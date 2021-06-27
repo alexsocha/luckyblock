@@ -1,5 +1,6 @@
 package mod.lucky.fabric.game
 
+import mod.lucky.common.RANDOM
 import mod.lucky.fabric.*
 import mod.lucky.java.*
 import mod.lucky.java.game.LuckyItemStackData

@@ -6,6 +6,7 @@ import mod.lucky.java.game.*
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.entity.EntityRenderDispatcher
 import net.minecraft.client.render.entity.EntityRenderer
+import net.minecraft.client.render.entity.EntityRendererFactory
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
@@ -16,7 +17,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.Packet
 import net.minecraft.util.Identifier
 import net.minecraft.util.hit.EntityHitResult
@@ -65,25 +66,25 @@ class LuckyProjectile(
                 val hitEntity: Entity? = (hitResult as? EntityHitResult)?.entity
                 data.onImpact(world, this, owner, hitEntity)
             }
-            remove()
+            remove(RemovalReason.DISCARDED)
         }
     }
 
-    override fun readCustomDataFromTag(tag: CompoundTag) {
-        super.readCustomDataFromTag(tag)
+    override fun readCustomDataFromNbt(tag: CompoundTag) {
+        super.readCustomDataFromNbt(tag)
         data = LuckyProjectileData.readFromTag(tag)
         val stackNBT = (javaGameAPI.readNBTKey(tag, "item") ?: javaGameAPI.readNBTKey(tag, "Item")) as? CompoundTag?
-        val stack = stackNBT.let { MCItemStack.fromTag(it) } ?: defaultDisplayItemStack
+        val stack = stackNBT.let { MCItemStack.fromNbt(it) } ?: defaultDisplayItemStack
         stack.count = 1
         stack.count = 1
         dataTracker.set(ITEM_STACK, stack)
     }
 
-    override fun writeCustomDataToTag(tag: CompoundTag) {
-        super.writeCustomDataToTag(tag)
+    override fun writeCustomDataToNbt(tag: NbtCompound) {
+        super.writeCustomDataToNbt(tag)
         data.writeToTag(tag)
         val stack = dataTracker.get(ITEM_STACK)
-        javaGameAPI.writeNBTKey(tag, "Item", stack.toTag(CompoundTag()))
+        javaGameAPI.writeNBTKey(tag, "Item", stack.writeNbt(CompoundTag()))
     }
 
     override fun createSpawnPacket(): Packet<*> {
@@ -92,7 +93,8 @@ class LuckyProjectile(
 }
 
 @OnlyInClient
-class LuckyProjectileRenderer(dispatcher: EntityRenderDispatcher) : EntityRenderer<LuckyProjectile>(dispatcher) {
+class LuckyProjectileRenderer(ctx: EntityRendererFactory.Context) : EntityRenderer<LuckyProjectile>(
+    ctx) {
     override fun render(
         entity: LuckyProjectile,
         yawDeg: Float,
@@ -102,7 +104,7 @@ class LuckyProjectileRenderer(dispatcher: EntityRenderDispatcher) : EntityRender
         light: Int,
     ) {
         val itemEntity = entity.itemEntity ?: return
-        renderManager.getRenderer(itemEntity)?.render(
+        dispatcher.getRenderer(itemEntity)?.render(
             itemEntity,
             yawDeg, particleTicks,
             matrix, vertexProvider, light

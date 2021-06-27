@@ -66,7 +66,7 @@ class FabricMod : ModInitializer {
         val featureId = "${blockId}_world_gen"
 
         Registry.register<Feature<*>, Feature<*>>(Registry.FEATURE, Identifier(featureId), feature)
-        val configuredId = RegistryKey.of(Registry.CONFIGURED_FEATURE_WORLDGEN, MCIdentifier(featureId))
+        val configuredId = RegistryKey.of(Registry.CONFIGURED_FEATURE_KEY, MCIdentifier(featureId))
         Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, configuredId.value, configuredFeature)
         BiomeModifications.addFeature(BiomeSelectors.all(), GenerationStep.Feature.SURFACE_STRUCTURES, configuredId);
     }
@@ -162,18 +162,18 @@ class FabricModClient : ClientModInitializer {
             registerLuckyBowModels(Registry.ITEM.get(Identifier(addon.ids.bow)) as LuckyBow)
         }
 
-        EntityRendererRegistry.INSTANCE.register(FabricLuckyRegistry.luckyProjectile) { dispatcher, _ ->
-            LuckyProjectileRenderer(dispatcher)
+        EntityRendererRegistry.INSTANCE.register(FabricLuckyRegistry.luckyProjectile) { ctx ->
+            LuckyProjectileRenderer(ctx)
         }
-        EntityRendererRegistry.INSTANCE.register(FabricLuckyRegistry.thrownLuckyPotion) { dispatcher, _ ->
-            ThrownLuckyPotionRenderer(dispatcher)
+        EntityRendererRegistry.INSTANCE.register(FabricLuckyRegistry.thrownLuckyPotion) { ctx ->
+            ThrownLuckyPotionRenderer(ctx)
         }
-        EntityRendererRegistry.INSTANCE.register(FabricLuckyRegistry.delayedDrop) { dispatcher, _ ->
-            DelayedDropRenderer(dispatcher)
+        EntityRendererRegistry.INSTANCE.register(FabricLuckyRegistry.delayedDrop) { ctx ->
+            DelayedDropRenderer(ctx)
         }
 
         ClientPlayNetworking.registerGlobalReceiver(FabricLuckyRegistry.spawnPacketId) { client, _, buf, _ ->
-            val spawnPacket = SpawnPacket.decode(buf)
+        val spawnPacket = SpawnPacket.decode(buf)
             val world = client.world
             if (spawnPacket != null && world != null) {
                 client.execute { spawnPacket.execute(world) }

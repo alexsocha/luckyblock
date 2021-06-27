@@ -3,6 +3,7 @@ package mod.lucky.fabric.game
 import mod.lucky.fabric.FabricLuckyRegistry
 import mod.lucky.fabric.isClientWorld
 import mod.lucky.fabric.toVec3i
+import mod.lucky.fabric.*
 import mod.lucky.java.*
 import mod.lucky.java.game.*
 import net.minecraft.block.*
@@ -10,9 +11,9 @@ import net.minecraft.block.entity.BlockEntity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket
 import net.minecraft.sound.BlockSoundGroup
+import net.minecraft.util.DyeColor
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 import net.minecraft.world.BlockView
@@ -41,7 +42,7 @@ private fun onBreak(
     )
 }
 
-class LuckyBlock : BlockWithEntity(Settings.of(Material.WOOD, MaterialColor.YELLOW)
+class LuckyBlock : BlockWithEntity(Settings.of(Material.WOOD, DyeColor.YELLOW)
     .sounds(BlockSoundGroup.STONE)
     .strength(0.2f, 6000000.0f)) {
 
@@ -84,8 +85,8 @@ class LuckyBlock : BlockWithEntity(Settings.of(Material.WOOD, MaterialColor.YELL
             onBreak(this, world, null, pos, removedByRedstone = true)
     }
 
-    override fun createBlockEntity(world: BlockView?): BlockEntity {
-        return LuckyBlockEntity()
+    override fun createBlockEntity(pos: BlockPos, state: BlockState): BlockEntity {
+        return LuckyBlockEntity(pos, state)
     }
 
     override fun getRenderType(state: BlockState): BlockRenderType {
@@ -95,16 +96,18 @@ class LuckyBlock : BlockWithEntity(Settings.of(Material.WOOD, MaterialColor.YELL
 
 
 class LuckyBlockEntity(
+    private val blockPos: MCBlockPos,
+    private val blockState: BlockState,
     var data: LuckyBlockEntityData = LuckyBlockEntityData()
-) : BlockEntity(FabricLuckyRegistry.luckyBlockEntity) {
+) : BlockEntity(FabricLuckyRegistry.luckyBlockEntity, blockPos, blockState) {
 
-    override fun fromTag(blockState: BlockState, tag: CompoundTag) {
-        super.fromTag(blockState, tag)
+    override fun readNbt(tag: CompoundTag) {
+        super.readNbt(tag)
         data = LuckyBlockEntityData.readFromTag(tag)
     }
 
-    override fun toTag(tag: CompoundTag): CompoundTag {
-        super.toTag(tag)
+    override fun writeNbt(tag: CompoundTag): CompoundTag {
+        super.writeNbt(tag)
         data.writeToTag(tag)
         return tag
     }

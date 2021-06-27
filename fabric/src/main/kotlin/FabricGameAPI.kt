@@ -27,7 +27,6 @@ import net.minecraft.entity.*
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.NbtHelper
 import net.minecraft.particle.ParticleEffect
 import net.minecraft.particle.ParticleType
@@ -53,6 +52,19 @@ typealias MCPlayerEntity = net.minecraft.entity.player.PlayerEntity
 typealias MCVec3d = net.minecraft.util.math.Vec3d
 typealias MCVec3i = net.minecraft.util.math.Vec3i
 typealias MCBlockPos = net.minecraft.util.math.BlockPos
+
+typealias Tag = net.minecraft.nbt.NbtElement
+typealias ByteTag = net.minecraft.nbt.NbtByte
+typealias ShortTag = net.minecraft.nbt.NbtShort
+typealias IntTag = net.minecraft.nbt.NbtInt
+typealias FloatTag = net.minecraft.nbt.NbtFloat
+typealias DoubleTag = net.minecraft.nbt.NbtDouble
+typealias LongTag = net.minecraft.nbt.NbtLong
+typealias StringTag = net.minecraft.nbt.NbtString
+typealias ByteArrayTag = net.minecraft.nbt.NbtByteArray
+typealias IntArrayTag = net.minecraft.nbt.NbtIntArray
+typealias ListTag = net.minecraft.nbt.NbtList
+typealias CompoundTag = net.minecraft.nbt.NbtCompound
 
 fun toMCVec3d(vec: Vec3d): MCVec3d = MCVec3d(vec.x, vec.y, vec.z)
 fun toMCBlockPos(vec: Vec3i): MCBlockPos = MCBlockPos(vec.x, vec.y, vec.z)
@@ -203,7 +215,7 @@ object FabricGameAPI : GameAPI {
                 SpawnReason.EVENT,
                 null, null
             )
-            entity.readCustomDataFromTag(mcEntityNBT)
+            entity.readCustomDataFromNbt(mcEntityNBT)
         }
     }
 
@@ -231,19 +243,16 @@ object FabricGameAPI : GameAPI {
 
     override fun setBlockEntity(world: World, pos: Vec3i, nbt: DictAttr) {
         val mcPos = toMCBlockPos(pos)
-        val state = (world as ServerWorldAccess).getBlockState(mcPos)
-        if (state.block.hasBlockEntity()) {
-            val blockEntity = world.getBlockEntity(mcPos)
-            if (blockEntity != null) {
-                val fullNBT = nbt.with(mapOf(
-                    "x" to intAttrOf(pos.x),
-                    "y" to intAttrOf(pos.y),
-                    "z" to intAttrOf(pos.z),
-                ))
-                blockEntity.fromTag(state, javaGameAPI.attrToNBT(fullNBT) as CompoundTag)
-                blockEntity.markDirty()
-                //if (world is MCWorld) world.setBlockEntity(mcPos, blockEntity)
-            }
+        val blockEntity = (world as ServerWorldAccess).getBlockEntity(mcPos)
+        if (blockEntity != null) {
+            val fullNBT = nbt.with(mapOf(
+                "x" to intAttrOf(pos.x),
+                "y" to intAttrOf(pos.y),
+                "z" to intAttrOf(pos.z),
+            ))
+            blockEntity.readNbt(javaGameAPI.attrToNBT(fullNBT) as CompoundTag)
+            blockEntity.markDirty()
+            //if (world is MCWorld) world.setBlockEntity(mcPos, blockEntity)
         }
     }
 
@@ -367,7 +376,7 @@ object FabricGameAPI : GameAPI {
                     else Registry.BLOCK.get(Identifier(blockIdWithMode)).defaultState
 
                 return if (newState == newBlockInfo.state) newBlockInfo
-                    else Structure.StructureBlockInfo(newBlockInfo.pos, newState, newBlockInfo.tag)
+                    else Structure.StructureBlockInfo(newBlockInfo.pos, newState, newBlockInfo.nbt)
             }
 
             override fun getType(): StructureProcessorType<*> {
@@ -380,7 +389,6 @@ object FabricGameAPI : GameAPI {
             .setRotation(mcRotation)
             .setPosition(toMCBlockPos(centerOffset))
             .setIgnoreEntities(false)
-            .setChunkPosition(null)
             .addProcessor(processor)
 
         val mcCornerPos = toMCBlockPos(pos - centerOffset)

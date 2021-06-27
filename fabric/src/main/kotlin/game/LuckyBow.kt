@@ -1,5 +1,6 @@
 package mod.lucky.fabric.game
 
+import mod.lucky.common.RANDOM
 import mod.lucky.fabric.MCItemStack
 import mod.lucky.fabric.OnlyInClient
 import mod.lucky.fabric.isClientWorld
@@ -93,14 +94,14 @@ fun registerLuckyBowModels(item: LuckyBow) {
     FabricModelPredicateProviderRegistry.register(
         item,
         Identifier("pulling")
-    ) { stack, _, entity ->
+    ) { stack, _, entity, _ ->
         if (entity != null && entity.isUsingItem && entity.activeItem === stack) 1.0f else 0.0f
     }
 
     FabricModelPredicateProviderRegistry.register(
         item,
         Identifier("pull")
-    ) { _, _, entity ->
+    ) { _, _, entity, _ ->
         if (entity == null) {
             0.0f
         } else {

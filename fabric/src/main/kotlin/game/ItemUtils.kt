@@ -2,12 +2,12 @@ package mod.lucky.fabric.game
 
 import mod.lucky.fabric.MCItemStack
 import mod.lucky.fabric.OnlyInClient
+import mod.lucky.fabric.*
 import mod.lucky.java.game.LuckyItemStackData
 import mod.lucky.java.game.readFromTag
 import mod.lucky.java.game.toAttr
 import mod.lucky.java.javaGameAPI
 import net.minecraft.item.Item
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
