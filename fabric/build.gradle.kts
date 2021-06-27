@@ -76,3 +76,14 @@ tasks.getByName<RemapJarTask>("remapJar") {
     input.set(shadowJar.archiveFile.get())
     dependsOn(tasks.getByName("shadowJar"))
 }
+
+tasks {
+    val javaVersion = JavaVersion.VERSION_16
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(javaVersion.toString()))
+        }
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
+    }
+}

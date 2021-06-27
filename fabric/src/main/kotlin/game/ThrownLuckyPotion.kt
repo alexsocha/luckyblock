@@ -6,15 +6,13 @@ import mod.lucky.java.game.ThrownLuckyPotionData
 import mod.lucky.java.game.onImpact
 import mod.lucky.java.game.readFromTag
 import mod.lucky.java.game.writeToTag
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.render.entity.EntityRenderDispatcher
+import net.minecraft.client.render.entity.EntityRendererFactory
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity
 import net.minecraft.item.Item
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.Packet
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.hit.HitResult
@@ -46,20 +44,20 @@ class ThrownLuckyPotion : ThrownItemEntity {
                 val hitEntity: Entity? = (hitResult as? EntityHitResult)?.entity
                 data.onImpact(world, this, owner, hitEntity)
             }
-            remove()
+            remove(RemovalReason.DISCARDED)
         }
     }
 
-    override fun readCustomDataFromTag(tag: CompoundTag) {
+    override fun readCustomDataFromNbt(tag: CompoundTag) {
         (javaGameAPI.readNBTKey(tag, "itemLuckyPotion") as? CompoundTag?)?.let {
             javaGameAPI.writeNBTKey(tag, "Item", it)
         }
-        super.readCustomDataFromTag(tag)
+        super.readCustomDataFromNbt(tag)
         data = ThrownLuckyPotionData.readFromTag(tag)
     }
 
-    override fun writeCustomDataToTag(tag: CompoundTag) {
-        super.writeCustomDataToTag(tag)
+    override fun writeCustomDataToNbt(tag: CompoundTag) {
+        super.writeCustomDataToNbt(tag)
         data.writeToTag(tag)
     }
 
@@ -77,5 +75,5 @@ class ThrownLuckyPotion : ThrownItemEntity {
 }
 
 @OnlyInClient
-class ThrownLuckyPotionRenderer(dispatcher: EntityRenderDispatcher) :
-    FlyingItemEntityRenderer<ThrownLuckyPotion>(dispatcher, MinecraftClient.getInstance().itemRenderer)
+class ThrownLuckyPotionRenderer(ctx: EntityRendererFactory.Context) :
+    FlyingItemEntityRenderer<ThrownLuckyPotion>(ctx)

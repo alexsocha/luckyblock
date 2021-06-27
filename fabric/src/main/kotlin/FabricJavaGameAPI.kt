@@ -3,12 +3,11 @@ package mod.lucky.fabric
 import mod.lucky.common.*
 import mod.lucky.common.attribute.*
 import mod.lucky.java.*
-import mod.lucky.java.loader.ShapedCraftingRecipe
-import mod.lucky.java.loader.ShapelessCraftingRecipe
+import mod.lucky.fabric.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.block.BlockState
+import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.datafixer.fix.ItemIdFix
@@ -16,16 +15,13 @@ import net.minecraft.datafixer.fix.ItemInstanceTheFlatteningFix
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.EnchantmentTarget
 import net.minecraft.enchantment.Enchantments
-import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.projectile.ArrowEntity
-import net.minecraft.nbt.*
+import net.minecraft.nbt.NbtIo
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.structure.Structure
 import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
-import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
-import net.minecraft.world.WorldView
 import java.awt.Color
 import java.io.File
 import java.io.InputStream
@@ -124,12 +120,12 @@ object FabricJavaGameAPI : JavaGameAPI {
         return when (tag) {
             is StringTag -> stringAttrOf(tag.asString())
             // note that booleans are stored as bytes
-            is ByteTag -> ValueAttr(AttrType.BYTE, tag.byte)
-            is ShortTag -> ValueAttr(AttrType.SHORT, tag.short)
-            is IntTag -> ValueAttr(AttrType.INT, tag.int)
-            is LongTag -> ValueAttr(AttrType.LONG, tag.long)
-            is FloatTag -> ValueAttr(AttrType.FLOAT, tag.float)
-            is DoubleTag -> ValueAttr(AttrType.DOUBLE, tag.double)
+            is ByteTag -> ValueAttr(AttrType.BYTE, tag.byteValue())
+            is ShortTag -> ValueAttr(AttrType.SHORT, tag.shortValue())
+            is IntTag -> ValueAttr(AttrType.INT, tag.intValue())
+            is LongTag -> ValueAttr(AttrType.LONG, tag.longValue())
+            is FloatTag -> ValueAttr(AttrType.FLOAT, tag.floatValue())
+            is DoubleTag -> ValueAttr(AttrType.DOUBLE, tag.doubleValue())
             is ByteArrayTag -> ValueAttr(AttrType.BYTE_ARRAY, tag.byteArray)
             is IntArrayTag -> ValueAttr(AttrType.INT_ARRAY, tag.intArray)
             is ListTag -> ListAttr(tag.map { nbtToAttr(it) })
@@ -221,14 +217,14 @@ object FabricJavaGameAPI : JavaGameAPI {
     }
 
     override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr {
-        val chestEntity = ChestBlockEntity()
+        val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultState)
         // world is needed to prevent a NullPointerException
-        chestEntity.setLocation(toServerWorld(world), toMCBlockPos(pos))
+        chestEntity.setWorld(toServerWorld(world))
         chestEntity.setLootTable(MCIdentifier(lootTableId), RANDOM.nextLong())
         chestEntity.checkLootInteraction(null)
 
         val tag = CompoundTag()
-        chestEntity.toTag(tag)
+        chestEntity.writeNbt(tag)
         return javaGameAPI.nbtToAttr(javaGameAPI.readNBTKey(tag, "Items")!!) as ListAttr
     }
 
@@ -262,7 +258,7 @@ object FabricJavaGameAPI : JavaGameAPI {
 
     override fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i> {
         val structure = Structure()
-        structure.fromTag(NbtIo.readCompressed(stream))
+        structure.readNbt(NbtIo.readCompressed(stream))
         return Pair(structure, toVec3i(structure.size))
     }
 }
