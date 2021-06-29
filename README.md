@@ -27,15 +27,15 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 
 ## Installing
 1. Download and install [Forge](https://files.minecraftforge.net) or [Fabric](https://fabricmc.net), then run Minecraft at least once.
-2. Download the Lucky Block and put it into your [.minecraft](https://minecraft.gamepedia.com/.minecraft)/mods/</a> folder.
+2. Download the Lucky Block mod and put it into your [.minecraft](https://minecraft.gamepedia.com/.minecraft)/mods/</a> folder.
 3. Run Minecraft and enjoy!
 
 ## Add-ons
 <img src="img/addons_3d.png" width="400px">
 
 ### Installing
-1. Install the Lucky Block and run Minecraft at least once.
-2. Put add-ons into your <a href="https://minecraft.gamepedia.com/.minecraft">.minecraft</a>/addons/lucky/</a> folder.
+1. Install the Lucky Block mod and run Minecraft at least once.
+2. Put add-ons into your [.minecraft](https://minecraft.gamepedia.com/.minecraft)/addons/lucky/ folder.
 3. Run Minecraft and enjoy!
 
 ## Development
