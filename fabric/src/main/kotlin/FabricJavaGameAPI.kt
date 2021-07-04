@@ -189,7 +189,12 @@ object FabricJavaGameAPI : JavaGameAPI {
     @OnlyInClient
     override fun showClientMessage(textJsonStr: String) {
         val player = MinecraftClient.getInstance().player
-        player?.sendSystemMessage(Text.Serializer.fromJson(textJsonStr), UUID.fromString(getEntityUUID(player)))
+        val mcText = Text.Serializer.fromJson(textJsonStr)
+        if (mcText == null) {
+            gameAPI.logError("Invalid JSON text: $textJsonStr")
+            return
+        }
+        player?.sendSystemMessage(mcText, UUID.fromString(getEntityUUID(player)))
     }
 
     override fun getBlockId(block: Block): String? {
@@ -219,7 +224,7 @@ object FabricJavaGameAPI : JavaGameAPI {
     override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr {
         val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultState)
         // world is needed to prevent a NullPointerException
-        chestEntity.setWorld(toServerWorld(world))
+        chestEntity.world = toServerWorld(world)
         chestEntity.setLootTable(MCIdentifier(lootTableId), RANDOM.nextLong())
         chestEntity.checkLootInteraction(null)
 

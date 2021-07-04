@@ -257,7 +257,7 @@ object FabricGameAPI : GameAPI {
     }
 
     override fun dropItem(world: World, pos: Vec3d, itemId: String, nbt: DictAttr?) {
-        val item = Registry.ITEM.getOrEmpty(Identifier(itemId))?.let { if (it.isPresent) it.get() else null }
+        val item = Registry.ITEM.getOrEmpty(Identifier(itemId)).orElse(null)
         if (item == null) {
             gameAPI.logError("Invalid item ID: '$itemId'")
             return
@@ -344,7 +344,12 @@ object FabricGameAPI : GameAPI {
 
     override fun playSplashPotionEvent(world: World, pos: Vec3d, potionName: String?, potionColor: Int?) {
         if (potionName != null) {
-            val potion = Registry.POTION.get(Identifier(potionName))
+            val potion = Registry.POTION.getOrEmpty(Identifier(potionName)).orElse(null)
+            if (potion == null) {
+                gameAPI.logError("Invalid splash potion name: $potionName")
+                return
+            }
+
             val color = PotionUtil.getColor(potion.effects)
             playParticleEvent(world, pos, if (potion.hasInstantEffect()) 2007 else 2002, color)
         } else if (potionColor != null) {

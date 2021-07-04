@@ -1,9 +1,7 @@
 package mod.lucky.fabric.game
 
-import mod.lucky.fabric.FabricLuckyRegistry
-import mod.lucky.fabric.MCIdentifier
-import mod.lucky.fabric.MCItemStack
-import mod.lucky.fabric.toMCItemStack
+import mod.lucky.common.gameAPI
+import mod.lucky.fabric.*
 import mod.lucky.java.*
 import mod.lucky.java.loader.ShapedCraftingRecipe
 import mod.lucky.java.loader.ShapelessCraftingRecipe
@@ -19,6 +17,15 @@ typealias MCCraftingRecipe = net.minecraft.recipe.CraftingRecipe
 typealias MCShapelessCraftingRecipe = net.minecraft.recipe.ShapelessRecipe
 typealias MCShapedCraftingRecipe = net.minecraft.recipe.ShapedRecipe
 
+fun getIngredient(id: String): Ingredient? {
+    val item = Registry.ITEM.getOrEmpty(MCIdentifier(id)).orElse(null)
+    if (item == null) {
+        gameAPI.logError("Invalid item in recipe: $id")
+        return null
+    }
+    return Ingredient.ofItems(item)
+}
+
 fun registerAddonCraftingRecipes() {
     val recipes = JavaLuckyRegistry.allAddonResources.flatMap { addonResources ->
         val blockId = addonResources.addon.ids.block
@@ -30,9 +37,7 @@ fun registerAddonCraftingRecipes() {
                     MCIdentifier(blockId),
                     "lucky",
                     toMCItemStack(recipe.resultStack),
-                    DefaultedList.copyOf(Ingredient.EMPTY, *recipe.ingredientIds.map {
-                        Ingredient.ofItems(Registry.ITEM.get(MCIdentifier(it)))
-                    }.toTypedArray()),
+                    DefaultedList.copyOf(Ingredient.EMPTY, *recipe.ingredientIds.mapNotNull { getIngredient(it) }.toTypedArray()),
                 )
 
                 is ShapedCraftingRecipe -> MCShapedCraftingRecipe(
@@ -41,7 +46,7 @@ fun registerAddonCraftingRecipes() {
                     recipe.width,
                     recipe.height,
                     DefaultedList.copyOf(Ingredient.EMPTY, *recipe.ingredientIds.map {
-                        if (it == null) Ingredient.EMPTY else Ingredient.ofItems(Registry.ITEM.get(MCIdentifier(it)))
+                        if (it == null) Ingredient.EMPTY else getIngredient(it)
                     }.toTypedArray()),
                     toMCItemStack(recipe.resultStack),
                 )
