@@ -1,4 +1,5 @@
 dist/
 .idea/
-build/
+**/build/
+.gradle/
 run/
