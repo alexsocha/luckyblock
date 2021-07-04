@@ -12,7 +12,7 @@ jobs:
                   path: |
                       - /root/.gradle/caches/
                       - /root/.gradle/wrapper/
-                  key: ${{ runner.os }}-${{ hashFiles('build.gradle') }}
+                  key: ${{ runner.os }}-${{ hashFiles('gradle.properties') }}
             - name: Build with Docker
               run: HOME=/root && ./docker-build.sh
             - name: Variables
