@@ -37,7 +37,7 @@ typealias MCItemStack = net.minecraft.item.ItemStack
 typealias MCIdentifier = net.minecraft.util.Identifier
 typealias MCStatusEffect = net.minecraft.entity.effect.StatusEffect
 
-fun isClientWorld(world: MCWorld): Boolean = world.isClient
+fun isClientWorld(world: MCIWorld): Boolean = world.isClient
 
 
 private fun toMCEnchantmentType(type: EnchantmentType): EnchantmentTarget {

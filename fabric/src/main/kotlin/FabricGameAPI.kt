@@ -47,6 +47,7 @@ import kotlin.random.asJavaRandom
 typealias MCBlock = net.minecraft.block.Block
 typealias MCItem = net.minecraft.item.Item
 typealias MCWorld = net.minecraft.world.World
+typealias MCIWorld = net.minecraft.world.WorldAccess
 typealias MCEntity = net.minecraft.entity.Entity
 typealias MCPlayerEntity = net.minecraft.entity.player.PlayerEntity
 typealias MCVec3d = net.minecraft.util.math.Vec3d
