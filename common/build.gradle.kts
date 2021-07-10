@@ -12,6 +12,22 @@ repositories {
     mavenCentral()
 }
 
+val isForgeEnabled: String by project
+val isForgeEnabledBool = isForgeEnabled.toBoolean()
+val forgeModVersion: String by project
+val forgeMinForgeVersion: String by project
+val forgeMinMCVersion: String by project
+
+val isFabricEnabled: String by project
+val isFabricEnabledBool = isFabricEnabled.toBoolean()
+val fabricModVersion: String by project
+val fabricMinMCVersion: String by project
+
+val isBedrockEnabled: String by project
+val isBedrockEnabledBool = isBedrockEnabled.toBoolean()
+val bedrockModVersion: String by project
+val bedrockTemplateAddonVersion: String by project
+
 kotlin {
     jvm {
         compilations.all {
@@ -28,34 +44,29 @@ kotlin {
     sourceSets {
         val commonMain by getting
 
-        val jvmMain by getting
-        val jvmTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-                // todo: separate common and JVM tests when mockk adds multiplatform support
-                // implementation("io.mockk:mockk-common:1.+")
-                implementation(kotlin("test-junit"))
-                implementation("io.mockk:mockk:1.+")
+        if (isForgeEnabledBool || isFabricEnabledBool) {
+            val jvmMain by getting
+            val jvmTest by getting {
+                dependencies {
+                    implementation(kotlin("test-common"))
+                    implementation(kotlin("test-annotations-common"))
+                    // todo: separate common and JVM tests when mockk adds multiplatform support
+                    // implementation("io.mockk:mockk-common:1.+")
+                    implementation(kotlin("test-junit"))
+                    implementation("io.mockk:mockk:1.+")
+                }
             }
         }
 
-        val jsMain by getting
+        if (isBedrockEnabledBool) {
+            val jsMain by getting
+        }
     }
 }
 
 tasks.getByName<ProcessResources>("jvmProcessResources") {
     exclude("*")
 }
-
-val forgeModVersion: String by project
-val forgeMinForgeVersion: String by project
-
-val fabricModVersion: String by project
-val fabricMinMCVersion: String by project
-
-val bedrockModVersion: String by project
-val bedrockTemplateAddonVersion: String by project
 
 typealias TemplateAddonVersions = Map<String, List<Map<String, String>>>
 
@@ -76,8 +87,8 @@ fun copyJvmRuntimeResources(projectName: String, taskName: String, loaderName: S
         }
     }
 }
-copyJvmRuntimeResources(projectName="fabric", taskName="copyRunResources", loaderName="fabric", modVersion=fabricModVersion, dir="$rootDir/run")
-//copyRuntimeResources(projectName="forge", taskName="copyRunResources", loaderName="forge", modVersion=forgeModVersion, dir="$rootDir/run")
+if (isForgeEnabledBool) copyJvmRuntimeResources(projectName="forge", taskName="copyRunResources", loaderName="forge", modVersion=forgeModVersion, dir="$rootDir/run")
+if (isFabricEnabledBool) copyJvmRuntimeResources(projectName="fabric", taskName="copyRunResources", loaderName="fabric", modVersion=fabricModVersion, dir="$rootDir/run")
 
 tasks.register<Copy>("jvmTestCopyRunResources") {
     into("build/test-run")
@@ -146,8 +157,10 @@ tasks.register<Zip>("jvmTemplateAddonDist") {
     from("dist/$distName/meta.yaml")
 }
 
-project(":bedrock").tasks.register<Zip>("templateAddonDist") {
-    // TODO
+if (isBedrockEnabledBool) {
+    project(":bedrock").tasks.register<Zip>("templateAddonDist") {
+        // TODO
+    }
 }
 
 fun jvmJarDist(projectName: String, minMCVersion: String, modVersion: String) {
@@ -173,25 +186,26 @@ fun jvmJarDist(projectName: String, minMCVersion: String, modVersion: String) {
         dependsOn(tasks.getByName("jvmConfigDist"))
     }
 }
-jvmJarDist("fabric", fabricMinMCVersion, fabricModVersion)
-//jvmJarDist("forge", forgeModVersion)
+if (isForgeEnabledBool) jvmJarDist("forge", forgeMinMCVersion, forgeModVersion)
+if (isFabricEnabledBool) jvmJarDist("fabric", fabricMinMCVersion, fabricModVersion)
+if (isBedrockEnabledBool) {
+    project(":bedrock").tasks.register<Zip>("dist") {
+        val distName = "${rootProject.name}-$bedrockModVersion-bedrock"
+        destinationDirectory.set(file("$rootDir/dist/$distName"))
+        archiveFileName.set("$distName.mcpack")
 
-project(":bedrock").tasks.register<Zip>("dist") {
-    val distName = "${rootProject.name}-$bedrockModVersion-bedrock"
-    destinationDirectory.set(file("$rootDir/dist/$distName"))
-    archiveFileName.set("$distName.mcpack")
+        doFirst {
+            writeMeta(
+                distDir = "$rootDir/dist/$distName",
+                version = bedrockModVersion,
+                versionNumber = getModVersionNumber(bedrockModVersion),
+                minMinecraftVersion = bedrockModVersion.split('-')[0]
+            )
+        }
 
-    doFirst {
-        writeMeta(
-            distDir = "$rootDir/dist/$distName",
-            version = bedrockModVersion,
-            versionNumber = getModVersionNumber(bedrockModVersion),
-            minMinecraftVersion = bedrockModVersion.split('-')[0]
-        )
+        from("$rootDir/bedrock/build/mcpack/$distName")
+        //dependsOn(tasks.getByName("processResources")) // TODO
     }
-
-    from("$rootDir/bedrock/build/mcpack/$distName")
-    //dependsOn(tasks.getByName("processResources")) // TODO
 }
 
 tasks.register<Delete>("jvmCleanDist") {
