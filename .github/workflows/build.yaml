@@ -21,10 +21,12 @@ jobs:
               with:
                 script: |
                     const refName = context.ref.split('/').pop()
-                    const isRelease = github.eventName == 'push' && (
-                        refName.startsWith('luckyblock-')
-                        || refName.startsWith('template-addon-')
-                    )
+                    const isRelease = github.eventName == 'push'
+                        && context.ref.startsWith("refs/tags/")
+                        && (
+                            refName.startsWith('luckyblock-')
+                            || refName.startsWith('template-addon-')
+                        )
                     
                     core.setOutput('refName', refName)
                     core.setOutput('isRelease', isRelease)
