@@ -21,7 +21,7 @@ jobs:
               with:
                 script: |
                     const refName = context.ref.split('/').pop()
-                    const isRelease = github.eventName == 'push'
+                    const isRelease = context.eventName === 'push'
                         && context.ref.startsWith("refs/tags/")
                         && (
                             refName.startsWith('luckyblock-')
