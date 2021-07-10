@@ -1,10 +1,14 @@
 pluginManagement {
     repositories {
-        mavenCentral()
+        maven {
+            name = "Forge"
+            url = uri("https://maven.minecraftforge.net/")
+        }
         maven {
             name = "Fabric"
-            url = java.net.URI("https://maven.fabricmc.net/")
+            url = uri("https://maven.fabricmc.net/")
         }
+        mavenCentral()
         gradlePluginPortal()
     }
 
@@ -17,7 +21,7 @@ pluginManagement {
         kotlin("js") version kotlinVersion
         id("fabric-loom") version fabricLoomVersion
         id("org.ajoberstar.grgit") version "4.1.0"
-        id("com.github.johnrengelman.shadow") version "7.0.0"
+        id("com.github.johnrengelman.shadow") version "5.2.0"
     }
 }
 
@@ -27,7 +31,15 @@ plugins {
     kotlin("js") apply false
 }
 
+val isFabricEnabled: String by settings
+val isFabricEnabledBool = isFabricEnabled.toBoolean()
+val isForgeEnabled: String by settings
+val isForgeEnabledBool = isForgeEnabled.toBoolean()
+val isBedrockEnabled: String by settings
+val isBedrockEnabledBool = isBedrockEnabled.toBoolean()
+
 rootProject.name = "luckyblock"
 include("common")
-include("fabric")
-include("bedrock")
+if (isForgeEnabledBool) include("forge")
+if (isFabricEnabledBool) include("fabric")
+if (isBedrockEnabledBool) include("bedrock")
