@@ -13,9 +13,8 @@ jobs:
                       - /root/.gradle/caches/
                       - /root/.gradle/wrapper/
                   key: ${{ runner.os }}-${{ hashFiles('build.gradle') }}
-          #- name: Build with Docker
-          #run: HOME=/root && ./docker-build.sh
-            # Deploy forge
+            - name: Build with Docker
+              run: HOME=/root && ./docker-build.sh
             - name: Variables
               id: variables
               uses: actions/github-script@0.9.0
@@ -23,13 +22,10 @@ jobs:
                 script: |
                     const refName = context.ref.split('/').pop()
                     const isRelease = github.eventName == 'push' && (
-                        refName.startsWith('luckyblocktest-')
+                        refName.startsWith('luckyblock-')
                         || refName.startsWith('template-addon-')
                     )
-
-                    console.log(refName)
-                    console.log(isRelease)
-                    console.log(context.eventName)
+                    
                     core.setOutput('refName', refName)
                     core.setOutput('isRelease', isRelease)
             - name: Deploy
