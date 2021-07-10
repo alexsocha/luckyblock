@@ -13,5 +13,27 @@ jobs:
                       - /root/.gradle/caches/
                       - /root/.gradle/wrapper/
                   key: ${{ runner.os }}-${{ hashFiles('build.gradle') }}
-            - name: Build with docker-compose
+            - name: Build with Docker
               run: HOME=/root && ./docker-build.sh
+            - name: Variables
+              id: variables
+              uses: actions/github-script@0.9.0
+              with:
+                script: |
+                    const refName = context.ref.split('/').pop()
+                    const isRelease = github.eventName == 'push' && (
+                        refName.startsWith('luckyblock-')
+                        || refName.startsWith('template-addon-')
+                    )
+                    
+                    core.setOutput('refName', refName)
+                    core.setOutput('isRelease', isRelease)
+            - name: Deploy
+              if: ${{ steps.variables.outputs.isRelease }}
+              uses: appleboy/scp-action@master
+              with:
+                  host: luckyblockmod.com
+                  username: root
+                  key: ${{ secrets.LUCKYBLOCKMOD_COM_KEY }}
+                  source: ${{ steps.variables.outputs.refName }}
+                  target: "~/luckyblock-dist"
