@@ -12,5 +12,4 @@ build/
 # other
 dist/
 logs/
-bedrock/
 run/
