@@ -15,7 +15,11 @@ data class DelayedDropData(
     val singleDrop: SingleDrop,
     val context: DropContext,
     var ticksRemaining: Int,
-) { companion object }
+) {
+    companion object {
+        val attrKeys = listOf("drop", "context", "ticksRemaining")
+    }
+}
 
 fun DelayedDropData.tick(world: World) {
     try {
@@ -62,5 +66,5 @@ fun DelayedDropData.writeToTag(tag: NBTTag) {
     writeNBTKeys(tag, toAttr())
 }
 fun DelayedDropData.Companion.readFromTag(tag: NBTTag, world: World): DelayedDropData {
-    return DelayedDropData.fromAttr(readNBTKeys(tag, DropContainer.attrKeys), world)
+    return DelayedDropData.fromAttr(readNBTKeys(tag, attrKeys), world)
 }

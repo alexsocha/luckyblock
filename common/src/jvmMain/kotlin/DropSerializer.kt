@@ -61,7 +61,7 @@ fun DropContext.Companion.fromAttr(attr: DictAttr, world: World): DropContext {
     val hitEntityUUID = attr.getOptionalValue<String>("hitEntityUUID")
 
     return DropContext(
-        pos = attr.getVec3("pos"),
+        pos = attr.getVec3("dropPos"),
         world = world,
         bowPower = attr.getValue("bowPower"),
         player = playerUUID?.let { javaGameAPI.findEntityByUUID(world, it) as PlayerEntity },
