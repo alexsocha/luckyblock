@@ -50,15 +50,11 @@ tasks.getByName("runClient").dependsOn(tasks.getByName("copyRunResources"))
 tasks.getByName("runServer").dependsOn(tasks.getByName("copyRunResources"))
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "1.8"
+compileKotlin.kotlinOptions.jvmTarget = "16"
 
-
-tasks.withType<JavaCompile>().configureEach{
-    this.options.encoding = "UTF-8"
-    val targetVersion = 8
-    if (JavaVersion.current().isJava9Compatible) {
-        this.options.release.set(targetVersion)
-    }
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    options.release.set(16)
 }
 
 tasks.jar {
