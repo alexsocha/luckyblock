@@ -15,13 +15,15 @@ pluginManagement {
     plugins {
         val fabricLoomVersion: String by settings
         val kotlinVersion: String by settings
+        val grGitVersion: String by settings
+        val shadowJarVersion: String by settings
 
         kotlin("multiplatform") version kotlinVersion
         kotlin("jvm") version kotlinVersion
         kotlin("js") version kotlinVersion
         id("fabric-loom") version fabricLoomVersion
-        id("org.ajoberstar.grgit") version "4.1.0"
-        id("com.github.johnrengelman.shadow") version "7.0.0"
+        id("org.ajoberstar.grgit") version grGitVersion
+        id("com.github.johnrengelman.shadow") version shadowJarVersion
     }
 }
 
