@@ -5,6 +5,7 @@ import mod.lucky.common.platformAPI
 import mod.lucky.forge.game.*
 import mod.lucky.java.*
 import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.resources.*
 import net.minecraft.server.packs.FilePackResources
 import net.minecraft.server.packs.FolderPackResources
@@ -72,7 +73,7 @@ class ForgeMod {
         FMLJavaModLoadingContext.get().modEventBus
             .addListener { _: FMLCommonSetupEvent -> setupCommon() }
         FMLJavaModLoadingContext.get().modEventBus
-            .addListener{ _: FMLClientSetupEvent -> setupClient() }
+            .addListener{ e: FMLClientSetupEvent -> setupClient(e) }
         MinecraftForge.EVENT_BUS.addListener { event: BiomeLoadingEvent ->
             registerBiomeFeatures(event)
         }
@@ -93,7 +94,7 @@ class ForgeMod {
     }
 
     @OnlyInClient
-    private fun setupClient() {
+    private fun setupClient(e: FMLClientSetupEvent) {
         MinecraftForge.EVENT_BUS.addListener { _: WorldEvent.Load ->
             JavaLuckyRegistry.notificationState = checkForUpdates(JavaLuckyRegistry.notificationState)
         }
@@ -112,10 +113,12 @@ class ForgeMod {
             if (addon.ids.bow != null) registerLuckyBowModels(ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.bow!!)) as LuckyBow)
         }
 
-        RenderingRegistry.registerEntityRenderingHandler(ForgeLuckyRegistry.luckyProjectile, ::LuckyProjectileRenderer)
-        RenderingRegistry.registerEntityRenderingHandler(ForgeLuckyRegistry.thrownLuckyPotion, ::ThrownLuckyPotionRenderer)
-        RenderingRegistry.registerEntityRenderingHandler(ForgeLuckyRegistry.delayedDrop, ::DelayedDropRenderer)
-        RenderingRegistry.loadEntityRenderers() // TODO: remove once Forge fixes the call to net.minecraftforge.fmlclient.ClientModLoader.postSidedRunnable()
+        // TODO: use RenderingRegistry.registerEntityRenderingHandler once Forge fixes the call to net.minecraftforge.fmlclient.ClientModLoader.postSidedRunnable()
+        e.enqueueWork() {
+            EntityRenderers.register(ForgeLuckyRegistry.luckyProjectile, ::LuckyProjectileRenderer)
+            EntityRenderers.register(ForgeLuckyRegistry.thrownLuckyPotion, ::ThrownLuckyPotionRenderer)
+            EntityRenderers.register(ForgeLuckyRegistry.delayedDrop, ::DelayedDropRenderer)
+        }
     }
 }
 
