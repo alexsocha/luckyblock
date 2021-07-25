@@ -33,10 +33,6 @@ annotation class OnlyInClient
 @Environment(EnvType.SERVER)
 annotation class OnlyInServer
 
-typealias MCItemStack = net.minecraft.item.ItemStack
-typealias MCIdentifier = net.minecraft.util.Identifier
-typealias MCStatusEffect = net.minecraft.entity.effect.StatusEffect
-
 fun isClientWorld(world: MCIWorld): Boolean = world.isClient
 
 
@@ -61,12 +57,12 @@ private fun toMCEnchantmentType(type: EnchantmentType): EnchantmentTarget {
 
 fun toMCItemStack(stack: ItemStack): MCItemStack {
     val mcStack = MCItemStack(Registry.ITEM.get(MCIdentifier(stack.itemId)), stack.count)
-    if (stack.nbt != null) mcStack.tag = stack.nbt as CompoundTag
+    if (stack.nbt != null) mcStack.nbt = stack.nbt as CompoundTag
     return mcStack
 }
 
 fun toItemStack(stack: MCItemStack): ItemStack {
-    return ItemStack(javaGameAPI.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.tag)
+    return ItemStack(javaGameAPI.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.nbt)
 }
 
 object FabricJavaGameAPI : JavaGameAPI {

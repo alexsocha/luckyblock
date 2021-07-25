@@ -76,7 +76,7 @@ class LuckyBlock : BlockWithEntity(Settings.of(Material.WOOD, DyeColor.YELLOW)
         super.onPlaced(world, pos, state, player, itemStack)
 
         val blockEntity = world.getBlockEntity(pos) as LuckyBlockEntity
-        itemStack.tag?.let {
+        itemStack.nbt?.let {
             blockEntity.data = LuckyBlockEntityData.readFromTag(it)
             blockEntity.markDirty()
         }
@@ -96,8 +96,8 @@ class LuckyBlock : BlockWithEntity(Settings.of(Material.WOOD, DyeColor.YELLOW)
 
 
 class LuckyBlockEntity(
-    private val blockPos: MCBlockPos,
-    private val blockState: BlockState,
+    blockPos: MCBlockPos,
+    blockState: BlockState,
     var data: LuckyBlockEntityData = LuckyBlockEntityData()
 ) : BlockEntity(FabricLuckyRegistry.luckyBlockEntity, blockPos, blockState) {
 

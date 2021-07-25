@@ -15,7 +15,7 @@ import net.minecraft.util.Formatting
 
 @OnlyInClient
 fun createLuckyTooltip(stack: MCItemStack): List<Text> {
-    val stackNBT = stack.tag?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
+    val stackNBT = stack.nbt?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
 
     val luckComponent = when {
         stackNBT.luck == 0 -> LiteralText(stackNBT.luck.toString()).formatted(Formatting.GOLD)
@@ -38,11 +38,11 @@ fun createLuckyTooltip(stack: MCItemStack): List<Text> {
 
 fun createLuckySubItems(item: Item, luckyName: String, unluckyName: String): List<MCItemStack> {
     val luckyStack = MCItemStack(item, 1)
-    luckyStack.tag = javaGameAPI.attrToNBT(LuckyItemStackData(luck=80).toAttr()) as CompoundTag
+    luckyStack.nbt = javaGameAPI.attrToNBT(LuckyItemStackData(luck=80).toAttr()) as CompoundTag
     luckyStack.setCustomName(TranslatableText(luckyName))
 
     val unluckyStack = MCItemStack(item, 1)
-    unluckyStack.tag = javaGameAPI.attrToNBT(LuckyItemStackData(luck=-80).toAttr()) as CompoundTag
+    unluckyStack.nbt = javaGameAPI.attrToNBT(LuckyItemStackData(luck=-80).toAttr()) as CompoundTag
     unluckyStack.setCustomName(TranslatableText(unluckyName))
 
     return listOf(luckyStack, unluckyStack)

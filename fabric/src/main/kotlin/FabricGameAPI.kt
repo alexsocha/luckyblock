@@ -9,8 +9,9 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
 import net.minecraft.util.math.Box
 import net.minecraft.util.registry.Registry
-import net.minecraft.util.Identifier
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.world.ServerWorldAccess
+import net.minecraft.world.WorldAccess
 import mod.lucky.common.*
 import mod.lucky.common.Entity
 import mod.lucky.common.World
@@ -26,7 +27,6 @@ import mod.lucky.java.game.uselessPostionNames
 import net.minecraft.entity.*
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.projectile.ArrowEntity
-import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtHelper
 import net.minecraft.particle.ParticleEffect
 import net.minecraft.particle.ParticleType
@@ -39,7 +39,8 @@ import net.minecraft.structure.processor.StructureProcessorType
 import net.minecraft.text.LiteralText
 import net.minecraft.util.BlockRotation
 import net.minecraft.util.math.Vec2f
-import net.minecraft.world.*
+import net.minecraft.world.Difficulty
+import net.minecraft.world.WorldView
 import net.minecraft.world.explosion.Explosion
 import java.util.*
 import kotlin.random.asJavaRandom
@@ -53,6 +54,9 @@ typealias MCPlayerEntity = net.minecraft.entity.player.PlayerEntity
 typealias MCVec3d = net.minecraft.util.math.Vec3d
 typealias MCVec3i = net.minecraft.util.math.Vec3i
 typealias MCBlockPos = net.minecraft.util.math.BlockPos
+typealias MCItemStack = net.minecraft.item.ItemStack
+typealias MCIdentifier = net.minecraft.util.Identifier
+typealias MCStatusEffect = net.minecraft.entity.effect.StatusEffect
 
 typealias Tag = net.minecraft.nbt.NbtElement
 typealias ByteTag = net.minecraft.nbt.NbtByte
@@ -140,7 +144,7 @@ object FabricGameAPI : GameAPI {
     }
 
     override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) {
-        val statusEffect = Registry.STATUS_EFFECT.get(Identifier(effectId))
+        val statusEffect = Registry.STATUS_EFFECT.get(MCIdentifier(effectId))
         if (statusEffect == null) {
             gameAPI.logError("Unknown status effect: $effectId")
             return
@@ -258,21 +262,21 @@ object FabricGameAPI : GameAPI {
     }
 
     override fun dropItem(world: World, pos: Vec3d, itemId: String, nbt: DictAttr?) {
-        val item = Registry.ITEM.getOrEmpty(Identifier(itemId)).orElse(null)
+        val item = Registry.ITEM.getOrEmpty(MCIdentifier(itemId)).orElse(null)
         if (item == null) {
             gameAPI.logError("Invalid item ID: '$itemId'")
             return
         }
 
-        val itemStack = ItemStack(item, 1)
-        if (nbt != null) itemStack.tag = javaGameAPI.attrToNBT(nbt) as CompoundTag
+        val itemStack = MCItemStack(item, 1)
+        if (nbt != null) itemStack.nbt = javaGameAPI.attrToNBT(nbt) as CompoundTag
         MCBlock.dropStack(toServerWorld(world), toMCBlockPos(pos.floor()), itemStack)
     }
 
     override fun runCommand(world: World, pos: Vec3d, command: String, senderName: String, showOutput: Boolean) {
         try {
             val commandSource = createCommandSource(toServerWorld(world), pos, senderName, showOutput)
-            commandSource.minecraftServer.commandManager.execute(commandSource, command)
+            commandSource.server.commandManager.execute(commandSource, command)
         } catch (e: Exception) {
             gameAPI.logError("Invalid command: $command", e)
         }
@@ -313,7 +317,7 @@ object FabricGameAPI : GameAPI {
 
     override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {
         @Suppress("UNCHECKED_CAST")
-        val particleType = Registry.PARTICLE_TYPE.get(Identifier(id)) as ParticleType<ParticleEffect>?
+        val particleType = Registry.PARTICLE_TYPE.get(MCIdentifier(id)) as ParticleType<ParticleEffect>?
         if (particleType == null) {
             gameAPI.logError("Invalid partical: $id")
             return
@@ -345,7 +349,7 @@ object FabricGameAPI : GameAPI {
 
     override fun playSplashPotionEvent(world: World, pos: Vec3d, potionName: String?, potionColor: Int?) {
         if (potionName != null) {
-            val potion = Registry.POTION.getOrEmpty(Identifier(potionName)).orElse(null)
+            val potion = Registry.POTION.getOrEmpty(MCIdentifier(potionName)).orElse(null)
             if (potion == null) {
                 gameAPI.logError("Invalid splash potion name: $potionName")
                 return
@@ -379,7 +383,7 @@ object FabricGameAPI : GameAPI {
                 if (blockIdWithMode == blockId) return newBlockInfo
 
                 val newState = if (blockIdWithMode == null) world.getBlockState(newBlockInfo.pos)
-                    else Registry.BLOCK.get(Identifier(blockIdWithMode)).defaultState
+                    else Registry.BLOCK.get(MCIdentifier(blockIdWithMode)).defaultState
 
                 return if (newState == newBlockInfo.state) newBlockInfo
                     else Structure.StructureBlockInfo(newBlockInfo.pos, newState, newBlockInfo.nbt)

@@ -36,7 +36,7 @@ class LuckyPotion : MCItem(FabricItemSettings().group(ItemGroup.COMBAT)) {
         )
 
         if (!isClientWorld(world)) {
-            val stackData = stack.tag?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
+            val stackData = stack.nbt?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
             val potionEntity = ThrownLuckyPotion(
                 world = world,
                 user = user,

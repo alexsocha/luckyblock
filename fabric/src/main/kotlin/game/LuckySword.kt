@@ -19,7 +19,7 @@ class LuckySword : SwordItem(ToolMaterials.IRON, 3, 2.4f, FabricItemSettings().m
                 world = attacker.world,
                 player = attacker,
                 hitEntity = target,
-                stackNBT = stack.tag,
+                stackNBT = stack.nbt,
                 sourceId = javaGameAPI.getItemId(this),
             )
         }
