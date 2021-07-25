@@ -1,40 +1,36 @@
 package mod.lucky.forge.game
 
-import com.mojang.blaze3d.matrix.MatrixStack
+import com.mojang.blaze3d.vertex.PoseStack
 import mod.lucky.forge.*
 import mod.lucky.java.*
 import mod.lucky.java.game.*
-import net.minecraft.client.renderer.IRenderTypeBuffer
+import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.EntityRenderer
-import net.minecraft.client.renderer.entity.EntityRendererManager
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.item.ItemEntity
-import net.minecraft.entity.projectile.ArrowEntity
-import net.minecraft.item.Items
-import net.minecraft.network.IPacket
-import net.minecraft.network.PacketBuffer
-import net.minecraft.network.datasync.DataParameter
-import net.minecraft.network.datasync.DataSerializers
-import net.minecraft.network.datasync.EntityDataManager
-import net.minecraft.util.math.EntityRayTraceResult
-import net.minecraft.util.math.RayTraceResult
-import net.minecraft.world.World
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData
-import net.minecraftforge.fml.network.NetworkHooks
+import net.minecraft.client.renderer.entity.EntityRendererProvider
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.syncher.EntityDataAccessor
+import net.minecraft.network.syncher.EntityDataSerializers
+import net.minecraft.network.syncher.SynchedEntityData
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.item.ItemEntity
+import net.minecraft.world.entity.projectile.Arrow
+import net.minecraft.world.item.Items
+import net.minecraft.world.phys.EntityHitResult
+import net.minecraft.world.phys.HitResult
+import net.minecraftforge.fmllegacy.network.NetworkHooks
 
 private val defaultDisplayItemStack = MCItemStack(Items.STICK)
 
 class LuckyProjectile(
     type: EntityType<LuckyProjectile> = ForgeLuckyRegistry.luckyProjectile,
-    world: World,
+    world: MCWorld,
     private var data: LuckyProjectileData = LuckyProjectileData(),
-) : ArrowEntity(type, world) {
+) : Arrow(type, world) {
     var itemEntity: ItemEntity? = null
 
     companion object {
-        private val ITEM_STACK: DataParameter<MCItemStack> = EntityDataManager.defineId(
-            LuckyProjectile::class.java, DataSerializers.ITEM_STACK
+        private val ITEM_STACK: EntityDataAccessor<MCItemStack> = SynchedEntityData.defineId(
+            LuckyProjectile::class.java, EntityDataSerializers.ITEM_STACK
         )
     }
 
@@ -58,14 +54,14 @@ class LuckyProjectile(
         if (!isClientWorld(level)) data.tick(level, this, owner, tickCount)
     }
 
-    override fun onHit(hitResult: RayTraceResult) {
+    override fun onHit(hitResult: HitResult) {
         super.onHit(hitResult)
-        if (hitResult.type != RayTraceResult.Type.MISS){
+        if (hitResult.type != HitResult.Type.MISS){
             if (!isClientWorld(level)) {
-                val hitEntity: Entity? = (hitResult as? EntityRayTraceResult)?.entity
+                val hitEntity: MCEntity? = (hitResult as? EntityHitResult)?.entity
                 data.onImpact(level, this, owner, hitEntity)
             }
-            remove()
+            remove(RemovalReason.DISCARDED)
         }
     }
 
@@ -86,24 +82,24 @@ class LuckyProjectile(
         javaGameAPI.writeNBTKey(tag, "Item", stack.save(CompoundTag()))
     }
 
-    override fun getAddEntityPacket(): IPacket<*> {
+    override fun getAddEntityPacket(): Packet<*> {
         return NetworkHooks.getEntitySpawningPacket(this)
     }
 }
 
 @OnlyInClient
-class LuckyProjectileRenderer(ctx: EntityRendererManager) : EntityRenderer<LuckyProjectile>(
+class LuckyProjectileRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<LuckyProjectile>(
     ctx) {
     override fun render(
         entity: LuckyProjectile,
         yawDeg: Float,
         particleTicks: Float,
-        matrix: MatrixStack,
-        vertexProvider: IRenderTypeBuffer,
+        matrix: PoseStack,
+        vertexProvider: MultiBufferSource,
         light: Int,
     ) {
         val itemEntity = entity.itemEntity ?: return
-        dispatcher.getRenderer(itemEntity)?.render(
+        entityRenderDispatcher.getRenderer(itemEntity)?.render(
             itemEntity,
             yawDeg, particleTicks,
             matrix, vertexProvider, light

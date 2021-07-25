@@ -6,52 +6,45 @@ import mod.lucky.java.game.ThrownLuckyPotionData
 import mod.lucky.java.game.onImpact
 import mod.lucky.java.game.readFromTag
 import mod.lucky.java.game.writeToTag
-import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.entity.EntityRendererManager
-import net.minecraft.client.renderer.entity.SpriteRenderer
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.IRendersAsItem
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.projectile.ProjectileItemEntity
-import net.minecraft.item.Item
-import net.minecraft.util.math.EntityRayTraceResult
-import net.minecraft.util.math.RayTraceResult
-import net.minecraft.world.World
-import net.minecraftforge.fml.network.NetworkHooks
+import net.minecraft.client.renderer.entity.EntityRendererProvider
+import net.minecraft.client.renderer.entity.ThrownItemRenderer
 
-import net.minecraft.network.IPacket
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.api.distmarker.OnlyIn
+import net.minecraft.network.protocol.Packet
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.projectile.ItemSupplier
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile
+import net.minecraft.world.phys.EntityHitResult
+import net.minecraft.world.phys.HitResult
+import net.minecraftforge.fmllegacy.network.NetworkHooks
 
-@OnlyIn(value = Dist.CLIENT, _interface = IRendersAsItem::class)
-class ThrownLuckyPotion : ProjectileItemEntity, IRendersAsItem {
+class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier {
     private var data: ThrownLuckyPotionData
 
     constructor(
         type: EntityType<ThrownLuckyPotion> = ForgeLuckyRegistry.thrownLuckyPotion,
-        world: World,
+        world: MCWorld,
         data: ThrownLuckyPotionData = ThrownLuckyPotionData(),
     ) : super(type, world) {
         this.data = data
     }
 
     constructor(
-        world: World,
+        world: MCWorld,
         user: LivingEntity,
         data: ThrownLuckyPotionData,
     ) : super(ForgeLuckyRegistry.thrownLuckyPotion, user, world) {
         this.data = data
     }
 
-    override fun onHit(hitResult: RayTraceResult) {
+    override fun onHit(hitResult: HitResult) {
         super.onHit(hitResult)
-        if (hitResult.type != RayTraceResult.Type.MISS) {
+        if (hitResult.type != HitResult.Type.MISS) {
             if (!isClientWorld(level)) {
-                val hitEntity: Entity? = (hitResult as? EntityRayTraceResult)?.entity
+                val hitEntity: MCEntity? = (hitResult as? EntityHitResult)?.entity
                 data.onImpact(level, this, owner, hitEntity)
             }
-            remove()
+            remove(RemovalReason.DISCARDED)
         }
     }
 
@@ -72,15 +65,15 @@ class ThrownLuckyPotion : ProjectileItemEntity, IRendersAsItem {
         return 0.05f
     }
 
-    override fun getDefaultItem(): Item {
+    override fun getDefaultItem(): MCItem {
         return ForgeLuckyRegistry.luckyPotion
     }
 
-    override fun getAddEntityPacket(): IPacket<*> {
+    override fun getAddEntityPacket(): Packet<*> {
         return NetworkHooks.getEntitySpawningPacket(this)
     }
 }
 
 @OnlyInClient
-class ThrownLuckyPotionRenderer(ctx: EntityRendererManager) :
-    SpriteRenderer<ThrownLuckyPotion>(ctx, Minecraft.getInstance().itemRenderer)
+class ThrownLuckyPotionRenderer(ctx: EntityRendererProvider.Context) :
+    ThrownItemRenderer<ThrownLuckyPotion>(ctx)

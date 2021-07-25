@@ -5,7 +5,6 @@ import mod.lucky.java.game.LuckyItemStackData
 import mod.lucky.java.game.readFromTag
 import mod.lucky.java.game.toAttr
 import mod.lucky.java.javaGameAPI
-import net.minecraft.item.Item
 
 @OnlyInClient
 fun createLuckyTooltip(stack: MCItemStack): List<MCText> {
@@ -30,7 +29,7 @@ fun createLuckyTooltip(stack: MCItemStack): List<MCText> {
     return listOf(nameTooltip)
 }
 
-fun createLuckySubItems(item: Item, luckyName: String, unluckyName: String): List<MCItemStack> {
+fun createLuckySubItems(item: MCItem, luckyName: String, unluckyName: String): List<MCItemStack> {
     val luckyStack = MCItemStack(item, 1)
     luckyStack.tag = javaGameAPI.attrToNBT(LuckyItemStackData(luck=80).toAttr()) as CompoundTag
     luckyStack.setHoverName(MCTranslatableText(luckyName))

@@ -7,28 +7,28 @@ import mod.lucky.java.game.LuckyItemStackData
 import mod.lucky.java.game.LuckyItemValues
 import mod.lucky.java.game.ThrownLuckyPotionData
 import mod.lucky.java.game.readFromTag
-import net.minecraft.client.util.ITooltipFlag
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.ItemGroup
-import net.minecraft.item.ItemStack
+import net.minecraft.core.NonNullList
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
 import net.minecraft.stats.Stats
-import net.minecraft.util.*
-import net.minecraft.world.World
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.item.TooltipFlag
 
-class LuckyPotion : MCItem(Properties().tab(ItemGroup.TAB_COMBAT)) {
+class LuckyPotion : MCItem(Properties().tab(CreativeModeTab.TAB_COMBAT)) {
 
-    override fun use(world: World, user: PlayerEntity, hand: Hand): ActionResult<ItemStack> {
+    override fun use(world: MCWorld, user: MCPlayerEntity, hand: InteractionHand): InteractionResultHolder<MCItemStack> {
         val stack = user.getItemInHand(hand)
 
         world.playSound(
-            null as PlayerEntity?,
+            null as MCPlayerEntity?,
             user.x, user.y, user.z,
             SoundEvents.SPLASH_POTION_THROW,
-            SoundCategory.PLAYERS,
+            SoundSource.PLAYERS,
             0.5f,
             0.4f / (RANDOM.nextFloat() * 0.4f + 0.8f)
         )
-
         if (!isClientWorld(world)) {
             val stackData = stack.tag?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
             val potionEntity = ThrownLuckyPotion(
@@ -48,7 +48,7 @@ class LuckyPotion : MCItem(Properties().tab(ItemGroup.TAB_COMBAT)) {
         user.awardStat(Stats.ITEM_USED.get(this))
         if (!user.abilities.instabuild) stack.shrink(1)
 
-        return ActionResult.sidedSuccess(stack, isClientWorld(world))
+        return InteractionResultHolder.sidedSuccess(stack, isClientWorld(world))
     }
 
     @OnlyInClient
@@ -56,7 +56,7 @@ class LuckyPotion : MCItem(Properties().tab(ItemGroup.TAB_COMBAT)) {
         return true
     }
 
-    override fun fillItemCategory(group: ItemGroup, stacks: NonNullList<MCItemStack>) {
+    override fun fillItemCategory(group: CreativeModeTab, stacks: NonNullList<MCItemStack>) {
         if (allowdedIn(group)) {
             stacks.add(MCItemStack(this, 1))
             if (this == ForgeLuckyRegistry.luckyPotion) {
@@ -66,7 +66,7 @@ class LuckyPotion : MCItem(Properties().tab(ItemGroup.TAB_COMBAT)) {
     }
 
     @OnlyInClient
-    override fun appendHoverText(stack: MCItemStack, world: World?, tooltip: MutableList<MCText>, context: ITooltipFlag) {
+    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCText>, context: TooltipFlag) {
         tooltip.addAll(createLuckyTooltip(stack))
     }
 }

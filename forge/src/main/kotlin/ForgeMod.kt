@@ -5,28 +5,29 @@ import mod.lucky.common.platformAPI
 import mod.lucky.forge.game.*
 import mod.lucky.java.*
 import net.minecraft.client.Minecraft
-import net.minecraft.entity.EntityClassification
-import net.minecraft.entity.EntityType
-import net.minecraft.item.crafting.IRecipeSerializer
-import net.minecraft.item.crafting.SpecialRecipeSerializer
 import net.minecraft.resources.*
-import net.minecraft.tileentity.TileEntityType
-import net.minecraft.util.ResourceLocation
-import net.minecraft.world.gen.GenerationStage
-import net.minecraft.world.gen.feature.NoFeatureConfig
+import net.minecraft.server.packs.FilePackResources
+import net.minecraft.server.packs.FolderPackResources
+import net.minecraft.server.packs.resources.SimpleReloadableResourceManager
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.MobCategory
+import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.item.crafting.SimpleRecipeSerializer
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.levelgen.GenerationStep
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.event.world.BiomeLoadingEvent
 import net.minecraftforge.event.world.WorldEvent
-import net.minecraftforge.eventbus.api.EventPriority
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.ModLoadingContext
-import net.minecraftforge.fml.client.registry.RenderingRegistry
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
+import net.minecraftforge.fmlclient.registry.RenderingRegistry
 import net.minecraftforge.registries.ForgeRegistries
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -40,12 +41,12 @@ object ForgeLuckyRegistry {
     val luckySword = LuckySword()
     val luckyPotion = LuckyPotion()
     lateinit var modVersion: String
-    lateinit var luckyBlockEntity: TileEntityType<LuckyBlockEntity>
+    lateinit var luckyBlockEntity: BlockEntityType<LuckyBlockEntity>
     lateinit var luckyProjectile: EntityType<LuckyProjectile>
     lateinit var thrownLuckyPotion: EntityType<ThrownLuckyPotion>
     lateinit var delayedDrop: EntityType<DelayedDrop>
-    lateinit var luckModifierCraftingRecipe: IRecipeSerializer<LuckModifierCraftingRecipe>
-    lateinit var addonCraftingRecipe: IRecipeSerializer<AddonCraftingRecipe>
+    lateinit var luckModifierCraftingRecipe: RecipeSerializer<LuckModifierCraftingRecipe>
+    lateinit var addonCraftingRecipe: RecipeSerializer<AddonCraftingRecipe>
 }
 
 private fun getAddonBlock(id: String): LuckyBlock {
@@ -81,9 +82,9 @@ class ForgeMod {
     private fun registerBiomeFeatures(event: BiomeLoadingEvent) {
         val blockIds = listOf(JavaLuckyRegistry.blockId) + JavaLuckyRegistry.addons.mapNotNull { it.ids.block }
         blockIds.forEach {
-            val feature = LuckyWorldFeature(NoFeatureConfig.CODEC, it)
-            val configuredFeature = feature.configured(NoFeatureConfig.INSTANCE)
-            event.generation.getFeatures(GenerationStage.Decoration.SURFACE_STRUCTURES).add { configuredFeature }
+            val feature = LuckyWorldFeature(NoneFeatureConfiguration.CODEC, it)
+            val configuredFeature = feature.configured(NoneFeatureConfiguration.INSTANCE)
+            event.generation.getFeatures(GenerationStep.Decoration.SURFACE_STRUCTURES).add { configuredFeature }
         }
     }
 
@@ -99,7 +100,7 @@ class ForgeMod {
 
         for (addon in JavaLuckyRegistry.addons) {
             val file = addon.file
-            val pack = if (file.isDirectory) FolderPack(file) else FilePack(file)
+            val pack = if (file.isDirectory) FolderPackResources(file) else FilePackResources(file)
             val resourceManager = Minecraft.getInstance().resourceManager
             if (resourceManager is SimpleReloadableResourceManager) {
                 resourceManager.add(pack)
@@ -114,6 +115,7 @@ class ForgeMod {
         RenderingRegistry.registerEntityRenderingHandler(ForgeLuckyRegistry.luckyProjectile, ::LuckyProjectileRenderer)
         RenderingRegistry.registerEntityRenderingHandler(ForgeLuckyRegistry.thrownLuckyPotion, ::ThrownLuckyPotionRenderer)
         RenderingRegistry.registerEntityRenderingHandler(ForgeLuckyRegistry.delayedDrop, ::DelayedDropRenderer)
+        RenderingRegistry.loadEntityRenderers() // TODO: remove once Forge fixes the call to net.minecraftforge.fmlclient.ClientModLoader.postSidedRunnable()
     }
 }
 
@@ -149,19 +151,19 @@ object ForgeSubscriber {
 
     @JvmStatic @SubscribeEvent
     fun registerEntites(event: RegistryEvent.Register<EntityType<*>>) {
-        ForgeLuckyRegistry.luckyProjectile = EntityType.Builder.of(::LuckyProjectile, EntityClassification.MISC)
+        ForgeLuckyRegistry.luckyProjectile = EntityType.Builder.of(::LuckyProjectile, MobCategory.MISC)
             .setTrackingRange(100)
             .setUpdateInterval(20)
             .setShouldReceiveVelocityUpdates(true)
             .build(JavaLuckyRegistry.projectileId)
 
-        ForgeLuckyRegistry.thrownLuckyPotion = EntityType.Builder.of(::ThrownLuckyPotion, EntityClassification.MISC)
+        ForgeLuckyRegistry.thrownLuckyPotion = EntityType.Builder.of(::ThrownLuckyPotion, MobCategory.MISC)
             .setTrackingRange(100)
             .setUpdateInterval(20)
             .setShouldReceiveVelocityUpdates(true)
             .build(JavaLuckyRegistry.potionId)
 
-        ForgeLuckyRegistry.delayedDrop = EntityType.Builder.of(::DelayedDrop, EntityClassification.MISC)
+        ForgeLuckyRegistry.delayedDrop = EntityType.Builder.of(::DelayedDrop, MobCategory.MISC)
             .setTrackingRange(100)
             .setUpdateInterval(20)
             .setShouldReceiveVelocityUpdates(true)
@@ -173,21 +175,21 @@ object ForgeSubscriber {
     }
 
     @JvmStatic @SubscribeEvent
-    fun registerRecipes(event: RegistryEvent.Register<IRecipeSerializer<*>>) {
-        ForgeLuckyRegistry.luckModifierCraftingRecipe = SpecialRecipeSerializer(::LuckModifierCraftingRecipe)
-        ForgeLuckyRegistry.addonCraftingRecipe = SpecialRecipeSerializer(::AddonCraftingRecipe)
+    fun registerRecipes(event: RegistryEvent.Register<RecipeSerializer<*>>) {
+        ForgeLuckyRegistry.luckModifierCraftingRecipe = SimpleRecipeSerializer(::LuckModifierCraftingRecipe)
+        ForgeLuckyRegistry.addonCraftingRecipe = SimpleRecipeSerializer(::AddonCraftingRecipe)
 
         event.registry.register(ForgeLuckyRegistry.luckModifierCraftingRecipe.setRegistryName(ResourceLocation("lucky:crafting_luck")))
         event.registry.register(ForgeLuckyRegistry.addonCraftingRecipe.setRegistryName(ResourceLocation("lucky:crafting_addons")))
     }
 
     @JvmStatic @SubscribeEvent
-    fun registerTileEntites(event: RegistryEvent.Register<TileEntityType<*>>) {
+    fun registerTileEntites(event: RegistryEvent.Register<BlockEntityType<*>>) {
         val validBlocks = listOf(ForgeLuckyRegistry.luckyBlock) + JavaLuckyRegistry.addons
             .mapNotNull { it.ids.block }
             .map { getAddonBlock(it) }
 
-        ForgeLuckyRegistry.luckyBlockEntity = @Suppress TileEntityType.Builder.of(::LuckyBlockEntity, *validBlocks.toTypedArray()).build(null)
+        ForgeLuckyRegistry.luckyBlockEntity = @Suppress BlockEntityType.Builder.of(::LuckyBlockEntity, *validBlocks.toTypedArray()).build(null)
 
         event.registry.register(ForgeLuckyRegistry.luckyBlockEntity.setRegistryName(JavaLuckyRegistry.blockId))
     }

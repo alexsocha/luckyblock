@@ -2,7 +2,6 @@ package mod.lucky.forge
 
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import net.minecraft.util.registry.Registry
 import mod.lucky.common.*
 import mod.lucky.common.Entity
 import mod.lucky.common.World
@@ -15,62 +14,69 @@ import mod.lucky.java.*
 import mod.lucky.java.game.DelayedDropData
 import mod.lucky.java.game.spawnEggSuffix
 import mod.lucky.java.game.uselessPostionNames
-import net.minecraft.command.CommandSource
-import net.minecraft.command.ICommandSource
-import net.minecraft.command.arguments.EntitySelectorParser
-import net.minecraft.entity.*
-import net.minecraft.entity.item.FallingBlockEntity
-import net.minecraft.entity.projectile.ArrowEntity
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTUtil
-import net.minecraft.particles.IParticleData
-import net.minecraft.particles.ParticleType
-import net.minecraft.potion.Effect
-import net.minecraft.potion.EffectInstance
-import net.minecraft.potion.PotionUtils
-import net.minecraft.util.Rotation
-import net.minecraft.util.SoundCategory
+import net.minecraft.commands.CommandSource
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.arguments.selector.EntitySelectorParser
+import net.minecraft.core.particles.ParticleOptions
+import net.minecraft.core.particles.ParticleType
+import net.minecraft.nbt.NbtUtils
+import net.minecraft.sounds.SoundSource
 import net.minecraft.world.*
-import net.minecraft.world.gen.feature.template.IStructureProcessorType
-import net.minecraft.world.gen.feature.template.PlacementSettings
-import net.minecraft.world.gen.feature.template.StructureProcessor
-import net.minecraft.world.gen.feature.template.Template
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.Mob
+import net.minecraft.world.entity.MobSpawnType
+import net.minecraft.world.entity.item.FallingBlockEntity
+import net.minecraft.world.entity.projectile.Arrow
+import net.minecraft.world.item.alchemy.PotionUtils
+import net.minecraft.world.level.Explosion
+import net.minecraft.world.level.LevelReader
+import net.minecraft.world.level.block.Rotation
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import net.minecraftforge.registries.ForgeRegistries
 import java.util.*
 import kotlin.random.asJavaRandom
 
-typealias MCIdentifier = net.minecraft.util.ResourceLocation
-typealias MCBlock = net.minecraft.block.Block
-typealias MCItem = net.minecraft.item.Item
-typealias MCIWorld = net.minecraft.world.IWorld
-typealias MCIServerWorld = net.minecraft.world.IServerWorld
-typealias MCWorld = net.minecraft.world.World
-typealias MCServerWorld = net.minecraft.world.server.ServerWorld
-typealias MCEntity = net.minecraft.entity.Entity
-typealias MCPlayerEntity = net.minecraft.entity.player.PlayerEntity
-typealias MCVec3d = net.minecraft.util.math.vector.Vector3d
-typealias MCVec3i = net.minecraft.util.math.vector.Vector3i
-typealias MCVec2f = net.minecraft.util.math.vector.Vector2f
-typealias MCBlockPos = net.minecraft.util.math.BlockPos
-typealias MCBox = net.minecraft.util.math.AxisAlignedBB
+typealias MCIdentifier = net.minecraft.resources.ResourceLocation
+typealias MCBlock = net.minecraft.world.level.block.Block
+typealias MCItem = net.minecraft.world.item.Item
+typealias MCIWorld = net.minecraft.world.level.LevelAccessor
+typealias MCIServerWorld = net.minecraft.world.level.ServerLevelAccessor
+typealias MCWorld = net.minecraft.world.level.Level
+typealias MCServerWorld = net.minecraft.server.level.ServerLevel
+typealias MCEntity = net.minecraft.world.entity.Entity
+typealias MCPlayerEntity = net.minecraft.world.entity.player.Player
+typealias MCVec3d = net.minecraft.world.phys.Vec3
+typealias MCVec3i = net.minecraft.core.Vec3i
+typealias MCVec2f = net.minecraft.world.phys.Vec2
+typealias MCBlockPos = net.minecraft.core.BlockPos
+typealias MCBox = net.minecraft.world.phys.AABB
+typealias MCItemStack = net.minecraft.world.item.ItemStack
 
-typealias MCText = net.minecraft.util.text.ITextComponent
-typealias MCLiteralText = net.minecraft.util.text.StringTextComponent
-typealias MCTextFormatting = net.minecraft.util.text.TextFormatting
-typealias MCTranslatableText = net.minecraft.util.text.TranslationTextComponent
+typealias MCEnchantmentType = net.minecraft.world.item.enchantment.EnchantmentCategory
+typealias MCStatusEffect = net.minecraft.world.effect.MobEffect
 
-typealias Tag = net.minecraft.nbt.INBT
-typealias ByteTag = net.minecraft.nbt.ByteNBT
-typealias ShortTag = net.minecraft.nbt.ShortNBT
-typealias IntTag = net.minecraft.nbt.IntNBT
-typealias FloatTag = net.minecraft.nbt.FloatNBT
-typealias DoubleTag = net.minecraft.nbt.DoubleNBT
-typealias LongTag = net.minecraft.nbt.LongNBT
-typealias StringTag = net.minecraft.nbt.StringNBT
-typealias ByteArrayTag = net.minecraft.nbt.ByteArrayNBT
-typealias IntArrayTag = net.minecraft.nbt.IntArrayNBT
-typealias ListTag = net.minecraft.nbt.ListNBT
-typealias CompoundTag = net.minecraft.nbt.CompoundNBT
+typealias MCText = net.minecraft.network.chat.Component
+typealias MCLiteralText = net.minecraft.network.chat.TextComponent
+typealias MCTextFormatting = net.minecraft.ChatFormatting
+typealias MCTranslatableText = net.minecraft.network.chat.TranslatableComponent
+
+typealias Tag = net.minecraft.nbt.Tag
+typealias ByteTag = net.minecraft.nbt.ByteTag
+typealias ShortTag = net.minecraft.nbt.ShortTag
+typealias IntTag = net.minecraft.nbt.IntTag
+typealias FloatTag = net.minecraft.nbt.FloatTag
+typealias DoubleTag = net.minecraft.nbt.DoubleTag
+typealias LongTag = net.minecraft.nbt.LongTag
+typealias StringTag = net.minecraft.nbt.StringTag
+typealias ByteArrayTag = net.minecraft.nbt.ByteArrayTag
+typealias IntArrayTag = net.minecraft.nbt.IntArrayTag
+typealias ListTag = net.minecraft.nbt.ListTag
+typealias CompoundTag = net.minecraft.nbt.CompoundTag
 
 fun toMCVec3d(vec: Vec3d): MCVec3d = MCVec3d(vec.x, vec.y, vec.z)
 fun toMCBlockPos(vec: Vec3i): MCBlockPos = MCBlockPos(vec.x, vec.y, vec.z)
@@ -79,7 +85,7 @@ fun toVec3i(vec: MCVec3i): Vec3i = Vec3i(vec.x, vec.y, vec.z)
 fun toVec3d(vec: MCVec3d): Vec3d = Vec3d(vec.x, vec.y, vec.z)
 
 fun toServerWorld(world: World): MCServerWorld {
-    return (world as MCServerWorld).worldServer
+    return (world as MCServerWorld).level
 }
 
 private fun createCommandSource(
@@ -87,15 +93,15 @@ private fun createCommandSource(
     pos: Vec3d,
     senderName: String = "Lucky Block",
     showOutput: Boolean,
-): CommandSource {
-    val commandOutput = object : ICommandSource {
+): CommandSourceStack {
+    val commandOutput = object : CommandSource {
         override fun sendMessage(message: MCText?, senderUUID: UUID?) {}
         override fun acceptsSuccess(): Boolean = showOutput
         override fun acceptsFailure(): Boolean = showOutput
         override fun shouldInformAdmins(): Boolean = showOutput
     }
 
-    return CommandSource(
+    return CommandSourceStack(
         commandOutput,
         toMCVec3d(pos),
         MCVec2f.ZERO, // (pitch, yaw)
@@ -150,12 +156,12 @@ object ForgeGameAPI : GameAPI {
             return
         }
         val duration = if (statusEffect.isInstantenous) 1 else (durationSeconds * 20.0).toInt()
-        if (entity is LivingEntity) entity.addEffect(EffectInstance(statusEffect, duration, amplifier))
+        if (entity is LivingEntity) entity.addEffect(MobEffectInstance(statusEffect, duration, amplifier))
     }
 
     // compatibility only
     override fun convertStatusEffectId(effectId: Int): String? {
-        val effect = Effect.byId(effectId)
+        val effect = MCStatusEffect.byId(effectId)
         return effect?.let { ForgeRegistries.POTIONS.getKey(effect).toString() }
     }
 
@@ -211,13 +217,13 @@ object ForgeGameAPI : GameAPI {
         } ?: return
 
         if (entity is FallingBlockEntity && "Time" !in entityNBT) entity.time = 1
-        if (player != null && entity is ArrowEntity) entity.owner = player as MCEntity
+        if (player != null && entity is Arrow) entity.owner = player as MCEntity
 
-        if (entity is MobEntity && randomizeMob && "Passengers" !in entityNBT) {
+        if (entity is Mob && randomizeMob && "Passengers" !in entityNBT) {
             entity.finalizeSpawn(
                 serverWorld,
                 serverWorld.getCurrentDifficultyAt(toMCBlockPos(pos.floor())),
-                SpawnReason.EVENT,
+                MobSpawnType.EVENT,
                 null, null
             )
             entity.readAdditionalSaveData(mcEntityNBT)
@@ -241,7 +247,7 @@ object ForgeGameAPI : GameAPI {
             "Name" to stringAttrOf(blockId),
             "Properties" to state,
         )) as CompoundTag
-        val mcBlockState = NBTUtil.readBlockState(blockStateNBT).rotate(world as MCIWorld, toMCBlockPos(pos), Rotation.values()[rotation])
+        val mcBlockState = NbtUtils.readBlockState(blockStateNBT).rotate(world as MCIWorld, toMCBlockPos(pos), Rotation.values()[rotation])
 
         world.setBlock(toMCBlockPos(pos), mcBlockState, if (notify) 3 else 2)
     }
@@ -255,9 +261,8 @@ object ForgeGameAPI : GameAPI {
                 "y" to intAttrOf(pos.y),
                 "z" to intAttrOf(pos.z),
             ))
-            blockEntity.load(world.getBlockState(mcPos), javaGameAPI.attrToNBT(fullNBT) as CompoundTag)
+            blockEntity.load(javaGameAPI.attrToNBT(fullNBT) as CompoundTag)
             blockEntity.setChanged()
-            //if (world is MCWorld) world.setBlockEntity(mcPos, blockEntity)
         }
     }
 
@@ -268,7 +273,7 @@ object ForgeGameAPI : GameAPI {
             return
         }
 
-        val itemStack = ItemStack(item, 1)
+        val itemStack = MCItemStack(item, 1)
         if (nbt != null) itemStack.tag = javaGameAPI.attrToNBT(nbt) as CompoundTag
         MCBlock.popResource(toServerWorld(world), toMCBlockPos(pos.floor()), itemStack)
     }
@@ -301,7 +306,7 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {
-        val soundEvent = Registry.SOUND_EVENT.get(MCIdentifier(id))
+        val soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(MCIdentifier(id))
         if (soundEvent == null) {
             gameAPI.logError("Invalid sound event: $id")
             return
@@ -310,14 +315,14 @@ object ForgeGameAPI : GameAPI {
             null, // player to exclude
             pos.x, pos.y, pos.z,
             soundEvent,
-            SoundCategory.BLOCKS,
+            SoundSource.BLOCKS,
             volume.toFloat(), pitch.toFloat(),
         )
     }
 
     override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {
         @Suppress("UNCHECKED_CAST")
-        val particleType = ForgeRegistries.PARTICLE_TYPES.getValue(MCIdentifier(id)) as ParticleType<IParticleData>?
+        val particleType = ForgeRegistries.PARTICLE_TYPES.getValue(MCIdentifier(id)) as ParticleType<ParticleOptions>?
         if (particleType == null) {
             gameAPI.logError("Invalid partical: $id")
             return
@@ -363,21 +368,21 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun createExplosion(world: World, pos: Vec3d, damage: Double, fire: Boolean) {
-        toServerWorld(world).explode(null, pos.x, pos.y, pos.z, damage.toFloat(), fire, Explosion.Mode.DESTROY)
+        toServerWorld(world).explode(null, pos.x, pos.y, pos.z, damage.toFloat(), fire, Explosion.BlockInteraction.DESTROY)
     }
 
     override fun createStructure(world: World, structureId: String, pos: Vec3i, centerOffset: Vec3i, rotation: Int, mode: String, notify: Boolean) {
         val nbtStructure = JavaLuckyRegistry.nbtStructures[structureId]
         val processor = object : StructureProcessor() {
             override fun process(
-                world: IWorldReader,
+                world: LevelReader,
                 oldPos: MCBlockPos,
                 newPos: MCBlockPos,
-                oldBlockInfo: Template.BlockInfo,
-                newBlockInfo: Template.BlockInfo,
-                settings: PlacementSettings,
-                template: Template?
-            ): Template.BlockInfo {
+                oldBlockInfo: StructureTemplate.StructureBlockInfo,
+                newBlockInfo: StructureTemplate.StructureBlockInfo,
+                settings: StructurePlaceSettings,
+                template: StructureTemplate?
+            ): StructureTemplate.StructureBlockInfo {
                 val blockId = javaGameAPI.getBlockId(newBlockInfo.state.block) ?: return newBlockInfo
                 val blockIdWithMode = withBlockMode(mode, blockId)
 
@@ -387,23 +392,23 @@ object ForgeGameAPI : GameAPI {
                     else ForgeRegistries.BLOCKS.getValue(MCIdentifier(blockIdWithMode))?.defaultBlockState()
 
                 return if (newState == newBlockInfo.state) newBlockInfo
-                    else Template.BlockInfo(newBlockInfo.pos, newState, newBlockInfo.nbt)
+                    else StructureTemplate.StructureBlockInfo(newBlockInfo.pos, newState, newBlockInfo.nbt)
             }
 
-            override fun getType(): IStructureProcessorType<*> {
-                return IStructureProcessorType.BLOCK_IGNORE
+            override fun getType(): StructureProcessorType<*> {
+                return StructureProcessorType.BLOCK_IGNORE
             }
         }
 
         val mcRotation = Rotation.values()[rotation]
-        val placementSettings: PlacementSettings = PlacementSettings()
+        val placementSettings: StructurePlaceSettings = StructurePlaceSettings()
             .setRotation(mcRotation)
             .setRotationPivot(toMCBlockPos(centerOffset))
             .setIgnoreEntities(false)
             .addProcessor(processor)
 
         val mcCornerPos = toMCBlockPos(pos - centerOffset)
-        (nbtStructure as Template).placeInWorld(
+        (nbtStructure as StructureTemplate).placeInWorld(
             world as MCIServerWorld,
             mcCornerPos,
             mcCornerPos,

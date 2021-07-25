@@ -3,18 +3,17 @@ package mod.lucky.forge.game
 import com.mojang.serialization.Codec
 import mod.lucky.common.Vec3i
 import mod.lucky.common.gameAPI
+import mod.lucky.forge.MCBlockPos
 import mod.lucky.java.JavaLuckyRegistry
 import mod.lucky.java.game.generateLuckyFeature
-import net.minecraft.block.Blocks
-import net.minecraft.util.math.BlockPos
-import net.minecraft.world.ISeedReader
-import net.minecraft.world.gen.ChunkGenerator
-import net.minecraft.world.gen.Heightmap
-import net.minecraft.world.gen.feature.Feature
-import net.minecraft.world.gen.feature.NoFeatureConfig
-import java.util.*
+import net.minecraft.world.level.WorldGenLevel
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.levelgen.Heightmap
+import net.minecraft.world.level.levelgen.feature.Feature
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration
 
-private fun canGenerateAt(world: ISeedReader, pos: BlockPos): Boolean {
+private fun canGenerateAt(world: WorldGenLevel, pos: MCBlockPos): Boolean {
     val curState = world.getBlockState(pos)
     val soilState = world.getBlockState(pos.below())
     return (
@@ -26,21 +25,20 @@ private fun canGenerateAt(world: ISeedReader, pos: BlockPos): Boolean {
 }
 
 class LuckyWorldFeature(
-    codec: Codec<NoFeatureConfig>,
+    codec: Codec<NoneFeatureConfiguration>,
     private val blockId: String = JavaLuckyRegistry.blockId,
-) : Feature<NoFeatureConfig>(codec) {
+) : Feature<NoneFeatureConfiguration>(codec) {
 
     override fun place(
-        world: ISeedReader,
-        chunkGenerator: ChunkGenerator,
-        random: Random,
-        pos: BlockPos,
-        config: NoFeatureConfig,
+        ctx: FeaturePlaceContext<NoneFeatureConfiguration>
     ): Boolean {
+        val world = ctx.level()
+        val random = ctx.random()
+        val pos = ctx.origin()
         return try {
-            val topPos = world.getHeightmapPos(Heightmap.Type.WORLD_SURFACE, pos)
+            val topPos = world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, pos)
             val surfaceY = (topPos.y downTo 1).firstOrNull {
-                canGenerateAt(world, BlockPos(topPos.x, it, topPos.z))
+                canGenerateAt(world, MCBlockPos(topPos.x, it, topPos.z))
             }
 
             if (surfaceY != null) {

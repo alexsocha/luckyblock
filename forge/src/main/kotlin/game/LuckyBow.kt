@@ -4,25 +4,23 @@ import mod.lucky.common.RANDOM
 import mod.lucky.forge.*
 import mod.lucky.java.*
 import mod.lucky.java.game.doBowDrop
-import net.minecraft.client.util.ITooltipFlag
-import net.minecraft.enchantment.EnchantmentHelper
-import net.minecraft.enchantment.Enchantments
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.*
-import net.minecraft.util.SoundCategory
-import net.minecraft.util.SoundEvents
-import net.minecraft.world.World
+import net.minecraft.client.renderer.item.ItemProperties
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.*
+import net.minecraft.world.item.enchantment.EnchantmentHelper
+import net.minecraft.world.item.enchantment.Enchantments
 
 class LuckyBow : BowItem(Properties()
     .stacksTo(1)
     .defaultDurability(1000)
-    .tab(ItemGroup.TAB_COMBAT)) {
+    .tab(CreativeModeTab.TAB_COMBAT)) {
 
     override fun releaseUsing(
-        stack: MCItemStack, world: World, player: LivingEntity?, timeLeft: Int,
+        stack: MCItemStack, world: MCWorld, player: LivingEntity?, timeLeft: Int,
     ) {
-        if (player is PlayerEntity) {
+        if (player is MCPlayerEntity) {
             val unlimitedArrows = player.abilities.instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0
             var arrowStack = player.getProjectile(stack)
             if (!arrowStack.isEmpty || unlimitedArrows) {
@@ -47,7 +45,7 @@ class LuckyBow : BowItem(Properties()
                         player.y,
                         player.z,
                         SoundEvents.ARROW_SHOOT,
-                        SoundCategory.PLAYERS,
+                        SoundSource.PLAYERS,
                         1.0f,
                         1.0f / (RANDOM.nextFloat() * 0.4f + 1.2f) + power * 0.5f
                     )
@@ -67,8 +65,8 @@ class LuckyBow : BowItem(Properties()
         return 0
     }
 
-    override fun getUseAnimation(stack: MCItemStack): UseAction {
-        return UseAction.BOW
+    override fun getUseAnimation(stack: MCItemStack): UseAnim {
+        return UseAnim.BOW
     }
 
     @OnlyInClient
@@ -77,24 +75,24 @@ class LuckyBow : BowItem(Properties()
     }
 
     @OnlyInClient
-    override fun appendHoverText(stack: MCItemStack, world: World?, tooltip: MutableList<MCText>, context: ITooltipFlag) {
+    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCText>, context: TooltipFlag) {
         tooltip.addAll(createLuckyTooltip(stack))
     }
 }
 
 @OnlyInClient
 fun registerLuckyBowModels(item: LuckyBow) {
-    ItemModelsProperties.register(
+    ItemProperties.register(
         item,
         MCIdentifier("pulling")
-    ) { stack, _, entity ->
+    ) { stack, _, entity, _ ->
         if (entity != null && entity.isUsingItem && entity.useItem === stack) 1.0f else 0.0f
     }
 
-    ItemModelsProperties.register(
+    ItemProperties.register(
         item,
         MCIdentifier("pull")
-    ) { _, _, entity ->
+    ) { _, _, entity, _ ->
         if (entity == null) {
             0.0f
         } else {

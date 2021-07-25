@@ -7,7 +7,7 @@ buildscript {
         maven { url = uri("https://maven.minecraftforge.net") }
     }
     dependencies {
-        classpath("net.minecraftforge.gradle:ForgeGradle:4.1.+") {
+        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.+") {
             isChanging=true
         }
     }
@@ -110,5 +110,13 @@ afterEvaluate {
     }
 }
 
+
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(16))
+
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "1.8"
+compileKotlin.kotlinOptions.jvmTarget = "16"
+
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    options.release.set(16)
+}

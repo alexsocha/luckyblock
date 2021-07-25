@@ -3,24 +3,21 @@ package mod.lucky.forge
 import mod.lucky.common.*
 import mod.lucky.common.attribute.*
 import mod.lucky.java.*
-import mod.lucky.forge.*
-import mod.lucky.forge.MCIdentifier
 import net.minecraft.client.Minecraft
-import net.minecraft.enchantment.EnchantmentHelper
-import net.minecraft.enchantment.Enchantments
-import net.minecraft.entity.projectile.ArrowEntity
-import net.minecraft.item.DyeColor
-import net.minecraft.item.Items
-import net.minecraft.nbt.CompressedStreamTools
-import net.minecraft.tileentity.ChestTileEntity
-import net.minecraft.util.datafix.fixes.ItemIntIDToString
-import net.minecraft.util.datafix.fixes.ItemStackDataFlattening
-import net.minecraft.util.registry.Registry
-import net.minecraft.util.text.ITextComponent
-import net.minecraft.world.gen.feature.template.Template
+import net.minecraft.nbt.NbtIo
+import net.minecraft.network.chat.Component
+import net.minecraft.util.datafix.fixes.ItemIdFix
+import net.minecraft.util.datafix.fixes.ItemStackTheFlatteningFix
+import net.minecraft.world.entity.projectile.Arrow
+import net.minecraft.world.item.DyeColor
+import net.minecraft.world.item.Items
+import net.minecraft.world.item.enchantment.EnchantmentHelper
+import net.minecraft.world.item.enchantment.Enchantments
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.entity.ChestBlockEntity
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
-import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.loading.FMLLoader
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.versions.mcp.MCPVersion
@@ -34,10 +31,6 @@ annotation class OnlyInClient
 
 @OnlyIn(Dist.DEDICATED_SERVER)
 annotation class OnlyInServer
-
-typealias MCItemStack = net.minecraft.item.ItemStack
-typealias MCEnchantmentType = net.minecraft.enchantment.EnchantmentType
-typealias MCStatusEffect = net.minecraft.potion.Effect
 
 fun isClientWorld(world: MCIWorld): Boolean = world.isClientSide
 
@@ -147,7 +140,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
     }
 
     override fun readCompressedNBT(stream: InputStream): Attr {
-        val nbt = CompressedStreamTools.readCompressed(stream)
+        val nbt = NbtIo.readCompressed(stream)
         return nbtToAttr(nbt)
     }
 
@@ -158,7 +151,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
         yawOffsetDeg: Double,
         pitchOffsetDeg: Double,
     ): Pair<Vec3d, Vec3d> {
-        val arrowEntity = ArrowEntity(world as MCServerWorld, player as MCPlayerEntity)
+        val arrowEntity = Arrow(world as MCServerWorld, player as MCPlayerEntity)
         arrowEntity.shootFromRotation(
             player,
             (gameAPI.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
@@ -188,7 +181,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
     @OnlyInClient
     override fun showClientMessage(textJsonStr: String) {
         val player = Minecraft.getInstance().player
-        val mcText = ITextComponent.Serializer.fromJson(textJsonStr)
+        val mcText = Component.Serializer.fromJson(textJsonStr)
         if (mcText == null) {
             gameAPI.logError("Invalid JSON text: $textJsonStr")
             return
@@ -221,9 +214,11 @@ object ForgeJavaGameAPI : JavaGameAPI {
     }
 
     override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr {
-        val chestEntity = ChestTileEntity()
+        val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultBlockState())
+
+        // world is needed to prevent a NullPointerException
+        chestEntity.level = toServerWorld(world)
         chestEntity.setLootTable(MCIdentifier(lootTableId), RANDOM.nextLong())
-        chestEntity.setLevelAndPosition(world as MCWorld, toMCBlockPos(pos))
         chestEntity.unpackLootTable(null)
 
         val tag = CompoundTag()
@@ -254,14 +249,14 @@ object ForgeJavaGameAPI : JavaGameAPI {
     }
 
     override fun convertLegacyItemId(id: Int, data: Int): String? {
-        val legacyName: String = ItemIntIDToString.getItem(id)
+        val legacyName: String = ItemIdFix.getItem(id)
         if (legacyName == "minecraft:air" && id > 0) return null
-        return ItemStackDataFlattening.updateItem(legacyName, data) ?: legacyName
+        return ItemStackTheFlatteningFix.updateItem(legacyName, data) ?: legacyName
     }
 
     override fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i> {
-        val structure = Template()
-        structure.load(CompressedStreamTools.readCompressed(stream))
+        val structure = StructureTemplate()
+        structure.load(NbtIo.readCompressed(stream))
         return Pair(structure, toVec3i(structure.size))
     }
 }

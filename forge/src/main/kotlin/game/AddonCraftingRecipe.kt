@@ -1,24 +1,20 @@
 package mod.lucky.forge.game
 
 import mod.lucky.common.gameAPI
-import mod.lucky.forge.ForgeLuckyRegistry
-import mod.lucky.forge.MCIdentifier
-import mod.lucky.forge.MCItemStack
-import mod.lucky.forge.toMCItemStack
+import mod.lucky.forge.*
 import mod.lucky.java.*
 import mod.lucky.java.loader.ShapedCraftingRecipe
 import mod.lucky.java.loader.ShapelessCraftingRecipe
-import net.minecraft.inventory.CraftingInventory
-import net.minecraft.item.crafting.IRecipeSerializer
-import net.minecraft.item.crafting.Ingredient
-import net.minecraft.item.crafting.SpecialRecipe
-import net.minecraft.util.NonNullList
-import net.minecraft.world.World
+import net.minecraft.core.NonNullList
+import net.minecraft.world.inventory.CraftingContainer
+import net.minecraft.world.item.crafting.CustomRecipe
+import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraftforge.registries.ForgeRegistries
 
-typealias MCCraftingRecipe = net.minecraft.item.crafting.ICraftingRecipe
-typealias MCShapelessCraftingRecipe = net.minecraft.item.crafting.ShapelessRecipe
-typealias MCShapedCraftingRecipe = net.minecraft.item.crafting.ShapedRecipe
+typealias MCCraftingRecipe = net.minecraft.world.item.crafting.CraftingRecipe
+typealias MCShapelessCraftingRecipe = net.minecraft.world.item.crafting.ShapelessRecipe
+typealias MCShapedCraftingRecipe = net.minecraft.world.item.crafting.ShapedRecipe
 
 fun getIngredient(id: String): Ingredient? {
     val item = ForgeRegistries.ITEMS.getValue(MCIdentifier(id))
@@ -62,16 +58,16 @@ fun registerAddonCraftingRecipes() {
     AddonCraftingRecipe.craftingRecipes = recipes
 }
 
-class AddonCraftingRecipe(id: MCIdentifier) : SpecialRecipe(id) {
+class AddonCraftingRecipe(id: MCIdentifier) : CustomRecipe(id) {
     companion object {
         lateinit var craftingRecipes: List<MCCraftingRecipe>
     }
 
-    override fun matches(inv: CraftingInventory, world: World): Boolean {
+    override fun matches(inv: CraftingContainer, world: MCWorld): Boolean {
         return craftingRecipes.find { it.matches(inv, world) } != null
     }
 
-    override fun assemble(inv: CraftingInventory): MCItemStack {
+    override fun assemble(inv: CraftingContainer): MCItemStack {
         val matchingRecipe = craftingRecipes.find { it.matches(inv, null) }
         if (matchingRecipe != null) return matchingRecipe.assemble(inv)
         return MCItemStack.EMPTY
@@ -85,7 +81,7 @@ class AddonCraftingRecipe(id: MCIdentifier) : SpecialRecipe(id) {
         return "lucky"
     }
 
-    override fun getSerializer(): IRecipeSerializer<*> {
+    override fun getSerializer(): RecipeSerializer<*> {
         return ForgeLuckyRegistry.addonCraftingRecipe
     }
 }

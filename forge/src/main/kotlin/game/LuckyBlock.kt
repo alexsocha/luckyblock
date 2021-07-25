@@ -3,23 +3,21 @@ package mod.lucky.forge.game
 import mod.lucky.forge.*
 import mod.lucky.java.*
 import mod.lucky.java.game.*
-import net.minecraft.block.*
-import net.minecraft.block.material.Material
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.DyeColor
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundNBT
-import net.minecraft.network.play.server.SUpdateTileEntityPacket
-import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.math.BlockPos
-import net.minecraft.world.IBlockReader
-import net.minecraft.world.World
+import net.minecraft.core.BlockPos
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.DyeColor
+import net.minecraft.world.level.block.BaseEntityBlock
+import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.SoundType
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.material.Material
 
 private fun onBreak(
-    block: Block,
-    world: World,
-    player: PlayerEntity?,
+    block: MCBlock,
+    world: MCWorld,
+    player: MCPlayerEntity?,
     pos: BlockPos,
     removedByRedstone: Boolean = false,
 ) {
@@ -39,16 +37,16 @@ private fun onBreak(
     )
 }
 
-class LuckyBlock : ContainerBlock(Properties.of(Material.WOOD, DyeColor.YELLOW)
+class LuckyBlock : BaseEntityBlock(Properties.of(Material.WOOD, DyeColor.YELLOW)
     .sound(SoundType.STONE)
     .strength(0.2f, 6000000.0f)) {
 
     override fun neighborChanged(
         state: BlockState,
-        world: World,
-        pos: BlockPos,
-        neighborBlock: Block,
-        neighborPos: BlockPos,
+        world: MCWorld,
+        pos: MCBlockPos,
+        neighborBlock: MCBlock,
+        neighborPos: MCBlockPos,
         notify: Boolean
     ) {
         super.neighborChanged(state, world, pos, neighborBlock, neighborPos, notify)
@@ -58,18 +56,18 @@ class LuckyBlock : ContainerBlock(Properties.of(Material.WOOD, DyeColor.YELLOW)
     }
 
     override fun playerDestroy(
-        world: World,
-        player: PlayerEntity,
-        pos: BlockPos,
+        world: MCWorld,
+        player: MCPlayerEntity,
+        pos: MCBlockPos,
         state: BlockState,
-        blockEntity: TileEntity?,
-        stack: ItemStack
+        blockEntity: BlockEntity?,
+        stack: MCItemStack
     ) {
         super.playerDestroy(world, player, pos, state, blockEntity, stack)
         onBreak(this, world, player, pos)
     }
 
-    override fun setPlacedBy(world: World, pos: BlockPos, state: BlockState, player: LivingEntity?, itemStack: ItemStack) {
+    override fun setPlacedBy(world: MCWorld, pos: BlockPos, state: BlockState, player: LivingEntity?, itemStack: MCItemStack) {
         super.setPlacedBy(world, pos, state, player, itemStack)
 
         val blockEntity = world.getBlockEntity(pos) as LuckyBlockEntity
@@ -82,22 +80,24 @@ class LuckyBlock : ContainerBlock(Properties.of(Material.WOOD, DyeColor.YELLOW)
             onBreak(this, world, null, pos, removedByRedstone = true)
     }
 
-    override fun newBlockEntity(world: IBlockReader): TileEntity {
-        return LuckyBlockEntity()
+    override fun newBlockEntity(pos: MCBlockPos, state: BlockState): BlockEntity {
+        return LuckyBlockEntity(pos, state)
     }
 
-    override fun getRenderShape(blockState: BlockState): BlockRenderType {
-        return BlockRenderType.MODEL
+    override fun getRenderShape(blockState: BlockState): RenderShape {
+        return RenderShape.MODEL
     }
 }
 
 
 class LuckyBlockEntity(
+    blockPos: MCBlockPos,
+    blockState: BlockState,
     var data: LuckyBlockEntityData = LuckyBlockEntityData()
-) : TileEntity(ForgeLuckyRegistry.luckyBlockEntity) {
+) : BlockEntity(ForgeLuckyRegistry.luckyBlockEntity, blockPos, blockState) {
 
-    override fun load(state: BlockState, tag: CompoundNBT) {
-        super.load(state, tag)
+    override fun load(tag: CompoundTag) {
+        super.load(tag)
         data = LuckyBlockEntityData.readFromTag(tag)
     }
 
@@ -107,8 +107,8 @@ class LuckyBlockEntity(
         return tag
     }
 
-    override fun getUpdatePacket(): SUpdateTileEntityPacket {
-        return SUpdateTileEntityPacket(
+    override fun getUpdatePacket(): ClientboundBlockEntityDataPacket {
+        return ClientboundBlockEntityDataPacket(
             MCBlockPos(blockPos.x, blockPos.y, blockPos.z),
             1, // block entity type
             javaGameAPI.attrToNBT(data.toAttr()) as CompoundTag
