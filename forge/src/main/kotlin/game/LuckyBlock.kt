@@ -1,0 +1,117 @@
+package mod.lucky.forge.game
+
+import mod.lucky.forge.*
+import mod.lucky.java.*
+import mod.lucky.java.game.*
+import net.minecraft.core.BlockPos
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.DyeColor
+import net.minecraft.world.level.block.BaseEntityBlock
+import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.SoundType
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.material.Material
+
+private fun onBreak(
+    block: MCBlock,
+    world: MCWorld,
+    player: MCPlayerEntity?,
+    pos: BlockPos,
+    removedByRedstone: Boolean = false,
+) {
+    if (isClientWorld(world)) return
+
+    val blockEntityData = (world.getBlockEntity(pos) as? LuckyBlockEntity?)?.data
+    world.removeBlock(pos, false)
+    world.removeBlockEntity(pos)
+
+    onLuckyBlockBreak(
+        block = block,
+        world = world,
+        player = player,
+        pos = toVec3i(pos),
+        blockEntityData = blockEntityData,
+        removedByRedstone = removedByRedstone,
+    )
+}
+
+class LuckyBlock : BaseEntityBlock(Properties.of(Material.WOOD, DyeColor.YELLOW)
+    .sound(SoundType.STONE)
+    .strength(0.2f, 6000000.0f)) {
+
+    override fun neighborChanged(
+        state: BlockState,
+        world: MCWorld,
+        pos: MCBlockPos,
+        neighborBlock: MCBlock,
+        neighborPos: MCBlockPos,
+        notify: Boolean
+    ) {
+        super.neighborChanged(state, world, pos, neighborBlock, neighborPos, notify)
+        if (world.hasNeighborSignal(pos)) {
+            onBreak(this, world, null, pos, removedByRedstone = true)
+        }
+    }
+
+    override fun playerDestroy(
+        world: MCWorld,
+        player: MCPlayerEntity,
+        pos: MCBlockPos,
+        state: BlockState,
+        blockEntity: BlockEntity?,
+        stack: MCItemStack
+    ) {
+        super.playerDestroy(world, player, pos, state, blockEntity, stack)
+        onBreak(this, world, player, pos)
+    }
+
+    override fun setPlacedBy(world: MCWorld, pos: BlockPos, state: BlockState, player: LivingEntity?, itemStack: MCItemStack) {
+        super.setPlacedBy(world, pos, state, player, itemStack)
+
+        val blockEntity = world.getBlockEntity(pos) as LuckyBlockEntity
+        itemStack.tag?.let {
+            blockEntity.data = LuckyBlockEntityData.readFromTag(it)
+            blockEntity.setChanged()
+        }
+
+        if (world.hasNeighborSignal(pos))
+            onBreak(this, world, null, pos, removedByRedstone = true)
+    }
+
+    override fun newBlockEntity(pos: MCBlockPos, state: BlockState): BlockEntity {
+        return LuckyBlockEntity(pos, state)
+    }
+
+    override fun getRenderShape(blockState: BlockState): RenderShape {
+        return RenderShape.MODEL
+    }
+}
+
+
+class LuckyBlockEntity(
+    blockPos: MCBlockPos,
+    blockState: BlockState,
+    var data: LuckyBlockEntityData = LuckyBlockEntityData()
+) : BlockEntity(ForgeLuckyRegistry.luckyBlockEntity, blockPos, blockState) {
+
+    override fun load(tag: CompoundTag) {
+        super.load(tag)
+        data = LuckyBlockEntityData.readFromTag(tag)
+    }
+
+    override fun save(tag: CompoundTag): CompoundTag {
+        super.save(tag)
+        data.writeToTag(tag)
+        return tag
+    }
+
+    override fun getUpdatePacket(): ClientboundBlockEntityDataPacket {
+        return ClientboundBlockEntityDataPacket(
+            MCBlockPos(blockPos.x, blockPos.y, blockPos.z),
+            1, // block entity type
+            javaGameAPI.attrToNBT(data.toAttr()) as CompoundTag
+        )
+    }
+}
