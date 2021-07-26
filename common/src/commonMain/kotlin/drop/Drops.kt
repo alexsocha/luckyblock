@@ -152,6 +152,7 @@ fun registerDefaultDrops() {
         "entity" to mapOf(
             *commonDefaults,
             "nbttag" to DictAttr(),
+            "components" to DictAttr(), // Bedrock edition only
             "adjustY" to listAttrOf(intAttrOf(0), intAttrOf(10)),
             "randomizeMob" to true,
             "facing" to 2.0,

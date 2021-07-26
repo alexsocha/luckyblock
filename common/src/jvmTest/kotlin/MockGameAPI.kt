@@ -28,6 +28,7 @@ object MockGameAPI : GameAPI {
         id: String,
         pos: Vec3d,
         nbt: DictAttr,
+        components: DictAttr,
         rotation: Double,
         randomizeMob: Boolean,
         player: PlayerEntity?,

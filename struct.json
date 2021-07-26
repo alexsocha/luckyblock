@@ -1,0 +1,83 @@
+{
+    "": {
+        format_version: 1, 
+        size: [3, 3, 3], 
+        structure: {
+            block_indices: [
+                [0, 1, 1, 2, 0, 3, 3, 0, 3, 1, 1, 1, 0, 3, 0, 0, 3, 0, 1, 1, 1, 3, 0, 3, 3, 0, 3], 
+                [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+            ], 
+            entities: [
+                {
+                    CustomName: "§l§eLucky Cow 3", 
+                    CustomNameVisible: 1b, 
+                    Pos: [-55.5f, 4.0f, -6.5f], 
+                    identifier: "minecraft:cow"
+                }
+            ], 
+            palette: {
+                default: {
+                    block_palette: [
+                        {
+                            name: "minecraft:dirt", 
+                            states: {
+                                dirt_type: "normal"
+                            }, 
+                            version: 17879555
+                        }, 
+                        {
+                            name: "minecraft:grass", 
+                            states: {}, 
+                            version: 17879555
+                        }, 
+                        {
+                            name: "minecraft:structure_block", 
+                            states: {
+                                structure_block_type: "save"
+                            }, 
+                            version: 17879555
+                        }, 
+                        {
+                            name: "minecraft:air", 
+                            states: {}, 
+                            version: 17879555
+                        }
+                    ], 
+                    block_position_data: {
+                        3: {
+                            block_entity_data: {
+                                animationMode: 0b, 
+                                animationSeconds: 0.0f, 
+                                data: 1, 
+                                dataField: "", 
+                                id: "StructureBlock", 
+                                ignoreEntities: 0b, 
+                                includePlayers: 0b, 
+                                integrity: 100.0f, 
+                                isMovable: 1b, 
+                                isPowered: 0b, 
+                                mirror: 0b, 
+                                redstoneSaveMode: 0, 
+                                removeBlocks: 0b, 
+                                rotation: 0b, 
+                                seed: 0L, 
+                                showBoundingBox: 1b, 
+                                structureName: "", 
+                                x: -57, 
+                                xStructureOffset: 0, 
+                                xStructureSize: 5, 
+                                y: 4, 
+                                yStructureOffset: -1, 
+                                yStructureSize: 5, 
+                                z: -8, 
+                                zStructureOffset: 0, 
+                                zStructureSize: 5
+                            }
+                        }
+                    }
+                }
+            }
+        }, 
+        structure_world_origin: [-57, 3, -8]
+    }
+}

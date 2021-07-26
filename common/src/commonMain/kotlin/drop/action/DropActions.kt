@@ -159,6 +159,7 @@ fun doEntityDrop(drop: SingleDrop, context: DropContext) {
         id=id,
         pos=pos,
         nbt = drop["nbttag"],
+        components = drop["components"],
         player = context.player,
         sourceId = context.sourceId,
         randomizeMob = drop["randomizeMob"],

@@ -42,6 +42,7 @@ val isBedrockEnabledBool = isBedrockEnabled.toBoolean()
 
 rootProject.name = "luckyblock"
 include("common")
+include("tools")
 if (isForgeEnabledBool) include("forge")
 if (isFabricEnabledBool) include("fabric")
 if (isBedrockEnabledBool) include("bedrock")

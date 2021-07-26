@@ -72,6 +72,15 @@ To use IntelliJ, ensure that the Gradle plugin is enabled, and import the direct
 - Optionally, run `/op <player>`
 - Start a Mincecraft client, and add a server with the address `:25565`
 
+### Bedrock
+
+- Create a symlink to the resource and behavior packs:
+
+```
+mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\development_resource_packs\LuckyBlockRP" "C:\...\bedrock\run\development_resource_pack"
+
+mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\development_behaviour_packs" "C:\...\bedrock\run\develpment_behaviour_pack"
+```
 
 ### Deploy
 

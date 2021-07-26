@@ -40,7 +40,6 @@ class Tests {
 
         val drop3 = createSingleDrop("pos=(#bPosY/4.0, #pExactPosZ-#bPosX, #bPosY*2.5)")
         assertEquals(Vec3d(0.5, 5.5, 5.0), drop3.getPos())
-
     }
 
     @Test

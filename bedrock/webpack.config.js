@@ -1,10 +1,10 @@
 module.exports = {
     mode: 'production',
     name: 'luckyblock',
-    entry: './js-src/main.js',
+    entry: './src/main/resources/main.js',
     target: 'node',
     output: {
-        path: __dirname + '/dist',
-        filename: 'luckyblock.js',
-    }
+        path: __dirname + '/build/processedResources/js/main/addon/behavior_pack/scripts/server',
+        filename: 'serverScript.js',
+    },
 }
