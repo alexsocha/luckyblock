@@ -121,9 +121,6 @@ object FabricGameAPI : GameAPI {
         }.map { it.toString() }.toList()
     }
 
-    override fun getUsefulPotionIds(): List<String> = usefulPotionIds
-    override fun getSpawnEggIds(): List<String> = spawnEggIds
-
     override fun logError(msg: String?, error: Exception?) {
         if (msg != null && error != null) FabricLuckyRegistry.LOGGER.error(msg, error)
         else if (msg != null) FabricLuckyRegistry.LOGGER.error(msg)
@@ -133,6 +130,9 @@ object FabricGameAPI : GameAPI {
     override fun logInfo(msg: String) {
         FabricLuckyRegistry.LOGGER.info(msg)
     }
+
+    override fun getUsefulPotionIds(): List<String> = usefulPotionIds
+    override fun getSpawnEggIds(): List<String> = spawnEggIds
 
     override fun getEntityPos(entity: Entity): Vec3d {
         val mcPos = (entity as MCEntity).pos

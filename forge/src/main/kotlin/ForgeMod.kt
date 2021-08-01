@@ -64,6 +64,7 @@ private fun getAddonBlock(id: String): LuckyBlock {
 class ForgeMod {
     init {
         platformAPI = JavaPlatformAPI
+        logger = ForgeGameAPI
         gameAPI = ForgeGameAPI
         javaGameAPI = ForgeJavaGameAPI
 

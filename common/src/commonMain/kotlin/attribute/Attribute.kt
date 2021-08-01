@@ -14,6 +14,7 @@ enum class AttrType {
     DOUBLE,
     BYTE_ARRAY,
     INT_ARRAY,
+    LONG_ARRAY,
     DICT,
     LIST,
 }
@@ -172,6 +173,7 @@ fun attrToJsonStr(attr: Attr): String {
             AttrType.DOUBLE -> "${attr.value}"
             AttrType.INT_ARRAY -> "[${(attr.value as IntArray).joinToString(";")}]"
             AttrType.BYTE_ARRAY -> "[${(attr.value as ByteArray).joinToString(";") { "${it}b" }}]"
+            AttrType.LONG_ARRAY -> "[${(attr.value as LongArray).joinToString(";") { "${it}l" }}]"
             AttrType.STRING -> "\"${attr.value}\""
             AttrType.BOOLEAN -> "${attr.value}"
             AttrType.LIST -> throw Exception()

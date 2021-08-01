@@ -4,9 +4,8 @@ import mod.lucky.common.LuckyBlockSettings
 import mod.lucky.common.attribute.splitLines
 import mod.lucky.common.drop.WeightedDrop
 import mod.lucky.common.drop.dropsFromStrList
-import mod.lucky.common.gameAPI
+import mod.lucky.common.logger
 import mod.lucky.java.Addon
-import mod.lucky.java.JavaGameAPI
 import mod.lucky.java.JavaLuckyRegistry
 import mod.lucky.java.javaGameAPI
 import java.io.*
@@ -81,7 +80,7 @@ fun extractDefaultConfig(configDir: File) {
     try {
         val stream = JavaLuckyRegistry::class.java.getResourceAsStream("lucky-config.zip")
         if (stream == null) {
-            gameAPI.logInfo("No default resources found. Ignore this in a dev environment.")
+            logger.logInfo("No default resources found. Ignore this in a dev environment.")
             return
         }
         val inputStream = ZipInputStream(stream)
@@ -99,7 +98,7 @@ fun extractDefaultConfig(configDir: File) {
         }
         inputStream.close()
     } catch (e: Exception) {
-        gameAPI.logError("Error extracting default config", e)
+        logger.logError("Error extracting default config", e)
     }
 }
 
@@ -107,7 +106,7 @@ fun loadMainResources(configDir: File): MainResources {
     val fileContents = commonConfigFiles.map { path ->
         val stream = getInputStream(configDir, path)
         if (stream == null) {
-            gameAPI.logError("Missing resource '${path}' in ${configDir.path}")
+            logger.logError("Missing resource '${path}' in ${configDir.path}")
             path to emptyList()
         } else path to readLines(stream)
     }.toMap()
@@ -137,7 +136,7 @@ fun loadAddonResources(addonFile: File): AddonResources? {
         val stream = getInputStream(addonFile, path)
         if (stream == null) {
             if (path == "plugin_init.txt") {
-                gameAPI.logError("Missing resource '${path}' for addon '${addonFile.name}'")
+                logger.logError("Missing resource '${path}' for addon '${addonFile.name}'")
                 return null
             }
             path to emptyList()

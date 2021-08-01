@@ -5,17 +5,17 @@ import mod.lucky.common.Vec3i
 import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.gameAPI
+import mod.lucky.common.logger
 import mod.lucky.java.javaGameAPI
 import mod.lucky.java.loader.DropStructureResource
 import java.io.InputStream
 import java.lang.Exception
-import kotlin.experimental.and
 
 fun readLegacySchematic(stream: InputStream): DropStructureResource {
     val nbt = try {
         javaGameAPI.readCompressedNBT(stream) as DictAttr
     } catch (e: Exception) {
-        gameAPI.logError("Error reading legacy schematic structure", e)
+        logger.logError("Error reading legacy schematic structure", e)
         DictAttr()
     }
 

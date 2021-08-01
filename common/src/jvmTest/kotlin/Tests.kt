@@ -19,6 +19,15 @@ class Tests {
     fun beforeTest() {
         mockkObject(MockGameAPI)
         gameAPI = MockGameAPI
+        logger = object : Logger {
+            override fun logError(msg: String?, error: Exception?) {
+                println("ERROR: $msg")
+                throw error ?: Exception()
+            }
+            override fun logInfo(msg: String) {
+                println("INFO: $msg")
+            }
+        }
     }
 
     @Test

@@ -55,6 +55,7 @@ object FabricLuckyRegistry {
 class FabricMod : ModInitializer {
     init {
         platformAPI = JavaPlatformAPI
+        logger = FabricGameAPI
         gameAPI = FabricGameAPI
         javaGameAPI = FabricJavaGameAPI
     }

@@ -128,9 +128,6 @@ object ForgeGameAPI : GameAPI {
         }.map { it.toString() }.toList()
     }
 
-    override fun getUsefulPotionIds(): List<String> = usefulPotionIds
-    override fun getSpawnEggIds(): List<String> = spawnEggIds
-
     override fun logError(msg: String?, error: Exception?) {
         if (msg != null && error != null) ForgeLuckyRegistry.LOGGER.error(msg, error)
         else if (msg != null) ForgeLuckyRegistry.LOGGER.error(msg)
@@ -140,6 +137,9 @@ object ForgeGameAPI : GameAPI {
     override fun logInfo(msg: String) {
         ForgeLuckyRegistry.LOGGER.info(msg)
     }
+
+    override fun getUsefulPotionIds(): List<String> = usefulPotionIds
+    override fun getSpawnEggIds(): List<String> = spawnEggIds
 
     override fun getEntityPos(entity: Entity): Vec3d {
         return Vec3d((entity as MCEntity).x, entity.y, entity.z)

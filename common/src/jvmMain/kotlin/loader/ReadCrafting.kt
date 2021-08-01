@@ -2,7 +2,7 @@ package mod.lucky.java.loader
 
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.attribute.*
-import mod.lucky.common.gameAPI
+import mod.lucky.common.logger
 import mod.lucky.java.ItemStack
 import mod.lucky.java.javaGameAPI
 import java.lang.Exception
@@ -51,7 +51,7 @@ fun readAddonCraftingRecipes(lines: List<String>, resultId: String): List<Crafti
                     tableLine.map {
                         if (it in ingredientKeys) ingredientKeys[it]
                         else {
-                            gameAPI.logError("Unknown ingredient key '$it' in recipe '$recipeLine'")
+                            logger.logError("Unknown ingredient key '$it' in recipe '$recipeLine'")
                             null
                         }
                     }
@@ -67,7 +67,7 @@ fun readAddonCraftingRecipes(lines: List<String>, resultId: String): List<Crafti
                 )
             }
         } catch (e: Exception) {
-            gameAPI.logError("Error reading addon crafting recipe", e)
+            logger.logError("Error reading addon crafting recipe", e)
             null
         }
     }
@@ -85,7 +85,7 @@ fun readCraftingLuckModifiers(lines: List<String>): Map<String, Int> {
                 LuckyRegistry.simpleEvalContext
             ) as Int
         } catch (e: Exception) {
-            gameAPI.logError("Invalid crafting luck modifier '$it'", e)
+            logger.logError("Invalid crafting luck modifier '$it'", e)
             null
         }
     }.toMap()
