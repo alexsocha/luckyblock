@@ -24,7 +24,7 @@ data class DropContext(
 
 
 fun createDropEvalContext(drop: SingleDrop, dropContext: DropContext): EvalContext {
-    return EvalContext(LuckyRegistry.templateVarFns, DropTemplateContext(drop, dropContext))
+    return EvalContext(LuckyRegistry.templateVarFns, DropTemplateContext(drop, dropContext, random=DefaultRandom()))
 }
 
 fun createVecSpec(baseName: String, partNames: Triple<String, String, String>, type: AttrType? = null): Array<Pair<String, AttrSpec>> {
@@ -118,7 +118,7 @@ private fun chooseRandomDrop(drops: List<WeightedDrop>, luck: Int): WeightedDrop
         weightTotal += newChance
         weightPoints.add(weightTotal)
     }
-    val randomIndex = randDouble(0.0, 1.0) * weightTotal
+    val randomIndex = defaultRandom.randDouble(0.0, 1.0) * weightTotal
     return drops[getDropIndexByWeight(weightPoints, randomIndex)]
 }
 

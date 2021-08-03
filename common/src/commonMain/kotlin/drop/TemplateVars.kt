@@ -2,7 +2,6 @@ package mod.lucky.common.drop
 
 import mod.lucky.common.*
 import mod.lucky.common.attribute.*
-import mod.lucky.common.LuckyRegistry.registerDropTemplateVar
 import mod.lucky.common.LuckyRegistry.registerTemplateVar
 import mod.lucky.common.attribute.EvalError
 import mod.lucky.common.colorNames
@@ -14,105 +13,104 @@ fun <T : Number> registerVec3TemplateVar(
     baseName: String,
     type: AttrType,
     spec: TemplateVarSpec = TemplateVarSpec(),
-    needsContext: Boolean = false,
-    posFn: (TemplateVar, DropTemplateContext?) -> Vec3<T>?
+    posFn: (TemplateVar, DropTemplateContext) -> Vec3<T>?
 ) {
     val zero = castNum(type, 0)
-    registerTemplateVar("${baseName}X", spec, needsContext) { t, c -> ValueAttr(type, posFn(t, c)?.x ?: zero) }
-    registerTemplateVar("${baseName}Y", spec, needsContext) { t, c -> ValueAttr(type, posFn(t, c)?.y ?: zero) }
-    registerTemplateVar("${baseName}Z", spec, needsContext) { t, c -> ValueAttr(type, posFn(t, c)?.z ?: zero) }
-    registerTemplateVar(baseName, spec, needsContext) { t, c ->
+    registerTemplateVar("${baseName}X", spec) { t, c -> ValueAttr(type, posFn(t, c)?.x ?: zero) }
+    registerTemplateVar("${baseName}Y", spec) { t, c -> ValueAttr(type, posFn(t, c)?.y ?: zero) }
+    registerTemplateVar("${baseName}Z", spec) { t, c -> ValueAttr(type, posFn(t, c)?.z ?: zero) }
+    registerTemplateVar(baseName, spec) { t, c ->
         vec3AttrOf(type, posFn(t, c) ?: Vec3(zero, zero, zero))
     }
 }
 
 fun registerDefaultTemplateVars() {
-    registerTemplateVar("randPotion") { _, _ -> stringAttrOf(chooseRandomFrom(gameAPI.getUsefulPotionIds())) }
-    registerTemplateVar("randSpawnEgg") { _, _ -> stringAttrOf(chooseRandomFrom(gameAPI.getSpawnEggIds())) }
-    registerTemplateVar("randColor") { _, _ -> stringAttrOf(chooseRandomFrom(colorNames)) }
-    registerDropTemplateVar("time") { _, context ->
+    registerTemplateVar("randPotion") { _, context -> stringAttrOf(chooseRandomFrom(context.random, gameAPI.getUsefulPotionIds())) }
+    registerTemplateVar("randSpawnEgg") { _, context -> stringAttrOf(chooseRandomFrom(context.random, gameAPI.getSpawnEggIds())) }
+    registerTemplateVar("randColor") { _, context -> stringAttrOf(chooseRandomFrom(context.random, colorNames)) }
+    registerTemplateVar("time") { _, context ->
         stringAttrOf(
-            gameAPI.getWorldTime(context.dropContext.world).toString()
+            gameAPI.getWorldTime(context.dropContext!!.world).toString()
         )
     }
 
-    registerVec3TemplateVar("bPos", AttrType.INT, needsContext = true) { _, context ->
-        context!!.dropContext.pos.floor()
+    registerVec3TemplateVar("bPos", AttrType.INT) { _, context ->
+        context.dropContext!!.pos.floor()
     }
-    registerVec3TemplateVar("bExactPos", AttrType.DOUBLE, needsContext = true) { _, context ->
-        context!!.dropContext.pos
+    registerVec3TemplateVar("bExactPos", AttrType.DOUBLE) { _, context ->
+        context.dropContext!!.pos
     }
 
-    registerVec3TemplateVar("ePos", AttrType.INT, needsContext = true) { _, context ->
-        context!!.dropContext.hitEntity?.let {
+    registerVec3TemplateVar("ePos", AttrType.INT) { _, context ->
+        context.dropContext!!.hitEntity?.let {
             gameAPI.getEntityPos(it).floor()
         }
     }
-    registerVec3TemplateVar("eExactPos", AttrType.DOUBLE, needsContext = true) { _, context ->
-        context!!.dropContext.hitEntity?.let { gameAPI.getEntityPos(it) }
+    registerVec3TemplateVar("eExactPos", AttrType.DOUBLE) { _, context ->
+        context.dropContext!!.hitEntity?.let { gameAPI.getEntityPos(it) }
     }
-    registerVec3TemplateVar("pPos", AttrType.INT, needsContext = true) { _, context ->
-        context!!.dropContext.player?.let { gameAPI.getEntityPos(it).floor() }
+    registerVec3TemplateVar("pPos", AttrType.INT) { _, context ->
+        context.dropContext!!.player?.let { gameAPI.getEntityPos(it).floor() }
     }
-    registerVec3TemplateVar("pExactPos", AttrType.DOUBLE, needsContext = true) { _, context ->
-        context!!.dropContext.player?.let { gameAPI.getEntityPos(it) }
-    }
-
-    registerDropTemplateVar("pName") { _, context ->
-        stringAttrOf(context.dropContext.player?.let { gameAPI.getPlayerName(it) } ?: "")
+    registerVec3TemplateVar("pExactPos", AttrType.DOUBLE) { _, context ->
+        context.dropContext!!.player?.let { gameAPI.getEntityPos(it) }
     }
 
-    registerDropTemplateVar("pDirect") { _, context ->
-        context.dropContext.player?.let {
+    registerTemplateVar("pName") { _, context ->
+        stringAttrOf(context.dropContext!!.player?.let { gameAPI.getPlayerName(it) } ?: "")
+    }
+
+    registerTemplateVar("pDirect") { _, context ->
+        context.dropContext!!.player?.let {
             val rotInt = round((gameAPI.getPlayerHeadYawDeg(it) + 180.0) / 90.0).toInt() % 4
             val rotIntClamped = if (rotInt < 0) (rotInt + 4) else rotInt
             intAttrOf(rotIntClamped)
         } ?: intAttrOf(0)
     }
-    registerDropTemplateVar("pYaw") { _, context ->
-        doubleAttrOf(context.dropContext.player?.let { gameAPI.getPlayerHeadYawDeg(it) } ?: 0.0)
+    registerTemplateVar("pYaw") { _, context ->
+        doubleAttrOf(context.dropContext!!.player?.let { gameAPI.getPlayerHeadYawDeg(it) } ?: 0.0)
     }
-    registerDropTemplateVar("pPitch") { _, context ->
-        doubleAttrOf(context.dropContext.player?.let { gameAPI.getPlayerHeadPitchDeg(it) } ?: 0.0)
+    registerTemplateVar("pPitch") { _, context ->
+        doubleAttrOf(context.dropContext!!.player?.let { gameAPI.getPlayerHeadPitchDeg(it) } ?: 0.0)
     }
 
-    fun randInRange(minAttr: ValueAttr, maxAttr: ValueAttr): ValueAttr {
+    fun randInRange(random: Random, minAttr: ValueAttr, maxAttr: ValueAttr): ValueAttr {
         val decimalType = when {
             isDecimalType(minAttr.type) -> minAttr.type
             isDecimalType(maxAttr.type) -> maxAttr.type
             else -> null
         }
         if (decimalType != null) {
-            val result = randDouble((minAttr.value as Number).toDouble(), (maxAttr.value as Number).toDouble())
+            val result = random.randDouble((minAttr.value as Number).toDouble(), (maxAttr.value as Number).toDouble())
             return ValueAttr(decimalType, castNum(decimalType, result))
         }
-        val result = randInt((minAttr.value as Number).toInt()..(maxAttr.value as Number).toInt())
+        val result = random.randInt((minAttr.value as Number).toInt()..(maxAttr.value as Number).toInt())
         return ValueAttr(minAttr.type, castNum(minAttr.type, result))
     }
 
     val randSpec = TemplateVarSpec(listOf("min" to ValueSpec(), "max" to ValueSpec()))
-    registerTemplateVar("rand", randSpec) { templateVar, _ ->
-        randInRange(templateVar.args[0] as ValueAttr, templateVar.args[1] as ValueAttr)
+    registerTemplateVar("rand", randSpec) { templateVar, context ->
+        randInRange(context.random, templateVar.args[0] as ValueAttr, templateVar.args[1] as ValueAttr)
     }
-    registerTemplateVar("randPosNeg", randSpec) { templateVar, _ ->
-        val numAttr = randInRange(templateVar.args[0] as ValueAttr, templateVar.args[1] as ValueAttr)
-        val multiplier = if (randInt(0..1) == 0) -1 else 1
+    registerTemplateVar("randPosNeg", randSpec) { templateVar, context ->
+        val numAttr = randInRange(context.random, templateVar.args[0] as ValueAttr, templateVar.args[1] as ValueAttr)
+        val multiplier = if (context.random.randInt(0..1) == 0) -1 else 1
         ValueAttr(numAttr.type, castNum(numAttr.type, (numAttr.value as Number).toDouble() * multiplier.toDouble()))
     }
 
     val randListSpec = TemplateVarSpec(listOf("value" to ValueSpec()), argRange = 0..Int.MAX_VALUE)
-    registerTemplateVar("randList", randListSpec) { v, _ -> chooseRandomFrom(v.args.toList()) }
+    registerTemplateVar("randList", randListSpec) { v, context -> chooseRandomFrom(context.random, v.args.toList()) }
 
     val circleOffsetSpec = TemplateVarSpec(
         listOf("min" to ValueSpec(AttrType.INT), "max" to ValueSpec(AttrType.INT)),
         argRange = 1..2
     )
-    registerTemplateVar("circleOffset", circleOffsetSpec) { templateAttr, _ ->
+    registerTemplateVar("circleOffset", circleOffsetSpec) { templateAttr, context ->
         val min = templateAttr.args.getValue<Int>(0)
         val max = templateAttr.args.getOptionalValue<Int>(1) ?: min
 
-        val radius = randInt(min..max)
-        val angle = randInt(0..360)
+        val radius = context.random.randInt(min..max)
+        val angle = context.random.randInt(0..360)
         val length = round(radius * sin(degToRad(angle.toDouble()))).toInt()
         val width = round(radius * cos(degToRad(angle.toDouble()))).toInt()
 
@@ -142,11 +140,11 @@ fun registerDefaultTemplateVars() {
         ),
         argRange = 0..2
     )
-    registerVec3TemplateVar("randLaunchMotion", AttrType.DOUBLE, launchMotionSpec) { templateVar, _ ->
+    registerVec3TemplateVar("randLaunchMotion", AttrType.DOUBLE, launchMotionSpec) { templateVar, context ->
         val power = templateVar.args.getOptionalValue(0) ?: 0.9
         val pitchOffsetDeg = templateVar.args.getOptionalValue(1) ?: 15.0
-        val yawDeg = randDouble(-180.0, 180.0)
-        val pitchDeg = -90.0 + randDouble(-pitchOffsetDeg, pitchOffsetDeg)
+        val yawDeg = context.random.randDouble(-180.0, 180.0)
+        val pitchDeg = -90.0 + context.random.randDouble(-pitchOffsetDeg, pitchOffsetDeg)
         directionToVelocity(degToRad(yawDeg), degToRad(pitchDeg), power)
     }
 
@@ -190,8 +188,8 @@ fun registerDefaultTemplateVars() {
             else -> args[0]!!.type
         }
 
-        val structProps = dictAttrOf(*sPosRelatedKeys.map { it to context.drop.props.children[it] }.toTypedArray())
-        val structDrop = SingleDrop(context.drop.type, evalAttr(structProps, EvalContext(sPosUnrelatedVars, context)) as DictAttr)
+        val structProps = dictAttrOf(*sPosRelatedKeys.map { it to context.drop!!.props.children[it] }.toTypedArray())
+        val structDrop = SingleDrop(context.drop!!.type, evalAttr(structProps, EvalContext(sPosUnrelatedVars, context)) as DictAttr)
 
         val pos = structDrop.getVec3<Double>("pos")
         val centerOffset = structDrop.getVec3<Double>("centerOffset")
@@ -200,17 +198,16 @@ fun registerDefaultTemplateVars() {
         val worldPos = getWorldPos(args.toVec3<Number>().toDouble(), centerOffset, pos, rotation)
         return vec3AttrOf(type, worldPos)
     }
-    registerDropTemplateVar("sPos", sPosSpec) { templateVar, context -> getStructurePos(templateVar, context) }
+    registerTemplateVar("sPos", sPosSpec) { templateVar, context -> getStructurePos(templateVar, context) }
 
     val dropPropSpec = TemplateVarSpec(listOf("property" to ValueSpec(AttrType.STRING)))
-    registerDropTemplateVar("drop", dropPropSpec) { templateVar, context ->
-        val propNameInit = templateVar.args.getValue<String>(0).toLowerCase()
-        val propNameMap = LuckyRegistry.dropSpecs[context.drop.type]!!.children.map { (k) -> k.toLowerCase() to k }.toMap()
-        val propName = propNameMap[propNameInit.toLowerCase()] ?: propNameInit
+    registerTemplateVar("drop", dropPropSpec) { templateVar, context ->
+        val propNameInit = templateVar.args.getValue<String>(0).lowercase()
+        val propNameMap = LuckyRegistry.dropSpecs[context.drop!!.type]!!.children.map { (k) -> k.lowercase() to k }.toMap()
+        val propName = propNameMap[propNameInit.lowercase()] ?: propNameInit
 
         // prevent potential infinite recursion by excluding the 'drop' template var
         val evalContext = EvalContext(LuckyRegistry.templateVarFns.filterKeys { it != "drop" }, context)
-        // TODO
 
         if (propName in context.drop.props) evalAttr(context.drop.props[propName]!!, evalContext)
         else throw EvalError("Can't reference missing drop property '$propNameInit' in drop '${context.drop.propsString}'")

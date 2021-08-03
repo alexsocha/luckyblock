@@ -1,7 +1,6 @@
 package mod.lucky.common
 
 import kotlin.math.*
-import kotlin.random.Random
 
 val colorNames = listOf(
     "black",
@@ -55,7 +54,23 @@ typealias Vec3d = Vec3<Double>
 typealias BlockPos = Vec3i
 val zeroVec3d = Vec3d(0.0, 0.0, 0.0)
 
-val RANDOM = Random.Default
+interface Random {
+    fun randInt(range: IntRange): Int
+    fun nextDouble(): Double
+
+    fun randDouble(min: Double, max: Double): Double {
+        return min + (max - min) * nextDouble()
+    }
+}
+
+class DefaultRandom(
+    private val random: kotlin.random.Random = kotlin.random.Random.Default,
+) : Random {
+    override fun randInt(range: IntRange): Int = range.random(random)
+    override fun nextDouble(): Double = random.nextDouble()
+}
+
+val defaultRandom = DefaultRandom()
 
 fun <K, V>mapOfNotNull(vararg pairs: Pair<K, V?>): Map<K, V> {
     @Suppress("UNCHECKED_CAST")
@@ -83,16 +98,8 @@ fun distanceBetween(vec1: Vec3d, vec2: Vec3d): Double {
     return sqrt(dx * dx + dy * dy + dz * dz)
 }
 
-fun randInt(range: IntRange): Int {
-    return range.random(RANDOM)
-}
-
-fun randDouble(min: Double, max: Double): Double {
-    return min + (max - min) * RANDOM.nextDouble()
-}
-
-fun <T> chooseRandomFrom(list: List<T>): T {
-    return list[randInt(list.indices)]
+fun <T> chooseRandomFrom(random: Random, list: List<T>): T {
+    return list[random.randInt(list.indices)]
 }
 
 fun directionToVelocity(yawRad: Double, pitchRad: Double, speed: Double): Vec3d {
@@ -111,10 +118,10 @@ fun rotateVec3d(vec: Vec3d, rotationRad: Double): Vec3d {
     )
 }
 
-fun <T>chooseMultiRandomFrom(list: List<T>, amountRange: IntRange): List<T> {
-    val removeAmount = list.size - randInt(amountRange)
+fun <T>chooseMultiRandomFrom(random: Random, list: List<T>, amountRange: IntRange): List<T> {
+    val removeAmount = list.size - random.randInt(amountRange)
     val newList = ArrayList(list)
-    (0 until removeAmount).forEach { _ -> newList.removeAt(randInt(newList.indices)) }
+    (0 until removeAmount).forEach { _ -> newList.removeAt(random.randInt(newList.indices)) }
     return newList
 }
 

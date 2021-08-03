@@ -1,13 +1,14 @@
 package mod.lucky.java
 
 import mod.lucky.common.*
+import mod.lucky.common.Random
 import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.registerVec3TemplateVar
 import java.util.*
 
 fun registerMultiList(
     templateName: String,
-    getValues: () -> List<Attr>,
+    getValues: (context: DropTemplateContext) -> List<Attr>,
     defaultAmount: IntRange = 4..6,
 ) {
     val spec = TemplateVarSpec(
@@ -17,27 +18,27 @@ fun registerMultiList(
         ),
         argRange = 0..2
     )
-    LuckyRegistry.registerTemplateVar(templateName, spec) { templateVar, _ ->
+    LuckyRegistry.registerTemplateVar(templateName, spec) { templateVar, context ->
         val minAmount = templateVar.args.getOptionalValue(0) ?: defaultAmount.first
         val maxAmount = templateVar.args.getOptionalValue(1) ?: templateVar.args.getOptionalValue(0) ?: defaultAmount.last
-        ListAttr(chooseMultiRandomFrom(getValues(), minAmount..maxAmount))
+        ListAttr(chooseMultiRandomFrom(context.random, getValues(context), minAmount..maxAmount))
     }
 }
 
-private fun randEnchInstance(enchantment: Enchantment): DictAttr {
+private fun randEnchInstance(random: Random, enchantment: Enchantment): DictAttr {
     return dictAttrOf(
         "id" to stringAttrOf(enchantment.id),
-        "lvl" to ValueAttr(AttrType.SHORT, randInt(1..enchantment.maxLevel).toShort()),
+        "lvl" to ValueAttr(AttrType.SHORT, random.randInt(1..enchantment.maxLevel).toShort()),
     )
 }
 
-private fun randEffectInstance(effect: StatusEffect): DictAttr {
+private fun randEffectInstance(random: Random, effect: StatusEffect): DictAttr {
     val maxDurationTicks = if (effect.isInstant) 0 else 9600
     val minDurationTicks = maxDurationTicks / 3
     return dictAttrOf(
         "Id" to ValueAttr(AttrType.BYTE, effect.intId.toByte()),
-        "Amplifier" to ValueAttr(AttrType.BYTE, randInt(0..3).toByte()),
-        "Duration" to intAttrOf(randInt(minDurationTicks..maxDurationTicks)),
+        "Amplifier" to ValueAttr(AttrType.BYTE, random.randInt(0..3).toByte()),
+        "Duration" to intAttrOf(random.randInt(minDurationTicks..maxDurationTicks)),
         "Ambient" to booleanAttrOf(false),
         "ShowParticles" to booleanAttrOf(true),
         "ShowIcon" to booleanAttrOf(true),
@@ -52,9 +53,9 @@ fun registerEnchantments(
 ) {
     registerMultiList(
         templateName,
-        getValues = {
+        getValues = { context ->
             val enchantments = javaGameAPI.getEnchantments(types).filter { if (!includeCurses) !it.isCurse else true }
-            enchantments.map { randEnchInstance(it) }
+            enchantments.map { randEnchInstance(context.random, it) }
         },
         defaultAmount = defaultAmount,
     )
@@ -63,21 +64,21 @@ fun registerEnchantments(
 fun registerStatusEffects(templateName: String, effectIds: List<String>, defaultAmount: IntRange) {
     registerMultiList(
         templateName,
-        getValues = {
+        getValues = { context ->
             val effects = effectIds.map { javaGameAPI.getStatusEffect(it)!! }
-            effects.map { randEffectInstance(it) }
+            effects.map { randEffectInstance(context.random, it) }
         },
         defaultAmount = defaultAmount,
     )
 }
 
 fun registerJavaTemplateVars() {
-    LuckyRegistry.registerDropTemplateVar("pUUID") { _, context ->
-        stringAttrOf(context.dropContext.player?.let { javaGameAPI.getEntityUUID(it) } ?: "")
+    LuckyRegistry.registerTemplateVar("pUUID") { _, context ->
+        stringAttrOf(context.dropContext!!.player?.let { javaGameAPI.getEntityUUID(it) } ?: "")
     }
 
-    LuckyRegistry.registerDropTemplateVar("pUUIDArray") { _, context ->
-        ValueAttr(AttrType.INT_ARRAY, context.dropContext.player?.let {
+    LuckyRegistry.registerTemplateVar("pUUIDArray") { _, context ->
+        ValueAttr(AttrType.INT_ARRAY, context.dropContext!!.player?.let {
             val uuid = UUID.fromString(javaGameAPI.getEntityUUID(it))
             intArrayOf(
                 (uuid.mostSignificantBits shr 32).toInt(),
@@ -88,8 +89,8 @@ fun registerJavaTemplateVars() {
         } ?: intArrayOf())
     }
 
-    registerVec3TemplateVar("bowPos", AttrType.DOUBLE, needsContext = true) { _, context ->
-        val dropContext = context!!.dropContext
+    registerVec3TemplateVar("bowPos", AttrType.DOUBLE) { _, context ->
+        val dropContext = context.dropContext!!
         dropContext.player?.let {
             javaGameAPI.getArrowPosAndVelocity(dropContext.world, it, dropContext.bowPower).first
         }
@@ -102,35 +103,35 @@ fun registerJavaTemplateVars() {
         ),
         argRange = 0..2
     )
-    registerVec3TemplateVar("bowMotion", AttrType.DOUBLE, bowMotionSpec, needsContext = true) { templateVar, context ->
+    registerVec3TemplateVar("bowMotion", AttrType.DOUBLE, bowMotionSpec) { templateVar, context ->
         val power = templateVar.args.getOptionalValue(0) ?: 1.0
         val inaccuracyDeg = templateVar.args.getOptionalValue(1) ?: 0.0
-        val dropContext = context!!.dropContext
+        val dropContext = context.dropContext!!
         dropContext.player?.let {
             javaGameAPI.getArrowPosAndVelocity(
                 world = dropContext.world,
                 player = it,
                 bowPower = dropContext.bowPower * power,
-                yawOffsetDeg = randDouble(-inaccuracyDeg, inaccuracyDeg),
-                pitchOffsetDeg = randDouble(-inaccuracyDeg, inaccuracyDeg)
+                yawOffsetDeg = context.random.randDouble(-inaccuracyDeg, inaccuracyDeg),
+                pitchOffsetDeg = context.random.randDouble(-inaccuracyDeg, inaccuracyDeg)
             ).second
         }
     }
 
-    LuckyRegistry.registerTemplateVar("randFireworksRocket") { _, _ ->
-        val colorAmount = randInt(1..4)
-        val colors = (0 until colorAmount).map { chooseRandomFrom(javaGameAPI.getRBGPalette()) }.toIntArray()
+    LuckyRegistry.registerTemplateVar("randFireworksRocket") { _, context ->
+        val colorAmount = context.random.randInt(1..4)
+        val colors = (0 until colorAmount).map { chooseRandomFrom(context.random, javaGameAPI.getRBGPalette()) }.toIntArray()
 
         val explosion = dictAttrOf(
-            "Type" to ValueAttr(AttrType.BYTE, randInt(0..4).toByte()),
-            "Flicker" to booleanAttrOf(randInt(0..1) == 1),
-            "Trail" to booleanAttrOf(randInt(0..1) == 1),
+            "Type" to ValueAttr(AttrType.BYTE, context.random.randInt(0..4).toByte()),
+            "Flicker" to booleanAttrOf(context.random.randInt(0..1) == 1),
+            "Trail" to booleanAttrOf(context.random.randInt(0..1) == 1),
             "Colors" to ValueAttr(AttrType.INT_ARRAY, colors),
         )
 
         val firework = dictAttrOf(
             "Explosions" to listAttrOf(explosion),
-            "Flight" to ValueAttr(AttrType.BYTE, randInt(1..2).toByte())
+            "Flight" to ValueAttr(AttrType.BYTE, context.random.randInt(1..2).toByte())
         )
 
         dictAttrOf("Fireworks" to firework)
@@ -229,22 +230,22 @@ fun registerJavaTemplateVars() {
     registerStatusEffects("unluckyPotionEffects", badPotionEffects, defaultAmount = 5..7)
 
     val chestLootSpec = TemplateVarSpec(listOf("lootTableId" to ValueSpec(AttrType.STRING)))
-    LuckyRegistry.registerDropTemplateVar("chestLootTable", chestLootSpec) { templateVar, context ->
+    LuckyRegistry.registerTemplateVar("chestLootTable", chestLootSpec) { templateVar, context ->
         javaGameAPI.generateChestLoot(
-            context.dropContext.world,
+            context.dropContext!!.world,
             context.dropContext.pos.floor(),
             (templateVar.args[0] as ValueAttr).value as String
         )
     }
 
     // compatibility
-    LuckyRegistry.registerDropTemplateVar("chestVillageArmorer") { _, context ->
-        javaGameAPI.generateChestLoot(context.dropContext.world, context.dropContext.pos.floor(), "chests/village/village_armorer")
+    LuckyRegistry.registerTemplateVar("chestVillageArmorer") { _, context ->
+        javaGameAPI.generateChestLoot(context.dropContext!!.world, context.dropContext.pos.floor(), "chests/village/village_armorer")
     }
-    LuckyRegistry.registerDropTemplateVar("chestBonusChest") { _, context ->
-        javaGameAPI.generateChestLoot(context.dropContext.world, context.dropContext.pos.floor(), "chests/spawn_bonus_chest")
+    LuckyRegistry.registerTemplateVar("chestBonusChest") { _, context ->
+        javaGameAPI.generateChestLoot(context.dropContext!!.world, context.dropContext.pos.floor(), "chests/spawn_bonus_chest")
     }
-    LuckyRegistry.registerDropTemplateVar("chestDungeonChest") { _, context ->
-        javaGameAPI.generateChestLoot(context.dropContext.world, context.dropContext.pos.floor(), "chests/simple_dungeon")
+    LuckyRegistry.registerTemplateVar("chestDungeonChest") { _, context ->
+        javaGameAPI.generateChestLoot(context.dropContext!!.world, context.dropContext.pos.floor(), "chests/simple_dungeon")
     }
 }
