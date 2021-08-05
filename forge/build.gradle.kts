@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.minecraftforge.gradle.common.util.ModConfig
 import net.minecraftforge.gradle.userdev.UserDevExtension
 
 buildscript {
@@ -7,7 +8,7 @@ buildscript {
         maven { url = uri("https://maven.minecraftforge.net") }
     }
     dependencies {
-        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.+") {
+        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.16") {
             isChanging=true
         }
     }
@@ -23,6 +24,7 @@ val forgeMappingsVersion: String by project
 
 plugins {
     kotlin("jvm")
+    java
     id("com.github.johnrengelman.shadow")
 }
 
