@@ -43,18 +43,15 @@ kotlin {
 
     sourceSets {
         val commonMain by getting
-
-        if (isForgeEnabledBool || isFabricEnabledBool) {
-            val jvmMain by getting
-            val jvmTest by getting {
-                dependencies {
-                    implementation(kotlin("test-common"))
-                    implementation(kotlin("test-annotations-common"))
-                    // todo: separate common and JVM tests when mockk adds multiplatform support
-                    // implementation("io.mockk:mockk-common:1.+")
-                    implementation(kotlin("test-junit"))
-                    implementation("io.mockk:mockk:1.+")
-                }
+        val jvmMain by getting
+        val jvmTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+                // todo: separate common and JVM tests when mockk adds multiplatform support
+                // implementation("io.mockk:mockk-common:1.+")
+                implementation(kotlin("test-junit"))
+                implementation("io.mockk:mockk:1.+")
             }
         }
 
