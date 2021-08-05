@@ -118,7 +118,7 @@ object ForgeGameAPI : GameAPI {
     private var spawnEggIds: List<String> = emptyList()
 
     fun init() {
-        usefulPotionIds = ForgeRegistries.POTION_TYPES.keys.filter {
+        usefulPotionIds = ForgeRegistries.POTIONS.keys.filter {
             it.namespace == "minecraft" && it.path !in uselessPostionNames
         }.map { it.toString() }.toList()
 
@@ -150,7 +150,7 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) {
-        val statusEffect = ForgeRegistries.POTIONS.getValue(MCIdentifier(effectId))
+        val statusEffect = ForgeRegistries.MOB_EFFECTS.getValue(MCIdentifier(effectId))
         if (statusEffect == null) {
             gameAPI.logError("Unknown status effect: $effectId")
             return
@@ -162,7 +162,7 @@ object ForgeGameAPI : GameAPI {
     // compatibility only
     override fun convertStatusEffectId(effectId: Int): String? {
         val effect = MCStatusEffect.byId(effectId)
-        return effect?.let { ForgeRegistries.POTIONS.getKey(effect).toString() }
+        return effect?.let { ForgeRegistries.MOB_EFFECTS.getKey(effect).toString() }
     }
 
     override fun getLivingEntitiesInBox(world: World, boxMin: Vec3d, boxMax: Vec3d): List<Entity> {
@@ -354,7 +354,7 @@ object ForgeGameAPI : GameAPI {
 
     override fun playSplashPotionEvent(world: World, pos: Vec3d, potionName: String?, potionColor: Int?) {
         if (potionName != null) {
-            val potion = ForgeRegistries.POTION_TYPES.getValue(MCIdentifier(potionName))
+            val potion = ForgeRegistries.POTIONS.getValue(MCIdentifier(potionName))
             if (potion == null) {
                 gameAPI.logError("Invalid splash potion name: $potionName")
                 return

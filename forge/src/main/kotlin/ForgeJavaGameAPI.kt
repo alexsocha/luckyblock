@@ -236,7 +236,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
 
     override fun getStatusEffect(id: String): StatusEffect? {
         val mcId = MCIdentifier(id)
-        val effect = ForgeRegistries.POTIONS.getValue(mcId) ?: return null
+        val effect = ForgeRegistries.MOB_EFFECTS.getValue(mcId) ?: return null
         return StatusEffect(id = mcId.toString(), intId = MCStatusEffect.getId(effect), isInstant = effect.isInstantenous)
     }
 

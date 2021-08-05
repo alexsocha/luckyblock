@@ -1,11 +1,12 @@
 package mod.lucky.forge
 
+import mod.lucky.common.attribute.stringAttrOf
 import mod.lucky.common.gameAPI
 import mod.lucky.common.platformAPI
+import mod.lucky.java.JavaPlatformAPI
 import mod.lucky.forge.game.*
 import mod.lucky.java.*
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.entity.EntityRenderers
 import net.minecraft.resources.*
 import net.minecraft.server.packs.FilePackResources
 import net.minecraft.server.packs.FolderPackResources
@@ -74,7 +75,7 @@ class ForgeMod {
         FMLJavaModLoadingContext.get().modEventBus
             .addListener { _: FMLCommonSetupEvent -> setupCommon() }
         FMLJavaModLoadingContext.get().modEventBus
-            .addListener{ e: FMLClientSetupEvent -> setupClient(e) }
+            .addListener{ _: FMLClientSetupEvent -> setupClient() }
         MinecraftForge.EVENT_BUS.addListener { event: BiomeLoadingEvent ->
             registerBiomeFeatures(event)
         }
@@ -95,7 +96,7 @@ class ForgeMod {
     }
 
     @OnlyInClient
-    private fun setupClient(e: FMLClientSetupEvent) {
+    private fun setupClient() {
         MinecraftForge.EVENT_BUS.addListener { _: WorldEvent.Load ->
             JavaLuckyRegistry.notificationState = checkForUpdates(JavaLuckyRegistry.notificationState)
         }
