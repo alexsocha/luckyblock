@@ -41,7 +41,7 @@ repositories {
 dependencies {
     implementation(project(":common"))
     implementation(kotlin("stdlib-jdk8"))
-    "minecraft"("net.minecraftforge:forge:$forgeLatestForgeVersion")
+    "minecraft"("net.minecraftforge:forge:$forgeLatestMCVersion-$forgeLatestForgeVersion")
     shadow(project(":common"))
 }
 
