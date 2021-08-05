@@ -17,6 +17,8 @@ import net.minecraft.world.item.crafting.SimpleRecipeSerializer
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.levelgen.GenerationStep
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration
+import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.event.world.BiomeLoadingEvent
@@ -28,7 +30,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
-import net.minecraftforge.fmlclient.registry.RenderingRegistry
 import net.minecraftforge.registries.ForgeRegistries
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -112,13 +113,6 @@ class ForgeMod {
         JavaLuckyRegistry.addons.map { addon ->
             if (addon.ids.bow != null) registerLuckyBowModels(ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.bow!!)) as LuckyBow)
         }
-
-        // TODO: use RenderingRegistry.registerEntityRenderingHandler once Forge fixes the call to net.minecraftforge.fmlclient.ClientModLoader.postSidedRunnable()
-        e.enqueueWork() {
-            EntityRenderers.register(ForgeLuckyRegistry.luckyProjectile, ::LuckyProjectileRenderer)
-            EntityRenderers.register(ForgeLuckyRegistry.thrownLuckyPotion, ::ThrownLuckyPotionRenderer)
-            EntityRenderers.register(ForgeLuckyRegistry.delayedDrop, ::DelayedDropRenderer)
-        }
     }
 }
 
@@ -195,5 +189,15 @@ object ForgeSubscriber {
         ForgeLuckyRegistry.luckyBlockEntity = @Suppress BlockEntityType.Builder.of(::LuckyBlockEntity, *validBlocks.toTypedArray()).build(null)
 
         event.registry.register(ForgeLuckyRegistry.luckyBlockEntity.setRegistryName(JavaLuckyRegistry.blockId))
+    }
+}
+
+@EventBusSubscriber(Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+object ForgeClientSubscriber {
+    @JvmStatic @SubscribeEvent
+    fun registerEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
+        event.registerEntityRenderer(ForgeLuckyRegistry.luckyProjectile, ::LuckyProjectileRenderer)
+        event.registerEntityRenderer(ForgeLuckyRegistry.thrownLuckyPotion, ::ThrownLuckyPotionRenderer)
+        event.registerEntityRenderer(ForgeLuckyRegistry.delayedDrop, ::DelayedDropRenderer)
     }
 }
