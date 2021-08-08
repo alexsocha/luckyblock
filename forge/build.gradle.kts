@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.minecraftforge.gradle.common.util.ModConfig
 import net.minecraftforge.gradle.userdev.UserDevExtension
 
 buildscript {
@@ -7,7 +8,7 @@ buildscript {
         maven { url = uri("https://maven.minecraftforge.net") }
     }
     dependencies {
-        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.+") {
+        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.16") {
             isChanging=true
         }
     }
@@ -23,6 +24,7 @@ val forgeMappingsVersion: String by project
 
 plugins {
     kotlin("jvm")
+    java
     id("com.github.johnrengelman.shadow")
 }
 
@@ -43,6 +45,14 @@ dependencies {
     "minecraft"("net.minecraftforge:forge:$forgeLatestMCVersion-$forgeLatestForgeVersion")
     implementation(project(":common"))
     shadow(project(":common"))
+}
+
+tasks.register<Copy>("copyRuntimeClasses") {
+    // since Forge mods are loaded as independent modules, we need to copy all runtime dependency
+    // classes to the build/classes folder
+    configurations.shadow.get().files.forEach { from(zipTree(it)) }
+    into("build/classes/kotlin/main/")
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 configure<UserDevExtension> {
@@ -101,7 +111,8 @@ tasks.register<Copy>("copyShadowJar") {
 }
 
 afterEvaluate {
-    tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRunResources"))
+    tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeResources"))
+    tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeClasses"))
 
     tasks.getByName("reobfJar").dependsOn(tasks.getByName("copyShadowJar"))
     tasks.assemble {

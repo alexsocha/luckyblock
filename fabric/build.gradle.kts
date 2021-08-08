@@ -46,8 +46,8 @@ tasks.processResources {
 }
 
 tasks.assemble { dependsOn(tasks.getByName("jarDist").mustRunAfter(tasks.remapJar)) }
-tasks.getByName("runClient").dependsOn(tasks.getByName("copyRunResources"))
-tasks.getByName("runServer").dependsOn(tasks.getByName("copyRunResources"))
+tasks.getByName("runClient").dependsOn(tasks.getByName("copyRuntimeResources"))
+tasks.getByName("runServer").dependsOn(tasks.getByName("copyRuntimeResources"))
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "16"
