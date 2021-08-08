@@ -47,6 +47,14 @@ dependencies {
     shadow(project(":common"))
 }
 
+tasks.register<Copy>("copyRuntimeClasses") {
+    // since Forge mods are loaded as independent modules, we need to copy all runtime dependency
+    // classes to the build/classes folder
+    configurations.shadow.get().files.forEach { from(zipTree(it)) }
+    into("build/classes/kotlin/main/")
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 configure<UserDevExtension> {
     mappings("official", forgeMappingsVersion)
 
@@ -104,6 +112,7 @@ tasks.register<Copy>("copyShadowJar") {
 
 afterEvaluate {
     tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRunResources"))
+    tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeClasses"))
 
     tasks.getByName("reobfJar").dependsOn(tasks.getByName("copyShadowJar"))
     tasks.assemble {
