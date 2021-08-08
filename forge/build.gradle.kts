@@ -111,7 +111,7 @@ tasks.register<Copy>("copyShadowJar") {
 }
 
 afterEvaluate {
-    tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRunResources"))
+    tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeResources"))
     tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeClasses"))
 
     tasks.getByName("reobfJar").dependsOn(tasks.getByName("copyShadowJar"))

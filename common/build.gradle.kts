@@ -84,8 +84,8 @@ fun copyJvmRuntimeResources(projectName: String, taskName: String, loaderName: S
         }
     }
 }
-if (isForgeEnabledBool) copyJvmRuntimeResources(projectName="forge", taskName="copyRunResources", loaderName="forge", modVersion=forgeModVersion, dir="$rootDir/run")
-if (isFabricEnabledBool) copyJvmRuntimeResources(projectName="fabric", taskName="copyRunResources", loaderName="fabric", modVersion=fabricModVersion, dir="$rootDir/run")
+if (isForgeEnabledBool) copyJvmRuntimeResources(projectName="forge", taskName="copyRuntimeResources", loaderName="forge", modVersion=forgeModVersion, dir="$rootDir/run")
+if (isFabricEnabledBool) copyJvmRuntimeResources(projectName="fabric", taskName="copyRuntimeResources", loaderName="fabric", modVersion=fabricModVersion, dir="$rootDir/run")
 
 tasks.register<Copy>("jvmTestCopyRunResources") {
     into("build/test-run")
