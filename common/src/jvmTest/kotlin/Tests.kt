@@ -88,6 +88,13 @@ class Tests {
     }
 
     @Test
+    fun testTemplateVarReturnsDict() {
+        val drop = createSingleDrop("type=entity,nbttag=#randList((x=4))")
+        val nbt: DictAttr = drop["nbttag"]
+        assertEquals(4, nbt.getValue("x"))
+    }
+
+    @Test
     fun testDropTemplateVar() {
         val drop = createSingleDrop("type=block,posZ=#pExactPosZ,tileEntity=(y=#drop(posZ))")
         assertEquals(6.5, drop.get<DictAttr>("nbttag").getValue("y"))

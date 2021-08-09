@@ -137,12 +137,16 @@ fun castAttr(toSpec: AttrSpec, attr: Attr): Attr? {
         }
     }
     if (toSpec is ListSpec && attr is ListAttr && toSpec.elements.size == attr.children.size) {
-        val newElements = attr.children.mapIndexed { i, v -> castAttr(toSpec.elements[i], v) ?: return null }
+        val newElements = attr.children.mapIndexed { i, v ->
+            if (i in toSpec.elements.indices) castAttr(toSpec.elements[i], v) ?: return null
+            else v
+        }
         return attr.copy(newElements)
     }
     if (toSpec is DictSpec && attr is DictAttr) {
         val newChildren = attr.children.mapValues { (k, v) ->
-            castAttr(toSpec.children[k] ?: return null, v) ?: return null
+            if (k in toSpec.children) castAttr(toSpec.children[k] ?: return null, v) ?: return null
+            else v
         }
         return attr.copy(newChildren)
     }
