@@ -230,7 +230,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
     override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
         val mcTypes = types.map { toMCEnchantmentType(it)  }
         return ForgeRegistries.ENCHANTMENTS.entries.filter { it.value.category in mcTypes }.map {
-            Enchantment(it.key.toString(), it.value.maxLevel, it.value.isCurse)
+            Enchantment(it.key.location().toString(), it.value.maxLevel, it.value.isCurse)
         }
     }
 
