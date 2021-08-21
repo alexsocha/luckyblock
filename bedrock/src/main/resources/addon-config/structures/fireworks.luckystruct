@@ -1,0 +1,14 @@
+>blocks
+0,0,0,nbttag=(
+    LifeTime=20,FireworksItem=(id=minecraft:fireworks_rocket,Count=1b,tag=(Fireworks=(
+        Explosions=[
+            (
+                FireworkColor=1b:2b,
+                FireworkFlicker=0b,
+                FireworkTrail=0b,
+                FireworkType=0b
+            )
+        ],
+        Flight=3b
+    )))
+)

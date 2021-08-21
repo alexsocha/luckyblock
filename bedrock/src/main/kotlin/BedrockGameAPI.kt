@@ -70,8 +70,8 @@ object BedrockGameAPI : GameAPI {
     private lateinit var luckyBlockEntityQuery: MCQuery
 
     fun initServer(server: MCServer, serverSystem: MCServerSystem) {
-        BedrockGameAPI.serverSystem = serverSystem
         BedrockGameAPI.server = server
+        BedrockGameAPI.serverSystem = serverSystem
 
         spacialQuery = serverSystem.registerQuery("minecraft:position", "x", "y", "z")
 
@@ -153,6 +153,7 @@ object BedrockGameAPI : GameAPI {
         player: PlayerEntity?,
         sourceId: String,
     ) {
+        logInfo("spawning entity!!!!")
         val entity = serverSystem.createEntity("entity", id)
         val posComponent = serverSystem.getComponent<MCVecPos>(entity, "minecraft:position")!!
         posComponent.data.x = pos.x

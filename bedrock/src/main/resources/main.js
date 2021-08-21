@@ -12,6 +12,7 @@ serverSystem.initialize = function() {
     scriptLoggerConfig.data.log_warnings = true;
     this.broadcastEvent("minecraft:script_logger_config", scriptLoggerConfig);
 
+    this.listenForEvent("minecraft:player_destroyed_block", () => {this.log("_received event")});
     lucky.initServer(server, this);
 };
 

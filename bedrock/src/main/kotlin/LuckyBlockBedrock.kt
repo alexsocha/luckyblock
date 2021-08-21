@@ -3,11 +3,12 @@ package mod.lucky.bedrock
 import mod.lucky.common.BlockPos
 import mod.lucky.common.Vec3d
 import mod.lucky.common.drop.*
+import mod.lucky.common.attribute.*
 import mod.lucky.common.gameAPI
 
 class UnparsedLuckyBlockConfig(
     val luck: Int,
-    val drops: Array<String>,
+    val drops: String,
     val doDropsOnCreativeMode: Boolean = false,
 )
 
@@ -23,7 +24,7 @@ object BedrockLuckyRegistry {
 fun parseLuckyBlockConfig(unparsedConfig: UnparsedLuckyBlockConfig): LuckyBlockConfig {
     return LuckyBlockConfig(
         dropContainer = DropContainer(
-            drops = dropsFromStrList(unparsedConfig.drops.toList()),
+            drops = dropsFromStrList(splitLines(unparsedConfig.drops.split('\n'))),
             luck = unparsedConfig.luck
         ),
         doDropsOnCreativeMode = unparsedConfig.doDropsOnCreativeMode,
@@ -32,6 +33,7 @@ fun parseLuckyBlockConfig(unparsedConfig: UnparsedLuckyBlockConfig): LuckyBlockC
 
 fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayer, pos: BlockPos, blockId: String, blockConfig: LuckyBlockConfig) {
     try {
+        BedrockGameAPI.logInfo("Starting drop")
         val vecPos = Vec3d(pos.x + 0.5, pos.y.toDouble(), pos.z + 0.5)
 
         val blockEntityDropContainer = BedrockGameAPI.readAndDestroyLuckyBlockEntity(world, pos)
@@ -39,7 +41,6 @@ fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayer, pos: BlockPos,
         // run a randrom drop
         val context = DropContext(world = world, pos = vecPos, player = player, sourceId = blockId)
 
-        BedrockGameAPI.logInfo("Starting drop")
         runRandomDrop(
             blockEntityDropContainer?.drops ?: blockConfig.dropContainer.drops,
             blockEntityDropContainer?.luck ?: blockConfig.dropContainer.luck,

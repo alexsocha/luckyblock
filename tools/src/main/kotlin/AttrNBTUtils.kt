@@ -16,6 +16,7 @@ class DynamicByteBuffer(
     private fun ensureSpace() {
         if (byteBuffer.remaining() < 8) {
             val newByteBuffer = ByteBuffer.allocate(byteBuffer.capacity() * 2).order(byteOrder)
+            byteBuffer.flip()
             newByteBuffer.put(byteBuffer)
             byteBuffer = newByteBuffer
         }
@@ -51,12 +52,8 @@ private fun putString(buffer: DynamicByteBuffer, value: String) {
 }
 
 fun writeAttrToNBT(buffer: DynamicByteBuffer, attr: Attr) {
-    buffer.putByte(NBT_IDS[AttrType.LIST]!!.toByte())
     when(attr) {
         is ValueAttr -> {
-            if (attr.type == AttrType.BYTE_ARRAY || attr.type == AttrType.INT_ARRAY || attr.type == AttrType.LONG_ARRAY) {
-                buffer.putInt((attr.value as Array<*>).size)
-            }
             when(attr.type) {
                 AttrType.BYTE -> buffer.putByte(attr.value as Byte)
                 AttrType.BOOLEAN -> buffer.putByte(if (attr.value as Boolean) 1 else 0)
@@ -66,14 +63,30 @@ fun writeAttrToNBT(buffer: DynamicByteBuffer, attr: Attr) {
                 AttrType.DOUBLE -> buffer.putDouble(attr.value as Double)
                 AttrType.LONG -> buffer.putLong(attr.value as Long)
                 AttrType.STRING -> putString(buffer, attr.value as String)
-                AttrType.BYTE_ARRAY -> (attr.value as ByteArray).forEach { buffer.putByte(it) }
-                AttrType.INT_ARRAY -> (attr.value as IntArray).forEach { buffer.putInt(it) }
-                AttrType.LONG_ARRAY -> (attr.value as IntArray).forEach { buffer.putInt(it) }
+                AttrType.BYTE_ARRAY -> {
+                    val array = attr.value as ByteArray
+                    buffer.putInt(array.size)
+                    array.forEach { buffer.putByte(it) }
+                }
+                AttrType.INT_ARRAY -> {
+                    val array = attr.value as IntArray
+                    buffer.putInt(array.size)
+                    array.forEach { buffer.putInt(it) }
+                }
+                AttrType.LONG_ARRAY -> {
+                    val array = attr.value as LongArray
+                    buffer.putInt(array.size)
+                    array.forEach { buffer.putLong(it) }
+                }
                 AttrType.LIST -> throw Exception()
                 AttrType.DICT -> throw Exception()
             }
         }
         is ListAttr -> {
+            buffer.putByte(
+                if (attr.children.size == 0) 0
+                else NBT_IDS[attr.children.first().type]!!.toByte()
+            )
             buffer.putInt(attr.children.size)
             attr.children.forEach {
                 writeAttrToNBT(buffer, it)
@@ -97,7 +110,9 @@ fun attrToNBT(attr: Attr, byteOrder: ByteOrder): ByteBuffer {
 }
 
 fun writeBufferToFile(buffer: ByteBuffer, file: File) {
-    val stream = FileOutputStream(file).channel
-    stream.write(buffer)
-    stream.close()
+    file.parentFile.mkdirs()
+    val channel = FileOutputStream(file).channel
+    buffer.flip()
+    channel.write(buffer)
+    channel.close()
 }

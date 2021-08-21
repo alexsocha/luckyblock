@@ -25,7 +25,7 @@ fun attrToSerializedString(attr: Attr): String {
             AttrType.DICT -> throw Exception()
             AttrType.LIST -> throw Exception()
         }
-        is TemplateAttr -> attr.templateVars.joinToString { (stringValue, templateVar) ->
+        is TemplateAttr -> attr.templateVars.joinToString("") { (stringValue, templateVar) ->
             stringValue ?: if (templateVar != null) {
                 if (templateVar.args.children.isNotEmpty()) {
                     val argsStr = attrToSerializedString(templateVar.args)

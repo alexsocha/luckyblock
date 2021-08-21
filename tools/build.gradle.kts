@@ -33,7 +33,7 @@ fun createAdditionalScript(name: String, configureStartScripts: CreateStartScrip
     }
 
 application {
-    mainClass.set("mod.lucky.tools.GenerateBedrockConfigKt")
+    mainClass.set("mod.lucky.tools.GenerateBedrockDropsKt")
 }
 
 /*
