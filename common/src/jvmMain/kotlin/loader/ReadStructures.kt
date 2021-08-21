@@ -2,6 +2,7 @@ package mod.lucky.java.loader
 
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.attribute.*
+import mod.lucky.common.drop.BaseDrop
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.processProps
 import mod.lucky.common.drop.readLuckyStructure
@@ -18,7 +19,7 @@ interface StructureResource {
 
 data class DropStructureResource(
     override val defaultProps: DictAttr,
-    val drops: List<SingleDrop>,
+    val drops: List<BaseDrop>,
 ) : StructureResource
 
 data class NBTStructureResource(

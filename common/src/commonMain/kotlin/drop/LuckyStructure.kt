@@ -3,6 +3,7 @@ package mod.lucky.common.drop
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.attribute.*
 import mod.lucky.common.gameAPI
+import mod.lucky.common.drop.dropsFromStrList
 
 private fun parseDictOrList(spec: DictSpec, orderedSpecKeys: List<String>, value: String): DictAttr {
     val splitProps = splitBracketString(value, ',')
@@ -20,7 +21,7 @@ private fun parseDictOrList(spec: DictSpec, orderedSpecKeys: List<String>, value
 }
 
 @Throws(ParserError::class)
-fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<SingleDrop>> {
+fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<BaseDrop>> {
     val defaultBlockSpec = LuckyRegistry.dropSpecs["block"]!!
     // for legacy reasons block states might be provided as numbers, so we remove them from the spec
     val blockSpec = defaultBlockSpec.copy(children = defaultBlockSpec.children.minus("state"))
@@ -59,6 +60,7 @@ fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<SingleDrop>> {
             null
         }
     }
+    val otherDrops = dropsFromStrList(sections.getOrElse("drops", { emptyList() })).map { it.drop }
 
-    return Pair(defaultProps, blockDrops + entityDrops)
+    return Pair(defaultProps, blockDrops + entityDrops + otherDrops)
 }

@@ -193,6 +193,7 @@ fun isNumType(type: AttrType) = type in listOf(AttrType.BYTE, AttrType.SHORT, At
 fun intAttrOf(v: Int) = ValueAttr(AttrType.INT, v)
 fun booleanAttrOf(v: Boolean) = ValueAttr(AttrType.BOOLEAN, v)
 fun doubleAttrOf(v: Double) = ValueAttr(AttrType.DOUBLE, v)
+fun floatAttrOf(v: Float) = ValueAttr(AttrType.FLOAT, v)
 fun stringAttrOf(v: String) = ValueAttr(AttrType.STRING, v)
 fun listAttrOf(vararg attrs: Attr) = ListAttr(listOf(*attrs))
 

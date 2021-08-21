@@ -74,12 +74,19 @@ fun doStructureDrop(drop: SingleDrop, context: DropContext) {
             "blockUpdate" to booleanAttrOf(notify),
         )
 
-        for (innerTemplateDrop in structureDrops) {
-            val innerProps = innerTemplateDrop.props.withDefaults(
-                if (innerTemplateDrop.type == "block") blockDefaults else commonDefaults
-            )
-            val innerDrop = innerTemplateDrop.copy(props=innerProps).eval(context)
-            runEvaluatedDrop(innerDrop, context)
+        fun mergeDefaultDropProps(drop: BaseDrop): BaseDrop {
+            return when (drop) {
+                is SingleDrop -> drop.copy(props=drop.props.withDefaults(
+                    if (drop.type == "block") blockDefaults else commonDefaults
+                )),
+                is GroupDrop -> drop.copy(drops=drop.drops.map { mergeDefaultDropProps(it) })
+                else -> throw Exception()
+            }
+        }
+
+        for (structureDrop in structureDrops) {
+            val evaluatedDrops = evalDrop(mergeDefaultDropProps(structureDrop), context)
+            evaluatedDrops.forEach { runEvaluatedDrop(it, context) }
         }
     } else {
         gameAPI.createStructure(

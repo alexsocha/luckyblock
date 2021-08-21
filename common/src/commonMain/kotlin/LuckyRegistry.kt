@@ -27,7 +27,7 @@ object LuckyRegistry {
     val blockSettings = HashMap<String, LuckyBlockSettings>() // blockId -> settings
     val drops = HashMap<String, List<WeightedDrop>>() // sourceId -> drops
     val structureProps = HashMap<String, DictAttr>() // addonId:path -> props
-    val structureDrops = HashMap<String, List<SingleDrop>>() // addonId:path -> drops
+    val structureDrops = HashMap<String, List<BaseDrop>>() // addonId:path -> drops
 
     val sourceToAddonId = HashMap<String, String>() // sourceId -> addonId
 
