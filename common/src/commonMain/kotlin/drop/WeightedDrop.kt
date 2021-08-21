@@ -55,7 +55,7 @@ fun dropsFromStrList(drops: List<String>): List<WeightedDrop> {
         try {
             WeightedDrop.fromString(it)
         } catch (e: Exception) {
-            gameAPI.logError("Error parsing drop: $it", e)
+            logger.logError("Error parsing drop: $it", e)
             null
         }
     }
