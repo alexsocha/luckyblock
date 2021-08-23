@@ -32,7 +32,12 @@ fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<BaseDrop>> {
 
     val sections = parseSectionedLines(lines)
 
-    val defaultPropsStr = sections.getOrElse("properties", { sections.getOrElse("default") { emptyList() } }).joinToString(",")
+    val isDropsOnly = sections.size == 1 && "default" in sections
+
+    val defaultPropsStr = if (isDropsOnly) "" else sections.getOrElse("properties", {
+        sections.getOrElse("default") { emptyList() }
+    }).joinToString(",")
+
     val defaultProps = try {
         val attr = parseAttr(defaultPropsStr, LuckyRegistry.dropSpecs["structure"]!!, LuckyRegistry.parserContext) as DictAttr
         SingleDrop.processProps("structure", attr)
@@ -44,6 +49,7 @@ fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<BaseDrop>> {
     val blockDrops = sections.getOrElse("blocks", { emptyList() }).mapNotNull {
         try {
             val props = parseDictOrList(blockSpec, orderedBlockSpecKeys, it)
+                .with(mapOf("type" to stringAttrOf("block")))
             val propsWithValidState = if (props["state"] is DictAttr) props else props.copy(children = props.children.minus("state"))
             SingleDrop("block", SingleDrop.processProps("block", propsWithValidState))
         } catch (e: ParserError) {
@@ -54,13 +60,14 @@ fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<BaseDrop>> {
     val entityDrops = sections.getOrElse("entities", { emptyList() }).mapNotNull {
         try {
             val props = parseDictOrList(entitySpec, orderedEntitySpecKeys, it)
+                .with(mapOf("type" to stringAttrOf("entity")))
             SingleDrop("entity", SingleDrop.processProps("entity", props))
         } catch (e: ParserError) {
             gameAPI.logError("Error reading structure entity '$it'", e)
             null
         }
     }
-    val otherDrops = dropsFromStrList(sections.getOrElse("drops", { emptyList() })).map { it.drop }
+    val otherDrops = dropsFromStrList(sections.getOrElse(if (isDropsOnly) "default" else "drops", { emptyList() })).map { it.drop }
 
     return Pair(defaultProps, blockDrops + entityDrops + otherDrops)
 }

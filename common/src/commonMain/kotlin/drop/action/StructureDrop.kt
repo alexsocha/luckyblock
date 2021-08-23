@@ -78,7 +78,7 @@ fun doStructureDrop(drop: SingleDrop, context: DropContext) {
             return when (drop) {
                 is SingleDrop -> drop.copy(props=drop.props.withDefaults(
                     if (drop.type == "block") blockDefaults else commonDefaults
-                )),
+                ))
                 is GroupDrop -> drop.copy(drops=drop.drops.map { mergeDefaultDropProps(it) })
                 else -> throw Exception()
             }

@@ -19,15 +19,7 @@ class Tests {
     fun beforeTest() {
         mockkObject(MockGameAPI)
         gameAPI = MockGameAPI
-        logger = object : Logger {
-            override fun logError(msg: String?, error: Exception?) {
-                println("ERROR: $msg")
-                throw error ?: Exception()
-            }
-            override fun logInfo(msg: String) {
-                println("INFO: $msg")
-            }
-        }
+        logger = MockGameAPI
     }
 
     @Test
@@ -150,6 +142,50 @@ class Tests {
         val drop = WeightedDrop.fromString("type=message,message=\"@luck=0\"@luck=-2@chance=0.1")
         assertEquals(-2, drop.luck)
         assertEquals(0.1, drop.chance)
+    }
+
+    @Test
+    fun testReadLuckyStructure() {
+        val (props, drops) = readLuckyStructure(listOf(
+            ">properties",
+            "width=9,length=10",
+            ">blocks",
+            "1,2,3,lucky:lucky_block,nbttag=(Luck=3)",
+            ">entities",
+            "4,5,6,bat",
+            ">drops",
+            "group(type=nothing,type=nothing)"
+        ))
+        assertEquals(9.0, props.getValue("width"))
+        assertEquals(10.0, props.getValue("length"))
+
+        assertEquals("block", (drops[0] as SingleDrop).type)
+        assertEquals("lucky:lucky_block", (drops[0] as SingleDrop).get("id"))
+        assertEquals(
+            Vec3d(1.0, 2.0, 3.0),
+            (drops[0] as SingleDrop).getVec3<Double>("posOffset"),
+        )
+        assertEquals(3, (drops[0] as SingleDrop).get<DictAttr>("nbttag").getValue("Luck"))
+
+        assertEquals("entity", (drops[1] as SingleDrop).type)
+        assertEquals("bat", (drops[1] as SingleDrop).get("id"))
+        assertEquals(
+            Vec3d(4.0, 5.0, 6.0),
+            (drops[1] as SingleDrop).getVec3<Double>("posOffset"),
+        )
+
+        assert(drops[2] is GroupDrop)
+    }
+
+    @Test
+    fun testReadLuckyStructureWithDropsOnly() {
+        val (props, drops) = readLuckyStructure(listOf(
+            "posOffset=(1,2,3),type=entity,ID=pig",
+        ))
+
+        assertEquals(0, props.children.size)
+        assertEquals("entity", (drops[0] as SingleDrop).type)
+        assertEquals("pig", (drops[0] as SingleDrop).get("id"))
     }
 
     @Test

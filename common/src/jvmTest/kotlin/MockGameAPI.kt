@@ -6,6 +6,14 @@ import mod.lucky.common.drop.SingleDrop
 data class MockEntity(val pos: Vec3d)
 
 object MockGameAPI : GameAPI {
+    override fun logError(msg: String?, error: Exception?) {
+        println("ERROR: $msg")
+        throw error ?: Exception()
+    }
+    override fun logInfo(msg: String) {
+        println("INFO: $msg")
+    }
+
     override fun getUsefulPotionIds(): List<String> = listOf("minecraft:healing")
     override fun getSpawnEggIds(): List<String> = listOf("minecraft:pig_spawn_egg")
     override fun getEntityPos(entity: Entity): Vec3d = (entity as MockEntity).pos

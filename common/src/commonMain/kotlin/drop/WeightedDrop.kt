@@ -7,7 +7,7 @@ data class WeightedDrop(
     val drop: BaseDrop,
     val dropString: String,
     val luck: Int = 0,
-    val chance: Double?
+    val chance: Double? = 1.0
 ) : BaseDrop {
     companion object
 }
