@@ -72,9 +72,11 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
         serverSystem.broadcastEvent("minecraft:display_chat_event", chatEvent);
     }
 
-    serverSystem.registerComponent("lucky:lucky_block_entity_data", UnparsedDropContainer(
-        drops = emptyArray(),
-        luck = 0,
+    serverSystem.registerComponent("lucky:all_lucky_block_entity_data", mapOf(
+        "" to UnparsedDropContainer(
+            drops = emptyArray(),
+            luck = 0,
+        )
     ))
 
     // (optimization) parse all drops for the default block

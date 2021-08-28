@@ -195,9 +195,9 @@ object BedrockGameAPI : GameAPI {
 
         val itemEntity = serverSystem.createEntity("item_entity", getIDWithNamespace(id))
         val posComponent = serverSystem.getComponent<MCVecPos>(itemEntity, "minecraft:position")!!
-        posComponent.data.x = pos.x
-        posComponent.data.y = pos.y
-        posComponent.data.z = pos.z
+        posComponent.data.x = pos.x + (defaultRandom.randDouble(0.0, 1.0) - 0.5)
+        posComponent.data.y = pos.y + 0.5
+        posComponent.data.z = pos.z + (defaultRandom.randDouble(0.0, 1.0) - 0.5)
         serverSystem.applyComponentChanges(itemEntity, posComponent)
     }
     override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {}
