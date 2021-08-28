@@ -1,5 +1,4 @@
->blocks
-0,0,0,nbttag=(
+type=block,id=dispenser,nbttag=(
     LifeTime=20,FireworksItem=(id=minecraft:fireworks_rocket,Count=1b,tag=(Fireworks=(
         Explosions=[
             (

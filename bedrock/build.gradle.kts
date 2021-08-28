@@ -1,4 +1,5 @@
 import com.moowork.gradle.node.task.NodeTask
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     kotlin("js")
@@ -23,13 +24,18 @@ buildscript {
 kotlin {
     js {
         browser {
-            useCommonJs()
             dceTask {
                 keep("luckyblock-bedrock.mod.lucky.bedrock.initServer")
+            }
+            webpackTask {
+                outputFileName = "serverScript.js"
+                devtool = "hidden-source-map"
             }
         }
     }
 }
+
+val addonDistDir = "$rootDir/bedrock/build/processedResources/js/main/addon"
 
 tasks.named<ProcessResources>("processResources") {
     from("../common/src/jvmMain/resources/game/assets/lucky/textures/blocks") {
@@ -58,7 +64,7 @@ tasks.register<JavaExec>("generateDrops") {
         "--outputJSFile",
         outputJSFile,
         "--outputStructuresFolder",
-        "$rootDir/bedrock/build/processedResources/js/main/addon/behavior_pack/structures/lucky",
+        "$addonDistDir/behavior_pack/structures/lucky",
     )
 
     doLast {
@@ -70,11 +76,11 @@ tasks.register<JavaExec>("generateDrops") {
     dependsOn(project(":tools").tasks.getByName("installDist"))
 }
 
+/*
 task<NodeTask>("webpack") {
     setScript(File("$rootDir/build/js/node_modules/webpack/bin/webpack"))
-    dependsOn("browserProductionWebpack")
-    dependsOn("generateDrops")
 }
+*/
 
 task<Copy>("copyRuntimePacks") {
     val addonPaths = mapOf(
@@ -92,8 +98,12 @@ task<Copy>("copyRuntimePacks") {
     }
 
     into("./run")
+    dependsOn("copyServerScript")
+}
 
-    dependsOn("assemble")
+task<Copy>("copyServerScript") {
+    from("./build/distributions/serverScript.js")
+    into("$addonDistDir/behavior_pack/scripts/server")
 }
 
 task<Zip>("zipPack") {
@@ -104,12 +114,24 @@ task<Zip>("zipPack") {
     dependsOn("processResources")
 }
 
-tasks.named("assemble").configure {
-    dependsOn("webpack")
-    dependsOn("dist")
-}
 
 tasks.named("build").configure {
+    tasks.getByName("browserProductionWebpack").dependsOn("generateDrops")
+    tasks.getByName("browserProductionWebpack").inputs.file("./build/processedResources/generated-config.js")
+    tasks.getByName("copyServerScript").dependsOn("browserProductionWebpack")
+    tasks.getByName("dist").dependsOn("browserProductionWebpack")
+    dependsOn("browserProductionWebpack")
+    dependsOn("copyServerScript")
+    dependsOn("dist")
+    dependsOn("copyRuntimePacks")
+}
+
+tasks.register("buildDev").configure {
+    tasks.getByName("browserDevelopmentWebpack").dependsOn("generateDrops")
+    tasks.getByName("browserDevelopmentWebpack").inputs.file("./build/processedResources/generated-config.js")
+    tasks.getByName("copyServerScript").dependsOn("browserDevelopmentWebpack")
+    dependsOn("browserDevelopmentWebpack")
+    dependsOn("copyServerScript")
     dependsOn("copyRuntimePacks")
 }
 

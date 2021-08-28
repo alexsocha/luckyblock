@@ -10,8 +10,16 @@ import mod.lucky.common.drop.dropsFromStrList
 
 data class MockEntity(val pos: Vec3d)
 
-fun toBlockPos(mcBlockPos: MCBlockPos): BlockPos {
-    return BlockPos(mcBlockPos.x, mcBlockPos.y, mcBlockPos.z)
+fun toBlockPos(mcPos: MCBlockPos): BlockPos {
+    return BlockPos(mcPos.x, mcPos.y, mcPos.z)
+}
+
+fun toMCBlockPos(pos: BlockPos): MCBlockPos {
+    val mcPos: dynamic = object{}
+    mcPos["x"] = pos.x
+    mcPos["y"] = pos.y
+    mcPos["z"] = pos.z
+    return mcPos
 }
 
 data class DropContainer(
@@ -33,6 +41,10 @@ fun parseDropContainer(unparsedContainer: UnparsedDropContainer): DropContainer 
 
 fun posToString(pos: BlockPos): String {
     return "${pos.x},${pos.y},${pos.z}"
+}
+
+fun getIDWithNamespace(id: String): String {
+    return if (":" in id) id else "minecraft:$id"
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -154,7 +166,7 @@ object BedrockGameAPI : GameAPI {
         sourceId: String,
     ) {
         logInfo("spawning entity!!!!")
-        val entity = serverSystem.createEntity("entity", id)
+        val entity = serverSystem.createEntity("entity", getIDWithNamespace(id))
         val posComponent = serverSystem.getComponent<MCVecPos>(entity, "minecraft:position")!!
         posComponent.data.x = pos.x
         posComponent.data.y = pos.y
@@ -180,8 +192,26 @@ object BedrockGameAPI : GameAPI {
     override fun setDifficulty(world: World, difficulty: String) {}
 
     override fun setTime(world: World, time: Long) {}
-    override fun dropItem(world: World, pos: Vec3d, itemId: String, nbt: DictAttr?) {
-        serverSystem.log("dropping item: ", itemId)
+    override fun dropItem(world: World, pos: Vec3d, itemId: String, nbt: DictAttr?, components: DictAttr?) {
+        serverSystem.log(listOf("dropping item: ", itemId))
+
+        val itemEntity = serverSystem.createEntity("item_entity", getIDWithNamespace(itemId))
+        val posComponent = serverSystem.getComponent<MCVecPos>(itemEntity, "minecraft:position")!!
+        posComponent.data.x = pos.x
+        posComponent.data.y = pos.y
+        posComponent.data.z = pos.z
+        serverSystem.applyComponentChanges(itemEntity, posComponent)
+
+        components.children.forEach {
+            val component = serverSystem.getComponent<Any>(entity, it.key)
+            if (component != null) {
+                component.data = attrToJson(it.value)
+                serverSystem.log(component.data)
+                serverSystem.applyComponentChanges(entity, component)
+            } else {
+                logError("Invalid entity component: ${it.key}")
+            }
+        }
     }
     override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {}
     override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {}

@@ -200,7 +200,6 @@ if (isBedrockEnabledBool) {
         }
 
         from("$rootDir/bedrock/build/processedResources/js/main/pack")
-        dependsOn(":bedrock:webpack")
     }
 }
 

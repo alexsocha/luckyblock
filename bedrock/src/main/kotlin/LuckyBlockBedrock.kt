@@ -5,6 +5,7 @@ import mod.lucky.common.Vec3d
 import mod.lucky.common.drop.*
 import mod.lucky.common.attribute.*
 import mod.lucky.common.gameAPI
+import kotlin.js.JSON.stringify
 
 class UnparsedLuckyBlockConfig(
     val luck: Int,
@@ -52,25 +53,50 @@ fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayer, pos: BlockPos,
     }
 }
 
-@JsName("initServer")
 fun initServer(server: MCServer, serverSystem: MCServerSystem) {
     gameAPI = BedrockGameAPI
     BedrockGameAPI.initServer(server, serverSystem)
+
+    serverSystem.initialize = {
+        // turn on logging of information, warnings, and errors
+        val scriptLoggerConfig = serverSystem.createEventData<MCLoggerConfigEvent>("minecraft:script_logger_config");
+        scriptLoggerConfig.data.log_errors = true
+        scriptLoggerConfig.data.log_information = true
+        scriptLoggerConfig.data.log_warnings = true
+        serverSystem.broadcastEvent("minecraft:script_logger_config", scriptLoggerConfig);
+    }
+
+    serverSystem.log = { msg ->
+        val chatEvent = serverSystem.createEventData<MCChatEvent>("minecraft:display_chat_event");
+        chatEvent.data.message = stringify(msg)
+        serverSystem.broadcastEvent("minecraft:display_chat_event", chatEvent);
+    }
 
     serverSystem.registerComponent("lucky:lucky_block_entity_data", UnparsedDropContainer(
         drops = emptyArray(),
         luck = 0,
     ))
 
-    serverSystem.registerComponent("lucky:all_lucky_block_entity_data", mapOf("" to UnparsedDropContainer(
-        drops = emptyArray(),
-        luck = 0,
-    )))
-
-    // parse all drops for the default block
+    // (optimization) parse all drops for the default block
     BedrockLuckyRegistry.blocks["lucky:lucky_block"] = parseLuckyBlockConfig(
         serverSystem.createEventData<UnparsedLuckyBlockConfig>("lucky:lucky_block_config").data
     )
+
+    serverSystem.listenForEvent<MCPlayerDestroyedBlockEvent>("minecraft:player_placed_block") { eventWrapper ->
+        /*
+        BedrockGameAPI.logInfo("Block interacted")
+        val event = eventWrapper.data
+        val pos = toBlockPos(event.block_position)
+        val world = serverSystem.getComponent<MCTickWorldComponent>(event.player, "minecraft:tick_world")!!.data
+
+        val block = serverSystem.getBlock(world.ticking_area, toMCBlockPos(BlockPos(pos.x, pos.y + 1, pos.z)))
+        serverSystem.log(block)
+
+        val container = serverSystem.getComponent<Any>(block, "minecraft:container")
+        serverSystem.log(container)
+        */
+    }
+
 
     serverSystem.listenForEvent<MCPlayerDestroyedBlockEvent>("minecraft:player_destroyed_block") { eventWrapper ->
         BedrockGameAPI.logInfo("Received event")

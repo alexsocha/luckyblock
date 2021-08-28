@@ -47,9 +47,10 @@ fun dropToString(drop: BaseDrop): String {
             val dropStrs = drop.drops.map { dropToString(it) }
 
             if (amountAttr is ValueAttr && amountAttr.value is Int && amountAttr.value == drop.drops.size) {
-                "group(${dropStrs.joinToString(",")})"
+                "group(${dropStrs.joinToString(";")})"
+            } else {
+                "group:${attrToSerializedString(drop.amount)}:(${dropStrs.joinToString(";")})"
             }
-            "group:${attrToSerializedString(drop.amount)}:(${dropStrs.joinToString(",")})"
         }
         is SingleDrop -> {
             val sortedProps = drop.props.children.toSortedMap { k1, k2 ->
@@ -61,3 +62,15 @@ fun dropToString(drop: BaseDrop): String {
     }
 }
 
+
+fun luckyStructToString(defaultProps: DictAttr, drops: List<BaseDrop>): List<String> {
+    val lines = if (defaultProps.children.size == 0) drops.map { dropToString(it) }
+        else listOf(
+            ">properties",
+            attrToSerializedString(defaultProps),
+            ">drops",
+            *(drops.map { dropToString(it) }).toTypedArray()
+        )
+
+    return lines
+}

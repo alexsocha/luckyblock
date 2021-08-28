@@ -7,4 +7,4 @@ group(
     type=structure,id=fireworks.luckystruct
 )@luck=2
 
-// type=entity,id=minecraft:pig,components=(minecraft:nameable=(name="$l$eLucky Pig"))
+//type=entity,id=minecraft:pig,components=(minecraft:nameable=(name="$l$eLucky Pig"))
