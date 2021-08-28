@@ -30,13 +30,13 @@ object MockGameAPI : GameAPI {
     override fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double) {}
     override fun isAirBlock(world: World, pos: Vec3i): Boolean = true
 
-    override fun setBlock(world: World, pos: Vec3i, blockId: String, state: DictAttr?, rotation: Int, notify: Boolean) {}
+    override fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean) {}
     override fun spawnEntity(
         world: World,
         id: String,
         pos: Vec3d,
         nbt: DictAttr,
-        components: DictAttr,
+        components: DictAttr?,
         rotation: Double,
         randomizeMob: Boolean,
         player: PlayerEntity?,
@@ -49,7 +49,7 @@ object MockGameAPI : GameAPI {
     override fun setDifficulty(world: World, difficulty: String) {}
 
     override fun setTime(world: World, time: Long) {}
-    override fun dropItem(world: World, pos: Vec3d, itemId: String, nbt: DictAttr?) {}
+    override fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?) {}
     override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {}
     override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {}
     override fun playParticleEvent(world: World, pos: Vec3d, eventId: Int, data: Int) {}

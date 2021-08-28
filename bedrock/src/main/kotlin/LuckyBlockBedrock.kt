@@ -125,6 +125,7 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
                     blockConfig = blockConfig,
                     blockId = event.block_identifier,
                 )
+                serverSystem.log("finished event!")
             }
         }
     }

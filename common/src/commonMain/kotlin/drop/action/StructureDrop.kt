@@ -52,8 +52,9 @@ fun doStructureDrop(drop: SingleDrop, context: DropContext) {
                     gameAPI.setBlock(
                         world = context.world,
                         pos = Vec3i(x, y, z),
-                        blockId = "minecraft:air",
+                        id = "minecraft:air",
                         state = null,
+                        components = null,
                         rotation = 0,
                         notify = notify,
                     )

@@ -43,7 +43,13 @@ fun onLuckyBlockBreak(
         // drop just the block when using silk touch
         if (player != null && javaGameAPI.hasSilkTouch(player) && !removedByRedstone) {
             val stackData = blockEntityData?.let { LuckyItemStackData.fromBlockEntityData(blockEntityData).toAttr() }
-            gameAPI.dropItem(world, vecPos, blockId, stackData)
+            gameAPI.dropItem(
+                world = world,
+                pos = vecPos,
+                id = blockId,
+                nbt = stackData,
+                components = null,
+            )
             return
         }
 

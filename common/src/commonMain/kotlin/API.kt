@@ -31,15 +31,15 @@ interface GameAPI : Logger {
     fun getNearestPlayer(world: World, pos: Vec3d): PlayerEntity?
     fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double)
     fun isAirBlock(world: World, pos: Vec3i): Boolean
-    fun spawnEntity(world: World, id: String, pos: Vec3d, nbt: DictAttr, components: DictAttr, rotation: Double, randomizeMob: Boolean, player: PlayerEntity?, sourceId: String)
-    fun setBlock(world: World, pos: Vec3i, blockId: String, state: DictAttr?, rotation: Int, notify: Boolean)
+    fun spawnEntity(world: World, id: String, pos: Vec3d, nbt: DictAttr, components: DictAttr?, rotation: Double, randomizeMob: Boolean, player: PlayerEntity?, sourceId: String)
+    fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean)
     fun setBlockEntity(world: World, pos: Vec3i, nbt: DictAttr)
     fun runCommand(world: World, pos: Vec3d, command: String, senderName: String, showOutput: Boolean)
     fun createExplosion(world: World, pos: Vec3d, damage: Double, fire: Boolean)
     fun sendMessage(player: PlayerEntity, message: String)
     fun setDifficulty(world: World, difficulty: String)
     fun setTime(world: World, time: Long)
-    fun dropItem(world: World, pos: Vec3d, itemId: String, nbt: DictAttr?)
+    fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?)
     fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double)
     fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int)
     fun playParticleEvent(world: World, pos: Vec3d, eventId: Int, data: Int)

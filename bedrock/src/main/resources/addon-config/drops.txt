@@ -1,10 +1,12 @@
-group(
-    ID=iron_ingot,amount=#rand(8,16);
-    ID=gold_ingot,amount=#rand(8,16);
-    ID=diamond,amount=#rand(8,16);
-    ID=emerald,amount=#rand(8,16);
-    ID=lapis_lazuli,amount=#rand(8,16);
-    type=structure,id=fireworks.luckystruct
-)@luck=2
+//group(
+//    ID=iron_ingot,amount=#rand(8,16);
+//    ID=gold_ingot,amount=#rand(8,16);
+//    ID=diamond,amount=#rand(8,16);
+//    ID=emerald,amount=#rand(8,16);
+//    ID=lapis_lazuli,amount=#rand(8,16);
+//    type=structure,id=fireworks.luckystruct
+//)@luck=2
+
+ID=diamond,amount=#rand(8,16)
 
 //type=entity,id=minecraft:pig,components=(minecraft:nameable=(name="$l$eLucky Pig"))

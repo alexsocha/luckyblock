@@ -92,8 +92,6 @@ object BedrockGameAPI : GameAPI {
     }
 
     fun readAndDestroyLuckyBlockEntity(world: MCWorld, pos: BlockPos): DropContainer? {
-        serverSystem.log(server)
-        serverSystem.log(server.level)
         if (serverSystem.hasComponent(server.level, "lucky:all_lucky_block_entity_data")) {
             val allBlockData = serverSystem.getComponent<MutableMap<String, DropContainer>>(server.level, "lucky:all_lucky_block_entity_data")!!.data
             serverSystem.log(allBlockData)
@@ -150,7 +148,7 @@ object BedrockGameAPI : GameAPI {
     override fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double) {}
     override fun isAirBlock(world: World, pos: Vec3i): Boolean = true
 
-    override fun setBlock(world: World, pos: Vec3i, blockId: String, state: DictAttr?, rotation: Int, notify: Boolean) {
+    override fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean) {
         serverSystem.log("setting block!")
     }
 
@@ -159,7 +157,7 @@ object BedrockGameAPI : GameAPI {
         id: String,
         pos: Vec3d,
         nbt: DictAttr,
-        components: DictAttr,
+        components: DictAttr?,
         rotation: Double,
         randomizeMob: Boolean,
         player: PlayerEntity?,
@@ -173,7 +171,7 @@ object BedrockGameAPI : GameAPI {
         posComponent.data.z = pos.z
         serverSystem.applyComponentChanges(entity, posComponent)
 
-        components.children.forEach {
+        components?.children?.forEach {
             val component = serverSystem.getComponent<Any>(entity, it.key)
             if (component != null) {
                 component.data = attrToJson(it.value)
@@ -192,26 +190,15 @@ object BedrockGameAPI : GameAPI {
     override fun setDifficulty(world: World, difficulty: String) {}
 
     override fun setTime(world: World, time: Long) {}
-    override fun dropItem(world: World, pos: Vec3d, itemId: String, nbt: DictAttr?, components: DictAttr?) {
-        serverSystem.log(listOf("dropping item: ", itemId))
+    override fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?) {
+        //serverSystem.log("dropping item...")
 
-        val itemEntity = serverSystem.createEntity("item_entity", getIDWithNamespace(itemId))
+        val itemEntity = serverSystem.createEntity("item_entity", getIDWithNamespace(id))
         val posComponent = serverSystem.getComponent<MCVecPos>(itemEntity, "minecraft:position")!!
         posComponent.data.x = pos.x
         posComponent.data.y = pos.y
         posComponent.data.z = pos.z
         serverSystem.applyComponentChanges(itemEntity, posComponent)
-
-        components.children.forEach {
-            val component = serverSystem.getComponent<Any>(entity, it.key)
-            if (component != null) {
-                component.data = attrToJson(it.value)
-                serverSystem.log(component.data)
-                serverSystem.applyComponentChanges(entity, component)
-            } else {
-                logError("Invalid entity component: ${it.key}")
-            }
-        }
     }
     override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {}
     override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {}

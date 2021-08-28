@@ -23,8 +23,9 @@ fun setBlock(world: World, pos: Vec3i, drop: SingleDrop) {
     gameAPI.setBlock(
         world = world,
         pos = pos,
-        blockId = blockId,
-        state = drop.get<DictAttr>("state", null),
+        id = blockId,
+        state = drop.getOrNull<DictAttr>("state"),
+        components = drop.getOrNull<DictAttr>("components"),
         rotation = positiveMod(drop.get<Int>("facing") + drop.get<Int>("rotation"), 4),
         notify = drop["blockUpdate"],
     )
@@ -55,7 +56,13 @@ fun doFillDrop(drop: SingleDrop, context: DropContext) {
 }
 
 fun doItemDrop(drop: SingleDrop, context: DropContext) {
-    gameAPI.dropItem(context.world, drop.getPos(context.pos), drop["id"], drop.getOrNull("nbttag"))
+    gameAPI.dropItem(
+        world = context.world,
+        pos = drop.getPos(context.pos),
+        id = drop["id"],
+        nbt = drop.getOrNull("nbttag"),
+        components = drop.getOrNull("components"),
+    )
 }
 
 fun doMessageDrop(drop: SingleDrop, context: DropContext) {
@@ -159,7 +166,7 @@ fun doEntityDrop(drop: SingleDrop, context: DropContext) {
         id=id,
         pos=pos,
         nbt = drop["nbttag"],
-        components = drop["components"],
+        components = drop.getOrNull("components"),
         player = context.player,
         sourceId = context.sourceId,
         randomizeMob = drop["randomizeMob"],

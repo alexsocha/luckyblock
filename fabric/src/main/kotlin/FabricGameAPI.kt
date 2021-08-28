@@ -190,7 +190,7 @@ object FabricGameAPI : GameAPI {
         return (world as WorldAccess).isAir(toMCBlockPos(pos))
     }
 
-    override fun spawnEntity(world: World, id: String, pos: Vec3d, nbt: DictAttr, rotation: Double, randomizeMob: Boolean, player: PlayerEntity?, sourceId: String) {
+    override fun spawnEntity(world: World, id: String, pos: Vec3d, nbt: DictAttr, components: DictAttr?, rotation: Double, randomizeMob: Boolean, player: PlayerEntity?, sourceId: String) {
         val entityNBT = if (id == JavaLuckyRegistry.projectileId && "sourceId" !in nbt)
             nbt.with(mapOf("sourceId" to stringAttrOf(sourceId))) else nbt
 
@@ -236,9 +236,9 @@ object FabricGameAPI : GameAPI {
         world.spawnEntity(delayedDrop)
     }
 
-    override fun setBlock(world: World, pos: Vec3i, blockId: String, state: DictAttr?, rotation: Int, notify: Boolean) {
+    override fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean) {
         val blockStateNBT = javaGameAPI.attrToNBT(dictAttrOf(
-            "Name" to stringAttrOf(blockId),
+            "Name" to stringAttrOf(id),
             "Properties" to state,
         )) as CompoundTag
         val mcBlockState = NbtHelper.toBlockState(blockStateNBT).rotate(BlockRotation.values()[rotation])
@@ -261,10 +261,10 @@ object FabricGameAPI : GameAPI {
         }
     }
 
-    override fun dropItem(world: World, pos: Vec3d, itemId: String, nbt: DictAttr?) {
-        val item = Registry.ITEM.getOrEmpty(MCIdentifier(itemId)).orElse(null)
+    override fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?) {
+        val item = Registry.ITEM.getOrEmpty(MCIdentifier(id)).orElse(null)
         if (item == null) {
-            gameAPI.logError("Invalid item ID: '$itemId'")
+            gameAPI.logError("Invalid item ID: '$id'")
             return
         }
 

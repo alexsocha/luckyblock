@@ -34,6 +34,7 @@ fun registerDefaultDrops() {
             "id" to ValueSpec(AttrType.STRING),
             "nbttag" to DictSpec(emptyMap()),
             "state" to DictSpec(emptyMap()),
+            "components" to DictSpec(emptyMap()), // Bedrock Edition only
             "blockUpdate" to ValueSpec(AttrType.BOOLEAN),
             "blockMode" to ValueSpec(AttrType.STRING),
             "facing" to ValueSpec(AttrType.INT),
@@ -42,11 +43,13 @@ fun registerDefaultDrops() {
             *commonSpecs,
             "id" to ValueSpec(AttrType.STRING),
             "nbttag" to DictSpec(emptyMap()),
+            "components" to DictSpec(emptyMap()), // Bedrock Edition only
         ),
         "entity" to dictSpecOf(
             *commonSpecs,
             "id" to ValueSpec(AttrType.STRING),
             "nbttag" to DictSpec(emptyMap()),
+            "components" to DictSpec(emptyMap()), // Bedrock Edition only
             "adjustY" to ListSpec(listOf(ValueSpec(AttrType.INT), ValueSpec(AttrType.INT))),
             "randomizeMob" to ValueSpec(AttrType.BOOLEAN),
             "facing" to ValueSpec(AttrType.DOUBLE),
@@ -82,6 +85,7 @@ fun registerDefaultDrops() {
             *createVecSpec("posOffset2", LuckyRegistry.dropTripleProps["posOffset2"]!!, AttrType.INT),
             "nbttag" to DictSpec(emptyMap()),
             "state" to DictSpec(emptyMap()),
+            "components" to DictSpec(emptyMap()), // Bedrock Edition only
             "blockUpdate" to ValueSpec(AttrType.BOOLEAN),
             "blockMode" to ValueSpec(AttrType.STRING),
             "facing" to ValueSpec(AttrType.INT),
@@ -152,7 +156,6 @@ fun registerDefaultDrops() {
         "entity" to mapOf(
             *commonDefaults,
             "nbttag" to DictAttr(),
-            "components" to DictAttr(), // Bedrock edition only
             "adjustY" to listAttrOf(intAttrOf(0), intAttrOf(10)),
             "randomizeMob" to true,
             "facing" to 2.0,
