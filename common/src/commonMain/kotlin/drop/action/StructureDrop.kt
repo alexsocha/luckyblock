@@ -6,19 +6,21 @@ import mod.lucky.common.drop.*
 import kotlin.math.floor
 
 fun resolveStructureId(id: String, sourceId: String): String {
-    return when (id.split(':').size) {
-        2 -> "lucky:$id"
-        1 -> {
-            val fullId = LuckyRegistry.sourceToAddonId[sourceId]?.let { "$it:$id" }
-            if (fullId != null && fullId in LuckyRegistry.structureProps) fullId
-            else LuckyRegistry.structureProps.keys.firstOrNull { it.endsWith(":$id") } ?: id
-        }
-        else -> id
+    // structure IDs should be in the form addonId:structureId, where addonId starts with lucky:
+    val numParts = id.split(":").size
+    if (numParts == 2 && !id.startsWith("lucky:")) return "lucky:$id"
+    if (numParts <= 2) {
+        val fullId = LuckyRegistry.sourceToAddonId[sourceId]?.let { "$it:${id.split(":").last()}" }
+        if (fullId != null && fullId in LuckyRegistry.structureProps) return fullId
+
+        // try to find an existing structure which matches the ID
+        return LuckyRegistry.structureProps.keys.firstOrNull { it.endsWith(":$id") } ?: fullId ?: id
     }
+    return id
 }
 
 fun doStructureDrop(drop: SingleDrop, context: DropContext) {
-    val structureId =  resolveStructureId(drop["id"], context.sourceId)
+    val structureId = resolveStructureId(drop["id"], context.sourceId)
     val defaultProps = LuckyRegistry.structureProps[structureId] ?: DictAttr()
 
     val dropWithDefaults = drop.copy(props = drop.props.withDefaults(defaultProps.children))
