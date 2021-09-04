@@ -373,6 +373,11 @@ object ForgeGameAPI : GameAPI {
 
     override fun createStructure(world: World, structureId: String, pos: Vec3i, centerOffset: Vec3i, rotation: Int, mode: String, notify: Boolean) {
         val nbtStructure = JavaLuckyRegistry.nbtStructures[structureId]
+        if (nbtStructure == null) {
+            gameAPI.logError("Missing structure '$structureId'")
+            return
+        }
+
         val processor = object : StructureProcessor() {
             override fun process(
                 world: LevelReader,

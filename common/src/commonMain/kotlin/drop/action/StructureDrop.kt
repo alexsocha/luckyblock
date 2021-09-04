@@ -19,12 +19,7 @@ fun resolveStructureId(id: String, sourceId: String): String {
 
 fun doStructureDrop(drop: SingleDrop, context: DropContext) {
     val structureId =  resolveStructureId(drop["id"], context.sourceId)
-    val defaultProps = LuckyRegistry.structureProps[structureId]
-
-    if (defaultProps == null) {
-        gameAPI.logError("Missing structure '$structureId'")
-        return
-    }
+    val defaultProps = LuckyRegistry.structureProps[structureId] ?: DictAttr()
 
     val dropWithDefaults = drop.copy(props = drop.props.withDefaults(defaultProps.children))
     val rotation: Int = positiveMod(dropWithDefaults["rotation"], 4)
