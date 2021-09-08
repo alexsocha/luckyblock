@@ -77,9 +77,9 @@ To use IntelliJ, ensure that the Gradle plugin is enabled, and import the direct
 - Create a symlink to the resource and behavior packs:
 
 ```
-mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\development_resource_packs\LuckyBlockRP" "C:\...\bedrock\run\development_resource_pack"
+mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\development_resource_packs" "C:\...\bedrock\run\development_resource_packs"
 
-mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\development_behaviour_packs" "C:\...\bedrock\run\develpment_behaviour_pack"
+mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\development_behavior_packs" "C:\...\bedrock\run\development_behavior_packs"
 ```
 
 ### Deploy
