@@ -99,11 +99,14 @@ task<Copy>("copyRuntimePacks") {
 
     into("./run")
     dependsOn("copyServerScript")
+    dependsOn("generateDrops")
 }
 
 task<Copy>("copyServerScript") {
     from("./build/distributions/serverScript.js")
     into("$addonDistDir/behavior_pack/scripts/server")
+
+    dependsOn("generateDrops")
 }
 
 task<Zip>("zipPack") {
