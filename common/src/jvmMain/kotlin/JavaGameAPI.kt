@@ -18,35 +18,6 @@ data class ItemStack(
     val nbt: NBTTag? = null,
 )
 
-enum class EnchantmentType {
-    ARMOR,
-    ARMOR_FEET,
-    ARMOR_LEGS,
-    ARMOR_CHEST,
-    ARMOR_HEAD,
-    WEAPON,
-    DIGGER,
-    FISHING_ROD,
-    TRIDENT,
-    BREAKABLE,
-    BOW,
-    WEARABLE,
-    CROSSBOW,
-    VANISHABLE,
-}
-
-data class Enchantment(
-    val id: String,
-    val maxLevel: Int,
-    val isCurse: Boolean,
-)
-
-data class StatusEffect(
-    val id: String,
-    val intId: Int,
-    val isInstant: Boolean,
-)
-
 interface JavaGameAPI {
     fun getLoaderName(): String
     fun getModVersion(): String
@@ -66,10 +37,7 @@ interface JavaGameAPI {
     fun getBlockId(block: Block): String?
     fun getItemId(item: Item): String?
     fun isValidItemId(id: String): Boolean
-    fun getRBGPalette(): List<Int>
     fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr
-    fun getEnchantments(types: List<EnchantmentType>): List<Enchantment>
-    fun getStatusEffect(id: String): StatusEffect?
     fun getEntityTypeId(entity: Entity): String?
     fun isCreativeMode(player: PlayerEntity): Boolean
     fun hasSilkTouch(player: PlayerEntity): Boolean

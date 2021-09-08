@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.util.datafix.fixes.ItemIdFix
 import net.minecraft.util.datafix.fixes.ItemStackTheFlatteningFix
 import net.minecraft.world.entity.projectile.Arrow
-import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.item.enchantment.Enchantments
@@ -33,25 +32,6 @@ annotation class OnlyInClient
 annotation class OnlyInServer
 
 fun isClientWorld(world: MCIWorld): Boolean = world.isClientSide
-
-private fun toMCEnchantmentType(type: EnchantmentType): MCEnchantmentType {
-    return when (type) {
-        EnchantmentType.ARMOR -> MCEnchantmentType.ARMOR
-        EnchantmentType.ARMOR_FEET -> MCEnchantmentType.ARMOR_FEET
-        EnchantmentType.ARMOR_LEGS -> MCEnchantmentType.ARMOR_LEGS
-        EnchantmentType.ARMOR_CHEST -> MCEnchantmentType.ARMOR_CHEST
-        EnchantmentType.ARMOR_HEAD -> MCEnchantmentType.ARMOR_HEAD
-        EnchantmentType.WEAPON -> MCEnchantmentType.WEAPON
-        EnchantmentType.DIGGER -> MCEnchantmentType.DIGGER
-        EnchantmentType.FISHING_ROD -> MCEnchantmentType.FISHING_ROD
-        EnchantmentType.TRIDENT -> MCEnchantmentType.TRIDENT
-        EnchantmentType.BREAKABLE -> MCEnchantmentType.BOW
-        EnchantmentType.BOW -> MCEnchantmentType.BOW
-        EnchantmentType.WEARABLE -> MCEnchantmentType.WEARABLE
-        EnchantmentType.CROSSBOW -> MCEnchantmentType.CROSSBOW
-        EnchantmentType.VANISHABLE -> MCEnchantmentType.VANISHABLE
-    }
-}
 
 fun toMCItemStack(stack: ItemStack): MCItemStack {
     val mcStack = MCItemStack(ForgeRegistries.ITEMS.getValue(MCIdentifier(stack.itemId)) ?: Items.AIR, stack.count)
@@ -206,13 +186,6 @@ object ForgeJavaGameAPI : JavaGameAPI {
         return key?.toString() ?: ""
     }
 
-    override fun getRBGPalette(): List<Int> {
-        return DyeColor.values().toList().map {
-            val c = it.textureDiffuseColors
-            Color(c[0], c[1], c[2]).rgb
-        }
-    }
-
     override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr {
         val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultBlockState())
 
@@ -224,20 +197,6 @@ object ForgeJavaGameAPI : JavaGameAPI {
         val tag = CompoundTag()
         chestEntity.save(tag)
         return javaGameAPI.nbtToAttr(javaGameAPI.readNBTKey(tag, "Items")!!) as ListAttr
-    }
-
-
-    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
-        val mcTypes = types.map { toMCEnchantmentType(it)  }
-        return ForgeRegistries.ENCHANTMENTS.entries.filter { it.value.category in mcTypes }.map {
-            Enchantment(it.key.toString(), it.value.maxLevel, it.value.isCurse)
-        }
-    }
-
-    override fun getStatusEffect(id: String): StatusEffect? {
-        val mcId = MCIdentifier(id)
-        val effect = ForgeRegistries.MOB_EFFECTS.getValue(mcId) ?: return null
-        return StatusEffect(id = mcId.toString(), intId = MCStatusEffect.getId(effect), isInstant = effect.isInstantenous)
     }
 
     override fun isCreativeMode(player: PlayerEntity): Boolean {

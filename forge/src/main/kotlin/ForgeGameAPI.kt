@@ -29,7 +29,10 @@ import net.minecraft.world.entity.Mob
 import net.minecraft.world.entity.MobSpawnType
 import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.projectile.Arrow
+import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.alchemy.PotionUtils
+import net.minecraft.world.item.enchantment.EnchantmentHelper
+import net.minecraft.world.item.enchantment.Enchantments
 import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.Rotation
@@ -88,6 +91,25 @@ fun toServerWorld(world: World): MCServerWorld {
     return (world as MCServerWorld).level
 }
 
+private fun toMCEnchantmentType(type: EnchantmentType): MCEnchantmentType {
+    return when (type) {
+        EnchantmentType.ARMOR -> MCEnchantmentType.ARMOR
+        EnchantmentType.ARMOR_FEET -> MCEnchantmentType.ARMOR_FEET
+        EnchantmentType.ARMOR_LEGS -> MCEnchantmentType.ARMOR_LEGS
+        EnchantmentType.ARMOR_CHEST -> MCEnchantmentType.ARMOR_CHEST
+        EnchantmentType.ARMOR_HEAD -> MCEnchantmentType.ARMOR_HEAD
+        EnchantmentType.WEAPON -> MCEnchantmentType.WEAPON
+        EnchantmentType.DIGGER -> MCEnchantmentType.DIGGER
+        EnchantmentType.FISHING_ROD -> MCEnchantmentType.FISHING_ROD
+        EnchantmentType.TRIDENT -> MCEnchantmentType.TRIDENT
+        EnchantmentType.BREAKABLE -> MCEnchantmentType.BOW
+        EnchantmentType.BOW -> MCEnchantmentType.BOW
+        EnchantmentType.WEARABLE -> MCEnchantmentType.WEARABLE
+        EnchantmentType.CROSSBOW -> MCEnchantmentType.CROSSBOW
+        EnchantmentType.VANISHABLE -> MCEnchantmentType.VANISHABLE
+    }
+}
+
 private fun createCommandSource(
     world: MCServerWorld,
     pos: Vec3d,
@@ -140,6 +162,26 @@ object ForgeGameAPI : GameAPI {
 
     override fun getUsefulPotionIds(): List<String> = usefulPotionIds
     override fun getSpawnEggIds(): List<String> = spawnEggIds
+
+    override fun getRGBPalette(): List<Int> {
+        return DyeColor.values().toList().map {
+            val c = it.textureDiffuseColors
+            Color(c[0], c[1], c[2]).rgb
+        }
+    }
+
+    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
+        val mcTypes = types.map { toMCEnchantmentType(it)  }
+        return ForgeRegistries.ENCHANTMENTS.entries.filter { it.value.category in mcTypes }.map {
+            Enchantment(it.key.toString(), it.value.maxLevel, it.value.isCurse)
+        }
+    }
+
+    override fun getStatusEffect(id: String): StatusEffect? {
+        val mcId = MCIdentifier(id)
+        val effect = ForgeRegistries.MOB_EFFECTS.getValue(mcId) ?: return null
+        return StatusEffect(id = mcId.toString(), intId = MCStatusEffect.getId(effect), isInstant = effect.isInstantenous)
+    }
 
     override fun getEntityPos(entity: Entity): Vec3d {
         return Vec3d((entity as MCEntity).x, entity.y, entity.z)

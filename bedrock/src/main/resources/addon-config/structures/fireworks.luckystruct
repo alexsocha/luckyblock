@@ -1,13 +1,7 @@
-type=block,id=dispenser,nbttag=(
-    LifeTime=20,FireworksItem=(id=minecraft:fireworks_rocket,Count=1b,tag=(Fireworks=(
-        Explosions=[
-            (
-                FireworkColor=1b:2b,
-                FireworkFlicker=0b,
-                FireworkTrail=0b,
-                FireworkType=0b
-            )
-        ],
-        Flight=3b
-    )))
-)
+posOffset=(0,-1,0),type=block,id=redstone_block
+posOffset=(0,0,0),type=block,id=dispenser,state=(facing_direction=1),nbttag=(id=Dispenser,Items=[(
+    Name=minecraft:firework_rocket,
+    Slot=0b,
+    Count=1b,
+    tag=#randFireworksRocket
+)])

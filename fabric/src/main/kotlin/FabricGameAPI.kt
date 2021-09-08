@@ -27,6 +27,9 @@ import mod.lucky.java.game.uselessPostionNames
 import net.minecraft.entity.*
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.projectile.ArrowEntity
+import net.minecraft.enchantment.EnchantmentHelper
+import net.minecraft.enchantment.EnchantmentTarget
+import net.minecraft.enchantment.Enchantments
 import net.minecraft.nbt.NbtHelper
 import net.minecraft.particle.ParticleEffect
 import net.minecraft.particle.ParticleType
@@ -38,6 +41,7 @@ import net.minecraft.structure.processor.StructureProcessor
 import net.minecraft.structure.processor.StructureProcessorType
 import net.minecraft.text.LiteralText
 import net.minecraft.util.BlockRotation
+import net.minecraft.util.DyeColor
 import net.minecraft.util.math.Vec2f
 import net.minecraft.world.Difficulty
 import net.minecraft.world.WorldView
@@ -79,6 +83,25 @@ fun toVec3d(vec: MCVec3d): Vec3d = Vec3d(vec.x, vec.y, vec.z)
 
 fun toServerWorld(world: World): ServerWorld {
     return (world as ServerWorldAccess).toServerWorld()
+}
+
+private fun toMCEnchantmentType(type: EnchantmentType): EnchantmentTarget {
+    return when (type) {
+        EnchantmentType.ARMOR -> EnchantmentTarget.ARMOR
+        EnchantmentType.ARMOR_FEET -> EnchantmentTarget.ARMOR_FEET
+        EnchantmentType.ARMOR_LEGS -> EnchantmentTarget.ARMOR_LEGS
+        EnchantmentType.ARMOR_CHEST -> EnchantmentTarget.ARMOR_CHEST
+        EnchantmentType.ARMOR_HEAD -> EnchantmentTarget.ARMOR_HEAD
+        EnchantmentType.WEAPON -> EnchantmentTarget.WEAPON
+        EnchantmentType.DIGGER -> EnchantmentTarget.DIGGER
+        EnchantmentType.FISHING_ROD -> EnchantmentTarget.FISHING_ROD
+        EnchantmentType.TRIDENT -> EnchantmentTarget.TRIDENT
+        EnchantmentType.BREAKABLE -> EnchantmentTarget.BOW
+        EnchantmentType.BOW -> EnchantmentTarget.BOW
+        EnchantmentType.WEARABLE -> EnchantmentTarget.WEARABLE
+        EnchantmentType.CROSSBOW -> EnchantmentTarget.CROSSBOW
+        EnchantmentType.VANISHABLE -> EnchantmentTarget.VANISHABLE
+    }
 }
 
 private fun createCommandSource(
@@ -133,6 +156,26 @@ object FabricGameAPI : GameAPI {
 
     override fun getUsefulPotionIds(): List<String> = usefulPotionIds
     override fun getSpawnEggIds(): List<String> = spawnEggIds
+
+    override fun getRGBPalette(): List<Int> {
+        return DyeColor.values().toList().map {
+            val c = it.colorComponents
+            Color(c[0], c[1], c[2]).rgb
+        }
+    }
+
+    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
+        val mcTypes = types.map { toMCEnchantmentType(it)  }
+        return Registry.ENCHANTMENT.entries.filter { it.value.type in mcTypes }.map {
+            Enchantment(it.key.value.toString(), it.value.maxLevel, it.value.isCursed)
+        }
+    }
+
+    override fun getStatusEffect(id: String): StatusEffect? {
+        val mcId = MCIdentifier(id)
+        val effect = Registry.STATUS_EFFECT.get(mcId) ?: return null
+        return StatusEffect(id = mcId.toString(), intId = MCStatusEffect.getRawId(effect), isInstant = effect.isInstant)
+    }
 
     override fun getEntityPos(entity: Entity): Vec3d {
         val mcPos = (entity as MCEntity).pos

@@ -12,15 +12,11 @@ import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.datafixer.fix.ItemIdFix
 import net.minecraft.datafixer.fix.ItemInstanceTheFlatteningFix
-import net.minecraft.enchantment.EnchantmentHelper
-import net.minecraft.enchantment.EnchantmentTarget
-import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.nbt.NbtIo
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.structure.Structure
 import net.minecraft.text.Text
-import net.minecraft.util.DyeColor
 import net.minecraft.util.registry.Registry
 import java.awt.Color
 import java.io.File
@@ -34,26 +30,6 @@ annotation class OnlyInClient
 annotation class OnlyInServer
 
 fun isClientWorld(world: MCIWorld): Boolean = world.isClient
-
-
-private fun toMCEnchantmentType(type: EnchantmentType): EnchantmentTarget {
-    return when (type) {
-        EnchantmentType.ARMOR -> EnchantmentTarget.ARMOR
-        EnchantmentType.ARMOR_FEET -> EnchantmentTarget.ARMOR_FEET
-        EnchantmentType.ARMOR_LEGS -> EnchantmentTarget.ARMOR_LEGS
-        EnchantmentType.ARMOR_CHEST -> EnchantmentTarget.ARMOR_CHEST
-        EnchantmentType.ARMOR_HEAD -> EnchantmentTarget.ARMOR_HEAD
-        EnchantmentType.WEAPON -> EnchantmentTarget.WEAPON
-        EnchantmentType.DIGGER -> EnchantmentTarget.DIGGER
-        EnchantmentType.FISHING_ROD -> EnchantmentTarget.FISHING_ROD
-        EnchantmentType.TRIDENT -> EnchantmentTarget.TRIDENT
-        EnchantmentType.BREAKABLE -> EnchantmentTarget.BOW
-        EnchantmentType.BOW -> EnchantmentTarget.BOW
-        EnchantmentType.WEARABLE -> EnchantmentTarget.WEARABLE
-        EnchantmentType.CROSSBOW -> EnchantmentTarget.CROSSBOW
-        EnchantmentType.VANISHABLE -> EnchantmentTarget.VANISHABLE
-    }
-}
 
 fun toMCItemStack(stack: ItemStack): MCItemStack {
     val mcStack = MCItemStack(Registry.ITEM.get(MCIdentifier(stack.itemId)), stack.count)
@@ -210,13 +186,6 @@ object FabricJavaGameAPI : JavaGameAPI {
         return key?.value?.toString() ?: ""
     }
 
-    override fun getRBGPalette(): List<Int> {
-        return DyeColor.values().toList().map {
-            val c = it.colorComponents
-            Color(c[0], c[1], c[2]).rgb
-        }
-    }
-
     override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr {
         val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultState)
         // world is needed to prevent a NullPointerException
@@ -227,20 +196,6 @@ object FabricJavaGameAPI : JavaGameAPI {
         val tag = CompoundTag()
         chestEntity.writeNbt(tag)
         return javaGameAPI.nbtToAttr(javaGameAPI.readNBTKey(tag, "Items")!!) as ListAttr
-    }
-
-
-    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
-        val mcTypes = types.map { toMCEnchantmentType(it)  }
-        return Registry.ENCHANTMENT.entries.filter { it.value.type in mcTypes }.map {
-            Enchantment(it.key.value.toString(), it.value.maxLevel, it.value.isCursed)
-        }
-    }
-
-    override fun getStatusEffect(id: String): StatusEffect? {
-        val mcId = MCIdentifier(id)
-        val effect = Registry.STATUS_EFFECT.get(mcId) ?: return null
-        return StatusEffect(id = mcId.toString(), intId = MCStatusEffect.getRawId(effect), isInstant = effect.isInstant)
     }
 
     override fun isCreativeMode(player: PlayerEntity): Boolean {

@@ -58,6 +58,11 @@ external class MCServer {
     val level: Any
 }
 
+external class MCCommandResult {
+    val statusCode: Int
+    val statusMessage: String
+}
+
 external class MCServerSystem {
     var initialize: () -> Unit
     var log: (msg: Any?) -> Unit
@@ -81,4 +86,6 @@ external class MCServerSystem {
 
     fun createEntity(entityType: String, entityId: String): MCEntity
     fun destroyEntity(entity: MCEntity)
+
+    fun executeCommand(command: String, callback: (result: MCEvent<MCCommandResult>) -> Unit)
 }

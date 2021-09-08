@@ -40,7 +40,7 @@ object LuckyRegistry {
 
     init {
         registerDefaultDrops()
-        registerDefaultTemplateVars()
+        registerCommonTemplateVars()
     }
 
     fun registerDropPropRenames(type: String, renames: Map<String, String>) {

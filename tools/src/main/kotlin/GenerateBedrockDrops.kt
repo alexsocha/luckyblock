@@ -7,11 +7,10 @@ import mod.lucky.common.drop.BaseDrop
 import mod.lucky.common.drop.GroupDrop
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.WeightedDrop
+import mod.lucky.common.drop.registerGameDependentTemplateVars
 import mod.lucky.java.loader.DropStructureResource
 import mod.lucky.java.loader.loadAddonResources
 import mod.lucky.java.loader.loadMainResources
-import mod.lucky.java.registerJavaTemplateVars
-import mod.lucky.java.javaGameAPI
 import java.nio.ByteOrder
 import java.io.File
 
@@ -37,17 +36,6 @@ class SpySeededRandom(
     }
 
     fun wasUsed(): Boolean = wasUsed
-}
-
-object ToolsLogger : Logger {
-    override fun logError(msg: String?, error: Exception?) {
-        if (msg != null) println(error)
-        if (error != null) println(error)
-    }
-
-    override fun logInfo(msg: String) {
-        println(msg)
-    }
 }
 
 fun getIDWithNamespace(id: String): String {
@@ -79,10 +67,10 @@ fun createDropStructre(drop: SingleDrop, nbtAttr: DictAttr): DictAttr {
                 "format_version" to intAttrOf(1),
                 "size" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)),
                 "structure" to dictAttrOf(
-                    "block_indices" to listAttrOf(listAttrOf(intAttrOf(0)), ListAttr()),
+                    "block_indices" to listAttrOf(listAttrOf(intAttrOf(0)), listAttrOf(intAttrOf(-1))),
                     "palette" to dictAttrOf(
                         "default" to dictAttrOf(
-                            "block_pallete" to listAttrOf(
+                            "block_palette" to listAttrOf(
                                 dictAttrOf(
                                     "name" to stringAttrOf(getIDWithNamespace(drop["id"])),
                                     "states" to drop.get("state", DictAttr()),
@@ -91,11 +79,16 @@ fun createDropStructre(drop: SingleDrop, nbtAttr: DictAttr): DictAttr {
                             ),
                             "block_position_data" to dictAttrOf(
                                 "0" to dictAttrOf(
-                                    "block_entity_data" to nbtAttr,
+                                    "block_entity_data" to nbtAttr.withDefaults(mapOf(
+                                        "x" to intAttrOf(0),
+                                        "y" to intAttrOf(0),
+                                        "z" to intAttrOf(0),
+                                    )),
                                 ),
                             ),
                         ),
                     ),
+                    "entities" to listAttrOf(),
                 ),
                 "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0))
             )
@@ -216,9 +209,9 @@ fun main(args: Array<String>) {
     val seed by parser.option(ArgType.Int, description = "Drop generation seed").default(0)
     parser.parse(args)
 
-    javaGameAPI = ToolsJavaGameAPI
+    gameAPI = BedrockToolsGameAPI
     logger = ToolsLogger
-    registerJavaTemplateVars()
+    registerGameDependentTemplateVars(GameType.BEDROCK)
 
     val resources = loadAddonResources(File(inputFolder))!!
 

@@ -1,16 +1,20 @@
 package mod.lucky.bedrock
 
+import mod.lucky.common.GameType
 import mod.lucky.common.BlockPos
 import mod.lucky.common.Vec3d
 import mod.lucky.common.drop.*
 import mod.lucky.common.attribute.*
 import mod.lucky.common.gameAPI
+import mod.lucky.common.LuckyRegistry
 import kotlin.js.JSON.stringify
+import kotlin.Error
 
-class UnparsedLuckyBlockConfig(
+class UnparsedModConfig(
     val luck: Int,
     val drops: String,
     val doDropsOnCreativeMode: Boolean = false,
+    val structures: dynamic,
 )
 
 data class LuckyBlockConfig(
@@ -22,14 +26,23 @@ object BedrockLuckyRegistry {
     val blocks: MutableMap<String, LuckyBlockConfig> = HashMap()
 }
 
-fun parseLuckyBlockConfig(unparsedConfig: UnparsedLuckyBlockConfig): LuckyBlockConfig {
-    return LuckyBlockConfig(
+fun registerModConfig(blockId: String, unparsedConfig: UnparsedModConfig) {
+    BedrockLuckyRegistry.blocks[blockId] = LuckyBlockConfig(
         dropContainer = DropContainer(
             drops = dropsFromStrList(splitLines(unparsedConfig.drops.split('\n'))),
             luck = unparsedConfig.luck
         ),
         doDropsOnCreativeMode = unparsedConfig.doDropsOnCreativeMode,
     )
+    if (unparsedConfig.structures != null) {
+        for (k in js("Object").keys(unparsedConfig.structures)) {
+            val unparsedStruct: String = unparsedConfig.structures[k]
+            val (props, drops) = readLuckyStructure(unparsedStruct.split('\n'))
+            val structureId = "$blockId:$k"
+            LuckyRegistry.structureProps[structureId] = props
+            LuckyRegistry.structureDrops[structureId] = drops
+        }
+    }
 }
 
 fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayer, pos: BlockPos, blockId: String, blockConfig: LuckyBlockConfig) {
@@ -55,6 +68,8 @@ fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayer, pos: BlockPos,
 
 fun initServer(server: MCServer, serverSystem: MCServerSystem) {
     gameAPI = BedrockGameAPI
+    registerGameDependentTemplateVars(GameType.BEDROCK)
+
     BedrockGameAPI.initServer(server, serverSystem)
 
     serverSystem.initialize = {
@@ -80,9 +95,7 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
     ))
 
     // (optimization) parse all drops for the default block
-    BedrockLuckyRegistry.blocks["lucky:lucky_block"] = parseLuckyBlockConfig(
-        serverSystem.createEventData<UnparsedLuckyBlockConfig>("lucky:lucky_block_config").data
-    )
+    registerModConfig("lucky:lucky_block", serverSystem.createEventData<UnparsedModConfig>("lucky:lucky_block_config").data)
 
     serverSystem.listenForEvent<MCPlayerDestroyedBlockEvent>("minecraft:player_placed_block") { eventWrapper ->
         /*
@@ -103,17 +116,17 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
     serverSystem.listenForEvent<MCPlayerDestroyedBlockEvent>("minecraft:player_destroyed_block") { eventWrapper ->
         BedrockGameAPI.logInfo("Received event")
         val event = eventWrapper.data
-        if (event.block_identifier.startsWith("lucky:")) {
-            val blockConfig = BedrockLuckyRegistry.blocks.getOrElse(event.block_identifier) {
-                val unparsedConfig = serverSystem.createEventData<UnparsedLuckyBlockConfig?>("${event.block_identifier}_config").data
+        val blockId = event.block_identifier
+        if (blockId.startsWith("lucky:")) {
+            val blockConfig = BedrockLuckyRegistry.blocks.getOrElse(blockId) {
+                val unparsedModConfig = serverSystem.createEventData<UnparsedModConfig?>("${blockId}_config").data
 
-                if (unparsedConfig == null) {
-                    BedrockGameAPI.logError("Missing Lucky Block config. Make sure to call createEventData(\"${event.block_identifier}_config\", ...) at the start of your serverScript.js.")
+                if (unparsedModConfig == null) {
+                    BedrockGameAPI.logError("Lucky Block addon '${blockId}' is not configured. Make sure to call createEventData(\"${blockId}_config\", ...) at the start of your serverScript.js.")
                     null
                 } else {
-                    val parsedConfig = parseLuckyBlockConfig(unparsedConfig)
-                    BedrockLuckyRegistry.blocks[event.block_identifier] = parsedConfig
-                    parsedConfig
+                    registerModConfig(blockId, unparsedModConfig)
+                    BedrockLuckyRegistry.blocks[blockId]
                 }
             }
 

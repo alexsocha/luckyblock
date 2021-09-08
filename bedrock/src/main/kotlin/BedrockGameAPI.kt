@@ -134,6 +134,14 @@ object BedrockGameAPI : GameAPI {
 
     override fun getUsefulPotionIds(): List<String> = listOf("minecraft:healing")
     override fun getSpawnEggIds(): List<String> = listOf("minecraft:pig_spawn_egg")
+    override fun getRGBPalette(): List<Int> = emptyList() // unused
+    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
+        return emptyList() // TODO
+    }
+    override fun getStatusEffect(id: String): StatusEffect? {
+        return null // TODO
+    }
+
     override fun getEntityPos(entity: Entity): Vec3d = (entity as MockEntity).pos
     override fun getPlayerName(player: PlayerEntity): String = "Test Player"
     override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) {}
@@ -212,5 +220,20 @@ object BedrockGameAPI : GameAPI {
         rotation: Int,
         mode: String,
         notify: Boolean,
-    ) {}
+    ) {
+        serverSystem.log(centerOffset)
+        serverSystem.log(rotatePos(centerOffset.toDouble(), Vec3d(0.0, 0.0, 0.0), rotation).floor())
+        val cornerPos = pos - rotatePos(centerOffset.toDouble(), Vec3d(0.0, 0.0, 0.0), rotation).floor()
+        
+        val command = "/structure load lucky:${structureId.split(":").last()} " +
+            "${cornerPos.x} ${cornerPos.y} ${cornerPos.z}"
+
+        BedrockGameAPI.logInfo(command)
+
+        serverSystem.executeCommand(command) { result ->
+            if (result.data.statusCode < 0) {
+                logError(result.data.statusMessage)
+            }
+        }
+    }
 }

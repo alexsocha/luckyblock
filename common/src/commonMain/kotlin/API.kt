@@ -4,11 +4,45 @@ import mod.lucky.common.attribute.DictAttr
 import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.SingleDrop
 
+enum class GameType {
+    JAVA,
+    BEDROCK
+}
+
 typealias Block = Any
 typealias Item = Any
 typealias PlayerEntity = Any
 typealias Entity = Any
 typealias World = Any
+
+data class Enchantment(
+    val id: String,
+    val maxLevel: Int,
+    val isCurse: Boolean,
+)
+
+data class StatusEffect(
+    val id: String,
+    val intId: Int,
+    val isInstant: Boolean,
+)
+
+enum class EnchantmentType {
+    ARMOR,
+    ARMOR_FEET,
+    ARMOR_LEGS,
+    ARMOR_CHEST,
+    ARMOR_HEAD,
+    WEAPON,
+    DIGGER,
+    FISHING_ROD,
+    TRIDENT,
+    BREAKABLE,
+    BOW,
+    WEARABLE,
+    CROSSBOW,
+    VANISHABLE,
+}
 
 interface Logger {
     fun logError(msg: String? = null, error: Exception? = null)
@@ -18,6 +52,9 @@ interface Logger {
 interface GameAPI : Logger {
     fun getUsefulPotionIds(): List<String>
     fun getSpawnEggIds(): List<String>
+    fun getRGBPalette(): List<Int>
+    fun getEnchantments(types: List<EnchantmentType>): List<Enchantment>
+    fun getStatusEffect(id: String): StatusEffect?
     fun getEntityPos(entity: Entity): Vec3d
     fun getPlayerName(player: PlayerEntity): String
     fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int)
