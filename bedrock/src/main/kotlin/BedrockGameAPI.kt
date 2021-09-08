@@ -75,6 +75,14 @@ fun attrToJson(attr: Attr): Any {
     }
 }
 
+fun runCommand(serverSystem: MCServerSystem, command: String) {
+    serverSystem.executeCommand(command) { result ->
+        if (result.data.statusCode < 0) {
+            BedrockGameAPI.logError(result.data.statusMessage)
+        }
+    }
+}
+
 object BedrockGameAPI : GameAPI {
     lateinit var server: MCServer
     lateinit var serverSystem: MCServerSystem
@@ -129,7 +137,9 @@ object BedrockGameAPI : GameAPI {
     }
 
     override fun logInfo(msg: String) {
-        serverSystem.log(msg)
+        runCommand(serverSystem, "/setblock load lucky:${structureId.split(":").last()} " +
+            "${cornerPos.x} ${cornerPos.y} ${cornerPos.z}"
+        )
     }
 
     override fun getUsefulPotionIds(): List<String> = listOf("minecraft:healing")
@@ -192,7 +202,16 @@ object BedrockGameAPI : GameAPI {
     }
 
     override fun setBlockEntity(world: World, pos: Vec3i, nbt: DictAttr) {}
-    override fun runCommand(world: World, pos: Vec3d, command: String, senderName: String, showOutput: Boolean) {}
+
+    override fun runCommand(world: World, pos: Vec3d, command: String, senderName: String, showOutput: Boolean) {
+        serverSystem.executeCommand(command) { result ->
+            if (result.data.statusCode < 0) {
+                BedrockGameAPI.logError(result.data.statusMessage)
+            } else if (showOutput) {
+                BedrockGameAPI.logInfo(result.data.statusMessage)
+            }
+        }
+    }
     override fun createExplosion(world: World, pos: Vec3d, damage: Double, fire: Boolean) {}
     override fun sendMessage(player: PlayerEntity, message: String) {}
     override fun setDifficulty(world: World, difficulty: String) {}
@@ -212,6 +231,7 @@ object BedrockGameAPI : GameAPI {
     override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {}
     override fun playParticleEvent(world: World, pos: Vec3d, eventId: Int, data: Int) {}
     override fun playSplashPotionEvent(world: World, pos: Vec3d, potionName: String?, potionColor: Int?) {}
+
     override fun createStructure(
         world: World,
         structureId: String,
@@ -221,19 +241,10 @@ object BedrockGameAPI : GameAPI {
         mode: String,
         notify: Boolean,
     ) {
-        serverSystem.log(centerOffset)
-        serverSystem.log(rotatePos(centerOffset.toDouble(), Vec3d(0.0, 0.0, 0.0), rotation).floor())
         val cornerPos = pos - rotatePos(centerOffset.toDouble(), Vec3d(0.0, 0.0, 0.0), rotation).floor()
         
-        val command = "/structure load lucky:${structureId.split(":").last()} " +
+        runCommand(serverSystem, "/structure load lucky:${structureId.split(":").last()} " +
             "${cornerPos.x} ${cornerPos.y} ${cornerPos.z}"
-
-        BedrockGameAPI.logInfo(command)
-
-        serverSystem.executeCommand(command) { result ->
-            if (result.data.statusCode < 0) {
-                logError(result.data.statusMessage)
-            }
-        }
+        )
     }
 }
