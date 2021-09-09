@@ -8,7 +8,7 @@ fun getRGBPalette(): List<Int> {
     return colors.map { it.toInt(16) }
 }
 
-fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
+fun getEnchantments(type: EnchantmentType): List<Enchantment> {
     return emptyList() // TODO
 }
 fun getStatusEffect(id: String): StatusEffect? {

@@ -170,9 +170,9 @@ object ForgeGameAPI : GameAPI {
         }
     }
 
-    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
-        val mcTypes = types.map { toMCEnchantmentType(it)  }
-        return ForgeRegistries.ENCHANTMENTS.entries.filter { it.value.category in mcTypes }.map {
+    override fun getEnchantments(types: EnchantmentType): List<Enchantment> {
+        val mcType = toMCEnchantmentType(it)
+        return ForgeRegistries.ENCHANTMENTS.entries.filter { it.value.category == mcType }.map {
             Enchantment(it.key.toString(), it.value.maxLevel, it.value.isCurse)
         }
     }

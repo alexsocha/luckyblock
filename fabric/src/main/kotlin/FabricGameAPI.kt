@@ -164,9 +164,9 @@ object FabricGameAPI : GameAPI {
         }
     }
 
-    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
-        val mcTypes = types.map { toMCEnchantmentType(it)  }
-        return Registry.ENCHANTMENT.entries.filter { it.value.type in mcTypes }.map {
+    override fun getEnchantments(type: EnchantmentType): List<Enchantment> {
+        val mcType = toMCEnchantmentType(type)
+        return Registry.ENCHANTMENT.entries.filter { it.value.type == mcType }.map {
             Enchantment(it.key.value.toString(), it.value.maxLevel, it.value.isCursed)
         }
     }

@@ -28,8 +28,8 @@ object BedrockToolsGameAPI : GameAPI {
         return mod.lucky.bedrock.common.getRGBPalette()
     }
 
-    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
-        return mod.lucky.bedrock.common.getEnchantments(types)
+    override fun getEnchantments(type: EnchantmentType): List<Enchantment> {
+        return mod.lucky.bedrock.common.getEnchantments(type)
     }
 
     override fun getStatusEffect(id: String): StatusEffect? { 

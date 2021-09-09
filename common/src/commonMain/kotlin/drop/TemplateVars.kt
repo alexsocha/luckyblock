@@ -72,7 +72,7 @@ fun registerEnchantments(
     registerMultiListTemplateVar(
         templateName,
         getValues = { context ->
-            val enchantments = gameAPI.getEnchantments(types).filter { if (!includeCurses) !it.isCurse else true }
+            val enchantments = types.flatMap { gameAPI.getEnchantments(it).filter { if (!includeCurses) !it.isCurse else true } }
             enchantments.map { randEnchInstance(context.random, it) }
         },
         defaultAmount = defaultAmount,

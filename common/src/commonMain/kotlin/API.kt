@@ -53,7 +53,7 @@ interface GameAPI : Logger {
     fun getUsefulPotionIds(): List<String>
     fun getSpawnEggIds(): List<String>
     fun getRGBPalette(): List<Int>
-    fun getEnchantments(types: List<EnchantmentType>): List<Enchantment>
+    fun getEnchantments(type: EnchantmentType): List<Enchantment>
     fun getStatusEffect(id: String): StatusEffect?
     fun getEntityPos(entity: Entity): Vec3d
     fun getPlayerName(player: PlayerEntity): String
