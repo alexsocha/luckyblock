@@ -108,16 +108,16 @@ fun registerGameDependentTemplateVars(gameType: GameType) {
 
         val explosion = when(gameType) {
             GameType.JAVA -> dictAttrOf(
-                "FireworkType" to fireworkType,
-                "FireworkFlicker" to fireworkFlicker,
-                "FireworkTrail" to fireworkTrail,
-                "FireworkColors" to fireworkColors,
-            )
-            GameType.BEDROCK -> dictAttrOf(
                 "Type" to fireworkType,
                 "Flicker" to fireworkFlicker,
                 "Trail" to fireworkTrail,
                 "Colors" to fireworkColors,
+            )
+            GameType.BEDROCK -> dictAttrOf(
+                "FireworkType" to fireworkType,
+                "FireworkFlicker" to fireworkFlicker,
+                "FireworkTrail" to fireworkTrail,
+                "FireworkColor" to fireworkColors,
             )
         }
 

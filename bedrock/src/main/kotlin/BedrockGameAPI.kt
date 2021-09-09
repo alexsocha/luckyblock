@@ -137,19 +137,21 @@ object BedrockGameAPI : GameAPI {
     }
 
     override fun logInfo(msg: String) {
-        runCommand(serverSystem, "/setblock load lucky:${structureId.split(":").last()} " +
-            "${cornerPos.x} ${cornerPos.y} ${cornerPos.z}"
-        )
+        serverSystem.log(msg)
     }
 
     override fun getUsefulPotionIds(): List<String> = listOf("minecraft:healing")
     override fun getSpawnEggIds(): List<String> = listOf("minecraft:pig_spawn_egg")
-    override fun getRGBPalette(): List<Int> = emptyList() // unused
+
+    override fun getRGBPalette(): List<Int> {
+        return mod.lucky.bedrock.common.getRGBPalette()
+    }
+
     override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
-        return emptyList() // TODO
+        return mod.lucky.bedrock.common.getEnchantments(types)
     }
     override fun getStatusEffect(id: String): StatusEffect? {
-        return null // TODO
+        return mod.lucky.bedrock.common.getStatusEffect(id)
     }
 
     override fun getEntityPos(entity: Entity): Vec3d = (entity as MockEntity).pos
@@ -167,7 +169,30 @@ object BedrockGameAPI : GameAPI {
     override fun isAirBlock(world: World, pos: Vec3i): Boolean = true
 
     override fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean) {
-        serverSystem.log("setting block!")
+        val blockStatesStr = state?.let {
+            "[${it.children.entries.joinToString(",") {
+                (k, v) -> "${k}:${attrToJson(v)}"
+            }}]"
+        }
+
+        runCommand(serverSystem, "/setblock " +
+            "${pos.x} ${pos.y} ${pos.z} " +
+            "${getIDWithNamespace(id)} " +
+            if (blockStatesStr != null) blockStatesStr else ""
+        )
+
+        if (components != null) {
+            val block = serverSystem.getBlock((world as MCWorld).ticking_area, toMCBlockPos(pos))
+            components.children.forEach {
+                val component = serverSystem.getComponent<Any>(block, it.key)
+                if (component != null) {
+                    component.data = attrToJson(it.value)
+                    serverSystem.applyComponentChanges(block, component)
+                } else {
+                    logError("Invalid block component: ${it.key}")
+                }
+            }
+        }
     }
 
     override fun spawnEntity(
@@ -193,7 +218,6 @@ object BedrockGameAPI : GameAPI {
             val component = serverSystem.getComponent<Any>(entity, it.key)
             if (component != null) {
                 component.data = attrToJson(it.value)
-                serverSystem.log(component.data)
                 serverSystem.applyComponentChanges(entity, component)
             } else {
                 logError("Invalid entity component: ${it.key}")

@@ -25,15 +25,19 @@ object BedrockToolsGameAPI : GameAPI {
     override fun logInfo(msg: String) = ToolsLogger.logInfo(msg)
 
     override fun getRGBPalette(): List<Int> {
-        // from https://www.schemecolor.com/bright-rainbow-colors.php
-        val colors = listOf("A800FF", "0079FF", "00F11D", "FFEF00", "FF7F00", "FF0900")
-        return colors.map { it.toInt(16) }
+        return mod.lucky.bedrock.common.getRGBPalette()
+    }
+
+    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
+        return mod.lucky.bedrock.common.getEnchantments(types)
+    }
+
+    override fun getStatusEffect(id: String): StatusEffect? { 
+        return mod.lucky.bedrock.common.getStatusEffect(id)
     }
 
     override fun getUsefulPotionIds(): List<String> = throw NoGameContextException()
     override fun getSpawnEggIds(): List<String> = throw NoGameContextException()
-    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> = throw NoGameContextException()
-    override fun getStatusEffect(id: String): StatusEffect? = throw NoGameContextException()
     override fun getEntityPos(entity: Entity): Vec3d = throw NoGameContextException()
     override fun getPlayerName(player: PlayerEntity): String = throw NoGameContextException()
     override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) = throw NoGameContextException()

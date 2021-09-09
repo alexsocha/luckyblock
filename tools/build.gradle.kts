@@ -14,6 +14,10 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
+java.sourceSets["main"].java {
+    srcDir("../bedrock/src/main/kotlin/common")
+}
+
 tasks.test {
     useJUnitPlatform()
 }
