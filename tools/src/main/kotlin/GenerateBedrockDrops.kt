@@ -39,9 +39,9 @@ fun getIDWithNamespace(id: String): String {
     return if (":" in id) id else "minecraft:$id"
 }
 
-fun createDropStructure(drop: SingleDrop): DictAttr {
-    if ("id" !in drop) throw Exception("Drop '${drop}' is missing the required property 'id'")
-    return when(drop.type) {
+fun createDropStructure(dropType: String, dropProps: DictAttr): DictAttr {
+    if ("id" !in dropProps) throw Exception("Drop '${dropProps}' is missing the required property 'id'")
+    return when(dropType) {
         "entity" -> dictAttrOf(
             "" to dictAttrOf(
                 "format_version" to intAttrOf(1),
@@ -50,9 +50,9 @@ fun createDropStructure(drop: SingleDrop): DictAttr {
                     "block_indices" to listAttrOf(ListAttr(), ListAttr()),
                     "palette" to DictAttr(),
                     "entities" to listAttrOf(
-                        drop.get<DictAttr>("nbttag").with(mapOf(
+                        dropProps.getDict("nbttag").with(mapOf(
                             "Pos" to listAttrOf(floatAttrOf(0.5f), floatAttrOf(0f), floatAttrOf(0.5f)),
-                            "identifier" to stringAttrOf(getIDWithNamespace(drop["id"])),
+                            "identifier" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
                         )),
                     ),
                 ),
@@ -69,14 +69,14 @@ fun createDropStructure(drop: SingleDrop): DictAttr {
                         "default" to dictAttrOf(
                             "block_palette" to listAttrOf(
                                 dictAttrOf(
-                                    "name" to stringAttrOf(getIDWithNamespace(drop["id"])),
-                                    "states" to drop.get("state", DictAttr()),
+                                    "name" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
+                                    "states" to dropProps.getWithDefault("state",  DictAttr()),
                                     "version" to intAttrOf(17825806),
                                 ),
                             ),
                             "block_position_data" to dictAttrOf(
                                 "0" to dictAttrOf(
-                                    "block_entity_data" to drop.get<DictAttr>("nbttag").withDefaults(mapOf(
+                                    "block_entity_data" to dropProps.getDict("nbttag").withDefaults(mapOf(
                                         "x" to intAttrOf(0),
                                         "y" to intAttrOf(0),
                                         "z" to intAttrOf(0),
@@ -105,13 +105,15 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
     val dropSamples = drop.props.getWithDefault("samples", 2)
     val dropSeed = drop.props.getWithDefault("seed", seed)
 
-    val cacheKey = attrToSerializedString(dictAttrOf(
+    val dropProps = dictAttrOf(
+        "type" to stringAttrOf(drop.type),
         "id" to drop.props["id"],
         "samples" to intAttrOf(dropSamples),
         "seed" to intAttrOf(dropSeed),
         nbtAttrKey to nbtAttr,
         *(if (drop.type == "block") arrayOf("state" to drop.props["state"]) else emptyArray()),
-    ))
+    )
+    val cacheKey = attrToSerializedString(dropProps)
 
     val hasCached = cacheKey in generatedDrops.dropStructureCache
     val (structureIds, newGeneratedDrops) =
@@ -123,7 +125,7 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
                 templateContext = DropTemplateContext(drop = drop, dropContext = null, random = random),
             )
 
-            val firstStructure = createDropStructure(drop.copy(props=evalAttr(drop.props, evalContext) as DictAttr))
+            val firstStructure = createDropStructure(drop.type, evalAttr(dropProps, evalContext) as DictAttr)
 
             val dropStructurePrefix = "${blockId}_drop_"
             val newStructures: List<Pair<String, DictAttr>> = if (random.wasUsed()) {
@@ -133,7 +135,7 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
                         if (dropSamples > 1) ".${it + 1}" else ""
 
                     k to if (i == 0) firstStructure else
-                        createDropStructure(drop.copy(props=evalAttr(drop.props, evalContext) as DictAttr))
+                        createDropStructure(drop.type, evalAttr(dropProps, evalContext) as DictAttr)
                 }
             } else {
                 listOf("${dropStructurePrefix}${generatedDrops.dropStructureCache.size + 1}" to firstStructure)
