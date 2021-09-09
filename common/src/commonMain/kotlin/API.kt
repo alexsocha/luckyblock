@@ -17,6 +17,7 @@ typealias World = Any
 
 data class Enchantment(
     val id: String,
+    val type: EnchantmentType,
     val maxLevel: Int,
     val isCurse: Boolean,
 )
@@ -24,6 +25,7 @@ data class Enchantment(
 data class StatusEffect(
     val id: String,
     val intId: Int,
+    val isNegative: Boolean,
     val isInstant: Boolean,
 )
 
@@ -53,8 +55,8 @@ interface GameAPI : Logger {
     fun getUsefulPotionIds(): List<String>
     fun getSpawnEggIds(): List<String>
     fun getRGBPalette(): List<Int>
-    fun getEnchantments(type: EnchantmentType): List<Enchantment>
-    fun getStatusEffect(id: String): StatusEffect?
+    fun getEnchantments(): List<Enchantment>
+    fun getUsefulStatusEffects(): List<StatusEffect>
     fun getEntityPos(entity: Entity): Vec3d
     fun getPlayerName(player: PlayerEntity): String
     fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int)

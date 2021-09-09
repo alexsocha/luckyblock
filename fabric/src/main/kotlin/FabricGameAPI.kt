@@ -24,12 +24,11 @@ import mod.lucky.java.*
 import mod.lucky.java.game.DelayedDropData
 import mod.lucky.java.game.spawnEggSuffix
 import mod.lucky.java.game.uselessPostionNames
+import mod.lucky.java.game.usefulStatusEffectIds
 import net.minecraft.entity.*
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.projectile.ArrowEntity
-import net.minecraft.enchantment.EnchantmentHelper
-import net.minecraft.enchantment.EnchantmentTarget
-import net.minecraft.enchantment.Enchantments
+import net.minecraft.entity.effect.StatusEffectType
 import net.minecraft.nbt.NbtHelper
 import net.minecraft.particle.ParticleEffect
 import net.minecraft.particle.ParticleType
@@ -46,7 +45,9 @@ import net.minecraft.util.math.Vec2f
 import net.minecraft.world.Difficulty
 import net.minecraft.world.WorldView
 import net.minecraft.world.explosion.Explosion
+import java.awt.Color
 import java.util.*
+import kotlin.random.Random
 import kotlin.random.asJavaRandom
 
 typealias MCBlock = net.minecraft.block.Block
@@ -61,6 +62,7 @@ typealias MCBlockPos = net.minecraft.util.math.BlockPos
 typealias MCItemStack = net.minecraft.item.ItemStack
 typealias MCIdentifier = net.minecraft.util.Identifier
 typealias MCStatusEffect = net.minecraft.entity.effect.StatusEffect
+typealias MCEnchantmentType = net.minecraft.enchantment.EnchantmentTarget
 
 typealias Tag = net.minecraft.nbt.NbtElement
 typealias ByteTag = net.minecraft.nbt.NbtByte
@@ -85,22 +87,22 @@ fun toServerWorld(world: World): ServerWorld {
     return (world as ServerWorldAccess).toServerWorld()
 }
 
-private fun toMCEnchantmentType(type: EnchantmentType): EnchantmentTarget {
-    return when (type) {
-        EnchantmentType.ARMOR -> EnchantmentTarget.ARMOR
-        EnchantmentType.ARMOR_FEET -> EnchantmentTarget.ARMOR_FEET
-        EnchantmentType.ARMOR_LEGS -> EnchantmentTarget.ARMOR_LEGS
-        EnchantmentType.ARMOR_CHEST -> EnchantmentTarget.ARMOR_CHEST
-        EnchantmentType.ARMOR_HEAD -> EnchantmentTarget.ARMOR_HEAD
-        EnchantmentType.WEAPON -> EnchantmentTarget.WEAPON
-        EnchantmentType.DIGGER -> EnchantmentTarget.DIGGER
-        EnchantmentType.FISHING_ROD -> EnchantmentTarget.FISHING_ROD
-        EnchantmentType.TRIDENT -> EnchantmentTarget.TRIDENT
-        EnchantmentType.BREAKABLE -> EnchantmentTarget.BOW
-        EnchantmentType.BOW -> EnchantmentTarget.BOW
-        EnchantmentType.WEARABLE -> EnchantmentTarget.WEARABLE
-        EnchantmentType.CROSSBOW -> EnchantmentTarget.CROSSBOW
-        EnchantmentType.VANISHABLE -> EnchantmentTarget.VANISHABLE
+private fun toEnchantmentType(mcType: MCEnchantmentType): EnchantmentType {
+    return when (mcType) {
+        MCEnchantmentType.ARMOR -> EnchantmentType.ARMOR
+        MCEnchantmentType.ARMOR_FEET -> EnchantmentType.ARMOR_FEET
+        MCEnchantmentType.ARMOR_LEGS -> EnchantmentType.ARMOR_LEGS
+        MCEnchantmentType.ARMOR_CHEST -> EnchantmentType.ARMOR_CHEST
+        MCEnchantmentType.ARMOR_HEAD -> EnchantmentType.ARMOR_HEAD
+        MCEnchantmentType.WEAPON -> EnchantmentType.WEAPON
+        MCEnchantmentType.DIGGER -> EnchantmentType.DIGGER
+        MCEnchantmentType.FISHING_ROD -> EnchantmentType.FISHING_ROD
+        MCEnchantmentType.TRIDENT -> EnchantmentType.TRIDENT
+        MCEnchantmentType.BREAKABLE -> EnchantmentType.BOW
+        MCEnchantmentType.BOW -> EnchantmentType.BOW
+        MCEnchantmentType.WEARABLE -> EnchantmentType.WEARABLE
+        MCEnchantmentType.CROSSBOW -> EnchantmentType.CROSSBOW
+        MCEnchantmentType.VANISHABLE -> EnchantmentType.VANISHABLE
     }
 }
 
@@ -132,6 +134,8 @@ private fun createCommandSource(
 object FabricGameAPI : GameAPI {
     private var usefulPotionIds: List<String> = emptyList()
     private var spawnEggIds: List<String> = emptyList()
+    private var enchantments: List<Enchantment> = emptyList()
+    private var usefulStatusEffects: List<StatusEffect> = emptyList()
 
     fun init() {
         usefulPotionIds = Registry.POTION.ids.filter {
@@ -142,6 +146,26 @@ object FabricGameAPI : GameAPI {
             it.namespace == "minecraft"
                 && it.path.endsWith(spawnEggSuffix)
         }.map { it.toString() }.toList()
+
+        enchantments = Registry.ENCHANTMENT.entries.map {
+            Enchantment(
+                it.key.toString(),
+                type = toEnchantmentType(it.value.type),
+                maxLevel = it.value.maxLevel,
+                isCurse = it.value.isCursed,
+            )
+        }
+
+        usefulStatusEffects = usefulStatusEffectIds.map {
+            val mcId = MCIdentifier(it)
+            val mcStatusEffect = Registry.STATUS_EFFECT.get(mcId)!!
+            StatusEffect(
+                id = mcId.toString(),
+                intId = MCStatusEffect.getRawId(mcStatusEffect),
+                isNegative = mcStatusEffect.type == StatusEffectType.HARMFUL,
+                isInstant = mcStatusEffect.isInstant,
+            )
+        }
     }
 
     override fun logError(msg: String?, error: Exception?) {
@@ -156,25 +180,14 @@ object FabricGameAPI : GameAPI {
 
     override fun getUsefulPotionIds(): List<String> = usefulPotionIds
     override fun getSpawnEggIds(): List<String> = spawnEggIds
+    override fun getEnchantments(): List<Enchantment> = enchantments
+    override fun getUsefulStatusEffects(): List<StatusEffect> = usefulStatusEffects
 
     override fun getRGBPalette(): List<Int> {
         return DyeColor.values().toList().map {
             val c = it.colorComponents
             Color(c[0], c[1], c[2]).rgb
         }
-    }
-
-    override fun getEnchantments(type: EnchantmentType): List<Enchantment> {
-        val mcType = toMCEnchantmentType(type)
-        return Registry.ENCHANTMENT.entries.filter { it.value.type == mcType }.map {
-            Enchantment(it.key.value.toString(), it.value.maxLevel, it.value.isCursed)
-        }
-    }
-
-    override fun getStatusEffect(id: String): StatusEffect? {
-        val mcId = MCIdentifier(id)
-        val effect = Registry.STATUS_EFFECT.get(mcId) ?: return null
-        return StatusEffect(id = mcId.toString(), intId = MCStatusEffect.getRawId(effect), isInstant = effect.isInstant)
     }
 
     override fun getEntityPos(entity: Entity): Vec3d {
@@ -455,7 +468,7 @@ object FabricGameAPI : GameAPI {
             mcCornerPos,
             mcCornerPos,
             placementSettings,
-            RANDOM.asJavaRandom(),
+            Random.asJavaRandom(),
             if (notify) 3 else 2
         )
     }

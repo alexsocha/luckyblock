@@ -150,8 +150,8 @@ object BedrockGameAPI : GameAPI {
     override fun getEnchantments(type: EnchantmentType): List<Enchantment> {
         return mod.lucky.bedrock.common.getEnchantments(types)
     }
-    override fun getStatusEffect(id: String): StatusEffect? {
-        return mod.lucky.bedrock.common.getStatusEffect(id)
+    override fun getUsefulStatusEffects(): List<StatusEffect> {
+        return mod.lucky.bedrock.common.getUsefulStatusEffects()
     }
 
     override fun getEntityPos(entity: Entity): Vec3d = (entity as MockEntity).pos

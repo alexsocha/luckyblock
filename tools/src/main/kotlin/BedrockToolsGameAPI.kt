@@ -24,20 +24,13 @@ object BedrockToolsGameAPI : GameAPI {
     override fun logError(msg: String?, error: Exception?) = ToolsLogger.logError(msg, error)
     override fun logInfo(msg: String) = ToolsLogger.logInfo(msg)
 
-    override fun getRGBPalette(): List<Int> {
-        return mod.lucky.bedrock.common.getRGBPalette()
-    }
-
-    override fun getEnchantments(type: EnchantmentType): List<Enchantment> {
-        return mod.lucky.bedrock.common.getEnchantments(type)
-    }
-
-    override fun getStatusEffect(id: String): StatusEffect? { 
-        return mod.lucky.bedrock.common.getStatusEffect(id)
-    }
-
     override fun getUsefulPotionIds(): List<String> = throw NoGameContextException()
     override fun getSpawnEggIds(): List<String> = throw NoGameContextException()
+
+    override fun getEnchantments(): List<Enchantment> = mod.lucky.bedrock.common.getEnchantments()
+    override fun getUsefulStatusEffects(): List<StatusEffect> = mod.lucky.bedrock.common.getUsefulStatusEffects()
+    override fun getRGBPalette(): List<Int> = mod.lucky.bedrock.common.getRGBPalette()
+
     override fun getEntityPos(entity: Entity): Vec3d = throw NoGameContextException()
     override fun getPlayerName(player: PlayerEntity): String = throw NoGameContextException()
     override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) = throw NoGameContextException()

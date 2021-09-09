@@ -72,19 +72,22 @@ fun registerEnchantments(
     registerMultiListTemplateVar(
         templateName,
         getValues = { context ->
-            val enchantments = types.flatMap { gameAPI.getEnchantments(it).filter { if (!includeCurses) !it.isCurse else true } }
+            val enchantments = gameAPI.getEnchantments().filter {
+                if (it.type !in types) false 
+                else if (!includeCurses && it.isCurse) false
+                else true
+            }
             enchantments.map { randEnchInstance(context.random, it) }
         },
         defaultAmount = defaultAmount,
     )
 }
 
-fun registerStatusEffects(templateName: String, effectIds: List<String>, defaultAmount: IntRange) {
+fun registerStatusEffects(templateName: String, statusEffects: List<StatusEffect>, defaultAmount: IntRange) {
     registerMultiListTemplateVar(
         templateName,
         getValues = { context ->
-            val effects = effectIds.map { gameAPI.getStatusEffect(it)!! }
-            effects.map { randEffectInstance(context.random, it) }
+            statusEffects.map { randEffectInstance(context.random, it) }
         },
         defaultAmount = defaultAmount,
     )
@@ -185,41 +188,16 @@ fun registerGameDependentTemplateVars(gameType: GameType) {
 
     registerEnchantments("randEnchantment", EnchantmentType.values().toList(), defaultAmount = 1..1)
 
-    val goodPotionEffects = listOf(
-        "speed",
-        "haste",
-        "strength",
-        "instant_health",
-        "jump_boost",
-        "regeneration",
-        "resistance",
-        "fire_resistance",
-        "water_breathing",
-        "invisibility",
-        "night_vision",
-        "health_boost",
-        "absorption",
-        "saturation",
-        "glowing",
-        "luck",
+    registerStatusEffects(
+        "luckyPotionEffects",
+        gameAPI.getUsefulStatusEffects().filter { !it.isNegative },
+        defaultAmount = 7..10
     )
-    registerStatusEffects("luckyPotionEffects", goodPotionEffects, defaultAmount = 7..10)
-
-    val badPotionEffects = listOf(
-        "slowness",
-        "mining_fatigue",
-        "instant_damage",
-        "nausea",
-        "blindness",
-        "hunger",
-        "weakness",
-        "poison",
-        "wither",
-        "levitation",
-        "unluck",
-        "slow_falling",
+    registerStatusEffects(
+        "unluckyPotionEffects",
+        gameAPI.getUsefulStatusEffects().filter { it.isNegative },
+        defaultAmount = 5..7
     )
-    registerStatusEffects("unluckyPotionEffects", badPotionEffects, defaultAmount = 5..7)
 }
 
 fun registerCommonTemplateVars() {

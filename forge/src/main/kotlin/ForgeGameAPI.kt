@@ -13,6 +13,7 @@ import mod.lucky.forge.game.DelayedDrop
 import mod.lucky.java.*
 import mod.lucky.java.game.DelayedDropData
 import mod.lucky.java.game.spawnEggSuffix
+import mod.lucky.java.game.usefulStatusEffectIds
 import mod.lucky.java.game.uselessPostionNames
 import net.minecraft.commands.CommandSource
 import net.minecraft.commands.CommandSourceStack
@@ -22,6 +23,7 @@ import net.minecraft.core.particles.ParticleType
 import net.minecraft.nbt.NbtUtils
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.*
+import net.minecraft.world.effect.MobEffectCategory
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
@@ -31,8 +33,6 @@ import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.projectile.Arrow
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.alchemy.PotionUtils
-import net.minecraft.world.item.enchantment.EnchantmentHelper
-import net.minecraft.world.item.enchantment.Enchantments
 import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.Rotation
@@ -41,7 +41,9 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import net.minecraftforge.registries.ForgeRegistries
+import java.awt.Color
 import java.util.*
+import kotlin.random.Random
 import kotlin.random.asJavaRandom
 
 typealias MCIdentifier = net.minecraft.resources.ResourceLocation
@@ -91,22 +93,22 @@ fun toServerWorld(world: World): MCServerWorld {
     return (world as MCServerWorld).level
 }
 
-private fun toMCEnchantmentType(type: EnchantmentType): MCEnchantmentType {
-    return when (type) {
-        EnchantmentType.ARMOR -> MCEnchantmentType.ARMOR
-        EnchantmentType.ARMOR_FEET -> MCEnchantmentType.ARMOR_FEET
-        EnchantmentType.ARMOR_LEGS -> MCEnchantmentType.ARMOR_LEGS
-        EnchantmentType.ARMOR_CHEST -> MCEnchantmentType.ARMOR_CHEST
-        EnchantmentType.ARMOR_HEAD -> MCEnchantmentType.ARMOR_HEAD
-        EnchantmentType.WEAPON -> MCEnchantmentType.WEAPON
-        EnchantmentType.DIGGER -> MCEnchantmentType.DIGGER
-        EnchantmentType.FISHING_ROD -> MCEnchantmentType.FISHING_ROD
-        EnchantmentType.TRIDENT -> MCEnchantmentType.TRIDENT
-        EnchantmentType.BREAKABLE -> MCEnchantmentType.BOW
-        EnchantmentType.BOW -> MCEnchantmentType.BOW
-        EnchantmentType.WEARABLE -> MCEnchantmentType.WEARABLE
-        EnchantmentType.CROSSBOW -> MCEnchantmentType.CROSSBOW
-        EnchantmentType.VANISHABLE -> MCEnchantmentType.VANISHABLE
+private fun toEnchantmentType(mcType: MCEnchantmentType): EnchantmentType {
+    return when (mcType) {
+        MCEnchantmentType.ARMOR -> EnchantmentType.ARMOR
+        MCEnchantmentType.ARMOR_FEET -> EnchantmentType.ARMOR_FEET
+        MCEnchantmentType.ARMOR_LEGS -> EnchantmentType.ARMOR_LEGS
+        MCEnchantmentType.ARMOR_CHEST -> EnchantmentType.ARMOR_CHEST
+        MCEnchantmentType.ARMOR_HEAD -> EnchantmentType.ARMOR_HEAD
+        MCEnchantmentType.WEAPON -> EnchantmentType.WEAPON
+        MCEnchantmentType.DIGGER -> EnchantmentType.DIGGER
+        MCEnchantmentType.FISHING_ROD -> EnchantmentType.FISHING_ROD
+        MCEnchantmentType.TRIDENT -> EnchantmentType.TRIDENT
+        MCEnchantmentType.BREAKABLE -> EnchantmentType.BOW
+        MCEnchantmentType.BOW -> EnchantmentType.BOW
+        MCEnchantmentType.WEARABLE -> EnchantmentType.WEARABLE
+        MCEnchantmentType.CROSSBOW -> EnchantmentType.CROSSBOW
+        MCEnchantmentType.VANISHABLE -> EnchantmentType.VANISHABLE
     }
 }
 
@@ -138,6 +140,8 @@ private fun createCommandSource(
 object ForgeGameAPI : GameAPI {
     private var usefulPotionIds: List<String> = emptyList()
     private var spawnEggIds: List<String> = emptyList()
+    private var enchantments: List<Enchantment> = emptyList()
+    private var usefulStatusEffects: List<StatusEffect> = emptyList()
 
     fun init() {
         usefulPotionIds = ForgeRegistries.POTIONS.keys.filter {
@@ -148,6 +152,26 @@ object ForgeGameAPI : GameAPI {
             it.namespace == "minecraft"
                 && it.path.endsWith(spawnEggSuffix)
         }.map { it.toString() }.toList()
+
+        usefulStatusEffects = usefulStatusEffectIds.map {
+            val mcId = MCIdentifier(it)
+            val mcStatusEffect = ForgeRegistries.MOB_EFFECTS.getValue(mcId)!!
+            StatusEffect(
+                id = mcId.toString(),
+                intId = MCStatusEffect.getId(mcStatusEffect),
+                isNegative = mcStatusEffect.category == MobEffectCategory.HARMFUL,
+                isInstant = mcStatusEffect.isInstantenous,
+            )
+        }
+
+        enchantments = ForgeRegistries.ENCHANTMENTS.entries.map {
+            Enchantment(
+                it.key.toString(),
+                type = toEnchantmentType(it.value.category),
+                maxLevel = it.value.maxLevel,
+                isCurse = it.value.isCurse,
+            )
+        }
     }
 
     override fun logError(msg: String?, error: Exception?) {
@@ -162,25 +186,14 @@ object ForgeGameAPI : GameAPI {
 
     override fun getUsefulPotionIds(): List<String> = usefulPotionIds
     override fun getSpawnEggIds(): List<String> = spawnEggIds
+    override fun getEnchantments(): List<Enchantment> = enchantments
+    override fun getUsefulStatusEffects(): List<StatusEffect> = usefulStatusEffects
 
     override fun getRGBPalette(): List<Int> {
         return DyeColor.values().toList().map {
             val c = it.textureDiffuseColors
             Color(c[0], c[1], c[2]).rgb
         }
-    }
-
-    override fun getEnchantments(types: EnchantmentType): List<Enchantment> {
-        val mcType = toMCEnchantmentType(it)
-        return ForgeRegistries.ENCHANTMENTS.entries.filter { it.value.category == mcType }.map {
-            Enchantment(it.key.toString(), it.value.maxLevel, it.value.isCurse)
-        }
-    }
-
-    override fun getStatusEffect(id: String): StatusEffect? {
-        val mcId = MCIdentifier(id)
-        val effect = ForgeRegistries.MOB_EFFECTS.getValue(mcId) ?: return null
-        return StatusEffect(id = mcId.toString(), intId = MCStatusEffect.getId(effect), isInstant = effect.isInstantenous)
     }
 
     override fun getEntityPos(entity: Entity): Vec3d {
@@ -460,7 +473,7 @@ object ForgeGameAPI : GameAPI {
             mcCornerPos,
             mcCornerPos,
             placementSettings,
-            RANDOM.asJavaRandom(),
+            Random.asJavaRandom(),
             if (notify) 3 else 2
         )
     }

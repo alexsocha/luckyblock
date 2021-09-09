@@ -17,10 +17,10 @@ object MockGameAPI : GameAPI {
     override fun getUsefulPotionIds(): List<String> = listOf("minecraft:healing")
     override fun getSpawnEggIds(): List<String> = listOf("minecraft:pig_spawn_egg")
     override fun getRGBPalette(): List<Int> = listOf(0)
-    override fun getEnchantments(type: EnchantmentType): List<Enchantment> =
-        listOf(Enchantment("minecraft:sharpness", 4, false))
-    override fun getStatusEffect(id: String): StatusEffect =
-        StatusEffect(id = "minecraft:speed", intId = 0, isInstant = false)
+    override fun getEnchantments(): List<Enchantment> =
+        listOf(Enchantment("minecraft:sharpness", type = EnchantmentType.WEAPON, maxLevel = 4, isCurse = false))
+    override fun getUsefulStatusEffects(): List<StatusEffect> =
+        listOf(StatusEffect("minecraft:speed", 1, isNegative = false, isInstant = false))
 
     override fun getEntityPos(entity: Entity): Vec3d = (entity as MockEntity).pos
     override fun getPlayerName(player: PlayerEntity): String = "Test Player"
