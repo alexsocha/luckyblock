@@ -290,7 +290,7 @@ group(type=fill,ID=air,size=(1,51,1);
 )@luck=2
 
 / baby player
-type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,HandItems=[(id=stone_pickaxe,Count=1)],ArmorItems=[(id=leather_boots,Count=1,tag=(display=(color=#randColor))),(id=leather_leggings,Count=1,tag=(display=(color=#randColor))),(id=leather_chestplate,Count=1,tag=(display=(color=#randColor))),(id=player_head,Count=1,tag=(SkullOwner=#pName))],Rotation=[#pYaw+180f,0f],CustomName=#jsonStr(text="Baby #pName"),CustomNameVisible=true)@luck=0
+type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,HandItems=[(id=stone_pickaxe,Count=1)],ArmorItems=[(id=leather_boots,Count=1,tag=(display=(color=#randColor))),(id=leather_leggings,Count=1,tag=(display=(color=#randColor))),(id=leather_chestplate,Count=1,tag=(display=(color=#randColor))),(id=player_head,Count=1,tag=(SkullOwner=Dev))],Rotation=[0f,0f])@luck=0
 
 / ==== Monster Apocalyple ====
 

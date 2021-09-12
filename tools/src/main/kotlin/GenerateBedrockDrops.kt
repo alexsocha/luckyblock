@@ -125,7 +125,12 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
                 templateContext = DropTemplateContext(drop = drop, dropContext = null, random = random),
             )
 
-            val firstStructure = createDropStructure(drop.type, evalAttr(dropProps, evalContext) as DictAttr)
+            val firstStructure = try {
+                createDropStructure(drop.type, evalAttr(dropProps, evalContext) as DictAttr)
+            } catch (e: MissingDropContextException) {
+                ToolsLogger.logError("Can't generate drop which relies on in-game context: ${dropToString(drop)}")
+                throw e
+            }
 
             val dropStructurePrefix = "${blockId}_drop_"
             val newStructures: List<Pair<String, DictAttr>> = if (random.wasUsed()) {

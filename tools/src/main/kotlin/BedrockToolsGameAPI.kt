@@ -11,8 +11,8 @@ class NoGameContextException : Exception("This API feature cannot be used withou
 
 object ToolsLogger : Logger {
     override fun logError(msg: String?, error: Exception?) {
-        if (msg != null) println(error)
-        if (error != null) println(error)
+        if (msg != null) System.err.println(msg)
+        if (error != null) error.printStackTrace()
     }
 
     override fun logInfo(msg: String) {

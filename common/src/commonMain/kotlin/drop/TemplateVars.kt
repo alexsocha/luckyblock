@@ -9,6 +9,8 @@ import kotlin.math.cos
 import kotlin.math.round
 import kotlin.math.sin
 
+class MissingDropContextException : Exception() {}
+
 fun <T : Number> registerVec3TemplateVar(
     baseName: String,
     type: AttrType,
@@ -204,50 +206,70 @@ fun registerCommonTemplateVars() {
     registerTemplateVar("randPotion") { _, context -> stringAttrOf(chooseRandomFrom(context.random, gameAPI.getUsefulPotionIds())) }
     registerTemplateVar("randSpawnEgg") { _, context -> stringAttrOf(chooseRandomFrom(context.random, gameAPI.getSpawnEggIds())) }
     registerTemplateVar("randColor") { _, context -> stringAttrOf(chooseRandomFrom(context.random, colorNames)) }
+
+    fun <T> ensureDropContext(context: DropTemplateContext, fn: (dropContext: DropContext) -> T): T {
+        if (context.dropContext == null) throw MissingDropContextException()
+        return fn(context.dropContext)
+    }
+
     registerTemplateVar("time") { _, context ->
-        stringAttrOf(
-            gameAPI.getWorldTime(context.dropContext!!.world).toString()
-        )
+        ensureDropContext(context) {
+            stringAttrOf(gameAPI.getWorldTime(it.world).toString())
+        }
     }
 
     registerVec3TemplateVar("bPos", AttrType.INT) { _, context ->
-        context.dropContext!!.pos.floor()
+        ensureDropContext(context) { it.pos.floor() }
     }
     registerVec3TemplateVar("bExactPos", AttrType.DOUBLE) { _, context ->
-        context.dropContext!!.pos
+        ensureDropContext(context) { it.pos }
     }
 
     registerVec3TemplateVar("ePos", AttrType.INT) { _, context ->
-        context.dropContext!!.hitEntity?.let {
-            gameAPI.getEntityPos(it).floor()
+        ensureDropContext(context) {
+            it.hitEntity?.let { gameAPI.getEntityPos(it).floor() }
         }
     }
     registerVec3TemplateVar("eExactPos", AttrType.DOUBLE) { _, context ->
-        context.dropContext!!.hitEntity?.let { gameAPI.getEntityPos(it) }
+        ensureDropContext(context) {
+            it.hitEntity?.let { gameAPI.getEntityPos(it) }
+        }
     }
     registerVec3TemplateVar("pPos", AttrType.INT) { _, context ->
-        context.dropContext!!.player?.let { gameAPI.getEntityPos(it).floor() }
+        ensureDropContext(context) {
+            it.player?.let { gameAPI.getEntityPos(it).floor() }
+        }
     }
     registerVec3TemplateVar("pExactPos", AttrType.DOUBLE) { _, context ->
-        context.dropContext!!.player?.let { gameAPI.getEntityPos(it) }
+        ensureDropContext(context) {
+            it.player?.let { gameAPI.getEntityPos(it) }
+        }
     }
 
     registerTemplateVar("pName") { _, context ->
-        stringAttrOf(context.dropContext!!.player?.let { gameAPI.getPlayerName(it) } ?: "")
+        ensureDropContext(context) {
+            stringAttrOf(it.player?.let { gameAPI.getPlayerName(it) } ?: "")
+        }
     }
 
     registerTemplateVar("pDirect") { _, context ->
-        context.dropContext!!.player?.let {
-            val rotInt = round((gameAPI.getPlayerHeadYawDeg(it) + 180.0) / 90.0).toInt() % 4
-            val rotIntClamped = if (rotInt < 0) (rotInt + 4) else rotInt
-            intAttrOf(rotIntClamped)
-        } ?: intAttrOf(0)
+        ensureDropContext(context) {
+            it.player?.let {
+                val rotInt = round((gameAPI.getPlayerHeadYawDeg(it) + 180.0) / 90.0).toInt() % 4
+                val rotIntClamped = if (rotInt < 0) (rotInt + 4) else rotInt
+                intAttrOf(rotIntClamped)
+            } ?: intAttrOf(0)
+        }
     }
     registerTemplateVar("pYaw") { _, context ->
-        doubleAttrOf(context.dropContext!!.player?.let { gameAPI.getPlayerHeadYawDeg(it) } ?: 0.0)
+        ensureDropContext(context) {
+            doubleAttrOf(it.player?.let { gameAPI.getPlayerHeadYawDeg(it) } ?: 0.0)
+        }
     }
     registerTemplateVar("pPitch") { _, context ->
-        doubleAttrOf(context.dropContext!!.player?.let { gameAPI.getPlayerHeadPitchDeg(it) } ?: 0.0)
+        ensureDropContext(context) {
+            doubleAttrOf(it.player?.let { gameAPI.getPlayerHeadPitchDeg(it) } ?: 0.0)
+        }
     }
 
     fun randInRange(random: Random, minAttr: ValueAttr, maxAttr: ValueAttr): ValueAttr {
