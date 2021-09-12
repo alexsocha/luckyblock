@@ -114,19 +114,6 @@ object BedrockGameAPI : GameAPI {
         } else {
             return null
         }
-
-        /*
-        BedrockGameAPI.logInfo("Running query 5...")
-        val blockEntities = systemServer.getEntitiesFromQuery(luckyBlockEntityQuery, pos.x, pos.x + 1, pos.y, pos.y + 1, pos.z, pos.z + 1)
-        BedrockGameAPI.logInfo("Finished query")
-
-        val dropContainer = blockEntities.getOrNull(0)?.let {
-            val unparsedDropContainer = systemServer.getComponent<UnparsedDropContainer?>(it, "lucky:lucky_block_entity_data").data
-            unparsedDropContainer?.let { c -> parseDropContainer(c) }
-        }
-
-        blockEntities.forEach { systemServer.destroyEntity(it) }
-         */
     }
 
     override fun logError(msg: String?, error: Exception?) {
@@ -147,8 +134,8 @@ object BedrockGameAPI : GameAPI {
         return mod.lucky.bedrock.common.getRGBPalette()
     }
 
-    override fun getEnchantments(type: EnchantmentType): List<Enchantment> {
-        return mod.lucky.bedrock.common.getEnchantments(types)
+    override fun getEnchantments(): List<Enchantment> {
+        return mod.lucky.bedrock.common.getEnchantments()
     }
     override fun getUsefulStatusEffects(): List<StatusEffect> {
         return mod.lucky.bedrock.common.getUsefulStatusEffects()
