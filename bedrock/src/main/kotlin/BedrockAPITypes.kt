@@ -84,7 +84,7 @@ external class MCServerSystem {
 
     fun getBlock(tickingArea: MCTickingArea, blockPos: MCBlockPos): MCBlock
 
-    fun createEntity(entityType: String, entityId: String): MCEntity
+    fun createEntity(entityType: String, entityId: String): MCEntity?
     fun destroyEntity(entity: MCEntity)
 
     fun executeCommand(command: String, callback: (result: MCEvent<MCCommandResult>) -> Unit)

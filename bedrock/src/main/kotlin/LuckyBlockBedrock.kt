@@ -7,6 +7,7 @@ import mod.lucky.common.drop.*
 import mod.lucky.common.attribute.*
 import mod.lucky.common.gameAPI
 import mod.lucky.common.LuckyRegistry
+import mod.lucky.common.LuckyBlockSettings
 import kotlin.js.JSON.stringify
 import kotlin.Error
 
@@ -23,17 +24,14 @@ data class LuckyBlockConfig(
 )
 
 object BedrockLuckyRegistry {
-    val blocks: MutableMap<String, LuckyBlockConfig> = HashMap()
+    val blockLuck: MutableMap<String, Int> = HashMap()
 }
 
 fun registerModConfig(blockId: String, unparsedConfig: UnparsedModConfig) {
-    BedrockLuckyRegistry.blocks[blockId] = LuckyBlockConfig(
-        dropContainer = DropContainer(
-            drops = dropsFromStrList(splitLines(unparsedConfig.drops.split('\n'))),
-            luck = unparsedConfig.luck
-        ),
-        doDropsOnCreativeMode = unparsedConfig.doDropsOnCreativeMode,
-    )
+    LuckyRegistry.drops[blockId] = dropsFromStrList(splitLines(unparsedConfig.drops.split('\n')))
+    LuckyRegistry.blockSettings[blockId] = LuckyBlockSettings(doDropsOnCreativeMode=unparsedConfig.doDropsOnCreativeMode)
+    BedrockLuckyRegistry.blockLuck[blockId] = unparsedConfig.luck
+
     if (unparsedConfig.structures != null) {
         for (k in js("Object").keys(unparsedConfig.structures)) {
             val unparsedStruct: String = unparsedConfig.structures[k]
@@ -45,7 +43,7 @@ fun registerModConfig(blockId: String, unparsedConfig: UnparsedModConfig) {
     }
 }
 
-fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayer, pos: BlockPos, blockId: String, blockConfig: LuckyBlockConfig) {
+fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayer, pos: BlockPos, blockId: String) {
     try {
         BedrockGameAPI.logInfo("Starting drop")
         val vecPos = Vec3d(pos.x + 0.5, pos.y.toDouble(), pos.z + 0.5)
@@ -56,8 +54,8 @@ fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayer, pos: BlockPos,
         val context = DropContext(world = world, pos = vecPos, player = player, sourceId = blockId)
 
         runRandomDrop(
-            blockEntityDropContainer?.drops ?: blockConfig.dropContainer.drops,
-            blockEntityDropContainer?.luck ?: blockConfig.dropContainer.luck,
+            customDrops = blockEntityDropContainer?.drops,
+            luck = blockEntityDropContainer?.luck ?: BedrockLuckyRegistry.blockLuck[blockId] ?: 0,
             context,
             showOutput = true
         )
@@ -118,7 +116,7 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
         val event = eventWrapper.data
         val blockId = event.block_identifier
         if (blockId.startsWith("lucky:")) {
-            val blockConfig = BedrockLuckyRegistry.blocks.getOrElse(blockId) {
+            LuckyRegistry.drops.getOrElse(blockId) {
                 val unparsedModConfig = serverSystem.createEventData<UnparsedModConfig?>("${blockId}_config").data
 
                 if (unparsedModConfig == null) {
@@ -126,22 +124,18 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
                     null
                 } else {
                     registerModConfig(blockId, unparsedModConfig)
-                    BedrockLuckyRegistry.blocks[blockId]
                 }
             }
 
-            if (blockConfig != null) {
-                val world = serverSystem.getComponent<MCTickWorldComponent>(event.player, "minecraft:tick_world")!!.data
+            val world = serverSystem.getComponent<MCTickWorldComponent>(event.player, "minecraft:tick_world")!!.data
 
-                onPlayerDestroyedLuckyBlock(
-                    world = world,
-                    player = event.player,
-                    pos = toBlockPos(event.block_position),
-                    blockConfig = blockConfig,
-                    blockId = event.block_identifier,
-                )
-                serverSystem.log("finished event!")
-            }
+            onPlayerDestroyedLuckyBlock(
+                world = world,
+                player = event.player,
+                pos = toBlockPos(event.block_position),
+                blockId = event.block_identifier,
+            )
+            serverSystem.log("finished event!")
         }
     }
 }

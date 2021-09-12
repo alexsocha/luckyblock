@@ -47,8 +47,9 @@ val NBT_IDS = mapOf(
 )
 
 private fun putString(buffer: DynamicByteBuffer, value: String) {
-    buffer.putShort(value.length.toShort())
-    value.encodeToByteArray().forEach { buffer.putByte(it) }
+    val byteArray = value.encodeToByteArray()
+    buffer.putShort(byteArray.size.toShort())
+    byteArray.forEach { buffer.putByte(it) }
 }
 
 fun writeAttrToNBT(buffer: DynamicByteBuffer, attr: Attr) {

@@ -193,8 +193,12 @@ object BedrockGameAPI : GameAPI {
         player: PlayerEntity?,
         sourceId: String,
     ) {
-        logInfo("spawning entity!!!!")
         val entity = serverSystem.createEntity("entity", getIDWithNamespace(id))
+        if (entity == null) {
+            logError("Invalid entity ID: ${id}")
+            return
+        }
+
         val posComponent = serverSystem.getComponent<MCVecPos>(entity, "minecraft:position")!!
         posComponent.data.x = pos.x
         posComponent.data.y = pos.y
@@ -229,9 +233,12 @@ object BedrockGameAPI : GameAPI {
 
     override fun setTime(world: World, time: Long) {}
     override fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?) {
-        //serverSystem.log("dropping item...")
-
         val itemEntity = serverSystem.createEntity("item_entity", getIDWithNamespace(id))
+        if (itemEntity == null) {
+            logError("Invalid item ID: ${id}")
+            return
+        }
+
         val posComponent = serverSystem.getComponent<MCVecPos>(itemEntity, "minecraft:position")!!
         posComponent.data.x = pos.x + (defaultRandom.randDouble(0.0, 1.0) - 0.5)
         posComponent.data.y = pos.y + 0.5

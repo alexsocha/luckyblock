@@ -6,9 +6,9 @@ import mod.lucky.common.attribute.evalAttr
 
 import kotlin.math.pow
 
-const val DEBUG = false
+const val DEBUG = true
 private var debugDropFilters = listOf<String>()
-private var debugDropIndexRange = 0..1000
+private var debugDropIndexRange = 33..34
 private var debugDropIndex = debugDropIndexRange.first
 
 class DropError(msg: String) : Exception("Error performing Lucky Block function: $msg")
@@ -147,8 +147,8 @@ fun runDropAfterDelay(delayedDrop: SingleDrop, context: DropContext) {
 
 fun nextDebugDrop(drops: List<WeightedDrop>): WeightedDrop {
     // during hot reloading, edit the values here
-    val newFilters: List<String> = listOf()
-    val newIndexRange = 0..1000
+    val newFilters: List<String> = debugDropFilters
+    val newIndexRange = debugDropIndexRange
 
     if (newIndexRange != debugDropIndexRange || newFilters != debugDropFilters) {
         debugDropIndexRange = newIndexRange

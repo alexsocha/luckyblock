@@ -76,13 +76,7 @@ tasks.register<JavaExec>("generateDrops") {
     dependsOn(project(":tools").tasks.getByName("installDist"))
 }
 
-/*
-task<NodeTask>("webpack") {
-    setScript(File("$rootDir/build/js/node_modules/webpack/bin/webpack"))
-}
-*/
-
-task<Copy>("copyRuntimePacks") {
+tasks.register<Sync>("copyRuntimePacks") {
     val addonPaths = mapOf(
         "LuckyBlock" to "./build/processedResources/js/main/addon",
         "LuckyBlockCustom" to "./build/processedResources/js/main/template-addons/template-addon-1-bedrock",
@@ -100,16 +94,19 @@ task<Copy>("copyRuntimePacks") {
     into("./run")
     dependsOn("copyServerScript")
     dependsOn("generateDrops")
+
+    // workaround: gradle doesn't always detect that the input folder has changed
+    outputs.upToDateWhen { false }
 }
 
-task<Copy>("copyServerScript") {
+tasks.register<Copy>("copyServerScript") {
     from("./build/distributions/serverScript.js")
     into("$addonDistDir/behavior_pack/scripts/server")
 
     dependsOn("generateDrops")
 }
 
-task<Zip>("zipPack") {
+tasks.register<Zip>("zipPack") {
     archiveFileName.set("pack.zip")
     destinationDirectory.set(file("./dist"))
     from("./build/main/resources/pack")

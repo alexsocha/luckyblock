@@ -56,7 +56,7 @@ ID=saddle,amount=2@luck=0
 ID=cake@luck=0
 ID=rotten_flesh@luck=-1
 ID=nether_star@luck=2
-ID=red_flower,NBTTag=(tag=(display=(Name=#jsonStr(text="Romantic Rose",color=dark_red))))
+ID=red_flower,NBTTag=(display=(Name="$4Romantic Rose"))
 ID=rabbit_stew,amount=#rand(5,7)@luck=1
 
 / ========== GROUPS ==========

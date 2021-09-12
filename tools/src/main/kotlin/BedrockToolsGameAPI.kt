@@ -24,9 +24,8 @@ object BedrockToolsGameAPI : GameAPI {
     override fun logError(msg: String?, error: Exception?) = ToolsLogger.logError(msg, error)
     override fun logInfo(msg: String) = ToolsLogger.logInfo(msg)
 
-    override fun getUsefulPotionIds(): List<String> = throw NoGameContextException()
-    override fun getSpawnEggIds(): List<String> = throw NoGameContextException()
-
+    override fun getUsefulPotionIds(): List<String> = mod.lucky.bedrock.common.getUsefulPotionIds()
+    override fun getSpawnEggIds(): List<String> = mod.lucky.bedrock.common.getSpawnEggIds()
     override fun getEnchantments(): List<Enchantment> = mod.lucky.bedrock.common.getEnchantments()
     override fun getUsefulStatusEffects(): List<StatusEffect> = mod.lucky.bedrock.common.getUsefulStatusEffects()
     override fun getRGBPalette(): List<Int> = mod.lucky.bedrock.common.getRGBPalette()

@@ -72,6 +72,14 @@ fun getRGBPalette(): List<Int> {
     return colors.map { it.toInt(16) }
 }
 
+fun getUsefulPotionIds(): List<String> {
+    return listOf("")
+}
+
+fun getSpawnEggIds(): List<String> {
+    return listOf("")
+}
+
 fun getEnchantments(): List<Enchantment> {
     return ENCHANTMENTS
 }
