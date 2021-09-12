@@ -42,10 +42,10 @@ ID=dropper,amount=8@luck=0
 ID=hay_block,amount=8@luck=0
 
 / chests
-type=block,ID=chest,tileEntity=(Items=#chestLootTable("chests/spawn_bonus_chest"))@luck=0
-type=block,ID=chest,tileEntity=(Items=#chestLootTable("chests/simple_dungeon"))@luck=1
-type=block,ID=chest,tileEntity=(Items=#chestLootTable("chests/stronghold_corridor"))@luck=1
-type=block,ID=chest,tileEntity=(Items=#chestLootTable("chests/shipwreck_map"))@luck=1
+type=block,ID=chest,tileEntity=(id=Chest,LootTable="loot_tables/chests/spawn_bonus_chest.json")@luck=0
+type=block,ID=chest,tileEntity=(id=Chest,LootTable="loot_tables/chests/simple_dungeon.json")@luck=1
+type=block,ID=chest,tileEntity=(id=Chest,LootTable="loot_tables/chests/stronghold_corridor.json")@luck=1
+type=block,ID=chest,tileEntity=(id=Chest,LootTable="loot_tables/chests/buriedtreasure.json")@luck=1
 
 / ========= ITEMS ==========
 
@@ -56,7 +56,7 @@ ID=saddle,amount=2@luck=0
 ID=cake@luck=0
 ID=rotten_flesh@luck=-1
 ID=nether_star@luck=2
-ID=poppy,NBTTag=(display=(Name=#jsonStr(text="Romantic Rose",color=dark_red)))@luck=-1
+ID=red_flower,NBTTag=(tag=(display=(Name=#jsonStr(text="Romantic Rose",color=dark_red))))
 ID=rabbit_stew,amount=#rand(5,7)@luck=1
 
 / ========== GROUPS ==========
@@ -110,7 +110,7 @@ group(
     ID=diamond,amount=#rand(8,16);
     ID=emerald,amount=#rand(8,16);
     ID=lapis_lazuli,amount=#rand(8,16);
-    type=structure,id=small_fireworks.luckystruct
+    type=structure,id=small_fireworks.luckystruct,posOffsetY=-1
 )@luck=2
 
 / quartz
