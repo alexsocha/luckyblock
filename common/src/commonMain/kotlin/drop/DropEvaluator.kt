@@ -8,7 +8,7 @@ import kotlin.math.pow
 
 const val DEBUG = true
 private var debugDropFilters = listOf<String>()
-private var debugDropIndexRange = 33..34
+private var debugDropIndexRange = 35..50
 private var debugDropIndex = debugDropIndexRange.first
 
 class DropError(msg: String) : Exception("Error performing Lucky Block function: $msg")

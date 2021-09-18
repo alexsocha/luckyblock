@@ -4,6 +4,7 @@ import kotlinx.cli.*
 import mod.lucky.common.*
 import mod.lucky.common.drop.*
 import mod.lucky.common.attribute.*
+import mod.lucky.bedrock.common.registerBedrockTemplateVars
 
 import mod.lucky.java.loader.DropStructureResource
 import mod.lucky.java.loader.loadAddonResources
@@ -65,6 +66,7 @@ fun createDropStructure(dropType: String, dropProps: DictAttr, random: Random): 
                             "Item" to dictAttrOf(
                                 "Name" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
                                 "Count" to ValueAttr(AttrType.BYTE, 1.toByte()),
+                                "Damage" to ValueAttr(AttrType.SHORT, dropProps.getWithDefault("data", 0.toShort())),
                                 "tag" to dropProps.getDict("nbttag"),
                             ),
                         ),
@@ -126,13 +128,13 @@ fun createDropStructure(dropType: String, dropProps: DictAttr, random: Random): 
 }
 
 fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDrops: GeneratedDrops): Pair<SingleDrop, GeneratedDrops> {
-    val nbtAttrKey = when {
-        drop.type == "item" && "nbttag" in drop.props -> "nbttag"
-        drop.type == "block" && "nbttag" in drop.props -> "nbttag"
-        drop.type == "entity" && "nbttag" in drop.props -> "nbttag"
-        else -> null
+    val shouldGenerate = when(drop.type) {
+        "item" -> "nbttag" in drop.props || "data" in drop.props
+        "block" -> "nbttag" in drop.props
+        "entity" -> "nbttag" in drop.props
+        else -> false
     }
-    val nbtAttr = nbtAttrKey?.let { drop.props[it] } ?: return Pair(drop, generatedDrops)
+    if (!shouldGenerate) return Pair(drop, generatedDrops)
 
     val dropSamples = drop.props.getWithDefault("samples", 2)
     val dropSeed = drop.props.getWithDefault("seed", seed)
@@ -142,8 +144,9 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
         "id" to drop.props["id"],
         "samples" to intAttrOf(dropSamples),
         "seed" to intAttrOf(dropSeed),
-        nbtAttrKey to nbtAttr,
+        "nbttag" to drop.props["nbttag"],
         *(if (drop.type == "block") arrayOf("state" to drop.props["state"]) else emptyArray()),
+        *(if (drop.type == "block" && "data" in drop.props) arrayOf("data" to drop.props["data"]),
     )
     val cacheKey = attrToSerializedString(dropProps)
 
@@ -256,6 +259,7 @@ fun main(args: Array<String>) {
     gameAPI = BedrockToolsGameAPI
     logger = ToolsLogger
     registerGameDependentTemplateVars(GameType.BEDROCK)
+    registerBedrockTemplateVars()
 
     val resources = loadAddonResources(File(inputFolder))!!
 
