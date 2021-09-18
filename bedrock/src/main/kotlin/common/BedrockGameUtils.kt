@@ -1,6 +1,16 @@
 package mod.lucky.bedrock.common
 
 import mod.lucky.common.*
+import mod.lucky.common.LuckyRegistry.registerTemplateVar
+import mod.lucky.common.attribute.*
+
+data class BedrockPotion(
+    val name: String,
+    val id: Int,
+    val extendedId: Int? = null,
+    val level2Id: Int? = null,
+    val isNegative: Boolean,
+)
 
 val USEFUL_STATUS_EFFECTS = listOf(
     StatusEffect("speed", 1, isNegative=false, isInstant=false),
@@ -24,6 +34,25 @@ val USEFUL_STATUS_EFFECTS = listOf(
     StatusEffect("absorption", 22, isNegative=false, isInstant=false),
     StatusEffect("saturation", 23, isNegative=false, isInstant=false),
     StatusEffect("fatal_poison", 25, isNegative=true, isInstant=false),
+)
+
+val USEFUL_POTIONS = listOf(
+    BedrockPotion("night_vision", 5, extendedId=6, isNegative=false),
+    BedrockPotion("invisibility", 7, extendedId=8, isNegative=false),
+    BedrockPotion("leaping", 9, extendedId=10, level2Id=11, isNegative=false),
+    BedrockPotion("fire_resistance", 12, extendedId=13, isNegative=false),
+    BedrockPotion("swiftness", 15, extendedId=16, level2Id=17, isNegative=false),
+    BedrockPotion("slowness", 17, extendedId=18, level2Id=42, isNegative=true),
+    BedrockPotion("water_breathing", 19, extendedId=20, isNegative=false),
+    BedrockPotion("healing", 21, level2Id=22, isNegative=false),
+    BedrockPotion("harming", 23, level2Id=24, isNegative=true),
+    BedrockPotion("poison", 25, extendedId=26, level2Id=27, isNegative=true),
+    BedrockPotion("regeneration", 28, extendedId=29, level2Id=30, isNegative=false),
+    BedrockPotion("strength", 31, extendedId=32, level2Id=33, isNegative=false),
+    BedrockPotion("weakness", 34, extendedId=35, isNegative=true),
+    BedrockPotion("decay", 35, isNegative=true),
+    BedrockPotion("turtle_master", 37, extendedId=38, level2Id=39, isNegative=false),
+    BedrockPotion("slow_falling", 40, extendedId=41, isNegative=false),
 )
 
 val ENCHANTMENTS = listOf(
@@ -86,4 +115,26 @@ fun getEnchantments(): List<Enchantment> {
 
 fun getUsefulStatusEffects(): List<StatusEffect> {
     return USEFUL_STATUS_EFFECTS
+}
+
+fun registerBedrockTemplateVars() {
+    fun getRandomPotionData(potion: BedrockPotion, random: Random): Int {
+        val dataValues = listOf(potion.id, potion.extendedId, potion.level2Id).filterNotNull()
+        return chooseRandomFrom(random, dataValues)
+    }
+
+    registerTemplateVar("randPotionData") { _, context ->
+        val potion = chooseRandomFrom(context.random, USEFUL_POTIONS)
+        intAttrOf(getRandomPotionData(potion, context.random))
+    }
+
+    registerTemplateVar("randLuckyPotionData") { _, context ->
+        val potion = chooseRandomFrom(context.random, USEFUL_POTIONS.filter { !it.isNegative })
+        intAttrOf(getRandomPotionData(potion, context.random))
+    }
+
+    registerTemplateVar("randUnluckyPotionData") { _, context ->
+        val potion = chooseRandomFrom(context.random, USEFUL_POTIONS.filter { it.isNegative })
+        intAttrOf(getRandomPotionData(potion, context.random))
+    }
 }

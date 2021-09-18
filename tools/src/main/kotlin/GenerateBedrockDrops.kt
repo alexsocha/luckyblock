@@ -66,8 +66,8 @@ fun createDropStructure(dropType: String, dropProps: DictAttr, random: Random): 
                             "Item" to dictAttrOf(
                                 "Name" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
                                 "Count" to ValueAttr(AttrType.BYTE, 1.toByte()),
-                                "Damage" to ValueAttr(AttrType.SHORT, dropProps.getWithDefault("data", 0.toShort())),
-                                "tag" to dropProps.getDict("nbttag"),
+                                "Damage" to ValueAttr(AttrType.SHORT, dropProps.getWithDefault("data", 0).toShort()),
+                                *(if ("nbttag" in dropProps) arrayOf("tag" to dropProps.getDict("nbttag")) else emptyArray()),
                             ),
                         ),
                     ),
@@ -145,8 +145,8 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
         "samples" to intAttrOf(dropSamples),
         "seed" to intAttrOf(dropSeed),
         "nbttag" to drop.props["nbttag"],
+        *(if (drop.type == "item" && "data" in drop.props) arrayOf("data" to drop.props["data"]) else emptyArray()),
         *(if (drop.type == "block") arrayOf("state" to drop.props["state"]) else emptyArray()),
-        *(if (drop.type == "block" && "data" in drop.props) arrayOf("data" to drop.props["data"]),
     )
     val cacheKey = attrToSerializedString(dropProps)
 

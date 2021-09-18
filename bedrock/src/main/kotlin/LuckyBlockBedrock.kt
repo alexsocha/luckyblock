@@ -8,6 +8,7 @@ import mod.lucky.common.attribute.*
 import mod.lucky.common.gameAPI
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.LuckyBlockSettings
+import mod.lucky.bedrock.common.registerBedrockTemplateVars
 import kotlin.js.JSON.stringify
 import kotlin.Error
 
@@ -67,6 +68,7 @@ fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayer, pos: BlockPos,
 fun initServer(server: MCServer, serverSystem: MCServerSystem) {
     gameAPI = BedrockGameAPI
     registerGameDependentTemplateVars(GameType.BEDROCK)
+    registerBedrockTemplateVars()
 
     BedrockGameAPI.initServer(server, serverSystem)
 

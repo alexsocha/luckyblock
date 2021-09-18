@@ -44,6 +44,7 @@ fun registerDefaultDrops() {
             "id" to ValueSpec(AttrType.STRING),
             "nbttag" to DictSpec(emptyMap()),
             "components" to DictSpec(emptyMap()), // Bedrock Edition only
+            "data" to ValueSpec(AttrType.INT), // Bedrock Edition only
         ),
         "entity" to dictSpecOf(
             *commonSpecs,

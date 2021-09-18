@@ -65,7 +65,7 @@ ID=rabbit_stew,amount=#rand(5,7)@luck=1
 group(ID=bookshelf,amount=#rand(6,12);ID=book,amount=#rand(8,16))@luck=0
 
 / pumpkins and jack o'lanterns
-group(ID=pumpkin,amount=#rand(8,16);ID=jack_o_lantern,amount=#rand(8,16))@luck=0
+group(ID=pumpkin,amount=#rand(8,16);ID=lit_pumpkin,amount=#rand(8,16))@luck=0
 
 / golden apples
 group(ID=golden_apple,amount=#rand(2,4);ID=enchanted_golden_apple,amount=#rand(1,2))@luck=2
@@ -83,13 +83,13 @@ group:1:(group(ID=carrot,amount=#rand(8,16);ID=golden_carrot,amount=#rand(4,8));
 group(ID=ender_pearl,amount=10;ID=ender_eye,amount=5)@luck=2
 
 / potions
-ID=#randList(potion,splash_potion),NBTTag=(Potion=#randPotion),amount=#rand(4,8)@luck=1
+ID=#randList(potion,splash_potion),data=#randPotionData,amount=#rand(4,8),samples=8@luck=1
 
 / spawn eggs
 ID=#randSpawnEgg,amount=#rand(4,8)@luck=1
 
 / heads
-group:#rand(1,3):(ID=skeleton_skull;ID=wither_skeleton_skull;ID=zombie_head;ID=player_head;ID=creeper_head)@luck=0
+ID=skull,data=#rand(0,4),amount=#rand(1,3)@luck=0
 
 / jukebox and music discs
 group(ID=jukebox;ID=#randList(music_disc_11,music_disc_13,music_disc_blocks,music_disc_chirp,music_disc_far,music_disc_mall,music_disc_mellohi,music_disc_stal,music_disc_strad,music_disc_wait,music_disc_ward),amount=#rand(1,3))@luck=1
@@ -227,8 +227,6 @@ type=entity,ID=villager,NBTTag=(
         (buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_sword,Count=1,tag=(Enchantments=#luckySwordEnchantments,display=(Name=#jsonStr(text="Hero's Sword",color=blue,bold=true)))),maxUses=1),
         (buy=(id=diamond,Count=#rand(20,25)),sell=(id=bow,Count=1,tag=(Enchantments=#luckyBowEnchantments,display=(Name=#jsonStr(text="Hero's Bow",color=blue,bold=true)))),maxUses=1),
         (buy=(id=diamond,Count=#rand(10,15)),sell=(id=fishing_rod,Count=1,tag=(Enchantments=#luckyFishingRodEnchantments,display=(Name=#jsonStr(text="Hero's Fishing Rod",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=potion,Count=1,tag=(Potion="fire_resistance",CustomPotionEffects=#luckyPotionEffects,display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(7,12)),sell=(id=splash_potion,Count=1,tag=(Potion="harming",CustomPotionEffects=#unluckyPotionEffects,display=(Name=#jsonStr(text="Evil Potion",color=blue,bold=true)))),maxUses=1)
     ]),
     CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
 )@luck=1
@@ -433,16 +431,12 @@ group:#rand(1,2):(
 )@luck=2
 
 / hero's potion
-ID=potion,NBTTag=(
-    Potion="fire_resistance",
-    CustomPotionEffects=#luckyPotionEffects,
+ID=potion,amount=#rand(4,8),data=#randLuckyPotionData,samples=8,NBTTag=(
     display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true))
 )@luck=2
 
 / evil potion
-ID=splash_potion,NBTTag=(
-    Potion="harming",
-    CustomPotionEffects=#unluckyPotionEffects,
+ID=splash_potion,amount=#rand(4,8),data=#randUnluckyPotionData,samples=8,NBTTag=(
     display=(Name=#jsonStr(text="Evil Potion",color=dard_red,bold=true))
 )@luck=1
 

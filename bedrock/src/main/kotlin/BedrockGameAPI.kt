@@ -127,19 +127,12 @@ object BedrockGameAPI : GameAPI {
         serverSystem.log(msg)
     }
 
-    override fun getUsefulPotionIds(): List<String> = listOf("minecraft:healing")
-    override fun getSpawnEggIds(): List<String> = listOf("minecraft:pig_spawn_egg")
+    override fun getUsefulPotionIds(): List<String> = emptyList()
+    override fun getSpawnEggIds(): List<String> = emptyList()
 
-    override fun getRGBPalette(): List<Int> {
-        return mod.lucky.bedrock.common.getRGBPalette()
-    }
-
-    override fun getEnchantments(): List<Enchantment> {
-        return mod.lucky.bedrock.common.getEnchantments()
-    }
-    override fun getUsefulStatusEffects(): List<StatusEffect> {
-        return mod.lucky.bedrock.common.getUsefulStatusEffects()
-    }
+    override fun getRGBPalette(): List<Int> = mod.lucky.bedrock.common.getRGBPalette()
+    override fun getEnchantments(): List<Enchantment> = mod.lucky.bedrock.common.getEnchantments()
+    override fun getUsefulStatusEffects(): List<StatusEffect> = mod.lucky.bedrock.common.getUsefulStatusEffects()
 
     override fun getEntityPos(entity: Entity): Vec3d = (entity as MockEntity).pos
     override fun getPlayerName(player: PlayerEntity): String = "Test Player"
