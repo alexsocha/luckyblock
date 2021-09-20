@@ -95,6 +95,77 @@ val ENCHANTMENTS = listOf(
     Enchantment("unbreaking", EnchantmentType.BREAKABLE, maxLevel=3, isCurse=false),
 )
 
+val SPAWN_EGG_IDS = listOf(
+    "agent_spawn_egg",
+    "axolotl_spawn_egg",
+    "bat_spawn_egg",
+    "bee_spawn_egg",
+    "blaze_spawn_egg",
+    "cat_spawn_egg",
+    "cave_spider_spawn_egg",
+    "chicken_spawn_egg",
+    "cod_spawn_egg",
+    "cow_spawn_egg",
+    "creeper_spawn_egg",
+    "dolphin_spawn_egg",
+    "donkey_spawn_egg",
+    "drowned_spawn_egg",
+    "elder_guardian_spawn_egg",
+    "enderman_spawn_egg",
+    "endermite_spawn_egg",
+    "evoker_spawn_egg",
+    "fox_spawn_egg",
+    "ghast_spawn_egg",
+    "glow_squid_spawn_egg",
+    "goat_spawn_egg",
+    "guardian_spawn_egg",
+    "hoglin_spawn_egg",
+    "horse_spawn_egg",
+    "husk_spawn_egg",
+    "llama_spawn_egg",
+    "magma_cube_spawn_egg",
+    "mooshroom_spawn_egg",
+    "mule_spawn_egg",
+    "npc_spawn_egg",
+    "ocelot_spawn_egg",
+    "panda_spawn_egg",
+    "parrot_spawn_egg",
+    "phantom_spawn_egg",
+    "pig_spawn_egg",
+    "piglin_brute_spawn_egg",
+    "piglin_spawn_egg",
+    "pillager_spawn_egg",
+    "polar_bear_spawn_egg",
+    "pufferfish_spawn_egg",
+    "rabbit_spawn_egg",
+    "ravager_spawn_egg",
+    "salmon_spawn_egg",
+    "sheep_spawn_egg",
+    "shulker_spawn_egg",
+    "silverfish_spawn_egg",
+    "skeleton_horse_spawn_egg",
+    "skeleton_spawn_egg",
+    "slime_spawn_egg",
+    "spider_spawn_egg",
+    "squid_spawn_egg",
+    "stray_spawn_egg",
+    "strider_spawn_egg",
+    "tropical_fish_spawn_egg",
+    "turtle_spawn_egg",
+    "vex_spawn_egg",
+    "villager_spawn_egg",
+    "vindicator_spawn_egg",
+    "wandering_trader_spawn_egg",
+    "witch_spawn_egg",
+    "wither_skeleton_spawn_egg",
+    "wolf_spawn_egg",
+    "zoglin_spawn_egg",
+    "zombie_horse_spawn_egg",
+    "zombie_pigman_spawn_egg",
+    "zombie_spawn_egg",
+    "zombie_villager_spawn_egg",
+)
+
 fun getRGBPalette(): List<Int> {
     // from https://www.schemecolor.com/bright-rainbow-colors.php
     val colors = listOf("A800FF", "0079FF", "00F11D", "FFEF00", "FF7F00", "FF0900")
@@ -136,5 +207,9 @@ fun registerBedrockTemplateVars() {
     registerTemplateVar("randUnluckyPotionData") { _, context ->
         val potion = chooseRandomFrom(context.random, USEFUL_POTIONS.filter { it.isNegative })
         intAttrOf(getRandomPotionData(potion, context.random))
+    }
+
+    registerTemplateVar("randSpawnEgg") { _, context ->
+        stringAttrOf(chooseRandomFrom(context.random, SPAWN_EGG_IDS))
     }
 }
