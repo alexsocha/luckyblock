@@ -83,7 +83,7 @@ group:1:(group(ID=carrot,amount=#rand(8,16);ID=golden_carrot,amount=#rand(4,8));
 group(ID=ender_pearl,amount=10;ID=ender_eye,amount=5)@luck=2
 
 / potions
-ID=#randList(potion,splash_potion),data=#randPotionData,amount=#rand(4,8),samples=8@luck=1
+ID=#randList(potion,splash_potion),data=#randPotionData,amount=#rand(4,8)@luck=1
 
 / spawn eggs
 ID=#randSpawnEgg,amount=#rand(4,8)@luck=1
@@ -109,9 +109,9 @@ group(
 / colorful
 group(
     group:1:(
-        ID=wool,data=#rand(0,15),amount=#rand(32,64),samples=8;
-        ID=stained_hardened_clay,data=#rand(0,15),amount=#rand(32,64),samples=8;
-        ID=#randColor_dye,amount=#rand(32,64),samples=8
+        ID=wool,data=#rand(0,15),amount=#rand(32,64);
+        ID=stained_hardened_clay,data=#rand(0,15),amount=#rand(32,64);
+        ID=#randColor_dye,amount=#rand(32,64)
     )
 )@luck=1
 
@@ -147,10 +147,10 @@ group:1:(
 )@luck=-1
 
 / flowers
-ID=red_flower,data=#rand(0,10),amount=64,samples=11@luck=0
+ID=red_flower,data=#rand(0,10),amount=64@luck=0
 
 / enchantment books
-ID=enchanted_book,NBTTag=(ench=#randEnchantment),amount=#rand(7,10),samples=20@luck=1
+ID=enchanted_book,NBTTag=(ench=#randEnchantment),amount=#rand(7,10)@luck=1
 
 / prismarine
 group(
@@ -171,7 +171,7 @@ group:1:(
 )@luck=0
 
 / colored sheep (note: CustomNameVisible doesn't work in bedrock)
-type=entity,ID=sheep,posOffset=#circleOffset(4),amount=16,samples=16,NBTTag=(
+type=entity,ID=sheep,posOffset=#circleOffset(4),amount=16,NBTTag=(
     CustomName="$cM$6r. $eR$aa$2i$bn$3b$5o$dw",
     CustomNameVisible=true,
     Color=#rand(0,15)b
@@ -460,12 +460,12 @@ group:#rand(1,2):(
 )@luck=2
 
 / hero's potion
-ID=potion,amount=#rand(4,8),data=#randLuckyPotionData,samples=8,NBTTag=(
+ID=potion,amount=#rand(4,8),data=#randLuckyPotionData,NBTTag=(
     display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true))
 )@luck=2
 
 / evil potion
-ID=splash_potion,amount=#rand(4,8),data=#randUnluckyPotionData,samples=8,NBTTag=(
+ID=splash_potion,amount=#rand(4,8),data=#randUnluckyPotionData,NBTTag=(
     display=(Name=#jsonStr(text="Evil Potion",color=dard_red,bold=true))
 )@luck=1
 

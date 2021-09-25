@@ -23,7 +23,7 @@ data class DropContext(
 ) { companion object }
 
 
-fun createDropEvalContext(drop: SingleDrop, dropContext: DropContext): EvalContext {
+fun createDropEvalContext(dropContext: DropContext, drop: SingleDrop? = null): EvalContext {
     return EvalContext(LuckyRegistry.templateVarFns, DropTemplateContext(drop, dropContext, random=DefaultRandom()))
 }
 
@@ -36,21 +36,24 @@ fun createVecSpec(baseName: String, partNames: Triple<String, String, String>, t
     )
 }
 
-fun evalDrop(template: BaseDrop, context: DropContext): List<SingleDrop> {
+fun evalDrop(template: BaseDrop, context: EvalContext): List<SingleDrop> {
     if (template is WeightedDrop) {
         return evalDrop(template.drop, context)
     }
     if (template is GroupDrop) {
-        val evalContext = createDropEvalContext(SingleDrop.nothingDrop, context)
         val shuffledDrops = if (template.shuffle) template.drops.shuffled() else template.drops
-        val groupAmount = (evalAttr(template.amount, evalContext) as ValueAttr).value as Int
+        val groupAmount = (evalAttr(template.amount, context) as ValueAttr).value as Int
 
         return (0 until groupAmount).map {
             evalDrop(shuffledDrops[it], context)
         }.flatten().toList()
     }
     if (template is SingleDrop) {
-        val drop = template.eval(context)
+        val contextWithDrop = if (context.templateContext is DropTemplateContext) {
+            context.copy(templateContext=context.templateContext.copy(drop=template))
+        } else context
+
+        val drop = template.eval(contextWithDrop)
         val repeatAmount: Int = drop["amount"]
         val evalOnRepeat: Boolean = drop["reinitialize"]
         val evalAfterDelay: Boolean = drop["postDelayInit"]
@@ -64,20 +67,21 @@ fun evalDrop(template: BaseDrop, context: DropContext): List<SingleDrop> {
 
             if (evalOnRepeat) {
                 return (0 until repeatAmount).map {
-                    if (evalAfterDelay) template.evalKeys(listOf("delay"), context) else if (it == 0) drop else template.eval(context)
+                    if (evalAfterDelay) template.evalKeys(listOf("delay"), contextWithDrop)
+                    else if (it == 0) drop else template.eval(contextWithDrop)
                 }.toList()
             }
             return listOf(if (evalAfterDelay) template.copy(props = template.props.with(mapOf("delay" to drop["delay"]))) else drop)
         }
 
         return (0 until repeatAmount).map {
-            if (it == 0) drop else if (evalOnRepeat) template.eval(context) else drop
+            if (it == 0) drop else if (evalOnRepeat) template.eval(contextWithDrop) else drop
         }.toList()
     }
     return emptyList()
 }
 
-fun evalDropAfterDelay(dropOrTemplate: SingleDrop, context: DropContext): List<SingleDrop> {
+fun evalDropAfterDelay(dropOrTemplate: SingleDrop, context: EvalContext): List<SingleDrop> {
     val evalAfterDelay: Boolean = dropOrTemplate["postDelayInit"]
     val drop = if (evalAfterDelay) dropOrTemplate.eval(context) else dropOrTemplate
 
@@ -133,12 +137,13 @@ fun runEvaluatedDrop(drop: SingleDrop, context: DropContext) {
 
 fun runDrop(drop: WeightedDrop, context: DropContext, showOutput: Boolean) {
     if (showOutput) gameAPI.logInfo("Chosen Lucky Drop: ${drop.dropString}")
-    val singleDrops = evalDrop(drop, context)
+    val singleDrops = evalDrop(drop, createDropEvalContext(context))
     singleDrops.forEach { runEvaluatedDrop(it, context) }
 }
 
 fun runDropAfterDelay(delayedDrop: SingleDrop, context: DropContext) {
-    val singleDrops = evalDropAfterDelay(delayedDrop, context)
+    val evalContext = createDropEvalContext(context)
+    val singleDrops = evalDropAfterDelay(delayedDrop, evalContext)
     for (drop in singleDrops) {
         val fn = LuckyRegistry.dropActions[drop.type]!!
         fn(drop, context)

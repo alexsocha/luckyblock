@@ -10,9 +10,10 @@ val testDropContext = DropContext(
     player = MockEntity(Vec3d(4.5, 5.0, 6.5)),
     sourceId = "lucky:lucky_block",
 )
+val testEvalContext = createDropEvalContext(testDropContext)
 
 fun createSingleDrop(propsStr: String): SingleDrop =
-    SingleDrop.fromString(propsStr).eval(testDropContext)
+    SingleDrop.fromString(propsStr).eval(testEvalContext)
 
 class Tests {
     @BeforeTest
@@ -126,7 +127,7 @@ class Tests {
     @Test
     fun testGroup() {
         val groupDrop = WeightedDrop.fromString("group:2:(id=cow;id=pig;id=sheep),type=entity,nbttag=(value=5)")
-        val singleDrops = evalDrop(groupDrop, testDropContext)
+        val singleDrops = evalDrop(groupDrop, testEvalContext)
 
         assertEquals(2, ((groupDrop.drop as GroupDrop).amount as ValueAttr).value)
         assertEquals(2, singleDrops.size)

@@ -45,8 +45,7 @@ fun getIDWithNamespace(id: String): String {
     return if (":" in id) id else "minecraft:$id"
 }
 
-fun createDropStructure(dropType: String, dropProps: DictAttr, random: Random): DictAttr {
-    if ("id" !in dropProps) throw Exception("Drop '${dropProps}' is missing the required property 'id'")
+fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Random): DictAttr {
     return when(dropType) {
         "item" -> dictAttrOf(
             "" to dictAttrOf(
@@ -55,7 +54,8 @@ fun createDropStructure(dropType: String, dropProps: DictAttr, random: Random): 
                 "structure" to dictAttrOf(
                     "block_indices" to listAttrOf(ListAttr(), ListAttr()),
                     "palette" to DictAttr(),
-                    "entities" to listAttrOf(
+                    "entities" to ListAttr(drops.map {
+                        val dropProps = it.props
                         dictAttrOf(
                             "Pos" to listAttrOf(
                                 floatAttrOf((0.5 + (random.randDouble(0.0, 1.0) - 0.5)).toFloat()),
@@ -69,8 +69,8 @@ fun createDropStructure(dropType: String, dropProps: DictAttr, random: Random): 
                                 "Damage" to ValueAttr(AttrType.SHORT, dropProps.getWithDefault("data", 0).toShort()),
                                 *(if ("nbttag" in dropProps) arrayOf("tag" to dropProps.getDict("nbttag")) else emptyArray()),
                             ),
-                        ),
-                    ),
+                        )
+                    }),
                 ),
                 "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0))
             )
@@ -82,47 +82,51 @@ fun createDropStructure(dropType: String, dropProps: DictAttr, random: Random): 
                 "structure" to dictAttrOf(
                     "block_indices" to listAttrOf(ListAttr(), ListAttr()),
                     "palette" to DictAttr(),
-                    "entities" to listAttrOf(
+                    "entities" to ListAttr(drops.map {
+                        val dropProps = it.props
                         dictAttrOf(
                             "Pos" to listAttrOf(floatAttrOf(0.5f), floatAttrOf(0f), floatAttrOf(0.5f)),
                             "identifier" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
                         ).with(dropProps.getDict("nbttag").children)
-                    ),
+                    }),
                 ),
                 "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0))
             )
         )
-        "block" -> dictAttrOf(
-            "" to dictAttrOf(
-                "format_version" to intAttrOf(1),
-                "size" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)),
-                "structure" to dictAttrOf(
-                    "block_indices" to listAttrOf(listAttrOf(intAttrOf(0)), listAttrOf(intAttrOf(-1))),
-                    "palette" to dictAttrOf(
-                        "default" to dictAttrOf(
-                            "block_palette" to listAttrOf(
-                                dictAttrOf(
-                                    "name" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
-                                    "states" to dropProps.getWithDefault("state",  DictAttr()),
-                                    "version" to intAttrOf(17825806),
+        "block" -> {
+            val dropProps = drops.first().props
+            dictAttrOf(
+                "" to dictAttrOf(
+                    "format_version" to intAttrOf(1),
+                    "size" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)),
+                    "structure" to dictAttrOf(
+                        "block_indices" to listAttrOf(listAttrOf(intAttrOf(0)), listAttrOf(intAttrOf(-1))),
+                        "palette" to dictAttrOf(
+                            "default" to dictAttrOf(
+                                "block_palette" to listAttrOf(
+                                    dictAttrOf(
+                                        "name" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
+                                        "states" to dropProps.getWithDefault("state",  DictAttr()),
+                                        "version" to intAttrOf(17825806),
+                                    ),
                                 ),
-                            ),
-                            "block_position_data" to dictAttrOf(
-                                "0" to dictAttrOf(
-                                    "block_entity_data" to dropProps.getDict("nbttag").withDefaults(mapOf(
-                                        "x" to intAttrOf(0),
-                                        "y" to intAttrOf(0),
-                                        "z" to intAttrOf(0),
-                                    )),
+                                "block_position_data" to dictAttrOf(
+                                    "0" to dictAttrOf(
+                                        "block_entity_data" to dropProps.getDict("nbttag").withDefaults(mapOf(
+                                            "x" to intAttrOf(0),
+                                            "y" to intAttrOf(0),
+                                            "z" to intAttrOf(0),
+                                        )),
+                                    ),
                                 ),
                             ),
                         ),
+                        "entities" to listAttrOf(),
                     ),
-                    "entities" to listAttrOf(),
-                ),
-                "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0))
+                    "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0))
+                )
             )
-        )
+        }
         else -> dictAttrOf("x" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)))
     }
 }
@@ -138,32 +142,39 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
 
     val dropSamples = drop.props.getWithDefault("samples", 2)
     val dropSeed = drop.props.getWithDefault("seed", seed)
+    val onePerSample = drop.props.getWithDefault("onePerSample", false)
 
     val dropProps = dictAttrOf(
         "type" to stringAttrOf(drop.type),
         "id" to drop.props["id"],
         "samples" to intAttrOf(dropSamples),
         "seed" to intAttrOf(dropSeed),
+        "onePerSample" to booleanAttrOf(onePerSample),
+        "amount" to if (onePerSample) intAttrOf(1) else drop.props["amount"],
         "nbttag" to drop.props["nbttag"],
         *(if (drop.type == "item" && "data" in drop.props) arrayOf("data" to drop.props["data"]) else emptyArray()),
         *(if (drop.type == "block") arrayOf("state" to drop.props["state"]) else emptyArray()),
     )
     val cacheKey = attrToSerializedString(dropProps)
 
+    val seededRandom = SeededRandom(dropSeed)
+    val spyRandom = SpyRandom(seededRandom)
+    val evalContext = EvalContext(
+        templateVarFns = LuckyRegistry.templateVarFns,
+        templateContext = DropTemplateContext(drop = null, dropContext = null, random = spyRandom),
+    )
+
+    fun generate(): DictAttr {
+        val evaluatedDrops = evalDrop(SingleDrop(drop.type, dropProps), evalContext)
+        return createDropStructure(drop.type, evaluatedDrops, seededRandom)
+    }
+
     val hasCached = cacheKey in generatedDrops.dropStructureCache
     val (structureIds, newGeneratedDrops) =
         if (hasCached) Pair(generatedDrops.dropStructureCache[cacheKey]!!, generatedDrops)
         else {
-            val seededRandom = SeededRandom(dropSeed)
-            val spyRandom = SpyRandom(seededRandom)
-
-            val evalContext = EvalContext(
-                templateVarFns = LuckyRegistry.templateVarFns,
-                templateContext = DropTemplateContext(drop = drop, dropContext = null, random = spyRandom),
-            )
-
             val firstStructure = try {
-                createDropStructure(drop.type, evalAttr(dropProps, evalContext) as DictAttr, seededRandom)
+                generate()
             } catch (e: MissingDropContextException) {
                 ToolsLogger.logError("Can't generate drop which relies on in-game context: ${dropToString(drop)}")
                 throw e
@@ -176,8 +187,7 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
                         "${generatedDrops.dropStructureCache.size + 1}" +
                         if (dropSamples > 1) ".${it + 1}" else ""
 
-                    k to if (i == 0) firstStructure else
-                        createDropStructure(drop.type, evalAttr(dropProps, evalContext) as DictAttr, seededRandom)
+                    k to if (i == 0) firstStructure else generate()
                 }
             } else {
                 listOf("${dropStructurePrefix}${generatedDrops.dropStructureCache.size + 1}" to firstStructure)
@@ -199,12 +209,15 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
         )
     }
 
+    val ignoredProps = listOf("nbttag", "samples", "seed", "onePerSample") +
+        if (!onePerSample) listOf("amount") else emptyList()
+
     val newDrop = SingleDrop(
         type = "structure",
         props = DictAttr(drop.props.children.plus(mapOf(
             "type" to stringAttrOf("structure"),
             "id" to structureIdAttr,
-        )).minus(listOf("nbttag", "samples", "seed"))),
+        )).minus(ignoredProps)),
     )
     return Pair(newDrop, newGeneratedDrops)
 }
@@ -237,6 +250,13 @@ fun createEmptyGeneratedDrops(): GeneratedDrops {
     )
 }
 
+fun prepareToGenerateDrops() {
+    gameAPI = BedrockToolsGameAPI
+    logger = ToolsLogger
+    registerCommonTemplateVars(GameType.BEDROCK)
+    registerBedrockTemplateVars()
+}
+
 fun generateDrops(drops: List<WeightedDrop>, seed: Int, blockId: String, generatedDrops: GeneratedDrops): Pair<List<BaseDrop>, GeneratedDrops> {
     var allGeneratedDrops = generatedDrops
     val newDropsList = drops.map {
@@ -256,10 +276,7 @@ fun main(args: Array<String>) {
     val seed by parser.option(ArgType.Int, description = "Drop generation seed").default(0)
     parser.parse(args)
 
-    gameAPI = BedrockToolsGameAPI
-    logger = ToolsLogger
-    registerCommonTemplateVars(GameType.BEDROCK)
-    registerBedrockTemplateVars()
+    prepareToGenerateDrops()
 
     val resources = loadAddonResources(File(inputFolder))!!
 

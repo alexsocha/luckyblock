@@ -78,13 +78,13 @@ fun SingleDrop.Companion.fromString(propsString: String): SingleDrop {
     return SingleDrop(type, processProps(type, parsedProps), propsString = propsString)
 }
 
-fun SingleDrop.evalKeys(keys: List<String>, context: DropContext): SingleDrop {
+fun SingleDrop.evalKeys(keys: List<String>, context: EvalContext): SingleDrop {
     val filteredProps = dictAttrOf(*keys.map { it to props[it] }.toTypedArray())
-    val newProps = evalAttr(filteredProps, createDropEvalContext(this, context)) as DictAttr
+    val newProps = evalAttr(filteredProps, context) as DictAttr
     return copy(props=props.with(newProps.children))
 }
 
-fun SingleDrop.eval(context: DropContext): SingleDrop {
-    val newProps = evalAttr(props, createDropEvalContext(this, context)) as DictAttr
+fun SingleDrop.eval(context: EvalContext): SingleDrop {
+    val newProps = evalAttr(props, context) as DictAttr
     return copy(props=newProps)
 }

@@ -83,7 +83,7 @@ fun doStructureDrop(drop: SingleDrop, context: DropContext) {
         }
 
         for (structureDrop in structureDrops) {
-            val evaluatedDrops = evalDrop(mergeDefaultDropProps(structureDrop), context)
+            val evaluatedDrops = evalDrop(mergeDefaultDropProps(structureDrop), createDropEvalContext(context))
             evaluatedDrops.forEach { runEvaluatedDrop(it, context) }
         }
     } else {
