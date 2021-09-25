@@ -43,6 +43,7 @@ fun <T : Number>subtract(n1: T, n2: T): T {
 data class Vec3<T : Number>(val x: T, val y: T, val z: T) {
     constructor(pos: Vec3<T>): this(pos.x, pos.y, pos.z)
     fun toDouble(): Vec3d = Vec3d(x.toDouble(), y.toDouble(), z.toDouble())
+    fun toFloat(): Vec3<Float> = Vec3<Float>(x.toFloat(), y.toFloat(), z.toFloat())
     fun floor(): Vec3i = Vec3i(floor(x.toDouble()).toInt(), floor(y.toDouble()).toInt(), floor(z.toDouble())
         .toInt())
     operator fun plus(vec: Vec3<T>): Vec3<T> = Vec3(add(this.x, vec.x), add(this.y, vec.y), add(this.z, vec.z))

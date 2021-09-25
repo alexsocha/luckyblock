@@ -45,9 +45,12 @@ fun registerMultiListTemplateVar(
     }
 }
 
-private fun randEnchInstance(random: Random, enchantment: Enchantment): DictAttr {
+private fun randEnchInstance(gameType: GameType, random: Random, enchantment: Enchantment): DictAttr {
     return dictAttrOf(
-        "id" to stringAttrOf(enchantment.id),
+        "id" to when(gameType) {
+            GameType.JAVA -> stringAttrOf(enchantment.id)
+            GameType.BEDROCK -> ValueAttr(AttrType.SHORT, enchantment.intId.toShort())
+        },
         "lvl" to ValueAttr(AttrType.SHORT, random.randInt(1..enchantment.maxLevel).toShort()),
     )
 }
@@ -68,6 +71,7 @@ private fun randEffectInstance(random: Random, effect: StatusEffect): DictAttr {
 fun registerEnchantments(
     templateName: String,
     types: List<EnchantmentType>,
+    gameType: GameType,
     includeCurses: Boolean = false,
     defaultAmount: IntRange = 4..6,
 ) {
@@ -79,7 +83,7 @@ fun registerEnchantments(
                 else if (!includeCurses && it.isCurse) false
                 else true
             }
-            enchantments.map { randEnchInstance(context.random, it) }
+            enchantments.map { randEnchInstance(gameType, context.random, it) }
         },
         defaultAmount = defaultAmount,
     )
@@ -95,114 +99,7 @@ fun registerStatusEffects(templateName: String, statusEffects: List<StatusEffect
     )
 }
 
-fun registerGameDependentTemplateVars(gameType: GameType) {
-    LuckyRegistry.registerTemplateVar("randFireworksRocket") { _, context ->
-        val fireworkType = ValueAttr(AttrType.BYTE, context.random.randInt(0..4).toByte())
-        val fireworkFlicker = booleanAttrOf(context.random.randInt(0..1) == 1)
-        val fireworkTrail = booleanAttrOf(context.random.randInt(0..1) == 1)
-
-        val colorAmount = context.random.randInt(1..4)
-        val fireworkColors = when(gameType) {
-            GameType.JAVA -> ValueAttr(AttrType.INT_ARRAY, (0 until colorAmount).map {
-                chooseRandomFrom(context.random, gameAPI.getRGBPalette())
-            }.toIntArray())
-            GameType.BEDROCK -> ValueAttr(AttrType.BYTE_ARRAY, (0 until colorAmount).map {
-                context.random.randInt(0..8).toByte()
-            }.toByteArray())
-        }
-
-        val explosion = when(gameType) {
-            GameType.JAVA -> dictAttrOf(
-                "Type" to fireworkType,
-                "Flicker" to fireworkFlicker,
-                "Trail" to fireworkTrail,
-                "Colors" to fireworkColors,
-            )
-            GameType.BEDROCK -> dictAttrOf(
-                "FireworkType" to fireworkType,
-                "FireworkFlicker" to fireworkFlicker,
-                "FireworkTrail" to fireworkTrail,
-                "FireworkColor" to fireworkColors,
-            )
-        }
-
-        val firework = dictAttrOf(
-            "Explosions" to listAttrOf(explosion),
-            "Flight" to ValueAttr(AttrType.BYTE, context.random.randInt(1..2).toByte())
-        )
-
-        dictAttrOf("Fireworks" to firework)
-    }
-
-    registerEnchantments(
-        "luckySwordEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEAPON),
-    )
-    registerEnchantments(
-        "luckyAxeEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.DIGGER, EnchantmentType.WEAPON),
-    )
-    registerEnchantments(
-        "luckyToolEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.DIGGER),
-        defaultAmount = 2..3,
-    )
-
-    registerEnchantments(
-        "luckyBowEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.BOW),
-    )
-    registerEnchantments(
-        "luckyFishingRodEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.FISHING_ROD),
-        defaultAmount = 2..3,
-    )
-    registerEnchantments(
-        "luckyCrossbowEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.CROSSBOW),
-        defaultAmount = 2..4,
-    )
-    registerEnchantments(
-        "luckyTridentEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.TRIDENT),
-        defaultAmount = 3..5,
-    )
-
-    registerEnchantments(
-        "luckyHelmetEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_HEAD),
-    )
-
-    registerEnchantments(
-        "luckyChestplateEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_CHEST),
-    )
-
-    registerEnchantments(
-        "luckyLeggingsEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_LEGS),
-    )
-
-    registerEnchantments(
-        "luckyBootsEnchantments",
-        listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_FEET),
-    )
-
-    registerEnchantments("randEnchantment", EnchantmentType.values().toList(), defaultAmount = 1..1)
-
-    registerStatusEffects(
-        "luckyPotionEffects",
-        gameAPI.getUsefulStatusEffects().filter { !it.isNegative },
-        defaultAmount = 7..10
-    )
-    registerStatusEffects(
-        "unluckyPotionEffects",
-        gameAPI.getUsefulStatusEffects().filter { it.isNegative },
-        defaultAmount = 5..7
-    )
-}
-
-fun registerCommonTemplateVars() {
+fun registerCommonTemplateVars(gameType: GameType) {
     registerTemplateVar("randPotion") { _, context -> stringAttrOf(chooseRandomFrom(context.random, gameAPI.getUsefulPotionIds())) }
     registerTemplateVar("randSpawnEgg") { _, context -> stringAttrOf(chooseRandomFrom(context.random, gameAPI.getSpawnEggIds())) }
     registerTemplateVar("randColor") { _, context -> stringAttrOf(chooseRandomFrom(context.random, colorNames)) }
@@ -315,6 +212,10 @@ fun registerCommonTemplateVars() {
         listAttrOf(intAttrOf(length), intAttrOf(0), intAttrOf(width))
     }
 
+    val motionTagType = when(gameType) {
+        GameType.JAVA -> AttrType.DOUBLE
+        GameType.BEDROCK -> AttrType.FLOAT
+    }
 
     val motionFromDirectionSpec = TemplateVarSpec(
         listOf(
@@ -324,11 +225,16 @@ fun registerCommonTemplateVars() {
         ),
         argRange = 2..3
     )
-    registerVec3TemplateVar("motionFromDirection", AttrType.DOUBLE, motionFromDirectionSpec) { templateVar, _ ->
+    registerVec3TemplateVar("motionFromDirection", motionTagType, motionFromDirectionSpec) { templateVar, _ ->
         val yawDeg = templateVar.args.getValue<Double>(0)
         val pitchDeg = templateVar.args.getValue<Double>(1)
         val power = templateVar.args.getOptionalValue(2) ?: 1.0
-        directionToVelocity(degToRad(yawDeg), degToRad(pitchDeg), power)
+
+        val motion = directionToVelocity(degToRad(yawDeg), degToRad(pitchDeg), power)
+        when(gameType) {
+            GameType.JAVA -> motion
+            GameType.BEDROCK -> motion.toFloat()
+        }
     }
 
     val launchMotionSpec = TemplateVarSpec(
@@ -338,13 +244,139 @@ fun registerCommonTemplateVars() {
         ),
         argRange = 0..2
     )
-    registerVec3TemplateVar("randLaunchMotion", AttrType.DOUBLE, launchMotionSpec) { templateVar, context ->
+    registerVec3TemplateVar("randLaunchMotion", motionTagType, launchMotionSpec) { templateVar, context ->
         val power = templateVar.args.getOptionalValue(0) ?: 0.9
         val pitchOffsetDeg = templateVar.args.getOptionalValue(1) ?: 15.0
         val yawDeg = context.random.randDouble(-180.0, 180.0)
         val pitchDeg = -90.0 + context.random.randDouble(-pitchOffsetDeg, pitchOffsetDeg)
-        directionToVelocity(degToRad(yawDeg), degToRad(pitchDeg), power)
+
+        val motion = directionToVelocity(degToRad(yawDeg), degToRad(pitchDeg), power)
+        when(gameType) {
+            GameType.JAVA -> motion
+            GameType.BEDROCK -> motion.toFloat()
+        }
     }
+
+    LuckyRegistry.registerTemplateVar("randFireworksRocket") { _, context ->
+        val fireworkType = ValueAttr(AttrType.BYTE, context.random.randInt(0..4).toByte())
+        val fireworkFlicker = booleanAttrOf(context.random.randInt(0..1) == 1)
+        val fireworkTrail = booleanAttrOf(context.random.randInt(0..1) == 1)
+
+        val colorAmount = context.random.randInt(1..4)
+        val fireworkColors = when(gameType) {
+            GameType.JAVA -> ValueAttr(AttrType.INT_ARRAY, (0 until colorAmount).map {
+                chooseRandomFrom(context.random, gameAPI.getRGBPalette())
+            }.toIntArray())
+            GameType.BEDROCK -> ValueAttr(AttrType.BYTE_ARRAY, (0 until colorAmount).map {
+                context.random.randInt(0..8).toByte()
+            }.toByteArray())
+        }
+
+        val explosion = when(gameType) {
+            GameType.JAVA -> dictAttrOf(
+                "Type" to fireworkType,
+                "Flicker" to fireworkFlicker,
+                "Trail" to fireworkTrail,
+                "Colors" to fireworkColors,
+            )
+            GameType.BEDROCK -> dictAttrOf(
+                "FireworkType" to fireworkType,
+                "FireworkFlicker" to fireworkFlicker,
+                "FireworkTrail" to fireworkTrail,
+                "FireworkColor" to fireworkColors,
+            )
+        }
+
+        val firework = dictAttrOf(
+            "Explosions" to listAttrOf(explosion),
+            "Flight" to ValueAttr(AttrType.BYTE, context.random.randInt(1..2).toByte())
+        )
+
+        dictAttrOf("Fireworks" to firework)
+    }
+
+    registerEnchantments(
+        "luckySwordEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEAPON),
+        gameType,
+    )
+    registerEnchantments(
+        "luckyAxeEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.DIGGER, EnchantmentType.WEAPON),
+        gameType,
+    )
+    registerEnchantments(
+        "luckyToolEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.DIGGER),
+        gameType,
+        defaultAmount = 2..3,
+    )
+
+    registerEnchantments(
+        "luckyBowEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.BOW),
+        gameType,
+    )
+    registerEnchantments(
+        "luckyFishingRodEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.FISHING_ROD),
+        gameType,
+        defaultAmount = 2..3,
+    )
+    registerEnchantments(
+        "luckyCrossbowEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.CROSSBOW),
+        gameType,
+        defaultAmount = 2..4,
+    )
+    registerEnchantments(
+        "luckyTridentEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.TRIDENT),
+        gameType,
+        defaultAmount = 3..5,
+    )
+
+    registerEnchantments(
+        "luckyHelmetEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_HEAD),
+        gameType,
+    )
+
+    registerEnchantments(
+        "luckyChestplateEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_CHEST),
+        gameType,
+    )
+
+    registerEnchantments(
+        "luckyLeggingsEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_LEGS),
+        gameType,
+    )
+
+    registerEnchantments(
+        "luckyBootsEnchantments",
+        listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_FEET),
+        gameType,
+    )
+
+    registerEnchantments(
+        "randEnchantment",
+        EnchantmentType.values().toList(),
+        gameType,
+        defaultAmount = 1..1
+    )
+
+    registerStatusEffects(
+        "luckyPotionEffects",
+        gameAPI.getUsefulStatusEffects().filter { !it.isNegative },
+        defaultAmount = 7..10
+    )
+    registerStatusEffects(
+        "unluckyPotionEffects",
+        gameAPI.getUsefulStatusEffects().filter { it.isNegative },
+        defaultAmount = 5..7
+    )
 
     val evalSpec = TemplateVarSpec(listOf("jsScript" to ValueSpec(AttrType.INT)))
     registerTemplateVar("eval", evalSpec) { v, _ ->
@@ -410,4 +442,5 @@ fun registerCommonTemplateVars() {
         if (propName in context.drop.props) evalAttr(context.drop.props[propName]!!, evalContext)
         else throw EvalError("Can't reference missing drop property '$propNameInit' in drop '${context.drop.propsString}'")
     }
+
 }

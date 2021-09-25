@@ -95,13 +95,25 @@ ID=skull,data=#rand(0,4),amount=#rand(1,3)@luck=0
 group(ID=jukebox;ID=#randList(music_disc_11,music_disc_13,music_disc_blocks,music_disc_chirp,music_disc_far,music_disc_mall,music_disc_mellohi,music_disc_stal,music_disc_strad,music_disc_wait,music_disc_ward),amount=#rand(1,3))@luck=1
 
 / brewing
-group(ID=ender_pearl,amount=#rand(1,3);ID=blaze_rod,amount=#rand(1,3);ID=ghast_tear,amount=#rand(1,3);ID=gold_nugget,amount=#rand(1,3);ID=nether_wart,amount=#rand(1,3);ID=spider_eye,amount=#rand(1,3);ID=fermented_spider_eye,amount=#rand(1,3);ID=blaze_powder,amount=#rand(1,3);ID=magma_cream,amount=#rand(1,3);ID=ender_eye,amount=#rand(1,3);ID=glistering_melon_slice,amount=#rand(1,3);ID=rabbit_foot,amount=#rand(1,3);type=particle,ID=splashpotion,potion="fire_resistance")@luck=2
+group(
+    ID=ender_pearl,amount=#rand(1,3);ID=blaze_rod,amount=#rand(1,3);ID=ghast_tear,amount=#rand(1,3);ID=gold_nugget,amount=#rand(1,3);ID=nether_wart,amount=#rand(1,3);ID=spider_eye,amount=#rand(1,3);ID=fermented_spider_eye,amount=#rand(1,3);ID=blaze_powder,amount=#rand(1,3);ID=magma_cream,amount=#rand(1,3);ID=ender_eye,amount=#rand(1,3);ID=glistering_melon_slice,amount=#rand(1,3);ID=rabbit_foot,amount=#rand(1,3);
+    type=particle,ID=basic_smoke_particle,size=(1.5,0,1.5),particleAmount=20
+)@luck=2
 
 / redstone
-group(ID=dispenser,amount=2;ID=note_block,amount=1;ID=sticky_piston,amount=4;ID=piston,amount=4;ID=tnt,amount=6;ID=lever,amount=2;ID=stone_pressure_plate,amount=2;ID=oak_pressure_plate,amount=2;ID=redstone_torch,amount=8;ID=stone_button,amount=2;ID=oak_trapdoor,amount=2;ID=iron_trapdoor,amount=2;ID=oak_fence_gate,amount=1;ID=redstone_lamp,amount=4;ID=tripwire_hook,amount=2;ID=oak_button,amount=2;ID=light_weighted_pressure_plate,amount=1;ID=heavy_weighted_pressure_plate,amount=1;ID=daylight_detector,amount=1;ID=hopper,amount=4;ID=dropper,amount=#rand(2,4);ID=oak_door,amount=1;ID=iron_door,amount=1;ID=redstone,amount=#rand(32,64);ID=repeater,amount=8;ID=comparator,amount=2;type=particle,ID=splashpotion,potion="healing")@luck=2
+group(
+    ID=dispenser,amount=2;ID=note_block,amount=1;ID=sticky_piston,amount=4;ID=piston,amount=4;ID=tnt,amount=6;ID=lever,amount=2;ID=stone_pressure_plate,amount=2;ID=wooden_pressure_plate,amount=2;ID=redstone_torch,amount=8;ID=stone_button,amount=2;ID=trapdoor,amount=2;ID=iron_trapdoor,amount=2;ID=fence_gate,amount=1;ID=redstone_lamp,amount=4;ID=tripwire_hook,amount=2;ID=wooden_button,amount=2;ID=light_weighted_pressure_plate,amount=1;ID=heavy_weighted_pressure_plate,amount=1;ID=daylight_detector,amount=1;ID=hopper,amount=4;ID=dropper,amount=#rand(2,4);ID=wooden_door,amount=1;ID=iron_door,amount=1;ID=redstone,amount=#rand(32,64);ID=repeater,amount=8;ID=comparator,amount=2;
+    type=particle,ID=redstone_wire_dust_particle,size=(1.5,0,1.5),particleAmount=20
+)@luck=2
 
 / colorful
-group(group:1:(ID=#randColor_wool,amount=#rand(32,64);ID=#randColor_terracotta,amount=#rand(32,64);ID=#randColor_dye,amount=#rand(32,64));type=particle,ID=splashpotion,potion=#randPotion,amount=10)@luck=1
+group(
+    group:1:(
+        ID=wool,data=#rand(0,15),amount=#rand(32,64),samples=8;
+        ID=stained_hardened_clay,data=#rand(0,15),amount=#rand(32,64),samples=8;
+        ID=#randColor_dye,amount=#rand(32,64),samples=8
+    )
+)@luck=1
 
 / iron, gold, diamond, emerald, lapis, with fireworks
 group(
@@ -115,53 +127,67 @@ group(
 
 / quartz
 group(
-    ID=quartz_slab,amount=#rand(4,8);
-    ID=nether_quartz_ore,amount=#rand(16,32);
+    ID=stone_slab,data=6,amount=#rand(4,8);
+    ID=quartz_ore,amount=#rand(16,32);
     ID=quartz_block,amount=#rand(4,8);
-    ID=quartz_block,damage=1,amount=#rand(4,8);
-    ID=quartz_block,damage=2,amount=#rand(4,8);
+    ID=quartz_block,data=1,amount=#rand(4,8);
+    ID=quartz_block,data=2,amount=#rand(4,8);
     ID=quartz_stairs,amount=#rand(4,8);ID=quartz,amount=#rand(24,32);
-    type=particle,ID=splashpotion,potion="invisibility"
+    type=particle,ID=snowflake_particle,size=(1.5,0,1.5),particleAmount=20
 )@luck=1
 
 / fish
 group(ID=fishing_rod;ID=#randList(cod,pufferfish,salmon,tropical_fish),amount=#rand(10,20))@luck=1
 
 / random jokes
-group:1:(ID=clock,NBTTag=(display=(Name=#jsonStr(text="You're wasting your time")));ID=tropical_fish,NBTTag=(display=(Name=#jsonStr(text="I'm funny")));ID=pufferfish,NBTTag=(display=(Name=#jsonStr(text="Oooooh!"))))@luck=-1
+group:1:(
+    ID=clock,NBTTag=(display=(Name="You're wasting your time"));
+    ID=tropical_fish,NBTTag=(display=(Name="I'm funny"));
+    ID=pufferfish,NBTTag=(display=(Name="Oooooh!"))
+)@luck=-1
 
 / flowers
-ID=#randList(dandelion,poppy,blue_orchid,allium,azure_bluet,pink_tulip,oxeye_daisy),amount=64@luck=0
+ID=red_flower,data=#rand(0,10),amount=64,samples=11@luck=0
 
 / enchantment books
-ID=enchanted_book,NBTTag=(StoredEnchantments=#randEnchantment),amount=#rand(7,10)@luck=1
+ID=enchanted_book,NBTTag=(ench=#randEnchantment),amount=#rand(7,10),samples=20@luck=1
 
 / prismarine
-group(ID=prismarine,amount=#rand(4,8);ID=prismarine,damage=1,amount=#rand(4,8);ID=prismarine,damage=2,amount=#rand(4,8);ID=sea_lantern,amount=#rand(4,8);ID=prismarine_shard,amount=#rand(15,30);ID=prismarine_crystals,amount=#rand(10,20);type=particle,ID=splashpotion,potion="invisibility")@luck=1
+group(
+    ID=prismarine,amount=#rand(4,8);ID=prismarine,data=1,amount=#rand(4,8);ID=prismarine,data=2,amount=#rand(4,8);ID=sealantern,amount=#rand(4,8);ID=prismarine_shard,amount=#rand(15,30);ID=prismarine_crystals,amount=#rand(10,20);
+    type=particle,ID=water_splash_particle_manual,size=(1.5,0,1.5),particleAmount=20
+)@luck=1
 
 / ========== ENTITIES ==========
 
 / lucky mobs
 group:1:(
-    type=entity,ID=pig,components=(minecraft:nameable=(name="$l$eLucky Pig"));
-    type=entity,ID=cow,components=(minecraft:nameable=(name="$l$eLucky Cow"));
-    type=entity,ID=chicken,components=(minecraft:nameable=(name="$l$eLucky Chicken"));
-    type=entity,ID=sheep,components=(minecraft:nameable=(name="$l$eLucky Sheep"));
-    type=entity,ID=rabbit,components=(minecraft:nameable=(name="$l$eLucky Rabbit"));
-    type=entity,ID=squid,components=(minecraft:nameable=(name="$l$eUnlucky Squid"))
+    type=entity,ID=pig,components=(nameable=(name="$l$eLucky Pig",always_show=true));
+    type=entity,ID=cow,components=(nameable=(name="$l$eLucky Cow,always_show=true"));
+    type=entity,ID=chicken,components=(nameable=(name="$l$eLucky Chicken",always_show=true));
+    type=entity,ID=sheep,components=(nameable=(name="$l$eLucky Sheep",always_show=true));
+    type=entity,ID=rabbit,components=(nameable=(name="$l$eLucky Rabbit",always_show=true));
+    type=entity,ID=squid,components=(nameable=(name="$l$eUnlucky Squid",always_show=true))
 )@luck=0
 
-/ colored sheep
-type=entity,ID=sheep,NBTTag=(CustomName=#jsonStr(text="$cM$6r. $eR$aa$2i$bn$3b$5o$dw"),CustomNameVisible=true,Color=#rand(0,15)),posOffset=#circleOffset(4),amount=16@luck=1
+/ colored sheep (note: CustomNameVisible doesn't work in bedrock)
+type=entity,ID=sheep,posOffset=#circleOffset(4),amount=16,samples=16,NBTTag=(
+    CustomName="$cM$6r. $eR$aa$2i$bn$3b$5o$dw",
+    CustomNameVisible=true,
+    Color=#rand(0,15)b
+)@luck=1
 
-/ eggs + diamonds
-group(type=entity,ID=egg,NBTTag=(Motion=#randLaunchMotion(0.6,15)),amount=40;type=entity,ID=item,NBTTag=(Item=(id=diamond,Count=1),Motion=#randLaunchMotion(0.7,18)),amount=20)@luck=2
+/ eggs + diamonds (note: Y-velocity on item entities doesn't work in bedrock)
+group(
+    type=entity,ID=egg,NBTTag=(Motion=#randLaunchMotion(0.6,15)),amount=40;
+    type=entity,ID=item,NBTTag=(Item=(Name=minecraft:diamond,Count=1b),Motion=#randLaunchMotion(0.7,18)),amount=20
+)@luck=2
 
 / thrown exp bottles
-type=entity,ID=experience_bottle,NBTTag=(Motion=#randLaunchMotion),amount=#rand(16,32)@luck=2
+type=entity,ID=xp_bottle,NBTTag=(Motion=#randLaunchMotion),amount=#rand(16,32)@luck=2
 
 / launched tnt
-type=entity,ID=tnt,NBTTag=(Fuse=50b,Motion=#randLaunchMotion),amount=15@luck=-2
+type=entity,ID=tnt,NBTTag=(Fuse=50b,IsFuseList=true,Motion=#randLaunchMotion),amount=15@luck=-2
 
 / lightning creeper
 group(type=difficulty,ID=hard;type=entity,ID=creeper;type=entity,ID=lightning_bolt)@luck=-2
@@ -181,20 +207,23 @@ group(type=difficulty,ID=hard;type=entity,ID=zombie,NBTTag=(
     HandItems=[(id=diamond_sword,Count=1,tag=(Enchantments=#luckySwordEnchantments))],
     ArmorItems=[(id=diamond_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments)),(id=diamond_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments)),(id=diamond_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments)),(id=diamond_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments))],
     HandDropChances=[0.5f,0f],ArmorDropChances=[0.3f,0.3f,0.3f,0.3f],
-    CustomName=#jsonStr(text="Bob",color=blue,bold=true),CustomNameVisible=true)
-)@luck=-2
+    CustomName=#jsonStr(text="Bob",color=blue,bold=true),
+    CustomNameVisible=true
+))@luck=-2
 
 / ghostly horseman skeleton
 group(type=difficulty,ID=hard;type=entity,ID=bat,NBTTag=(
     Silent=true,
     ActiveEffects=[(Id=14,Duration=100000,Amplifier=1,ShowParticles=false)],
-    Passengers=[(id=skeleton_horse,Tame=true,Type=4,
-        Passengers=[(id=skeleton,
+    Passengers=[(identifier=minecraft:skeleton_horse,Tame=true,Type=4,
+        Passengers=[(
+            identifier=minecraft:skeleton,
             HandItems=[(id=bow,Count=1,tag=(Enchantments=#luckyBowEnchantments))],
             ArmorItems=[(id=chainmail_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments)),(id=chainmail_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments)),(id=chainmail_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments)),(id=chainmail_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments))],
             HandDropChances=[0.5f,0f],ArmorDropChances=[0.3f,0.3f,0.3f,0.3f],
-            CustomName=#jsonStr(text="Ghostly Horseman",color=gray,bold=true),CustomNameVisible=true)
-        ])
+            CustomName=#jsonStr(text="Ghostly Horseman",color=gray,bold=true),
+            CustomNameVisible=true
+        )])
     ])
 )@luck=-2
 

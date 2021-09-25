@@ -20,6 +20,7 @@ data class Enchantment(
     val type: EnchantmentType,
     val maxLevel: Int,
     val isCurse: Boolean,
+    val intId: Int = -1, // Bedrock Edition only
 )
 
 data class StatusEffect(

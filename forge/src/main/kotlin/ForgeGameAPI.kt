@@ -395,7 +395,7 @@ object ForgeGameAPI : GameAPI {
                 pos.x, pos.y, pos.z,
                 amount,
                 boxSize.x, boxSize.y, boxSize.z,
-                0.0 // spead
+                0.0 // spread
             )
         } catch (e: Exception) {
             gameAPI.logError("Invalid partical arguments: $args", e)

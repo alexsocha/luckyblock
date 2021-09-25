@@ -8,10 +8,14 @@ import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.WeightedDrop
 import mod.lucky.common.drop.dropsFromStrList
 
-data class MockEntity(val pos: Vec3d)
+class MissingAPIFeature : Exception("This API feature is unavailable in Bedrock")
 
 fun toBlockPos(mcPos: MCBlockPos): BlockPos {
     return BlockPos(mcPos.x, mcPos.y, mcPos.z)
+}
+
+fun toVec3d(mcPos: MCVecPos): Vec3d {
+    return Vec3d(mcPos.x, mcPos.y, mcPos.z)
 }
 
 fun toMCBlockPos(pos: BlockPos): MCBlockPos {
@@ -117,9 +121,13 @@ object BedrockGameAPI : GameAPI {
     }
 
     override fun logError(msg: String?, error: Exception?) {
-        if (msg != null) serverSystem.log("Lucky Block Error: $msg")
+        if (msg != null) {
+            serverSystem.log("Lucky Block Error: $msg")
+            throw Exception(msg)
+        }
         if (error != null) {
             serverSystem.log("Lucky Block Error: ${error.message}: ${error.stackTraceToString()}")
+            throw error
         }
     }
 
@@ -134,8 +142,9 @@ object BedrockGameAPI : GameAPI {
     override fun getEnchantments(): List<Enchantment> = mod.lucky.bedrock.common.getEnchantments()
     override fun getUsefulStatusEffects(): List<StatusEffect> = mod.lucky.bedrock.common.getUsefulStatusEffects()
 
-    override fun getEntityPos(entity: Entity): Vec3d = (entity as MockEntity).pos
+    override fun getEntityPos(entity: Entity): Vec3d = toVec3d((entity as MCEntity).pos)
     override fun getPlayerName(player: PlayerEntity): String = "Test Player"
+
     override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) {}
     override fun convertStatusEffectId(effectId: Int): String? = null
     override fun getLivingEntitiesInBox(world: World, boxMin: Vec3d, boxMax: Vec3d): List<Entity> = emptyList()
@@ -164,12 +173,13 @@ object BedrockGameAPI : GameAPI {
         if (components != null) {
             val block = serverSystem.getBlock((world as MCWorld).ticking_area, toMCBlockPos(pos))
             components.children.forEach {
-                val component = serverSystem.getComponent<Any>(block, it.key)
+                val componentId = getIDWithNamespace(it.key)
+                val component = serverSystem.getComponent<Any>(block, componentId)
                 if (component != null) {
                     component.data = attrToJson(it.value)
                     serverSystem.applyComponentChanges(block, component)
                 } else {
-                    logError("Invalid block component: ${it.key}")
+                    logError("Invalid block component: ${componentId}")
                 }
             }
         }
@@ -199,12 +209,13 @@ object BedrockGameAPI : GameAPI {
         serverSystem.applyComponentChanges(entity, posComponent)
 
         components?.children?.forEach {
-            val component = serverSystem.getComponent<Any>(entity, it.key)
+            val componentId = getIDWithNamespace(it.key)
+            val component = serverSystem.getComponent<Any>(entity, componentId)
             if (component != null) {
                 component.data = attrToJson(it.value)
                 serverSystem.applyComponentChanges(entity, component)
             } else {
-                logError("Invalid entity component: ${it.key}")
+                logError("Invalid entity component: ${componentId}")
             }
         }
     }
@@ -223,8 +234,8 @@ object BedrockGameAPI : GameAPI {
     override fun createExplosion(world: World, pos: Vec3d, damage: Double, fire: Boolean) {}
     override fun sendMessage(player: PlayerEntity, message: String) {}
     override fun setDifficulty(world: World, difficulty: String) {}
-
     override fun setTime(world: World, time: Long) {}
+
     override fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?) {
         val itemEntity = serverSystem.createEntity("item_entity", getIDWithNamespace(id))
         if (itemEntity == null) {
@@ -237,11 +248,36 @@ object BedrockGameAPI : GameAPI {
         posComponent.data.y = pos.y + 0.5
         posComponent.data.z = pos.z + (defaultRandom.randDouble(0.0, 1.0) - 0.5)
         serverSystem.applyComponentChanges(itemEntity, posComponent)
+
+        components?.children?.forEach {
+            val componentId = getIDWithNamespace(it.key)
+            val component = serverSystem.getComponent<Any>(itemEntity, componentId)
+            if (component != null) {
+                component.data = attrToJson(it.value)
+                serverSystem.applyComponentChanges(itemEntity, component)
+            } else {
+                logError("Invalid item entity component: ${componentId}")
+            }
+        }
     }
+
     override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {}
-    override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {}
-    override fun playParticleEvent(world: World, pos: Vec3d, eventId: Int, data: Int) {}
-    override fun playSplashPotionEvent(world: World, pos: Vec3d, potionName: String?, potionColor: Int?) {}
+
+    override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {
+        for (i in 0 until amount) {
+            val particlePos = Vec3d(
+                pos.x + defaultRandom.randDouble(-boxSize.x, boxSize.x),
+                pos.y + defaultRandom.randDouble(-boxSize.y, boxSize.y),
+                pos.z + defaultRandom.randDouble(-boxSize.z, boxSize.z),
+            )
+            runCommand(serverSystem, "/particle ${getIDWithNamespace(id)} " +
+                "${particlePos.x} ${particlePos.y} ${particlePos.z}"
+            )
+        }
+    }
+
+    override fun playParticleEvent(world: World, pos: Vec3d, eventId: Int, data: Int) = throw MissingAPIFeature()
+    override fun playSplashPotionEvent(world: World, pos: Vec3d, potionName: String?, potionColor: Int?) = throw MissingAPIFeature()
 
     override fun createStructure(
         world: World,

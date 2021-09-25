@@ -13,7 +13,9 @@ external class MCVecPos {
 }
 
 external class MCBlock {}
-external class MCEntity {}
+external class MCEntity {
+    val pos: MCVecPos
+}
 
 external class MCQuery {
     val query_id: Int

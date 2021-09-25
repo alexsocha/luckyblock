@@ -258,7 +258,7 @@ fun main(args: Array<String>) {
 
     gameAPI = BedrockToolsGameAPI
     logger = ToolsLogger
-    registerGameDependentTemplateVars(GameType.BEDROCK)
+    registerCommonTemplateVars(GameType.BEDROCK)
     registerBedrockTemplateVars()
 
     val resources = loadAddonResources(File(inputFolder))!!
