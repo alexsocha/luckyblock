@@ -1,71 +1,78 @@
 package mod.lucky.bedrock
 
-external class MCBlockPos {
+external interface MCBlockPos {
     val x: Int
     val y: Int
     val z: Int
 }
 
-external class MCVecPos {
+external interface MCVecPos {
     var x: Double
     var y: Double
     var z: Double
 }
 
-external class MCBlock {}
-external class MCEntity {
+external interface MCBlock {
+    val __identifier__: String;
+}
+
+external interface MCEntity {
     val pos: MCVecPos
 }
 
-external class MCQuery {
+external interface MCQuery {
     val query_id: Int
 }
 
 
-external class MCTickingArea {}
+external interface MCTickingArea {}
 
-external class MCTickWorldComponent {
+external interface MCTickWorldComponent {
     val ticking_area: MCTickingArea
 }
 typealias MCWorld = MCTickWorldComponent
 
-external class MCPlayer {
+external interface MCNameableComponent {
+    val name: String
 }
 
-external class MCComponent<T> {
+external interface MCPlayerEntity {
+}
+
+external interface MCComponent<T> {
     var data: T
 }
 
-external class MCEvent<T> {
+external interface MCEvent<T> {
     val data: T
 }
 
-external class MCPlayerDestroyedBlockEvent {
+external interface MCPlayerDestroyedBlockEvent {
     val block_identifier: String
     val block_position: MCBlockPos
-    val player: MCPlayer
+    val player: MCPlayerEntity
 }
 
-external class MCLoggerConfigEvent {
+external interface MCLoggerConfigEvent {
     var log_errors: Boolean
     var log_information: Boolean
     var log_warnings: Boolean
 }
 
-external class MCChatEvent {
+external interface MCChatEvent {
     var message: String
 }
 
-external class MCServer {
+external interface MCServer {
     val level: Any
 }
 
-external class MCCommandResult {
+external interface MCCommandResult {
     val statusCode: Int
     val statusMessage: String
 }
 
-external class MCServerSystem {
+external interface MCServerSystem {
     var initialize: () -> Unit
     var log: (msg: Any?) -> Unit
 

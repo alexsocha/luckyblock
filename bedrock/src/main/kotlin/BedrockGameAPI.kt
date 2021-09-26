@@ -87,6 +87,11 @@ fun runCommand(serverSystem: MCServerSystem, command: String) {
     }
 }
 
+fun getPlayerName(serverSystem: MCServerSystem, player: MCPlayerEntity): String? {
+    val component = serverSystem.getComponent<MCNameableComponent>(player, "minecraft:nameable")
+    return component?.data?.name
+}
+
 object BedrockGameAPI : GameAPI {
     lateinit var server: MCServer
     lateinit var serverSystem: MCServerSystem
@@ -123,12 +128,11 @@ object BedrockGameAPI : GameAPI {
     override fun logError(msg: String?, error: Exception?) {
         if (msg != null) {
             serverSystem.log("Lucky Block Error: $msg")
-            throw Exception(msg)
         }
         if (error != null) {
             serverSystem.log("Lucky Block Error: ${error.message}: ${error.stackTraceToString()}")
-            throw error
         }
+        throw error ?: Exception(msg)
     }
 
     override fun logInfo(msg: String) {
@@ -142,8 +146,13 @@ object BedrockGameAPI : GameAPI {
     override fun getEnchantments(): List<Enchantment> = mod.lucky.bedrock.common.getEnchantments()
     override fun getUsefulStatusEffects(): List<StatusEffect> = mod.lucky.bedrock.common.getUsefulStatusEffects()
 
-    override fun getEntityPos(entity: Entity): Vec3d = toVec3d((entity as MCEntity).pos)
-    override fun getPlayerName(player: PlayerEntity): String = "Test Player"
+    override fun getEntityPos(entity: Entity): Vec3d {
+        return toVec3d((entity as MCEntity).pos)
+    }
+
+    override fun getPlayerName(player: PlayerEntity): String {
+        return getPlayerName(serverSystem, player as MCPlayerEntity) ?: "Unknown"
+    }
 
     override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) {}
     override fun convertStatusEffectId(effectId: Int): String? = null
@@ -155,7 +164,11 @@ object BedrockGameAPI : GameAPI {
     override fun getPlayerHeadPitchDeg(player: PlayerEntity): Double = 0.0
     override fun getNearestPlayer(world: World, pos: Vec3d): PlayerEntity? = null
     override fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double) {}
-    override fun isAirBlock(world: World, pos: Vec3i): Boolean = true
+
+    override fun isAirBlock(world: World, pos: Vec3i): Boolean {
+        val block = serverSystem.getBlock((world as MCWorld).ticking_area, toMCBlockPos(pos))
+        return block.__identifier__ == "minecraft:air"
+    }
 
     override fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean) {
         val blockStatesStr = state?.let {
@@ -232,7 +245,12 @@ object BedrockGameAPI : GameAPI {
         }
     }
     override fun createExplosion(world: World, pos: Vec3d, damage: Double, fire: Boolean) {}
-    override fun sendMessage(player: PlayerEntity, message: String) {}
+
+    override fun sendMessage(player: PlayerEntity, message: String) {
+        val playerName = getPlayerName(serverSystem, player as MCPlayerEntity)
+        runCommand(serverSystem, "/msg ${playerName ?: "@a"} ${message}")
+    }
+
     override fun setDifficulty(world: World, difficulty: String) {}
     override fun setTime(world: World, time: Long) {}
 

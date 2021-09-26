@@ -45,7 +45,7 @@ fun registerModConfig(blockId: String, unparsedConfig: UnparsedModConfig) {
     }
 }
 
-fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayer, pos: BlockPos, blockId: String) {
+fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayerEntity, pos: BlockPos, blockId: String) {
     try {
         BedrockGameAPI.logInfo("Starting drop")
         val vecPos = Vec3d(pos.x + 0.5, pos.y.toDouble(), pos.z + 0.5)
