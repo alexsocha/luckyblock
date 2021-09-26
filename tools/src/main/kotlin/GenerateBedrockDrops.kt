@@ -56,11 +56,12 @@ fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Rando
                     "palette" to DictAttr(),
                     "entities" to ListAttr(drops.map {
                         val dropProps = it.props
+                        val pos = it.getPos(Vec3d(0.0, 0.0, 0.0))
                         dictAttrOf(
                             "Pos" to listAttrOf(
-                                floatAttrOf((0.5 + (random.randDouble(0.0, 1.0) - 0.5)).toFloat()),
-                                floatAttrOf(0.5f),
-                                floatAttrOf((0.5 + (random.randDouble(0.0, 1.0) - 0.5)).toFloat()),
+                                floatAttrOf((pos.x + 0.5 + (random.randDouble(0.0, 1.0) - 0.5)).toFloat()),
+                                floatAttrOf((pos.y + 0.5).toFloat()),
+                                floatAttrOf((pos.z + 0.5 + (random.randDouble(0.0, 1.0) - 0.5)).toFloat()),
                             ),
                             "identifier" to stringAttrOf("minecraft:item"),
                             "Item" to dictAttrOf(
@@ -84,8 +85,13 @@ fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Rando
                     "palette" to DictAttr(),
                     "entities" to ListAttr(drops.map {
                         val dropProps = it.props
+                        val pos = it.getPos(Vec3d(0.0, 0.0, 0.0))
                         dictAttrOf(
-                            "Pos" to listAttrOf(floatAttrOf(0.5f), floatAttrOf(0f), floatAttrOf(0.5f)),
+                            "Pos" to listAttrOf(
+                                floatAttrOf((pos.x + 0.5).toFloat()),
+                                floatAttrOf(pos.y.toFloat()),
+                                floatAttrOf((pos.z + 0.5).toFloat()),
+                            ),
                             "identifier" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
                         ).with(dropProps.getDict("nbttag").children)
                     }),
@@ -95,6 +101,7 @@ fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Rando
         )
         "block" -> {
             val dropProps = drops.first().props
+            val pos = drops.first().getPos(Vec3d(0.0, 0.0, 0.0)).floor()
             dictAttrOf(
                 "" to dictAttrOf(
                     "format_version" to intAttrOf(1),
@@ -113,9 +120,9 @@ fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Rando
                                 "block_position_data" to dictAttrOf(
                                     "0" to dictAttrOf(
                                         "block_entity_data" to dropProps.getDict("nbttag").withDefaults(mapOf(
-                                            "x" to intAttrOf(0),
-                                            "y" to intAttrOf(0),
-                                            "z" to intAttrOf(0),
+                                            "x" to intAttrOf(pos.x),
+                                            "y" to intAttrOf(pos.y),
+                                            "z" to intAttrOf(pos.z),
                                         )),
                                     ),
                                 ),
@@ -152,6 +159,11 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
         "onePerSample" to booleanAttrOf(onePerSample),
         "amount" to if (onePerSample) intAttrOf(1) else drop.props["amount"],
         "nbttag" to drop.props["nbttag"],
+        *(if (!onePerSample) arrayOf(
+            "posOffset" to drop.props["posOffset"],
+            "centerOffset" to drop.props["centerOffset"],
+            "rotation" to drop.props["rotation"],
+        ) else emptyArray()),
         *(if (drop.type == "item" && "data" in drop.props) arrayOf("data" to drop.props["data"]) else emptyArray()),
         *(if (drop.type == "block") arrayOf("state" to drop.props["state"]) else emptyArray()),
     )
@@ -210,7 +222,7 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
     }
 
     val ignoredProps = listOf("nbttag", "samples", "seed", "onePerSample") +
-        if (!onePerSample) listOf("amount") else emptyList()
+        if (!onePerSample) listOf("amount", "posOffset", "centerOffset", "rotation") else emptyList()
 
     val newDrop = SingleDrop(
         type = "structure",

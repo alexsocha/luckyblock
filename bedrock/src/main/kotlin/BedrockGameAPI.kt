@@ -167,6 +167,7 @@ object BedrockGameAPI : GameAPI {
 
     override fun isAirBlock(world: World, pos: Vec3i): Boolean {
         val block = serverSystem.getBlock((world as MCWorld).ticking_area, toMCBlockPos(pos))
+        serverSystem.log(block.__identifier__)
         return block.__identifier__ == "minecraft:air"
     }
 

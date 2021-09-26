@@ -152,6 +152,7 @@ fun doEntityDrop(drop: SingleDrop, context: DropContext) {
     val initPos = drop.getPos(context.pos)
     val adjustList: ListAttr = drop["adjustY"]
     val adjustRange = adjustList.getValue<Int>(0)..adjustList.getValue(1)
+    gameAPI.logInfo(adjustRange.toString())
     val pos = adjustY(context.world, initPos, adjustRange)
 
     if ("id" !in drop) throw DropError("Missing entity ID")

@@ -2,6 +2,7 @@ import mod.lucky.common.attribute.AttrType
 import mod.lucky.common.attribute.ValueAttr
 import mod.lucky.common.attribute.dictAttrOf
 import mod.lucky.common.attribute.listAttrOf
+import mod.lucky.common.attribute.DictAttr
 import mod.lucky.common.drop.dropsFromStrList
 import kotlin.test.Test
 import kotlin.test.BeforeTest
@@ -11,7 +12,7 @@ import java.nio.ByteOrder
 
 fun singleLine(s: String): String = s.split("\n").joinToString("") { it.trim() }
 
-internal class BedrockDropsTests {
+internal class TestGenerateBedrockDrops {
     @BeforeTest
     fun init() {
         prepareToGenerateDrops()
@@ -57,7 +58,7 @@ internal class BedrockDropsTests {
     @Test
     fun testGenerateBedrockDropsWithAmount() {
         val drops = listOf(
-            "type=entity,id=pig,nbttag=(x=#rand(0,3)),samples=1,amount=30",
+            "type=entity,id=pig,nbttag=(x=#rand(0,3)),samples=1,posOffset=(1,1,1),amount=30",
             "type=entity,id=pig,nbttag=(x=#rand(0,3)),samples=1,amount=30,onePerSample=true",
             "type=entity,id=pig,nbttag=(x=#rand(0,3)),samples=1,amount=#rand(1,2),onePerSample=true",
         )
@@ -72,7 +73,12 @@ internal class BedrockDropsTests {
         assertEquals(generatedDrops.dropStructures.size, 2)
 
         val struct1 = generatedDrops.dropStructures["lucky_block_drop_1"]!!
-        assertEquals(struct1.getDict("").getDict("structure").getList("entities").children.size, 30)
+        val entities1 = struct1.getDict("").getDict("structure").getList("entities")
+        assertEquals(entities1.children.size, 30)
+        assertEquals(
+            (entities1[0] as DictAttr).getList("Pos").toList().map { (it as ValueAttr).value as Float },
+            listOf(1.5f, 1f, 1.5f),
+        )
 
         val struct2 = generatedDrops.dropStructures["lucky_block_drop_2"]!!
         assertEquals(struct2.getDict("").getDict("structure").getList("entities").children.size, 1)
