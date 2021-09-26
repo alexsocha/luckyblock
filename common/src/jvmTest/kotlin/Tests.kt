@@ -2,6 +2,7 @@ import io.mockk.mockkObject
 import mod.lucky.common.*
 import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.*
+import mod.lucky.common.drop.action.calculatePos
 import kotlin.test.*
 
 val testDropContext = DropContext(
@@ -26,25 +27,25 @@ class Tests {
     @Test
     fun testPos() {
         val drop1 = createSingleDrop("type = item, id = minecraft:stick, pos = #pPos")
-        assertEquals(Vec3d(4.0, 5.0, 6.0), drop1.getPos())
+        assertEquals(Vec3d(4.0, 5.0, 6.0), calculatePos(drop1))
 
         val drop2 = createSingleDrop("posY=#pPosY + 3, POSZ=50")
-        assertEquals(Vec3d(1.0, 8.0, 50.0), drop2.getPos(testDropContext.pos))
+        assertEquals(Vec3d(1.0, 8.0, 50.0), calculatePos(drop2, testDropContext.pos))
 
         val drop3 = createSingleDrop("pos=(#bPosY/4.0, #pExactPosZ-#bPosX, #bPosY*2.5)")
-        assertEquals(Vec3d(0.5, 5.5, 5.0), drop3.getPos())
+        assertEquals(Vec3d(0.5, 5.5, 5.0), calculatePos(drop3))
     }
 
     @Test
     fun testPosOffset() {
         val drop1 = createSingleDrop("pos=(1, 2, 3),posOffset=(10,10,10)")
-        assertEquals(Vec3d(11.0, 12.0, 13.0), drop1.getPos())
+        assertEquals(Vec3d(11.0, 12.0, 13.0), calculatePos(drop1))
 
         val drop2 = createSingleDrop("pos=(1, 2, 3),posOffsetY=10")
-        assertEquals(Vec3d(1.0, 12.0, 3.0), drop2.getPos())
+        assertEquals(Vec3d(1.0, 12.0, 3.0), calculatePos(drop2))
 
         val drop3 = createSingleDrop("pos=(4,4,4),posOffsetX=2,centerOffset=(1,-1,1),rotation=2")
-        assertEquals(Vec3d(3.0, 5.0, 5.0), drop3.getPos())
+        assertEquals(Vec3d(3.0, 5.0, 5.0), calculatePos(drop3))
     }
 
     @Test
@@ -56,7 +57,7 @@ class Tests {
             + ")"
         )
         val nbt: DictAttr = drop["nbttag"]
-        assertEquals(Vec3d(1.0, 26.0, 3.0), drop.getPos(testDropContext.pos))
+        assertEquals(Vec3d(1.0, 26.0, 3.0), calculatePos(drop, testDropContext.pos))
         assertEquals(2, drop["amount"])
         assertEquals(AttrType.INT, nbt["i"]!!.type)
         assertEquals(AttrType.BYTE, nbt["b"]!!.type)

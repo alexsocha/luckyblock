@@ -43,16 +43,6 @@ data class SingleDrop(
             )
         } else baseVec
     }
-
-    fun getPos(default: Vec3d? = null, posKey: String = "pos", offsetKey: String? = "posOffset"): Vec3d {
-        val basePos = getVec3(posKey, default)
-        val centerOffset = getVec3<Double>("centerOffset")
-        val posOffset = getVec3<Double>(offsetKey ?: "posOffset")
-
-        if (centerOffset != zeroVec3d) return getWorldPos(posOffset, centerOffset, basePos, this["rotation"])
-        if (posOffset != zeroVec3d) return basePos + posOffset
-        return basePos
-    }
 }
 
 fun SingleDrop.Companion.processProps(type: String, props: DictAttr): DictAttr {

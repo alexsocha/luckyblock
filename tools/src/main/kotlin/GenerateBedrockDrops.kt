@@ -4,6 +4,7 @@ import kotlinx.cli.*
 import mod.lucky.common.*
 import mod.lucky.common.drop.*
 import mod.lucky.common.attribute.*
+import mod.lucky.common.drop.action.calculatePos
 import mod.lucky.bedrock.common.registerBedrockTemplateVars
 
 import mod.lucky.java.loader.DropStructureResource
@@ -45,6 +46,13 @@ fun getIDWithNamespace(id: String): String {
     return if (":" in id) id else "minecraft:$id"
 }
 
+fun getDropAttrOrDefault(drop: SingleDrop, k: String): Attr {
+    if (k in drop.props) return drop.props[k]!!
+    val defaultValue = LuckyRegistry.dropDefaults[drop.type]!![k]!!
+    val spec = LuckyRegistry.dropSpecs[drop.type]!!.children[k]!!
+    return if (defaultValue is Attr) defaultValue else ValueAttr((spec as ValueSpec).type!!, defaultValue)
+}
+
 fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Random): DictAttr {
     return when(dropType) {
         "item" -> dictAttrOf(
@@ -56,7 +64,7 @@ fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Rando
                     "palette" to DictAttr(),
                     "entities" to ListAttr(drops.map {
                         val dropProps = it.props
-                        val pos = it.getPos(Vec3d(0.0, 0.0, 0.0))
+                        val pos = calculatePos(it, Vec3d(0.0, 0.0, 0.0))
                         dictAttrOf(
                             "Pos" to listAttrOf(
                                 floatAttrOf((pos.x + 0.5 + (random.randDouble(0.0, 1.0) - 0.5)).toFloat()),
@@ -85,7 +93,7 @@ fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Rando
                     "palette" to DictAttr(),
                     "entities" to ListAttr(drops.map {
                         val dropProps = it.props
-                        val pos = it.getPos(Vec3d(0.0, 0.0, 0.0))
+                        val pos = calculatePos(it, Vec3d(0.0, 0.0, 0.0))
                         dictAttrOf(
                             "Pos" to listAttrOf(
                                 floatAttrOf((pos.x + 0.5).toFloat()),
@@ -101,7 +109,7 @@ fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Rando
         )
         "block" -> {
             val dropProps = drops.first().props
-            val pos = drops.first().getPos(Vec3d(0.0, 0.0, 0.0)).floor()
+            val pos = calculatePos(drops.first(), Vec3d(0.0, 0.0, 0.0)).floor()
             dictAttrOf(
                 "" to dictAttrOf(
                     "format_version" to intAttrOf(1),
@@ -151,19 +159,17 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
     val dropSeed = drop.props.getWithDefault("seed", seed)
     val onePerSample = drop.props.getWithDefault("onePerSample", false)
 
+    val propKeysForCombinedSamples = listOf("amount", "reinitialize", "posOffset", "centerOffset", "rotation")
+
     val dropProps = dictAttrOf(
         "type" to stringAttrOf(drop.type),
         "id" to drop.props["id"],
         "samples" to intAttrOf(dropSamples),
         "seed" to intAttrOf(dropSeed),
         "onePerSample" to booleanAttrOf(onePerSample),
-        "amount" to if (onePerSample) intAttrOf(1) else drop.props["amount"],
         "nbttag" to drop.props["nbttag"],
-        *(if (!onePerSample) arrayOf(
-            "posOffset" to drop.props["posOffset"],
-            "centerOffset" to drop.props["centerOffset"],
-            "rotation" to drop.props["rotation"],
-        ) else emptyArray()),
+        *(if (!onePerSample) propKeysForCombinedSamples.map { it to drop.props[it] }.toTypedArray() else emptyArray()),
+        "amount" to if (onePerSample) intAttrOf(1) else drop.props["amount"],
         *(if (drop.type == "item" && "data" in drop.props) arrayOf("data" to drop.props["data"]) else emptyArray()),
         *(if (drop.type == "block") arrayOf("state" to drop.props["state"]) else emptyArray()),
     )
@@ -221,15 +227,23 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
         )
     }
 
-    val ignoredProps = listOf("nbttag", "samples", "seed", "onePerSample") +
-        if (!onePerSample) listOf("amount", "posOffset", "centerOffset", "rotation") else emptyList()
+    // ignore props which have no real-time effect, or which have already been accounted for
+    val ignoredProps = listOf("samples", "seed", "onePerSample", "nbttag") +
+        if (!onePerSample) propKeysForCombinedSamples else emptyList()
+
+    // force-include props which have different defaults for structures
+    val includedProps = if (drop.type == "entity") listOf("adjustY") else emptyList()
 
     val newDrop = SingleDrop(
         type = "structure",
-        props = DictAttr(drop.props.children.plus(mapOf(
-            "type" to stringAttrOf("structure"),
-            "id" to structureIdAttr,
-        )).minus(ignoredProps)),
+        props = DictAttr(
+            drop.props.children.plus(
+                mapOf(
+                    "type" to stringAttrOf("structure"),
+                    "id" to structureIdAttr,
+                ) + includedProps.associateWith { getDropAttrOrDefault(drop, it) }
+            ).minus(ignoredProps)
+        ),
     )
     return Pair(newDrop, newGeneratedDrops)
 }

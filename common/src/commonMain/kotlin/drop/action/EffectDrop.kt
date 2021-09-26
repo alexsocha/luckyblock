@@ -30,7 +30,7 @@ fun applyEffect(drop: SingleDrop, dropPos: Vec3d, targetEntity: Entity, effectId
 }
 
 fun doEffectDrop(drop: SingleDrop, context: DropContext) {
-    val dropPos = drop.getPos(context.pos)
+    val pos = calculatePos(drop, context.pos, context.world)
     val targetEntity = when {
         "target" in drop && "range" !in drop -> when (drop.get<String>("target")) {
             "player" -> context.player
@@ -56,18 +56,18 @@ fun doEffectDrop(drop: SingleDrop, context: DropContext) {
     }
 
     if (targetEntity != null) {
-        applyEffect(drop, dropPos, targetEntity, effectId)
+        applyEffect(drop, pos, targetEntity, effectId)
     } else {
-        val effectBoxMin = dropPos - dropPos
-        val effectBoxMax = dropPos + dropPos
+        val range: Double = drop["range"]
+        val effectBoxMin = pos - Vec3d(range, range, range)
+        val effectBoxMax = pos + Vec3d(range, range, range)
         val entities = gameAPI.getLivingEntitiesInBox(context.world, effectBoxMin, effectBoxMax)
 
-        val range: Double = drop["range"]
         for (entity in entities) {
             if (drop["excludePlayer"] && entity == context.player) continue
-            val distance = distanceBetween(dropPos, gameAPI.getEntityPos(entity))
+            val distance = distanceBetween(pos, gameAPI.getEntityPos(entity))
             if (distance <= range) {
-                applyEffect(drop, dropPos, entity, effectId)
+                applyEffect(drop, pos, entity, effectId)
             }
         }
     }

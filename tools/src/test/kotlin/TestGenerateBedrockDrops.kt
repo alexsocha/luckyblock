@@ -19,10 +19,24 @@ internal class TestGenerateBedrockDrops {
     }
 
     @Test
-    fun testGenerateBedrockDropsSampling() {
+    fun testWithoutNBT() {
         val drops = listOf(
-            "type=entity,id=pig,nbttag=(x=#rand(0,3)),samples=1@chance=1",
-            "type=entity,id=cow,nbttag=#randList((Short=23s),(Short=25s)),samples=3@luck=3",
+            "type=entity,id=cow,pos=#pPos",
+        )
+
+        val (newDrops, generatedDrops) = generateDrops(dropsFromStrList(drops), 0, "lucky_block", createEmptyGeneratedDrops())
+        assertEquals(listOf(
+            """type="entity",id="cow",pos=#pPos""",
+        ), newDrops.map { dropToString(it) })
+
+        assertEquals(generatedDrops.dropStructures.size, 0)
+    }
+
+    @Test
+    fun testSampling() {
+        val drops = listOf(
+            "type=item,id=sword,nbttag=(x=#rand(0,3)),samples=1@chance=1",
+            "type=item,id=axe,nbttag=#randList((Short=23s),(Short=25s)),samples=3@luck=3",
         )
 
         val (newDrops, generatedDrops) = generateDrops(dropsFromStrList(drops), 0, "lucky_block", createEmptyGeneratedDrops())
@@ -40,10 +54,22 @@ internal class TestGenerateBedrockDrops {
     }
 
     @Test
-    fun testGenerateBedrockDropsCaching() {
+    fun testPreservesDefaults() {
         val drops = listOf(
-            "type=entity,id=pig,nbttag=(x=#rand(0,3)),samples=2",
-            "type=entity,id=pig,pos=#pPos,nbttag=(x=#rand(0,3)),samples=2",
+            "type=entity,id=cow,nbttag=(x=1)",
+        )
+
+        val (newDrops, _) = generateDrops(dropsFromStrList(drops), 0, "lucky_block", createEmptyGeneratedDrops())
+        assertEquals(listOf(
+            """type="structure",adjustY=[0,10],id="lucky:lucky_block_drop_1"""",
+        ), newDrops.map { dropToString(it) })
+    }
+
+    @Test
+    fun testCaching() {
+        val drops = listOf(
+            "type=item,id=sword,nbttag=(x=#rand(0,3)),samples=2",
+            "type=item,id=sword,pos=#pPos,nbttag=(x=#rand(0,3)),samples=2",
         )
 
         val (newDrops, generatedDrops) = generateDrops(dropsFromStrList(drops), 0, "lucky_block", createEmptyGeneratedDrops())
@@ -56,7 +82,7 @@ internal class TestGenerateBedrockDrops {
     }
 
     @Test
-    fun testGenerateBedrockDropsWithAmount() {
+    fun testOnePerSample() {
         val drops = listOf(
             "type=entity,id=pig,nbttag=(x=#rand(0,3)),samples=1,posOffset=(1,1,1),amount=30",
             "type=entity,id=pig,nbttag=(x=#rand(0,3)),samples=1,amount=30,onePerSample=true",
@@ -65,9 +91,9 @@ internal class TestGenerateBedrockDrops {
 
         val (newDrops, generatedDrops) = generateDrops(dropsFromStrList(drops), 0, "lucky_block", createEmptyGeneratedDrops())
         assertEquals(listOf(
-            """type="structure",id="lucky:lucky_block_drop_1"""",
-            """type="structure",amount=30,id="lucky:lucky_block_drop_2"""",
-            """type="structure",amount=#rand(1,2),id="lucky:lucky_block_drop_2"""",
+            """type="structure",adjustY=[0,10],id="lucky:lucky_block_drop_1"""",
+            """type="structure",adjustY=[0,10],amount=30,id="lucky:lucky_block_drop_2"""",
+            """type="structure",adjustY=[0,10],amount=#rand(1,2),id="lucky:lucky_block_drop_2"""",
         ), newDrops.map { dropToString(it) })
 
         assertEquals(generatedDrops.dropStructures.size, 2)

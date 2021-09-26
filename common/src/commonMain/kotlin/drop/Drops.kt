@@ -26,6 +26,7 @@ fun registerDefaultDrops() {
         *createVecSpec("pos", LuckyRegistry.dropTripleProps["pos"]!!, AttrType.DOUBLE),
         *createVecSpec("posOffset", LuckyRegistry.dropTripleProps["posOffset"]!!, AttrType.DOUBLE),
         *createVecSpec("centerOffset", LuckyRegistry.dropTripleProps["centerOffset"]!!, AttrType.DOUBLE),
+        "adjustY" to ListSpec(listOf(ValueSpec(AttrType.INT), ValueSpec(AttrType.INT))),
     )
 
     val dropSpecs = mapOf(
@@ -51,7 +52,6 @@ fun registerDefaultDrops() {
             "id" to ValueSpec(AttrType.STRING),
             "nbttag" to DictSpec(emptyMap()),
             "components" to DictSpec(emptyMap()), // Bedrock Edition only
-            "adjustY" to ListSpec(listOf(ValueSpec(AttrType.INT), ValueSpec(AttrType.INT))),
             "randomizeMob" to ValueSpec(AttrType.BOOLEAN),
             "facing" to ValueSpec(AttrType.DOUBLE),
         ),
@@ -139,6 +139,7 @@ fun registerDefaultDrops() {
         "pos" to Vec3d(0.0, 0.0, 0.0), // defaults to dropPos
         "posOffset" to Vec3d(0.0, 0.0, 0.0),
         "centerOffset" to Vec3d(0.0, 0.0, 0.0),
+        "adjustY" to listAttrOf(intAttrOf(0), intAttrOf(0)),
     )
 
     val dropDefaults: Map<String, Map<String, Any>> = mapOf(

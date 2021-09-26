@@ -33,7 +33,7 @@ fun doStructureDrop(drop: SingleDrop, context: DropContext) {
     )
     val centerOffsetInt = centerOffset.floor()
 
-    val pos = drop.getPos(context.pos)
+    val pos = calculatePos(drop, context.pos, context.world)
     val posInt = pos.floor()
 
     val mode: String = dropWithDefaults["blockMode"]
