@@ -7,6 +7,7 @@ import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.WeightedDrop
 import mod.lucky.common.drop.dropsFromStrList
+import kotlin.js.JSON.stringify
 
 class MissingAPIFeature : Exception("This API feature is unavailable in Bedrock")
 
@@ -73,7 +74,7 @@ fun attrToJson(attr: Attr): Any {
             attr.children.forEach { (k, v) -> jsDict[k] = attrToJson(v) }
             jsDict as Any
         }
-        is ListAttr -> attr.children.map { attrToJson(it) }
+        is ListAttr -> attr.children.map { attrToJson(it) }.toTypedArray()
         is ValueAttr -> attr.value
         else -> throw Exception()
     }
@@ -96,16 +97,35 @@ object BedrockGameAPI : GameAPI {
     lateinit var server: MCServer
     lateinit var serverSystem: MCServerSystem
     private lateinit var spacialQuery: MCQuery
-    private lateinit var luckyBlockEntityQuery: MCQuery
+    private lateinit var nearestPlayerQuery: MCQuery
 
     fun initServer(server: MCServer, serverSystem: MCServerSystem) {
         BedrockGameAPI.server = server
         BedrockGameAPI.serverSystem = serverSystem
 
         spacialQuery = serverSystem.registerQuery("minecraft:position", "x", "y", "z")
+        nearestPlayerQuery = serverSystem.registerQuery("minecraft:position", "x", "y", "z")
 
-        luckyBlockEntityQuery = serverSystem.registerQuery("minecraft:position", "x", "y", "z")
-        serverSystem.addFilterToQuery(luckyBlockEntityQuery, "lucky:lucky_block_entity_data")
+        serverSystem.initialize = {
+            val scriptLoggerConfig = serverSystem.createEventData<MCLoggerConfigEvent>("minecraft:script_logger_config");
+            scriptLoggerConfig.data.log_errors = true
+            scriptLoggerConfig.data.log_information = true
+            scriptLoggerConfig.data.log_warnings = true
+            serverSystem.broadcastEvent("minecraft:script_logger_config", scriptLoggerConfig);
+        }
+
+        serverSystem.log = { msg ->
+            val chatEvent = serverSystem.createEventData<MCChatEvent>("minecraft:display_chat_event");
+            chatEvent.data.message = stringify(msg)
+            serverSystem.broadcastEvent("minecraft:display_chat_event", chatEvent);
+        }
+
+        serverSystem.registerComponent("lucky:all_lucky_block_entity_data", mapOf(
+            "" to UnparsedDropContainer(
+                drops = emptyArray(),
+                luck = 0,
+            )
+        ))
     }
 
     fun readAndDestroyLuckyBlockEntity(world: MCWorld, pos: BlockPos): DropContainer? {
@@ -139,12 +159,11 @@ object BedrockGameAPI : GameAPI {
         serverSystem.log(msg)
     }
 
-    override fun getUsefulPotionIds(): List<String> = emptyList()
-    override fun getSpawnEggIds(): List<String> = emptyList()
-
     override fun getRGBPalette(): List<Int> = mod.lucky.bedrock.common.getRGBPalette()
     override fun getEnchantments(): List<Enchantment> = mod.lucky.bedrock.common.getEnchantments()
     override fun getUsefulStatusEffects(): List<StatusEffect> = mod.lucky.bedrock.common.getUsefulStatusEffects()
+    override fun getUsefulPotionIds(): List<String> = mod.lucky.bedrock.common.getUsefulPotionIds()
+    override fun getSpawnEggIds(): List<String> = mod.lucky.bedrock.common.getSpawnEggIds()
 
     override fun getEntityPos(entity: Entity): Vec3d {
         return toVec3d((entity as MCEntity).pos)
@@ -154,16 +173,31 @@ object BedrockGameAPI : GameAPI {
         return getPlayerName(serverSystem, player as MCPlayerEntity) ?: "Unknown"
     }
 
-    override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) {}
-    override fun convertStatusEffectId(effectId: Int): String? = null
-    override fun getLivingEntitiesInBox(world: World, boxMin: Vec3d, boxMax: Vec3d): List<Entity> = emptyList()
-    override fun setEntityOnFire(entity: Entity, durationSeconds: Int) {}
-    override fun setEntityMotion(entity: Entity, motion: Vec3d) {}
-    override fun getWorldTime(world: World): Long = 0
-    override fun getPlayerHeadYawDeg(player: PlayerEntity): Double = 0.0
-    override fun getPlayerHeadPitchDeg(player: PlayerEntity): Double = 0.0
-    override fun getNearestPlayer(world: World, pos: Vec3d): PlayerEntity? = null
-    override fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double) {}
+    override fun getLivingEntitiesInBox(world: World, boxMin: Vec3d, boxMax: Vec3d): List<Entity> {
+        return serverSystem.getEntitiesFromQuery(
+            spacialQuery,
+            boxMin.x, boxMin.y, boxMin.z,
+            boxMax.x, boxMax.y, boxMax.z,
+        ).toList()
+    }
+
+    override fun setEntityOnFire(entity: Entity, durationSeconds: Int) {
+        val component = serverSystem.createComponent<Any>(entity, "minecraft:is_ignited")
+        serverSystem.log(component)
+    }
+
+    override fun getNearestPlayer(world: World, pos: Vec3d): PlayerEntity? {
+        val entities = serverSystem.getEntitiesFromQuery(
+            spacialQuery,
+            pos.x - 16, pos.y - 16, pos.z - 16,
+            pos.x + 16, pos.y + 16, pos.z + 16,
+        )
+        return entities.find { it.__identifier__ == "minecraft:player" }
+    }
+
+    override fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double) {
+        // TODO
+    }
 
     override fun isAirBlock(world: World, pos: Vec3i): Boolean {
         val block = serverSystem.getBlock((world as MCWorld).ticking_area, toMCBlockPos(pos))
@@ -233,7 +267,9 @@ object BedrockGameAPI : GameAPI {
         }
     }
 
-    override fun setBlockEntity(world: World, pos: Vec3i, nbt: DictAttr) {}
+    override fun setBlockEntity(world: World, pos: Vec3i, nbt: DictAttr) {
+        // TODO
+    }
 
     override fun runCommand(world: World, pos: Vec3d, command: String, senderName: String, showOutput: Boolean) {
         serverSystem.executeCommand(command) { result ->
@@ -244,15 +280,40 @@ object BedrockGameAPI : GameAPI {
             }
         }
     }
-    override fun createExplosion(world: World, pos: Vec3d, damage: Double, fire: Boolean) {}
+
+    override fun createExplosion(world: World, pos: Vec3d, damage: Double, fire: Boolean) {
+        spawnEntity(
+            world=world,
+            id="tnt",
+            pos=pos,
+            components=dictAttrOf(
+                "explode" to dictAttrOf(
+                    "fuse_length" to listAttrOf(doubleAttrOf(-1.0), doubleAttrOf(-1.0)),
+                    "fuse_lit" to booleanAttrOf(true),
+                    "power" to doubleAttrOf(damage),
+                    "causes_fire" to booleanAttrOf(fire),
+                )
+            ),
+            nbt=DictAttr(),
+            rotation=0.0,
+            randomizeMob=false,
+            player=null,
+            sourceId="",
+        )
+    }
 
     override fun sendMessage(player: PlayerEntity, message: String) {
         val playerName = getPlayerName(serverSystem, player as MCPlayerEntity)
         runCommand(serverSystem, "/msg ${playerName ?: "@a"} ${message}")
     }
 
-    override fun setDifficulty(world: World, difficulty: String) {}
-    override fun setTime(world: World, time: Long) {}
+    override fun setDifficulty(world: World, difficulty: String) {
+        runCommand(serverSystem, "/difficulty ${difficulty}")
+    }
+
+    override fun setTime(world: World, time: Long) {
+        runCommand(serverSystem, "/time set ${time}")
+    }
 
     override fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?) {
         val itemEntity = serverSystem.createEntity("item_entity", getIDWithNamespace(id))
@@ -279,7 +340,14 @@ object BedrockGameAPI : GameAPI {
         }
     }
 
-    override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {}
+    override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {
+        val soundEvent = serverSystem.createEventData<MCSoundEvent>("minecraft:play_sound");
+        soundEvent.data.position = arrayOf(pos.x, pos.y, pos.z)
+        soundEvent.data.sound = id
+        soundEvent.data.volume = volume
+        soundEvent.data.pitch = pitch
+        serverSystem.broadcastEvent("minecraft:play_sound", soundEvent);
+    }
 
     override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {
         for (i in 0 until amount) {
@@ -293,9 +361,6 @@ object BedrockGameAPI : GameAPI {
             )
         }
     }
-
-    override fun playParticleEvent(world: World, pos: Vec3d, eventId: Int, data: Int) = throw MissingAPIFeature()
-    override fun playSplashPotionEvent(world: World, pos: Vec3d, potionName: String?, potionColor: Int?) = throw MissingAPIFeature()
 
     override fun createStructure(
         world: World,
@@ -312,4 +377,13 @@ object BedrockGameAPI : GameAPI {
             "${cornerPos.x} ${cornerPos.y} ${cornerPos.z}"
         )
     }
+
+    override fun getWorldTime(world: World): Long = throw MissingAPIFeature()
+    override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) = throw MissingAPIFeature()
+    override fun setEntityMotion(entity: Entity, motion: Vec3d) = throw MissingAPIFeature()
+    override fun getPlayerHeadYawDeg(player: PlayerEntity): Double = throw MissingAPIFeature()
+    override fun getPlayerHeadPitchDeg(player: PlayerEntity): Double = throw MissingAPIFeature()
+    override fun convertStatusEffectId(effectId: Int): String? = throw MissingAPIFeature()
+    override fun playParticleEvent(world: World, pos: Vec3d, eventId: Int, data: Int) = throw MissingAPIFeature()
+    override fun playSplashPotionEvent(world: World, pos: Vec3d, potionName: String?, potionColor: Int?) = throw MissingAPIFeature()
 }

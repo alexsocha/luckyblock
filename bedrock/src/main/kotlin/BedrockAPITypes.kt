@@ -17,6 +17,7 @@ external interface MCBlock {
 }
 
 external interface MCEntity {
+    val __identifier__: String;
     val pos: MCVecPos
 }
 
@@ -63,6 +64,13 @@ external interface MCChatEvent {
     var message: String
 }
 
+external interface MCSoundEvent {
+    var pitch: Double
+    var position: Array<Double>
+    var sound: String
+    var volume: Double
+}
+
 external interface MCServer {
     val level: Any
 }
@@ -78,7 +86,7 @@ external interface MCServerSystem {
 
     fun registerQuery(componentName: String, field1: String, field2: String, field3: String): MCQuery
     fun addFilterToQuery(query: MCQuery, componentName: String)
-    fun getEntitiesFromQuery(query: MCQuery, field1Min: Int, field1Max: Int, field2Min: Int, field2Max: Int, field3Min: Int, field3Max: Int): Array<MCEntity>
+    fun getEntitiesFromQuery(query: MCQuery, field1Min: Double, field2Min: Double, field3Min: Double, field1Max: Double, field2Max: Double, field3Max: Double): Array<MCEntity>
 
     fun registerEventData(name: String, eventData: Any)
     fun <T> createEventData(name: String): MCEvent<T>

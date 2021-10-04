@@ -187,7 +187,7 @@ group(
 type=entity,ID=xp_bottle,NBTTag=(Motion=#randLaunchMotion),amount=#rand(16,32)@luck=2
 
 / launched tnt
-type=entity,ID=tnt,NBTTag=(Fuse=50b,IsFuseList=true,Motion=#randLaunchMotion),amount=15@luck=-2
+type=entity,ID=tnt,NBTTag=(Fuse=50b,IsFuseLit=true,Motion=#randLaunchMotion),amount=15@luck=-2
 
 / lightning creeper
 group(type=difficulty,ID=hard;type=entity,ID=creeper;type=entity,ID=lightning_bolt)@luck=-2
