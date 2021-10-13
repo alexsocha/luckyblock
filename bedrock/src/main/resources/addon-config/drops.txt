@@ -190,96 +190,168 @@ type=entity,ID=xp_bottle,NBTTag=(Motion=#randLaunchMotion),amount=#rand(16,32)@l
 type=entity,ID=tnt,NBTTag=(Fuse=50b,IsFuseLit=true,Motion=#randLaunchMotion),amount=15@luck=-2
 
 / lightning creeper
-group(type=difficulty,ID=hard;type=entity,ID=creeper;type=entity,ID=lightning_bolt)@luck=-2
-/ giant
-group(type=difficulty,ID=hard;type=entity,ID=giant)@luck=-2
+group(type=entity,ID=creeper;type=entity,ID=lightning_bolt)@luck=-2
 / wither
-group(type=difficulty,ID=hard;type=entity,ID=wither)@chance=0.1@luck=-2
+type=entity,ID=wither@chance=0.1@luck=-2
 / ghast
-group(type=difficulty,ID=hard;type=entity,ID=ghast)@chance=0.2@luck=-2
+type=entity,ID=ghast@chance=0.2@luck=-2
 / elder guardian
-group(type=difficulty,ID=hard;type=entity,ID=guardian,NBTTag=(Elder=1))@chance=0.5@luck=-2
-/ killer rabbit
-group(type=difficulty,ID=hard;type=entity,ID=rabbit,NBTTag=(RabbitType=99))@luck=-1
+type=entity,ID=elder_guardian@chance=0.5@luck=-2
 
 / bob the zombie
-group(type=difficulty,ID=hard;type=entity,ID=zombie,NBTTag=(
-    HandItems=[(id=diamond_sword,Count=1,tag=(Enchantments=#luckySwordEnchantments))],
-    ArmorItems=[(id=diamond_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments)),(id=diamond_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments)),(id=diamond_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments)),(id=diamond_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments))],
-    HandDropChances=[0.5f,0f],ArmorDropChances=[0.3f,0.3f,0.3f,0.3f],
-    CustomName=#jsonStr(text="Bob",color=blue,bold=true),
+type=entity,ID=zombie,NBTTag=(
+    Mainhand=[(Name=minecraft:diamond_sword,Count=1b,tag=(ench=#luckySwordEnchantments))],
+    Armor=[
+        (Name=minecraft:diamond_boots,Count=1b,tag=(ench=#luckyBootsEnchantments)),
+        (Name=minecraft:diamond_leggings,Count=1b,tag=(ench=#luckyLeggingsEnchantments)),
+        (Name=minecraft:diamond_chestplate,Count=1b,tag=(ench=#luckyChestplateEnchantments)),
+        (Name=minecraft:diamond_helmet,Count=1b,tag=(ench=#luckyHelmetEnchantments))
+    ],
+    CustomName="$l$9Bob",
     CustomNameVisible=true
-))@luck=-2
-
-/ ghostly horseman skeleton
-group(type=difficulty,ID=hard;type=entity,ID=bat,NBTTag=(
-    Silent=true,
-    ActiveEffects=[(Id=14,Duration=100000,Amplifier=1,ShowParticles=false)],
-    Passengers=[(identifier=minecraft:skeleton_horse,Tame=true,Type=4,
-        Passengers=[(
-            identifier=minecraft:skeleton,
-            HandItems=[(id=bow,Count=1,tag=(Enchantments=#luckyBowEnchantments))],
-            ArmorItems=[(id=chainmail_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments)),(id=chainmail_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments)),(id=chainmail_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments)),(id=chainmail_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments))],
-            HandDropChances=[0.5f,0f],ArmorDropChances=[0.3f,0.3f,0.3f,0.3f],
-            CustomName=#jsonStr(text="Ghostly Horseman",color=gray,bold=true),
-            CustomNameVisible=true
-        )])
-    ])
 )@luck=-2
 
-/ stacked villager and pigs
-type=entity,ID=pig,NBTTag=(Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(id=villager,VillagerData=(profession=nitwit))])])])])])])])])@luck=0
+/ skeleton horsemen
+type=command,ID="/summon skeleton_horse #bPosX #bPosY #bPosZ minecraft:set_trap"@luck=-2
 
 / horses
-type=entity,ID=#randList(horse,skeleton_horse,zombie_horse),amount=12,posOffset=#circleOffset(4),NBTTag=(Tame=true,Owner=#pUUIDArray)@luck=1
+type=entity,ID=#randList(horse,skeleton_horse,zombie_horse),amount=12,posOffset=#circleOffset(4)@luck=1
 
 / llamas
-type=entity,ID=llama,amount=8,posOffset=#circleOffset(4),NBTTag=(CustomName=#jsonStr(text=#randList(Llaura,Llauretta,Llavender,Llinda,Llisa,Llouise,Llucy,Llydia),color=dark_purple,bold=true),Variant=#rand(0,3),CustomNameVisible=true)@luck=0
+type=entity,ID=llama,amount=8,posOffset=#circleOffset(4),NBTTag=(
+    CustomName=$l$5#randList(Llaura,Llauretta,Llavender,Llinda,Llisa,Llouise,Llucy,Llydia),
+    CustomNameVisible=true,
+    Variant=#rand(0,3)
+)@luck=0
 
 / witch with bats
-group(type=difficulty,ID=hard;type=entity,ID=witch;type=entity,ID=bat,posY=#bPosY+#rand(0,2),posOffset=#circleOffset(0,1),amount=64)@luck=-1
+group(type=entity,ID=witch;type=entity,ID=bat,posY=#bPosY+#rand(0,2),posOffset=#circleOffset(0,1),amount=64)@luck=-1
+
 / huge slime and magma cube
-group:1:(type=entity,ID=slime,NBTTag=(Size=10);type=entity,ID=magma_cube,NBTTag=(Size=10))@luck=-2
+group:1:(type=entity,ID=slime,NBTTag=(Size=10);type=entity,ID=magma_cube,NBTTag=(Size=10b))@luck=-2
 
 / pet wolves
-group(type=entity,ID=wolf,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(CollarColor=#rand(0,15),Owner=#pUUIDArray,Sitting=true);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
+group(
+    ID=bone,amount=64;
+    type=entity,ID=wolf,amount=#rand(5,10),posOffset=#circleOffset(3);
+    type=particle,ID=heart_particle,size=(2,0,2),particleAmount=20
+)@luck=1
+
 / pet cats
-group(type=entity,ID=cat,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(CatType=#rand(0,10),CollarColor=#rand(0,15),Owner=#pUUIDArray,Sitting=true);type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
-/ pet rabbits
-group(type=entity,ID=rabbit,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag=(RabbitType=#rand(0,5));type=particle,ID="heart",size=(2,0,2),particleAmount=20)@luck=1
+group(
+    ID=salmon,amount=64;
+    type=entity,ID=cat,amount=#rand(5,10),posOffset=#circleOffset(3);
+    type=particle,ID=heart_particle,size=(2,0,2),particleAmount=20
+)@luck=1
+
+/ rabbits
+group(
+    type=entity,ID=rabbit,amount=#rand(5,10),posOffset=#circleOffset(3);
+    type=particle,ID=heart_particle,size=(2,0,2),particleAmount=20
+)@luck=1
 
 / hero villagers
 
 type=entity,ID=villager,NBTTag=(
-    VillagerData=(level=3,profession=weaponsmith,type=jungle),
-    Offers=(Recipes=[
-        (buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_sword,Count=1,tag=(Enchantments=#luckySwordEnchantments,display=(Name=#jsonStr(text="Hero's Sword",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(20,25)),sell=(id=bow,Count=1,tag=(Enchantments=#luckyBowEnchantments,display=(Name=#jsonStr(text="Hero's Bow",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=fishing_rod,Count=1,tag=(Enchantments=#luckyFishingRodEnchantments,display=(Name=#jsonStr(text="Hero's Fishing Rod",color=blue,bold=true)))),maxUses=1),
-    ]),
-    CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
+    TradeTier=3,
+    Variant=9,
+    Offers=(
+        Recipes=[
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:diamond_sword,Count=1b,tag=(ench=#luckySwordEnchantments,display=(Name="$l$9Hero's Sword"))),
+                buyCountA=#rand(20,25),
+                maxUses=1
+            ),
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:bow,Count=1b,tag=(ench=#luckyBowEnchantments,display=(Name="$l$9Hero's Bow"))),
+                buyCountA=#rand(20,25),
+                maxUses=1
+            ),
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:fishing_rod,Count=1b,tag=(ench=#luckyFishingRodEnchantments,display=(Name="$l$9Hero's Fishing Rod"))),
+                buyCountA=#rand(10,15),
+                maxUses=1
+            )
+        ]
+    ),
+    CustomName="$l$9Hero Villager",
+    CustomNameVisible=true,
+    definitions=["+minecraft:villager_v2", "+", "+weaponsmith"]
 )@luck=1
 
 type=entity,ID=villager,NBTTag=(
-    VillagerData=(level=3,profession=armorer,type=jungle),
-    Offers=(Recipes=[
-        (buy=(id=diamond,Count=#rand(12,17)),sell=(id=diamond_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments,display=(Name=#jsonStr(text="Hero's Helmet",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments,display=(Name=#jsonStr(text="Hero's Chestplate",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments,display=(Name=#jsonStr(text="Hero's Leggings",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(12,17)),sell=(id=diamond_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments,display=(Name=#jsonStr(text="Hero's Boots",color=blue,bold=true)))),maxUses=1)
-    ]),
-    CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
+    TradeTier=3,
+    Variant=8,
+    Offers=(
+        Recipes=[
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:diamond_helmet,Count=1b,tag=(ench=#luckyHelmetEnchantments,display=(Name="$l$9Hero's Helmet"))),
+                buyCountA=#rand(12,17),
+                maxUses=1
+            ),
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:diamond_chestplate,Count=1b,tag=(ench=#luckyChestplateEnchantments,display=(Name="$l$9Hero's Chestplate"))),
+                buyCountA=#rand(20,25),
+                maxUses=1
+            ),
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:diamond_leggings,Count=1b,tag=(ench=#luckyLeggingsEnchantments,display=(Name="$l$9Hero's Leggings"))),
+                buyCountA=#rand(15,20),
+                maxUses=1
+            ),
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:diamond_boots,Count=1b,tag=(ench=#luckyBootsEnchantments,display=(Name="$l$9Hero's Boots"))),
+                buyCountA=#rand(12,17),
+                maxUses=1
+             )
+        ]
+    ),
+    CustomName="$l$9Hero Villager",
+    CustomNameVisible=true,
+    definitions=["+minecraft:villager_v2", "+", "+armorer"]
 )@luck=1
 
 type=entity,ID=villager,NBTTag=(
-    VillagerData=(level=3,profession=toolsmith,type=jungle),
-    Offers=(Recipes=[
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=diamond_shovel,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Shovel",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_pickaxe,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Pickaxe",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_axe,Count=1,tag=(Enchantments=#luckyAxeEnchantments,display=(Name=#jsonStr(text="Hero's Axe",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=diamond_hoe,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Hoe",color=blue,bold=true)))),maxUses=1)
-    ]),
-    CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
+    TradeTier=3,
+    Variant=10,
+    Offers=(
+        Recipes=[
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:diamond_shovel,Count=1b,tag=(ench=#luckyToolEnchantments,display=(Name="$l$9Hero's Shovel"))),
+                buyCountA=#rand(10,15),
+                maxUses=1
+            ),
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:diamond_pickaxe,Count=1b,tag=(ench=#luckyToolEnchantments,display=(Name="$l$9Hero's Pickaxe"))),
+                buyCountA=#rand(15,20),
+                maxUses=1
+            ),
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:diamond_axe,Count=1b,tag=(ench=#luckyAxeEnchantments,display=(Name="$l$9Hero's Axe"))),
+                buyCountA=#rand(15,20),
+                maxUses=1
+            ),
+            (
+                buyA=(Name=minecraft:diamond),
+                sell=(Name=minecraft:diamond_hoe,Count=1b,tag=(ench=#luckyToolEnchantments,display=(Name="$l$9Hero's Hoe"))),
+                buyCountA=#rand(10,15),
+                maxUses=1
+            )
+        ]
+    ),
+    CustomName="$l$9Hero Villager",
+    CustomNameVisible=true,
+    definitions=["+minecraft:villager_v2", "+", "+toolsmith"]
 )@luck=1
 
 / falling blocks (iron, gold, diamond, emerald)
@@ -324,7 +396,6 @@ type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,Han
 group(
     / sword, difficulty, time, potion effects
     ID=wooden_sword;
-    type=difficulty,ID=hard;
     type=time,ID=18750;
     type=effect,ID=slowness,duration=30,amplifier=4;
     type=effect,ID=blindness,duration=30;
