@@ -412,19 +412,15 @@ group(type=fill,ID=air,size=(1,51,1);
     group(posY=#bPosY+10;posY=#bPosY+15;posY=#bPosY+20;posY=#bPosY+25;posY=#bPosY+30;posY=#bPosY+35;posY=#bPosY+40;posY=#bPosY+45;posY=#bPosY+50),type=entity,ID=falling_block,NBTTag=(FallingBlock=(name=minecraft:tnt,states=()))
 )@luck=2
 
-/ baby player
-type=entity,ID=armor_stand,NBTTag=(
-    Small=true,
-    NoBasePlate=true,
-    ShowArms=true,
-    Mainhand=[(Name=minecraft:stone_pickaxe,Count=1b)],
+/ colorful armor
+type=entity,ID=armor_stand,samples=4,seed=528,NBTTag=(
+    Mainhand=[(Name=minecraft:#randColor_candle,Count=1b)],
     Armor=[
-        (Name=minecraft:leather_boots,Count=1b,tag=(display=(color=#randColor))),
-        (Name=minecraft:leather_leggings,Count=1b,tag=(display=(color=#randColor))),
-        (Name=minecraft:leather_chestplate,Count=1b,tag=(display=(color=#randColor))),
-        (Name=minecraft:player_head,Count=1b,tag=(SkullOwner=Dev))
-    ],
-    Rotation=[0f,0f]
+        (Name=minecraft:leather_boots,Count=1b,tag=(customColor=#rand(0,16777215))),
+        (Name=minecraft:leather_leggings,Count=1b,tag=(customColor=#rand(0,16777215))),
+        (Name=minecraft:leather_chestplate,Count=1b,tag=(customColor=#rand(0,16777215))),
+        (Name=minecraft:leather_helmet,Count=1b,tag=(customColor=#rand(0,16777215)))
+    ]
 )@luck=0
 
 / ==== Monster Apocalyple ====
