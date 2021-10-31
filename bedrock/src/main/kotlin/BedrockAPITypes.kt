@@ -1,5 +1,7 @@
 package mod.lucky.bedrock
 
+external fun setTimeout(fn: () -> Unit, delay: Number)
+
 external interface MCBlockPos {
     val x: Int
     val y: Int

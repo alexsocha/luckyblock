@@ -355,41 +355,77 @@ type=entity,ID=villager,NBTTag=(
 )@luck=1
 
 / falling blocks (iron, gold, diamond, emerald)
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=iron_block));type=particle,ID=large_smoke,size=(1,2,1),particleAmount=500;type=sound,ID=block.fire.extinguish)@luck=0
+group(
+    type=fill,ID=air,size=(1,8,1);
+    type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(FallingBlock=(name=minecraft:iron_block,states=()));
+    type=particle,ID=basic_smoke_particle,size=(1,8,1),particleAmount=500;
+    type=sound,ID=random.fizz
+)@luck=0
 
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=gold_block));type=particle,ID=flame,size=(1,2,1),particleAmount=500;type=sound,ID=entity.ghast.shoot)@luck=0
+group(
+    type=fill,ID=air,size=(1,8,1);
+    type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(FallingBlock=(name=minecraft:gold_block,states=()));
+    type=particle,ID=basic_flame_particle,size=(1,8,1),particleAmount=500;
+    type=sound,ID=mob.ghast.fireball
+)@luck=0
 
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=diamond_block));type=entity,ID=lightning_bolt)@luck=1
+group(
+    type=fill,ID=air,size=(1,8,1);
+    type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(FallingBlock=(name=minecraft:diamond_block,states=()));
+    type=entity,ID=lightning_bolt
+)@luck=1
 
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=emerald_block));type=particle,ID=happy_villager,size=(1,2,1),particleAmount=500;type=sound,ID=block.grass.break)@luck=0
+group(
+    type=fill,ID=air,size=(1,8,1);
+    type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(FallingBlock=(name=minecraft:emerald_block,states=()));
+    type=particle,ID=villager_happy,size=(1,8,1),particleAmount=500;
+    type=sound,ID=dig.grass
+)@luck=0
 
-group(type=fill,ID=air,size=(1,8,1);type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(BlockState=(Name=lapis_block));type=particle,ID=splash,size=(1,2,1),particleAmount=1000;type=sound,ID=entity.player.swim)@luck=0
+group(
+    type=fill,ID=air,size=(1,8,1);
+    type=entity,ID=falling_block,posY=#bPosY+7,NBTTag=(FallingBlock=(name=minecraft:lapis_block,states=()));
+    type=particle,ID=water_splash_particle_manual,size=(1,8,1),particleAmount=1000;
+    type=sound,ID=random.swim
+)@luck=0
 
 / colorful pole
 group(type=fill,ID=air,size=(1,51,1);
     group(
-        NBTTag=(BlockState=(Name=red_glazed_terracotta)),posY=#bPosY+5;
-        NBTTag=(BlockState=(Name=orange_glazed_terracotta)),posY=#bPosY+10;
-        NBTTag=(BlockState=(Name=yellow_glazed_terracotta)),posY=#bPosY+15;
-        NBTTag=(BlockState=(Name=lime_glazed_terracotta)),posY=#bPosY+20;
-        NBTTag=(BlockState=(Name=light_blue_glazed_terracotta)),posY=#bPosY+25;
-        NBTTag=(BlockState=(Name=blue_glazed_terracotta)),posY=#bPosY+30;
-        NBTTag=(BlockState=(Name=purple_glazed_terracotta)),posY=#bPosY+35;
-        NBTTag=(BlockState=(Name=magenta_glazed_terracotta)),posY=#bPosY+40;
-        NBTTag=(BlockState=(Name=pink_glazed_terracotta)),posY=#bPosY+45
+        NBTTag=(FallingBlock=(name=minecraft:red_glazed_terracotta,states=())),posY=#bPosY+5;
+        NBTTag=(FallingBlock=(name=minecraft:orange_glazed_terracotta,states=())),posY=#bPosY+10;
+        NBTTag=(FallingBlock=(name=minecraft:yellow_glazed_terracotta,states=())),posY=#bPosY+15;
+        NBTTag=(FallingBlock=(name=minecraft:lime_glazed_terracotta,states=())),posY=#bPosY+20;
+        NBTTag=(FallingBlock=(name=minecraft:light_blue_glazed_terracotta,states=())),posY=#bPosY+25;
+        NBTTag=(FallingBlock=(name=minecraft:blue_glazed_terracotta,states=())),posY=#bPosY+30;
+        NBTTag=(FallingBlock=(name=minecraft:purple_glazed_terracotta,states=())),posY=#bPosY+35;
+        NBTTag=(FallingBlock=(name=minecraft:magenta_glazed_terracotta,states=())),posY=#bPosY+40;
+        NBTTag=(FallingBlock=(name=minecraft:pink_glazed_terracotta,states=())),posY=#bPosY+45
     ),type=entity,ID=falling_block;
-    type=entity,ID=falling_block,NBTTag=(BlockState=(Name=diamond_block)),posY=#bPosY+50;
+    type=entity,ID=falling_block,NBTTag=(FallingBlock=(name=diamond_block,state=())),posY=#bPosY+50;
     type=entity,ID=lightning_bolt,posY=#bPosY+10,delay=5.3
 )@luck=2
 
 / tnt pole
 group(type=fill,ID=air,size=(1,51,1);
-    type=entity,ID=falling_block,NBTTag=(BlockState=(Name=redstone_block)),posY=#bPosY+5;
-    group(posY=#bPosY+10;posY=#bPosY+15;posY=#bPosY+20;posY=#bPosY+25;posY=#bPosY+30;posY=#bPosY+35;posY=#bPosY+40;posY=#bPosY+45;posY=#bPosY+50),type=entity,ID=falling_block,NBTTag=(BlockState=(Name=tnt))
+    type=entity,ID=falling_block,NBTTag=(FallingBlock=(name=minecraft:redstone_block,states=())),posY=#bPosY+5;
+    group(posY=#bPosY+10;posY=#bPosY+15;posY=#bPosY+20;posY=#bPosY+25;posY=#bPosY+30;posY=#bPosY+35;posY=#bPosY+40;posY=#bPosY+45;posY=#bPosY+50),type=entity,ID=falling_block,NBTTag=(FallingBlock=(name=minecraft:tnt))
 )@luck=2
 
 / baby player
-type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,HandItems=[(id=stone_pickaxe,Count=1)],ArmorItems=[(id=leather_boots,Count=1,tag=(display=(color=#randColor))),(id=leather_leggings,Count=1,tag=(display=(color=#randColor))),(id=leather_chestplate,Count=1,tag=(display=(color=#randColor))),(id=player_head,Count=1,tag=(SkullOwner=Dev))],Rotation=[0f,0f])@luck=0
+type=entity,ID=armor_stand,NBTTag=(
+    Small=true,
+    NoBasePlate=true,
+    ShowArms=true,
+    Mainhand=[(Name=minecraft:stone_pickaxe,Count=1b)],
+    Armor=[
+        (Name=minecraft:leather_boots,Count=1b,tag=(display=(color=#randColor))),
+        (Name=minecraft:leather_leggings,Count=1b,tag=(display=(color=#randColor))),
+        (Name=minecraft:leather_chestplate,Count=1b,tag=(display=(color=#randColor))),
+        (Name=minecraft:player_head,Count=1b,tag=(SkullOwner=Dev))
+    ],
+    Rotation=[0f,0f]
+)@luck=0
 
 / ==== Monster Apocalyple ====
 

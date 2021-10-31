@@ -7,6 +7,7 @@ import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.WeightedDrop
 import mod.lucky.common.drop.dropsFromStrList
+import mod.lucky.common.drop.runDropAfterDelay
 import kotlin.js.JSON.stringify
 
 class MissingAPIFeature : Exception("This API feature is unavailable in Bedrock")
@@ -80,10 +81,10 @@ fun attrToJson(attr: Attr): Any {
     }
 }
 
-fun runCommand(serverSystem: MCServerSystem, command: String) {
+fun runCommand(serverSystem: MCServerSystem, command: String, ignoreErrorCode: Int? = null) {
     serverSystem.executeCommand(command) { result ->
-        if (result.data.statusCode < 0) {
-            BedrockGameAPI.logError(result.data.statusMessage)
+        if (result.data.statusCode < 0 && result.data.statusCode != ignoreErrorCode) {
+            BedrockGameAPI.logError("Error running command $command: ${result.data.statusMessage}")
         }
     }
 }
@@ -196,7 +197,7 @@ object BedrockGameAPI : GameAPI {
     }
 
     override fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double) {
-        // TODO
+        setTimeout({ runDropAfterDelay(drop, context) }, seconds * 1000)
     }
 
     override fun isAirBlock(world: World, pos: Vec3i): Boolean {
@@ -214,7 +215,8 @@ object BedrockGameAPI : GameAPI {
         runCommand(serverSystem, "/setblock " +
             "${pos.x} ${pos.y} ${pos.z} " +
             "${getIDWithNamespace(id)} " +
-            if (blockStatesStr != null) blockStatesStr else ""
+            if (blockStatesStr != null) blockStatesStr else "",
+            ignoreErrorCode=-2147352576, // ignore "block couldn't be placed" when trying to replace a block with itself
         )
 
         if (components != null) {
