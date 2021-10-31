@@ -402,14 +402,14 @@ group(type=fill,ID=air,size=(1,51,1);
         NBTTag=(FallingBlock=(name=minecraft:magenta_glazed_terracotta,states=())),posY=#bPosY+40;
         NBTTag=(FallingBlock=(name=minecraft:pink_glazed_terracotta,states=())),posY=#bPosY+45
     ),type=entity,ID=falling_block;
-    type=entity,ID=falling_block,NBTTag=(FallingBlock=(name=diamond_block,state=())),posY=#bPosY+50;
-    type=entity,ID=lightning_bolt,posY=#bPosY+10,delay=5.3
+    type=entity,ID=falling_block,NBTTag=(FallingBlock=(name=diamond_block,states=())),posY=#bPosY+50;
+    type=entity,ID=lightning_bolt,posY=#bPosY+10,delay=2.3
 )@luck=2
 
 / tnt pole
 group(type=fill,ID=air,size=(1,51,1);
     type=entity,ID=falling_block,NBTTag=(FallingBlock=(name=minecraft:redstone_block,states=())),posY=#bPosY+5;
-    group(posY=#bPosY+10;posY=#bPosY+15;posY=#bPosY+20;posY=#bPosY+25;posY=#bPosY+30;posY=#bPosY+35;posY=#bPosY+40;posY=#bPosY+45;posY=#bPosY+50),type=entity,ID=falling_block,NBTTag=(FallingBlock=(name=minecraft:tnt))
+    group(posY=#bPosY+10;posY=#bPosY+15;posY=#bPosY+20;posY=#bPosY+25;posY=#bPosY+30;posY=#bPosY+35;posY=#bPosY+40;posY=#bPosY+45;posY=#bPosY+50),type=entity,ID=falling_block,NBTTag=(FallingBlock=(name=minecraft:tnt,states=()))
 )@luck=2
 
 / baby player

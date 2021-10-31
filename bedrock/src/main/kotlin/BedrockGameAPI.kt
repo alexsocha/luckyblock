@@ -53,21 +53,6 @@ fun getIDWithNamespace(id: String): String {
     return if (":" in id) id else "minecraft:$id"
 }
 
-@Suppress("UNCHECKED_CAST")
-fun <T> deepMerge(dst: T, src: T): T {
-    fun <K, V> deepMergeMaps(dstMap: MutableMap<K, V>, srcMap: Map<*, *>): Map<K, V> {
-        for (k in srcMap.keys) {
-            dstMap[k as K] = deepMerge(dstMap[k], srcMap[k]) as V
-        }
-        return dstMap
-    }
-
-    if (dst is MutableMap<*, *> && src is Map<*, *>) {
-        return deepMergeMaps(dst, src) as T
-    }
-    return dst
-}
-
 fun attrToJson(attr: Attr): Any {
     return when (attr) {
         is DictAttr -> {
@@ -94,11 +79,18 @@ fun getPlayerName(serverSystem: MCServerSystem, player: MCPlayerEntity): String?
     return component?.data?.name
 }
 
+data class DelayedDrop(
+    val singleDrop: SingleDrop,
+    val context: DropContext,
+    var ticksRemaining: Int,
+)
+
 object BedrockGameAPI : GameAPI {
     lateinit var server: MCServer
     lateinit var serverSystem: MCServerSystem
     private lateinit var spacialQuery: MCQuery
     private lateinit var nearestPlayerQuery: MCQuery
+    private var delayedDrops: MutableSet<DelayedDrop> = mutableSetOf()
 
     fun initServer(server: MCServer, serverSystem: MCServerSystem) {
         BedrockGameAPI.server = server
@@ -127,6 +119,21 @@ object BedrockGameAPI : GameAPI {
                 luck = 0,
             )
         ))
+
+        serverSystem.update = ::onServerTick
+    }
+
+    private fun onServerTick() {
+        if (delayedDrops.size > 0) {
+            delayedDrops.forEach {
+                it.ticksRemaining -= 1
+                if (it.ticksRemaining <= 0) {
+                    serverSystem.log("--- running delayed drop")
+                    runDropAfterDelay(it.singleDrop, it.context)
+                }
+            }
+            delayedDrops.removeAll { it.ticksRemaining <= 0 }
+        }
     }
 
     fun readAndDestroyLuckyBlockEntity(world: MCWorld, pos: BlockPos): DropContainer? {
@@ -197,7 +204,9 @@ object BedrockGameAPI : GameAPI {
     }
 
     override fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double) {
-        setTimeout({ runDropAfterDelay(drop, context) }, seconds * 1000)
+        //setTimeout({ runDropAfterDelay(drop, context) }, seconds * 1000)
+        val delayedDrop = DelayedDrop(drop, context, (seconds * 20).toInt())
+        delayedDrops.add(delayedDrop)
     }
 
     override fun isAirBlock(world: World, pos: Vec3i): Boolean {

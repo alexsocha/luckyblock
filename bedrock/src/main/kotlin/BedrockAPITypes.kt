@@ -23,12 +23,18 @@ external interface MCEntity {
     val pos: MCVecPos
 }
 
+external interface MCPlayerEntity {
+}
+
 external interface MCQuery {
     val query_id: Int
 }
 
-
 external interface MCTickingArea {}
+
+external interface MCComponent<T> {
+    var data: T
+}
 
 external interface MCTickWorldComponent {
     val ticking_area: MCTickingArea
@@ -37,13 +43,6 @@ typealias MCWorld = MCTickWorldComponent
 
 external interface MCNameableComponent {
     val name: String
-}
-
-external interface MCPlayerEntity {
-}
-
-external interface MCComponent<T> {
-    var data: T
 }
 
 external interface MCEvent<T> {
@@ -84,6 +83,7 @@ external interface MCCommandResult {
 
 external interface MCServerSystem {
     var initialize: () -> Unit
+    var update: () -> Unit
     var log: (msg: Any?) -> Unit
 
     fun registerQuery(componentName: String, field1: String, field2: String, field3: String): MCQuery
@@ -103,6 +103,7 @@ external interface MCServerSystem {
 
     fun getBlock(tickingArea: MCTickingArea, blockPos: MCBlockPos): MCBlock
 
+    fun createEntity(): MCEntity
     fun createEntity(entityType: String, entityId: String): MCEntity?
     fun destroyEntity(entity: MCEntity)
 
