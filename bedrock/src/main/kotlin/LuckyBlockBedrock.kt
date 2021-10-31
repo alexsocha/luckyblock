@@ -46,7 +46,6 @@ fun registerModConfig(blockId: String, unparsedConfig: UnparsedModConfig) {
 
 fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayerEntity, pos: BlockPos, blockId: String) {
     try {
-        BedrockGameAPI.logInfo("Starting drop")
         val vecPos = Vec3d(pos.x + 0.5, pos.y.toDouble(), pos.z + 0.5)
 
         val blockEntityDropContainer = BedrockGameAPI.readAndDestroyLuckyBlockEntity(world, pos)
@@ -58,7 +57,7 @@ fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayerEntity, pos: Blo
             customDrops = blockEntityDropContainer?.drops,
             luck = blockEntityDropContainer?.luck ?: BedrockLuckyRegistry.blockLuck[blockId] ?: 0,
             context,
-            showOutput = true
+            showOutput = DEBUG
         )
     } catch (e: Exception) {
         BedrockGameAPI.logError("Error performing Lucky Block function", e)
@@ -78,7 +77,6 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
 
 
     serverSystem.listenForEvent<MCPlayerDestroyedBlockEvent>("minecraft:player_destroyed_block") { eventWrapper ->
-        BedrockGameAPI.logInfo("Received event")
         val event = eventWrapper.data
         val blockId = event.block_identifier
         if (blockId.startsWith("lucky:")) {
@@ -101,7 +99,6 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
                 pos = toBlockPos(event.block_position),
                 blockId = event.block_identifier,
             )
-            serverSystem.log("finished event!")
         }
     }
 }
