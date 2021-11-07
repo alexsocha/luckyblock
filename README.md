@@ -74,18 +74,13 @@ To use IntelliJ, ensure that the Gradle plugin is enabled, and import the direct
 
 ### Bedrock
 
-- Create a symlink to the resource and behavior packs:
+For convenience, create a symlink to the resource and behavior packs:
 
 ```
 mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\development_resource_packs" "C:\...\bedrock\run\development_resource_packs"
 
 mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\development_behavior_packs" "C:\...\bedrock\run\development_behavior_packs"
 ```
-
-### Deploy
-
-1. Run `./gradlew build`.
-2. Run `./scripts/deploy.sh`.
 
 ## Copyright
 Copyright © 2015-2021 Alex Socha. All Rights Reserved.

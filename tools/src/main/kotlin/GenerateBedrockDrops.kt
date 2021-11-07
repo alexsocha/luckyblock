@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCli::class)
+
 package mod.lucky.tools
 
 import kotlinx.cli.*
@@ -248,17 +250,17 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
     return Pair(newDrop, newGeneratedDrops)
 }
 
-fun <T : BaseDrop> replaceNBTWithGeneratedDrops(drop: T, seed: Int, blockId: String, generatedDrops: GeneratedDrops): Pair<T, GeneratedDrops> {
+fun <T : BaseDrop> replaceNbtWithGeneratedDrops(drop: T, seed: Int, blockId: String, generatedDrops: GeneratedDrops): Pair<T, GeneratedDrops> {
     @Suppress("UNCHECKED_CAST")
     return when (drop) {
         is WeightedDrop -> {
-            val (newDrop, newGeneratedDrops) = replaceNBTWithGeneratedDrops(drop.drop, seed, blockId, generatedDrops)
+            val (newDrop, newGeneratedDrops) = replaceNbtWithGeneratedDrops(drop.drop, seed, blockId, generatedDrops)
             Pair(drop.copy(drop = newDrop) as T, newGeneratedDrops)
         }
         is GroupDrop -> {
             var allGeneratedDrops = generatedDrops
             val newDrops = drop.drops.map {
-                val (newDrop, newGeneratedDrops) = replaceNBTWithGeneratedDrops(it, seed, blockId, generatedDrops)
+                val (newDrop, newGeneratedDrops) = replaceNbtWithGeneratedDrops(it, seed, blockId, generatedDrops)
                 allGeneratedDrops = newGeneratedDrops
                 newDrop
             }
@@ -286,45 +288,44 @@ fun prepareToGenerateDrops() {
 fun generateDrops(drops: List<WeightedDrop>, seed: Int, blockId: String, generatedDrops: GeneratedDrops): Pair<List<BaseDrop>, GeneratedDrops> {
     var allGeneratedDrops = generatedDrops
     val newDropsList = drops.map {
-        val (newDrop, newGeneratedDrops) = replaceNBTWithGeneratedDrops(it, seed, blockId, generatedDrops)
+        val (newDrop, newGeneratedDrops) = replaceNbtWithGeneratedDrops(it, seed, blockId, generatedDrops)
         allGeneratedDrops = newGeneratedDrops
         newDrop
     }
     return Pair(newDropsList, allGeneratedDrops)
 }
 
-fun main(args: Array<String>) {
-    val parser = ArgParser("generate_bedrock_drops")
-    val blockId by parser.option(ArgType.String, description = "Lucky Block ID, e.g. lucky_block_red").required()
-    val inputFolder by parser.argument(ArgType.String, description = "Input config folder").optional().default(".")
-    val outputJSFile by parser.option(ArgType.String, description = "Output generated JS file").default("serverScript.js")
-    val outputStructuresFolder by parser.option(ArgType.String, description = "Output generated structures folder").default("structures")
-    val seed by parser.option(ArgType.Int, description = "Drop generation seed").default(0)
-    parser.parse(args)
+class GenerateBedrockDrops: Subcommand("generate-bedrock-drops", "Generate JS script containing pre-processed and aggregated drops for use in Bedrock edition") {
+    val blockId by option(ArgType.String, description = "Lucky Block ID, e.g. lucky_block_red").required()
+    val inputFolder by argument(ArgType.String, description = "Input config folder").optional().default(".")
+    val outputJSFile by option(ArgType.String, description = "Output generated JS file").default("serverScript.js")
+    val outputStructuresFolder by option(ArgType.String, description = "Output folder for generated structures").default("structures")
+    val seed by option(ArgType.Int, description = "Drop generation seed").default(0)
 
-    prepareToGenerateDrops()
+    override fun execute() {
+        prepareToGenerateDrops()
 
-    val resources = loadAddonResources(File(inputFolder))!!
+        val resources = loadAddonResources(File(inputFolder))!!
 
-    var generatedDrops = createEmptyGeneratedDrops()
-    val (blockDrops, generatedDropsWithBlock) = generateDrops(resources.drops[resources.addon.ids.block]!!, seed, blockId, generatedDrops)
-    generatedDrops = generatedDropsWithBlock
+        var generatedDrops = createEmptyGeneratedDrops()
+        val (blockDrops, generatedDropsWithBlock) = generateDrops(resources.drops[resources.addon.ids.block]!!, seed, blockId, generatedDrops)
+        generatedDrops = generatedDropsWithBlock
 
-    val luckyStructs = resources.structures.mapNotNull { (k, v) ->
-        if (v !is DropStructureResource) null
-        else {
-            val (drops, generatedDropsWithStruct) = generateDrops(
-                v.drops.map { WeightedDrop(it, "") },
-                seed,
-                blockId,
-                generatedDrops
-            )
-            generatedDrops = generatedDropsWithStruct
-            k to luckyStructToString(v.defaultProps, drops)
-        }
-    }.toMap()
+        val luckyStructs = resources.structures.mapNotNull { (k, v) ->
+            if (v !is DropStructureResource) null
+            else {
+                val (drops, generatedDropsWithStruct) = generateDrops(
+                    v.drops.map { WeightedDrop(it, "") },
+                    seed,
+                    blockId,
+                    generatedDrops
+                )
+                generatedDrops = generatedDropsWithStruct
+                k to luckyStructToString(v.defaultProps, drops)
+            }
+        }.toMap()
 
-    val outputJS = """
+        val outputJS = """
 const serverSystem = server.registerSystem(0, 0);
 
 serverSystem.registerEventData("lucky:${blockId}_config", {
@@ -340,13 +341,14 @@ ${v.joinToString("\n") { it.replace("`", "\\`") } }
     },
     "luck": 0,
 });
-    """.trimIndent()
+        """.trimIndent()
 
-    File(outputJSFile).writeText(outputJS)
+        File(outputJSFile).writeText(outputJS)
 
-    File(outputStructuresFolder).listFiles()?.forEach { it.delete() }
-    generatedDrops.dropStructures.forEach { (k, v) ->
-        val nbtBuffer = attrToNBT(v, ByteOrder.LITTLE_ENDIAN)
-        writeBufferToFile(nbtBuffer, File(outputStructuresFolder).resolve("${k}.mcstructure"))
+        File(outputStructuresFolder).listFiles()?.forEach { it.delete() }
+        generatedDrops.dropStructures.forEach { (k, v) ->
+            val nbtBuffer = attrToNbt(v, ByteOrder.LITTLE_ENDIAN)
+            writeBufferToFile(nbtBuffer, File(outputStructuresFolder).resolve("${k}.mcstructure"))
+        }
     }
 }

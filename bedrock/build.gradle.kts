@@ -55,10 +55,11 @@ tasks.named<ProcessResources>("processResources") {
 
 tasks.register<JavaExec>("generateDrops") {
     classpath = fileTree("$rootDir/tools/build/install/tools/lib")
-    mainClass.set("mod.lucky.tools.GenerateBedrockDropsKt")
+    mainClass.set("mod.lucky.tools.MainKt")
     val outputJSFile = "$rootDir/bedrock/build/processedResources/generated-config.js"
     args = listOf(
-        "$rootDir/bedrock/src/main/resources/addon-config",
+        "generate-bedrock-drops",
+        "$rootDir/bedrock/src/main/resources/lucky-config",
         "--blockId",
         "lucky_block",
         "--outputJSFile",
@@ -73,6 +74,18 @@ tasks.register<JavaExec>("generateDrops") {
         File(outputJSFile).appendText("\n\nmodule.exports = { \"serverSystem\": serverSystem }\n")
     }
 
+    dependsOn(project(":tools").tasks.getByName("installDist"))
+}
+
+tasks.register<JavaExec>("convertStructures") {
+    classpath = fileTree("$rootDir/tools/build/install/tools/lib")
+    mainClass.set("mod.lucky.tools.MainKt")
+    args = listOf(
+        "nbt-to-mcstructure",
+        "$rootDir/common/src/jvmMain/resources/lucky-config/structures",
+        "--outputStructuresFolder",
+        "$addonDistDir/behavior_pack/structures/lucky",
+    )
     dependsOn(project(":tools").tasks.getByName("installDist"))
 }
 
@@ -134,11 +147,3 @@ tasks.register("buildDev").configure {
     dependsOn("copyServerScript")
     dependsOn("copyRuntimePacks")
 }
-
-/*
-tasks.named<KotlinJsCompile>("compileKotlinJs").configure {
-    //kotlinOptions.moduleKind = "commonjs"
-    //kotlinOptions.noStdlib = false
-}
-
- */
