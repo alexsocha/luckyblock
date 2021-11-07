@@ -24,7 +24,7 @@ object MockGameAPI : GameAPI {
 
     override fun getEntityPos(entity: Entity): Vec3d = (entity as MockEntity).pos
     override fun getPlayerName(player: PlayerEntity): String = "Test Player"
-    override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) {}
+    override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) {}
     override fun convertStatusEffectId(effectId: Int): String? = null
     override fun getLivingEntitiesInBox(world: World, boxMin: Vec3d, boxMax: Vec3d): List<Entity> = emptyList()
     override fun setEntityOnFire(entity: Entity, durationSeconds: Int) {}

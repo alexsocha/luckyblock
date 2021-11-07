@@ -174,7 +174,8 @@ object BedrockGameAPI : GameAPI {
     override fun getSpawnEggIds(): List<String> = mod.lucky.bedrock.common.getSpawnEggIds()
 
     override fun getEntityPos(entity: Entity): Vec3d {
-        return toVec3d((entity as MCEntity).pos)
+        val mcPos = serverSystem.getComponent<MCVecPos>(entity, "minecraft:position")?.data ?: throw Exception("Entity has no minecraft:position component")
+        return toVec3d(mcPos);
     }
 
     override fun getPlayerName(player: PlayerEntity): String {
@@ -187,6 +188,13 @@ object BedrockGameAPI : GameAPI {
             boxMin.x, boxMin.y, boxMin.z,
             boxMax.x, boxMax.y, boxMax.z,
         ).toList()
+    }
+
+    override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) {
+        val commandTarget = if (target == "player") "@p" else target
+        if (commandTarget == null) throw Exception("Missing target")
+
+        runCommand(serverSystem, "/effect ${commandTarget} ${effectId} ${durationSeconds} ${amplifier}")
     }
 
     override fun setEntityOnFire(entity: Entity, durationSeconds: Int) {
@@ -390,7 +398,6 @@ object BedrockGameAPI : GameAPI {
     }
 
     override fun getWorldTime(world: World): Long = throw MissingAPIFeature()
-    override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) = throw MissingAPIFeature()
     override fun setEntityMotion(entity: Entity, motion: Vec3d) = throw MissingAPIFeature()
     override fun getPlayerHeadYawDeg(player: PlayerEntity): Double = throw MissingAPIFeature()
     override fun getPlayerHeadPitchDeg(player: PlayerEntity): Double = throw MissingAPIFeature()

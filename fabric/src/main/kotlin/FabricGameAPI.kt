@@ -199,14 +199,14 @@ object FabricGameAPI : GameAPI {
         return (player as MCPlayerEntity).name.asString()
     }
 
-    override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) {
+    override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) {
         val statusEffect = Registry.STATUS_EFFECT.get(MCIdentifier(effectId))
         if (statusEffect == null) {
             gameAPI.logError("Unknown status effect: $effectId")
             return
         }
         val duration = if (statusEffect.isInstant) 1 else (durationSeconds * 20.0).toInt()
-        if (entity is LivingEntity) entity.addStatusEffect(StatusEffectInstance(statusEffect, duration, amplifier))
+        if (targetEntity is LivingEntity) targetEntity.addStatusEffect(StatusEffectInstance(statusEffect, duration, amplifier))
     }
 
     // compatibility only

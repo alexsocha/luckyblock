@@ -204,14 +204,14 @@ object ForgeGameAPI : GameAPI {
         return (player as MCPlayerEntity).name.string
     }
 
-    override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) {
+    override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) {
         val statusEffect = ForgeRegistries.MOB_EFFECTS.getValue(MCIdentifier(effectId))
         if (statusEffect == null) {
             gameAPI.logError("Unknown status effect: $effectId")
             return
         }
         val duration = if (statusEffect.isInstantenous) 1 else (durationSeconds * 20.0).toInt()
-        if (entity is LivingEntity) entity.addEffect(MobEffectInstance(statusEffect, duration, amplifier))
+        if (targetEntity is LivingEntity) targetEntity.addEffect(MobEffectInstance(statusEffect, duration, amplifier))
     }
 
     // compatibility only

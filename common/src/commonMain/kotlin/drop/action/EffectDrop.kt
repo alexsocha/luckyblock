@@ -21,26 +21,38 @@ private fun applyKnockbackEffect(drop: SingleDrop, dropPos: Vec3d, targetEntity:
     gameAPI.setEntityMotion(targetEntity, motion)
 }
 
-fun applyEffect(drop: SingleDrop, dropPos: Vec3d, targetEntity: Entity, effectId: String) {
+fun applyEffect(drop: SingleDrop, dropPos: Vec3d, target: String?, targetEntity: Entity?, effectId: String) {
     when (effectId) {
-        "special_fire" -> gameAPI.setEntityOnFire(targetEntity, drop["duration"])
-        "special_knockback" -> applyKnockbackEffect(drop, dropPos, targetEntity)
-        else -> gameAPI.applyStatusEffect(targetEntity, effectId, drop["duration"], drop["amplifier"])
+        "special_fire" -> {
+            if (targetEntity == null) throw Exception("Entity required")
+            gameAPI.setEntityOnFire(targetEntity, drop["duration"])
+        }
+        "special_knockback" -> {
+            if (targetEntity == null) throw Exception("Entity required")
+            applyKnockbackEffect(drop, dropPos, targetEntity)
+        }
+        else -> gameAPI.applyStatusEffect(
+            target=target,
+            targetEntity=targetEntity,
+            effectId=effectId,
+            durationSeconds=drop["duration"],
+            amplifier=drop["amplifier"]
+        )
     }
 }
 
 fun doEffectDrop(drop: SingleDrop, context: DropContext) {
     val pos = calculatePos(drop, context.pos, context.world)
-    val targetEntity = when {
+    val (target, targetEntity) = when {
         "target" in drop && "range" !in drop -> when (drop.get<String>("target")) {
-            "player" -> context.player
-            "hitEntity" -> context.hitEntity
-            else -> null
+            "player" -> Pair("player", context.player)
+            "hitEntity" -> Pair("hitEntity", context.hitEntity)
+            else -> Pair("player", null)
         }
-        "target" !in drop && "range" !in drop -> context.player
-        else -> null
+        "target" !in drop && "range" !in drop -> Pair("player", context.player)
+        else -> Pair(null, null)
     }
-    if (drop.getOrNull<String>("target") == "hitEntity" && targetEntity == null) return
+    if (target == "hitEntity" && targetEntity == null) return
 
     val effectId: String = when (val dropId = drop.get<String>("id")) {
         "special_fire" -> dropId
@@ -55,8 +67,14 @@ fun doEffectDrop(drop: SingleDrop, context: DropContext) {
         }
     }
 
-    if (targetEntity != null) {
-        applyEffect(drop, pos, targetEntity, effectId)
+    if (target != null || targetEntity != null) {
+        applyEffect(
+            drop=drop,
+            dropPos=pos,
+            target=target,
+            targetEntity=targetEntity,
+            effectId=effectId
+        )
     } else {
         val range: Double = drop["range"]
         val effectBoxMin = pos - Vec3d(range, range, range)
@@ -67,7 +85,13 @@ fun doEffectDrop(drop: SingleDrop, context: DropContext) {
             if (drop["excludePlayer"] && entity == context.player) continue
             val distance = distanceBetween(pos, gameAPI.getEntityPos(entity))
             if (distance <= range) {
-                applyEffect(drop, pos, entity, effectId)
+                applyEffect(
+                    drop=drop,
+                    dropPos=pos,
+                    target=target,
+                    targetEntity=targetEntity,
+                    effectId=effectId
+                )
             }
         }
     }

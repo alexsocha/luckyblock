@@ -20,10 +20,9 @@ external interface MCBlock {
 
 external interface MCEntity {
     val __identifier__: String;
-    val pos: MCVecPos
 }
 
-external interface MCPlayerEntity {
+external interface MCPlayerEntity : MCEntity {
 }
 
 external interface MCQuery {

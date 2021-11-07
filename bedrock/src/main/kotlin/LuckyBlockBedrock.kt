@@ -93,6 +93,7 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
 
             val world = serverSystem.getComponent<MCTickWorldComponent>(event.player, "minecraft:tick_world")!!.data
 
+            BedrockGameAPI.serverSystem.log(event.player)
             onPlayerDestroyedLuckyBlock(
                 world = world,
                 player = event.player,

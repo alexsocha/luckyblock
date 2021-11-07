@@ -423,8 +423,7 @@ type=entity,ID=armor_stand,samples=4,seed=528,NBTTag=(
     ]
 )@luck=0
 
-/ ==== Monster Apocalyple ====
-
+/ monster battle
 group(
     / sword, difficulty, time, potion effects
     ID=wooden_sword;
