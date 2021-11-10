@@ -1,6 +1,7 @@
 package mod.lucky.tools
 
 import mod.lucky.common.attribute.*
+import br.com.gamemods.nbtmanipulator.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -8,6 +9,7 @@ import java.io.FileOutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.*
+import java.util.zip.GZIPInputStream
 
 class DynamicByteBuffer(
     private val byteOrder: ByteOrder,
@@ -30,7 +32,20 @@ class DynamicByteBuffer(
     fun putLong(v: Long) { ensureSpace(); byteBuffer.putLong(v) }
 }
 
-val NBT_IDS = mapOf(
+private fun putString(byteBuffer: DynamicByteBuffer, value: String) {
+    val byteArray = value.encodeToByteArray()
+    byteBuffer.putShort(byteArray.size.toShort())
+    byteArray.forEach { byteBuffer.putByte(it) }
+}
+
+private fun readString(byteBuffer: ByteBuffer): String {
+    val size = byteBuffer.get().toInt()
+    val byteArray = ByteArray(size)
+    byteBuffer.get(byteArray, 0, size)
+    return byteArray.decodeToString()
+}
+
+val NBT_TYPE_TO_ID = mapOf(
     AttrType.BYTE to 1,
     AttrType.BOOLEAN to 1,
     AttrType.SHORT to 2,
@@ -45,14 +60,87 @@ val NBT_IDS = mapOf(
     AttrType.INT_ARRAY to 11,
     AttrType.LONG_ARRAY to 12,
 )
+val NBT_ID_TO_TYPE = NBT_TYPE_TO_ID.entries.associate { (k, v) -> v to k }
 
-private fun putString(buffer: DynamicByteBuffer, value: String) {
-    val byteArray = value.encodeToByteArray()
-    buffer.putShort(byteArray.size.toShort())
-    byteArray.forEach { buffer.putByte(it) }
+fun readNbt(byteBuffer: ByteBuffer, attrType: AttrType): Attr {
+    /*
+    return when (attrType) {
+        AttrType.BYTE -> ValueAttr(AttrType.BYTE, byteBuffer.get())
+        AttrType.BOOLEAN -> ValueAttr(AttrType.BOOLEAN, false if byteBuffer.get().toInt() == 0 else true)
+        AttrType.SHORT -> ValueAttr(AttrType.SHORT, byteBuffer.getShort())
+        AttrType.INT -> ValueAttr(AttrType.INT, byteBuffer.getInt())
+        AttrType.FLOAT -> ValueAttr(AttrType.FLOAT, byteBuffer.getFloat())
+        AttrType.DOUBLE -> ValueAttr(AttrType.DOUBLE, byteBuffer.getDouble())
+        AttrType.LONG -> ValueAttr(AttrType.LONG, byteBuffer.getLong())
+        AttrType.STRING -> putString(buffer, attr.value as String)
+        AttrType.BYTE_ARRAY -> {
+            val array = attr.value as ByteArray
+            buffer.putInt(array.size)
+            array.forEach { buffer.putByte(it) }
+        }
+        AttrType.INT_ARRAY -> {
+            val array = attr.value as IntArray
+            buffer.putInt(array.size)
+            array.forEach { buffer.putInt(it) }
+        }
+        AttrType.LONG_ARRAY -> {
+            val array = attr.value as LongArray
+            buffer.putInt(array.size)
+            array.forEach { buffer.putLong(it) }
+        }
+        AttrType.DICT -> {
+            val entries = generateSequence {
+                val childTypeId = byteBuffer.get().toInt()
+                println(childTypeId)
+                if (childTypeId != 0) {
+                    val childType = NBT_ID_TO_TYPE[childTypeId]!!
+                    val childKey = readString(byteBuffer)
+                    println(childKey)
+                    val childAttr = readNbt(byteBuffer, childType)
+                    Pair(childKey, childAttr)
+                } else null
+            }
+            return DictAttr(entries.toMap())
+        }
+        AttrType.LIST -> {
+            val childTypeId = byteBuffer.get().toInt()
+            val count = byteBuffer.get().toInt()
+
+            if (count == 0) ListAttr()
+            else {
+                val childType = NBT_ID_TO_TYPE[childTypeId]!!
+                val elements = (0 until count).map { readNbt(byteBuffer, childType) }
+                ListAttr(elements)
+            }
+        }
+        else -> DictAttr()
+    }
+    */
+    return DictAttr()
 }
 
-fun writeAttrToNBT(buffer: DynamicByteBuffer, attr: Attr) {
+fun readNbtFromRoot(byteBuffer: ByteBuffer): Attr {
+    //val attrType = NBT_ID_TO_TYPE[byteBuffer.get().toInt()]!!
+    return readNbt(byteBuffer, AttrType.DICT)
+}
+
+fun readCompressedNbt(stream: GZIPInputStream, byteOrder: ByteOrder): Attr {
+    val byteStream = ByteArrayOutputStream()
+    val buffer = ByteArray(1024);
+
+    do {
+        val numBytes = stream.read(buffer, 0, buffer.size)
+        if (numBytes > 0) byteStream.write(buffer, 0, numBytes)
+    } while (numBytes > 0)
+
+    stream.close()
+    byteStream.close()
+
+    val byteBuffer = ByteBuffer.wrap(byteStream.toByteArray()).order(byteOrder)
+    return readNbtFromRoot(byteBuffer)
+}
+
+fun writeAttrToNbt(buffer: DynamicByteBuffer, attr: Attr) {
     when(attr) {
         is ValueAttr -> {
             when(attr.type) {
@@ -86,27 +174,27 @@ fun writeAttrToNBT(buffer: DynamicByteBuffer, attr: Attr) {
         is ListAttr -> {
             buffer.putByte(
                 if (attr.children.size == 0) 0
-                else NBT_IDS[attr.children.first().type]!!.toByte()
+                else NBT_TYPE_TO_ID[attr.children.first().type]!!.toByte()
             )
             buffer.putInt(attr.children.size)
             attr.children.forEach {
-                writeAttrToNBT(buffer, it)
+                writeAttrToNbt(buffer, it)
             }
         }
         is DictAttr -> {
             attr.children.forEach { (k, v) ->
-                buffer.putByte(NBT_IDS[v.type]!!.toByte())
+                buffer.putByte(NBT_TYPE_TO_ID[v.type]!!.toByte())
                 putString(buffer, k)
-                writeAttrToNBT(buffer, v)
+                writeAttrToNbt(buffer, v)
             }
             buffer.putByte(0)
         }
     }
 }
 
-fun attrToNBT(attr: Attr, byteOrder: ByteOrder): ByteBuffer {
+fun attrToNbt(attr: Attr, byteOrder: ByteOrder): ByteBuffer {
     val byteBuffer = DynamicByteBuffer(byteOrder)
-    writeAttrToNBT(byteBuffer, attr)
+    writeAttrToNbt(byteBuffer, attr)
     return byteBuffer.byteBuffer
 }
 

@@ -1,5 +1,6 @@
 import com.moowork.gradle.node.task.NodeTask
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import java.io.File
 
 plugins {
     kotlin("js")
@@ -53,7 +54,11 @@ tasks.named<ProcessResources>("processResources") {
     }
 }
 
-tasks.register<JavaExec>("generateDrops") {
+tasks.register<Delete>("clearStructures") {
+    delete(File("$addonDistDir/behavior_pack/structures/lucky").walkTopDown().toList())
+}
+
+tasks.register<JavaExec>("generateBedrockDrops") {
     classpath = fileTree("$rootDir/tools/build/install/tools/lib")
     mainClass.set("mod.lucky.tools.MainKt")
     val outputJSFile = "$rootDir/bedrock/build/processedResources/generated-config.js"
@@ -77,7 +82,7 @@ tasks.register<JavaExec>("generateDrops") {
     dependsOn(project(":tools").tasks.getByName("installDist"))
 }
 
-tasks.register<JavaExec>("convertStructures") {
+tasks.register<JavaExec>("nbtToMcstructure") {
     classpath = fileTree("$rootDir/tools/build/install/tools/lib")
     mainClass.set("mod.lucky.tools.MainKt")
     args = listOf(
@@ -106,7 +111,9 @@ tasks.register<Sync>("copyRuntimePacks") {
 
     into("./run")
     dependsOn("copyServerScript")
-    dependsOn("generateDrops")
+    dependsOn("clearStructures")
+    dependsOn("generateBedrockDrops")
+    dependsOn("nbtToMcstructure")
 
     // workaround: gradle doesn't always detect that the input folder has changed
     outputs.upToDateWhen { false }

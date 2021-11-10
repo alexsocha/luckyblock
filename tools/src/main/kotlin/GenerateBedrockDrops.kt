@@ -345,7 +345,6 @@ ${v.joinToString("\n") { it.replace("`", "\\`") } }
 
         File(outputJSFile).writeText(outputJS)
 
-        File(outputStructuresFolder).listFiles()?.forEach { it.delete() }
         generatedDrops.dropStructures.forEach { (k, v) ->
             val nbtBuffer = attrToNbt(v, ByteOrder.LITTLE_ENDIAN)
             writeBufferToFile(nbtBuffer, File(outputStructuresFolder).resolve("${k}.mcstructure"))
