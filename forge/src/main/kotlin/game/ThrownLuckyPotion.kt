@@ -16,7 +16,7 @@ import net.minecraft.world.entity.projectile.ItemSupplier
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
-import net.minecraftforge.fmllegacy.network.NetworkHooks
+import net.minecraftforge.network.NetworkHooks
 
 class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier {
     private var data: ThrownLuckyPotionData

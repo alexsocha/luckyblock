@@ -17,7 +17,7 @@ import net.minecraft.world.entity.projectile.Arrow
 import net.minecraft.world.item.Items
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
-import net.minecraftforge.fmllegacy.network.NetworkHooks
+import net.minecraftforge.network.NetworkHooks
 
 private val defaultDisplayItemStack = MCItemStack(Items.STICK)
 

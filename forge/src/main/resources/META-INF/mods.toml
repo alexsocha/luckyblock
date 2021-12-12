@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[${forgeMinLoaderVersion},)"
+loaderVersion="[${forgeMinMajorForgeVersion},)"
 license="All rights reserved"
 
 [[mods]]
@@ -12,7 +12,7 @@ description="Adds a block with random outcomes"
 [[dependencies.lucky]]
     modId="forge"
     mandatory=true
-    versionRange="[${forgeMinLoaderVersion},)"
+    versionRange="[${forgeMinMajorForgeVersion},)"
     ordering="NONE"
     side="BOTH"
 

@@ -29,11 +29,7 @@ val bedrockModVersion: String by project
 val bedrockTemplateAddonVersion: String by project
 
 kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
-        }
-    }
+    jvm {}
 
     js {
         browser {

@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.network.protocol.Packet
 import net.minecraft.world.entity.EntityType
-import net.minecraftforge.fmllegacy.network.NetworkHooks
+import net.minecraftforge.network.NetworkHooks
 
 class DelayedDrop(
     type: EntityType<DelayedDrop> = ForgeLuckyRegistry.delayedDrop,

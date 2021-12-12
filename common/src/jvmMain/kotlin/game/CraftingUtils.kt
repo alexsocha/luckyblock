@@ -20,7 +20,7 @@ fun getLuckModifierCraftingResult(stacks: List<ItemStack>): ItemStack? {
     val stackData = luckyStack.nbt?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
 
     val isPotion = luckyStack.itemId in JavaLuckyRegistry.allLuckyItemIdsByType[JavaLuckyRegistry.potionId]!!
-    val luckModifier = stacks.sumBy {
+    val luckModifier = stacks.sumOf {
         if (it.count == 0 || it == luckyStack) 0
         else (luckModifiers[it.itemId] ?: 0) * (if (isPotion) 4 else 1)
     }

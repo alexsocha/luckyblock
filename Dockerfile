@@ -1,7 +1,7 @@
 #
 # Base
 #
-FROM openjdk:16-jdk-slim as base
+FROM openjdk:17-jdk-slim as base
 
 RUN apt-get update && apt-get install -y git
 

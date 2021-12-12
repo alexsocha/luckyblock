@@ -6,7 +6,7 @@ import mod.lucky.common.attribute.evalAttr
 
 import kotlin.math.pow
 
-const val DEBUG = true
+const val DEBUG = false
 private var debugDropFilters = listOf<String>()
 private var debugDropIndexRange = 0..1000
 private var debugDropIndex = debugDropIndexRange.first

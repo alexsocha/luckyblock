@@ -442,5 +442,4 @@ fun registerCommonTemplateVars(gameType: GameType) {
         if (propName in context.drop.props) evalAttr(context.drop.props[propName]!!, evalContext)
         else throw EvalError("Can't reference missing drop property '$propNameInit' in drop '${context.drop.propsString}'")
     }
-
 }

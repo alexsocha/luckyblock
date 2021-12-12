@@ -39,7 +39,7 @@ fun WeightedDrop.Companion.fromString(dropStr: String): WeightedDrop {
     val (strippedDropStr, extraProps) = readLuckChance(dropStr)
 
     val innerDrop: BaseDrop =
-        if (strippedDropStr.toLowerCase().startsWith("group")) GroupDrop.fromString(strippedDropStr)
+        if (strippedDropStr.lowercase().startsWith("group")) GroupDrop.fromString(strippedDropStr)
         else SingleDrop.fromString(strippedDropStr)
 
     return WeightedDrop(

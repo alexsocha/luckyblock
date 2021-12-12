@@ -197,8 +197,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
         chestEntity.setLootTable(MCIdentifier(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
         chestEntity.unpackLootTable(null)
 
-        val tag = CompoundTag()
-        chestEntity.save(tag)
+        val tag = chestEntity.saveWithFullMetadata()
         return JAVA_GAME_API.nbtToAttr(JAVA_GAME_API.readNBTKey(tag, "Items")!!) as ListAttr
     }
 

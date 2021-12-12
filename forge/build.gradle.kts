@@ -8,7 +8,7 @@ buildscript {
         maven { url = uri("https://maven.minecraftforge.net") }
     }
     dependencies {
-        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.16") {
+        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.+") {
             isChanging=true
         }
     }
@@ -18,9 +18,9 @@ val forgeModVersion: String by project
 val forgeLatestForgeVersion: String by project
 val forgeLatestMCVersion: String by project
 val forgeMinMCVersion: String by project
-val forgeMinLoaderVersion: String by project
+val forgeMinForgeVersion: String by project
+val forgeMinMajorForgeVersion = forgeMinForgeVersion.split('.').first()
 val forgeMappingsVersion: String by project
-
 
 plugins {
     kotlin("jvm")
@@ -42,15 +42,20 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    "minecraft"("net.minecraftforge:forge:$forgeLatestMCVersion-$forgeLatestForgeVersion")
-    implementation(project(":common"))
     shadow(project(":common"))
+    //compileOnly("org.intellij:lang.annotations")
+    "minecraft"("net.minecraftforge:forge:$forgeLatestMCVersion-$forgeLatestForgeVersion")
 }
 
 tasks.register<Copy>("copyRuntimeClasses") {
     // since Forge mods are loaded as independent modules, we need to copy all runtime dependency
     // classes to the build/classes folder
-    configurations.shadow.get().files.forEach { from(zipTree(it)) }
+    configurations.shadow.get().files.forEach {
+        // ignore compile-only annotations
+        if (!it.name.startsWith("annotations-")) {
+            from(zipTree(it))
+        }
+    }
     into("build/classes/kotlin/main/")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
@@ -83,7 +88,7 @@ tasks.processResources {
         expand(
             "forgeModVersion" to forgeModVersion,
             "forgeMinMCVersion" to forgeMinMCVersion,
-            "forgeMinLoaderVersion" to forgeMinLoaderVersion
+            "forgeMinMajorForgeVersion" to forgeMinMajorForgeVersion
         )
     }
 }
@@ -122,12 +127,12 @@ afterEvaluate {
 }
 
 
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(16))
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "16"
+compileKotlin.kotlinOptions.jvmTarget = "17"
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
-    options.release.set(16)
+    options.release.set(17)
 }
