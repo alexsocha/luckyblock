@@ -90,6 +90,10 @@ tasks.register<JavaExec>("nbtToMcstructure") {
         "$rootDir/common/src/jvmMain/resources/lucky-config/structures",
         "--outputStructuresFolder",
         "$addonDistDir/behavior_pack/structures/lucky",
+        "--blockConversionFile",
+        "$rootDir/tools/block_conversion.yaml",
+        "--outputGeneratedBlockConversionFile",
+        "$rootDir/tools/.debug/block_conversion.generated.yaml",
     )
     dependsOn(project(":tools").tasks.getByName("installDist"))
 }
@@ -123,7 +127,7 @@ tasks.register<Copy>("copyServerScript") {
     from("./build/distributions/serverScript.js")
     into("$addonDistDir/behavior_pack/scripts/server")
 
-    dependsOn("generateDrops")
+    dependsOn("generateBedrockDrops")
 }
 
 tasks.register<Zip>("zipPack") {
@@ -136,7 +140,7 @@ tasks.register<Zip>("zipPack") {
 
 
 tasks.named("build").configure {
-    tasks.getByName("browserProductionWebpack").dependsOn("generateDrops")
+    tasks.getByName("browserProductionWebpack").dependsOn("generateBedrockDrops")
     tasks.getByName("browserProductionWebpack").inputs.file("./build/processedResources/generated-config.js")
     tasks.getByName("copyServerScript").dependsOn("browserProductionWebpack")
     tasks.getByName("dist").dependsOn("browserProductionWebpack")
@@ -147,7 +151,7 @@ tasks.named("build").configure {
 }
 
 tasks.register("buildDev").configure {
-    tasks.getByName("browserDevelopmentWebpack").dependsOn("generateDrops")
+    tasks.getByName("browserDevelopmentWebpack").dependsOn("generateBedrockDrops")
     tasks.getByName("browserDevelopmentWebpack").inputs.file("./build/processedResources/generated-config.js")
     tasks.getByName("copyServerScript").dependsOn("browserDevelopmentWebpack")
     dependsOn("browserDevelopmentWebpack")

@@ -44,10 +44,6 @@ class SpyRandom(
     fun wasUsed(): Boolean = wasUsed
 }
 
-fun getIDWithNamespace(id: String): String {
-    return if (":" in id) id else "minecraft:$id"
-}
-
 fun getDropAttrOrDefault(drop: SingleDrop, k: String): Attr {
     if (k in drop.props) return drop.props[k]!!
     val defaultValue = LuckyRegistry.dropDefaults[drop.type]!![k]!!
@@ -58,90 +54,84 @@ fun getDropAttrOrDefault(drop: SingleDrop, k: String): Attr {
 fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Random): DictAttr {
     return when(dropType) {
         "item" -> dictAttrOf(
-            "" to dictAttrOf(
-                "format_version" to intAttrOf(1),
-                "size" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)),
-                "structure" to dictAttrOf(
-                    "block_indices" to listAttrOf(ListAttr(), ListAttr()),
-                    "palette" to DictAttr(),
-                    "entities" to ListAttr(drops.map {
-                        val dropProps = it.props
-                        val pos = calculatePos(it, Vec3d(0.0, 0.0, 0.0))
-                        dictAttrOf(
-                            "Pos" to listAttrOf(
-                                floatAttrOf((pos.x + 0.5 + (random.randDouble(0.0, 1.0) - 0.5)).toFloat()),
-                                floatAttrOf((pos.y + 0.5).toFloat()),
-                                floatAttrOf((pos.z + 0.5 + (random.randDouble(0.0, 1.0) - 0.5)).toFloat()),
-                            ),
-                            "identifier" to stringAttrOf("minecraft:item"),
-                            "Item" to dictAttrOf(
-                                "Name" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
-                                "Count" to ValueAttr(AttrType.BYTE, 1.toByte()),
-                                "Damage" to ValueAttr(AttrType.SHORT, dropProps.getWithDefault("data", 0).toShort()),
-                                *(if ("nbttag" in dropProps) arrayOf("tag" to dropProps.getDict("nbttag")) else emptyArray()),
-                            ),
-                        )
-                    }),
-                ),
-                "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0))
-            )
+            "format_version" to intAttrOf(1),
+            "size" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)),
+            "structure" to dictAttrOf(
+                "block_indices" to listAttrOf(ListAttr(), ListAttr()),
+                "palette" to DictAttr(),
+                "entities" to ListAttr(drops.map {
+                    val dropProps = it.props
+                    val pos = calculatePos(it, Vec3d(0.0, 0.0, 0.0))
+                    dictAttrOf(
+                        "Pos" to listAttrOf(
+                            floatAttrOf((pos.x + 0.5 + (random.randDouble(0.0, 1.0) - 0.5)).toFloat()),
+                            floatAttrOf((pos.y + 0.5).toFloat()),
+                            floatAttrOf((pos.z + 0.5 + (random.randDouble(0.0, 1.0) - 0.5)).toFloat()),
+                        ),
+                        "identifier" to stringAttrOf("minecraft:item"),
+                        "Item" to dictAttrOf(
+                            "Name" to stringAttrOf(getIdWithNamespace(dropProps.getValue("id"))),
+                            "Count" to ValueAttr(AttrType.BYTE, 1.toByte()),
+                            "Damage" to ValueAttr(AttrType.SHORT, dropProps.getWithDefault("data", 0).toShort()),
+                            *(if ("nbttag" in dropProps) arrayOf("tag" to dropProps.getDict("nbttag")) else emptyArray()),
+                        ),
+                    )
+                }),
+            ),
+            "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0)),
         )
         "entity" -> dictAttrOf(
-            "" to dictAttrOf(
-                "format_version" to intAttrOf(1),
-                "size" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)),
-                "structure" to dictAttrOf(
-                    "block_indices" to listAttrOf(ListAttr(), ListAttr()),
-                    "palette" to DictAttr(),
-                    "entities" to ListAttr(drops.map {
-                        val dropProps = it.props
-                        val pos = calculatePos(it, Vec3d(0.0, 0.0, 0.0))
-                        dictAttrOf(
-                            "Pos" to listAttrOf(
-                                floatAttrOf((pos.x + 0.5).toFloat()),
-                                floatAttrOf(pos.y.toFloat()),
-                                floatAttrOf((pos.z + 0.5).toFloat()),
-                            ),
-                            "identifier" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
-                        ).with(dropProps.getDict("nbttag").children)
-                    }),
-                ),
-                "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0))
-            )
+            "format_version" to intAttrOf(1),
+            "size" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)),
+            "structure" to dictAttrOf(
+                "block_indices" to listAttrOf(ListAttr(), ListAttr()),
+                "palette" to DictAttr(),
+                "entities" to ListAttr(drops.map {
+                    val dropProps = it.props
+                    val pos = calculatePos(it, Vec3d(0.0, 0.0, 0.0))
+                    dictAttrOf(
+                        "Pos" to listAttrOf(
+                            floatAttrOf((pos.x + 0.5).toFloat()),
+                            floatAttrOf(pos.y.toFloat()),
+                            floatAttrOf((pos.z + 0.5).toFloat()),
+                        ),
+                        "identifier" to stringAttrOf(getIdWithNamespace(dropProps.getValue("id"))),
+                    ).with(dropProps.getDict("nbttag").children)
+                }),
+            ),
+            "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0)),
         )
         "block" -> {
             val dropProps = drops.first().props
             val pos = calculatePos(drops.first(), Vec3d(0.0, 0.0, 0.0)).floor()
             dictAttrOf(
-                "" to dictAttrOf(
-                    "format_version" to intAttrOf(1),
-                    "size" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)),
-                    "structure" to dictAttrOf(
-                        "block_indices" to listAttrOf(listAttrOf(intAttrOf(0)), listAttrOf(intAttrOf(-1))),
-                        "palette" to dictAttrOf(
-                            "default" to dictAttrOf(
-                                "block_palette" to listAttrOf(
-                                    dictAttrOf(
-                                        "name" to stringAttrOf(getIDWithNamespace(dropProps.getValue("id"))),
-                                        "states" to dropProps.getWithDefault("state",  DictAttr()),
-                                        "version" to intAttrOf(17825806),
-                                    ),
+                "format_version" to intAttrOf(1),
+                "size" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)),
+                "structure" to dictAttrOf(
+                    "block_indices" to listAttrOf(listAttrOf(intAttrOf(0)), listAttrOf(intAttrOf(-1))),
+                    "palette" to dictAttrOf(
+                        "default" to dictAttrOf(
+                            "block_palette" to listAttrOf(
+                                dictAttrOf(
+                                    "name" to stringAttrOf(getIdWithNamespace(dropProps.getValue("id"))),
+                                    "states" to dropProps.getWithDefault("state",  DictAttr()),
+                                    "version" to intAttrOf(17825806),
                                 ),
-                                "block_position_data" to dictAttrOf(
-                                    "0" to dictAttrOf(
-                                        "block_entity_data" to dropProps.getDict("nbttag").withDefaults(mapOf(
-                                            "x" to intAttrOf(pos.x),
-                                            "y" to intAttrOf(pos.y),
-                                            "z" to intAttrOf(pos.z),
-                                        )),
-                                    ),
+                            ),
+                            "block_position_data" to dictAttrOf(
+                                "0" to dictAttrOf(
+                                    "block_entity_data" to dropProps.getDict("nbttag").withDefaults(mapOf(
+                                        "x" to intAttrOf(pos.x),
+                                        "y" to intAttrOf(pos.y),
+                                        "z" to intAttrOf(pos.z),
+                                    )),
                                 ),
                             ),
                         ),
-                        "entities" to listAttrOf(),
                     ),
-                    "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0))
-                )
+                    "entities" to listAttrOf(),
+                ),
+                "structure_world_origin" to listAttrOf(intAttrOf(0), intAttrOf(0), intAttrOf(0)),
             )
         }
         else -> dictAttrOf("x" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)))
@@ -346,8 +336,7 @@ ${v.joinToString("\n") { it.replace("`", "\\`") } }
         File(outputJSFile).writeText(outputJS)
 
         generatedDrops.dropStructures.forEach { (k, v) ->
-            val nbtBuffer = attrToNbt(v, ByteOrder.LITTLE_ENDIAN)
-            writeBufferToFile(nbtBuffer, File(outputStructuresFolder).resolve("${k}.mcstructure"))
+            writeNbtFile(File(outputStructuresFolder).resolve("${k}.mcstructure"), v, compressed=false, isLittleEndian=true)
         }
     }
 }

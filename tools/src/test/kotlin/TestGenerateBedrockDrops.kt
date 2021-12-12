@@ -1,3 +1,4 @@
+import mod.lucky.tools.*
 import mod.lucky.common.attribute.AttrType
 import mod.lucky.common.attribute.ValueAttr
 import mod.lucky.common.attribute.dictAttrOf
@@ -7,7 +8,6 @@ import mod.lucky.common.drop.dropsFromStrList
 import kotlin.test.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
-import mod.lucky.tools.*
 import java.nio.ByteOrder
 
 fun singleLine(s: String): String = s.split("\n").joinToString("") { it.trim() }
@@ -99,7 +99,7 @@ internal class TestGenerateBedrockDrops {
         assertEquals(generatedDrops.dropStructures.size, 2)
 
         val struct1 = generatedDrops.dropStructures["lucky_block_drop_1"]!!
-        val entities1 = struct1.getDict("").getDict("structure").getList("entities")
+        val entities1 = struct1.getDict("structure").getList("entities")
         assertEquals(entities1.children.size, 30)
         assertEquals(
             (entities1[0] as DictAttr).getList("Pos").toList().map { (it as ValueAttr).value as Float },
@@ -107,7 +107,7 @@ internal class TestGenerateBedrockDrops {
         )
 
         val struct2 = generatedDrops.dropStructures["lucky_block_drop_2"]!!
-        assertEquals(struct2.getDict("").getDict("structure").getList("entities").children.size, 1)
+        assertEquals(struct2.getDict("structure").getList("entities").children.size, 1)
     }
 
     @Test
@@ -116,6 +116,6 @@ internal class TestGenerateBedrockDrops {
             "a" to listAttrOf(ValueAttr(AttrType.DOUBLE, 4.0), ValueAttr(AttrType.INT, 4)),
             "b" to ValueAttr(AttrType.STRING, "a"),
         )
-        assertEquals(29, attrToNBT(attr, ByteOrder.LITTLE_ENDIAN).position())
+        assertEquals(29, attrToNbt(attr, ByteOrder.LITTLE_ENDIAN).position())
     }
 }

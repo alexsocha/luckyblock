@@ -13,3 +13,5 @@ build/
 dist/
 logs/
 run/
+tools/.cached-pages/
+tools/.debug/

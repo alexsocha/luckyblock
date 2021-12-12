@@ -49,7 +49,8 @@ To use IntelliJ, ensure that the Gradle plugin is enabled, and import the direct
 - `./gradlew :{forge/fabric}:build`: Build the project, and create a distributable jar file in `build/dist/{version}`
 - `./gradlew :jvmTemplateAddonDist`: Copy the latest template addon to `build/dist/{version}`
 - `./gradlew :{forge/fabric}:runClient`: Run a Minecraft client
-- `./gradlew :{forge/fabric}:runClient`: Run a Minecraft server
+- `./gradlew :{forge/fabric}:runServer`: Run a Minecraft server
+- `./gradlew :{forge/fabric/tools}:test --tests "*{test name regex}" --info`: Run tests
 
 ### Hot reloading
 
@@ -81,6 +82,12 @@ mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8we
 
 mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\development_behavior_packs" "C:\...\bedrock\run\development_behavior_packs"
 ```
+
+### Bedrock tools
+
+- `./gradlew :tools:run --args "generate-bedrock-drops --help"`
+- `./gradlew :tools:run --args "nbt-to-mcstructure --help"`
+- `./gradlew :tools:run --args "download-block-ids --help"`
 
 ## Copyright
 Copyright © 2015-2021 Alex Socha. All Rights Reserved.

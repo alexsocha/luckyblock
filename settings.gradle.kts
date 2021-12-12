@@ -21,6 +21,7 @@ pluginManagement {
         kotlin("multiplatform") version kotlinVersion
         kotlin("jvm") version kotlinVersion
         kotlin("js") version kotlinVersion
+        kotlin("plugin.serialization") version kotlinVersion
         id("fabric-loom") version fabricLoomVersion
         id("org.ajoberstar.grgit") version grGitVersion
         id("com.github.johnrengelman.shadow") version shadowJarVersion
