@@ -3,11 +3,8 @@ package mod.lucky.java
 import mod.lucky.common.*
 import mod.lucky.common.attribute.Attr
 import mod.lucky.common.attribute.ListAttr
-import mod.lucky.java.loader.ShapedCraftingRecipe
-import mod.lucky.java.loader.ShapelessCraftingRecipe
 import java.io.File
 import java.io.InputStream
-import java.util.*
 
 typealias NBTTag = Any
 typealias NBTStructure = Any

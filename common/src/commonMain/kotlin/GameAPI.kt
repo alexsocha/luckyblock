@@ -1,55 +1,12 @@
 package mod.lucky.common
 
-import mod.lucky.common.attribute.DictAttr
-import mod.lucky.common.drop.DropContext
-import mod.lucky.common.drop.SingleDrop
+import mod.lucky.common.*
+import mod.lucky.common.drop.*
+import mod.lucky.common.attribute.*
 
 enum class GameType {
     JAVA,
     BEDROCK
-}
-
-typealias Block = Any
-typealias Item = Any
-typealias PlayerEntity = Any
-typealias Entity = Any
-typealias World = Any
-
-data class Enchantment(
-    val id: String,
-    val type: EnchantmentType,
-    val maxLevel: Int,
-    val isCurse: Boolean,
-    val intId: Int = -1, // Bedrock Edition only
-)
-
-data class StatusEffect(
-    val id: String,
-    val intId: Int,
-    val isNegative: Boolean,
-    val isInstant: Boolean,
-)
-
-enum class EnchantmentType {
-    ARMOR,
-    ARMOR_FEET,
-    ARMOR_LEGS,
-    ARMOR_CHEST,
-    ARMOR_HEAD,
-    WEAPON,
-    DIGGER,
-    FISHING_ROD,
-    TRIDENT,
-    BREAKABLE,
-    BOW,
-    WEARABLE,
-    CROSSBOW,
-    VANISHABLE,
-}
-
-interface Logger {
-    fun logError(msg: String? = null, error: Exception? = null)
-    fun logInfo(msg: String)
 }
 
 interface GameAPI : Logger {
@@ -87,10 +44,4 @@ interface GameAPI : Logger {
     fun createStructure(world: World, structureId: String, pos: Vec3i, centerOffset: Vec3i, rotation: Int, mode: String, notify: Boolean)
 }
 
-interface PlatformAPI {
-    fun evalJS(script: String): Any
-}
-
-lateinit var logger: Logger
 lateinit var gameAPI: GameAPI
-lateinit var platformAPI: PlatformAPI

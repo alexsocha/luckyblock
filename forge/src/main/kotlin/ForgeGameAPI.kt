@@ -3,8 +3,6 @@ package mod.lucky.forge
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import mod.lucky.common.*
-import mod.lucky.common.Entity
-import mod.lucky.common.World
 import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.SingleDrop
