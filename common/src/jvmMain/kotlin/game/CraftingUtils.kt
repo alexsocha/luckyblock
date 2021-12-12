@@ -2,7 +2,7 @@ package mod.lucky.java.game
 
 import mod.lucky.java.ItemStack
 import mod.lucky.java.JavaLuckyRegistry
-import mod.lucky.java.javaGameAPI
+import mod.lucky.java.JAVA_GAME_API
 
 fun matchesLuckModifierCraftingRecipe(stacks: List<ItemStack>): Boolean {
     val luckyStacks = stacks.filter { it.itemId in JavaLuckyRegistry.allLuckyItemIds }
@@ -27,6 +27,6 @@ fun getLuckModifierCraftingResult(stacks: List<ItemStack>): ItemStack? {
 
     val newLuckUnbounded = stackData.luck + luckModifier
     val newLuck = if (newLuckUnbounded > 100) 100 else if (newLuckUnbounded < -100) -100 else newLuckUnbounded
-    val newNBT = javaGameAPI.attrToNBT(LuckyItemStackData(luck = newLuck).toAttr())
+    val newNBT = JAVA_GAME_API.attrToNBT(LuckyItemStackData(luck = newLuck).toAttr())
     return ItemStack(luckyStack.itemId, luckyStack.count, newNBT)
 }

@@ -6,11 +6,10 @@ import mod.lucky.common.Vec3d
 import mod.lucky.common.drop.*
 import mod.lucky.common.attribute.*
 import mod.lucky.common.gameAPI
-import mod.lucky.common.logger
+import mod.lucky.common.LOGGER
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.LuckyBlockSettings
 import mod.lucky.bedrock.common.registerBedrockTemplateVars
-import kotlin.Error
 
 class UnparsedModConfig(
     val luck: Int,
@@ -66,7 +65,7 @@ fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayerEntity, pos: Blo
 
 fun initServer(server: MCServer, serverSystem: MCServerSystem) {
     gameAPI = BedrockGameAPI
-    logger = BedrockGameAPI
+    LOGGER = BedrockGameAPI
     registerCommonTemplateVars(GameType.BEDROCK)
     registerBedrockTemplateVars()
 

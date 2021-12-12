@@ -86,7 +86,7 @@ object JavaLuckyRegistry {
         registerCommonTemplateVars(GameType.JAVA)
         registerJavaTemplateVars()
 
-        val (mainResources, allAddonResources) = loadResources(javaGameAPI.getGameDir())
+        val (mainResources, allAddonResources) = loadResources(JAVA_GAME_API.getGameDir())
         JavaLuckyRegistry.allAddonResources = allAddonResources
 
         registerMainResources(mainResources)

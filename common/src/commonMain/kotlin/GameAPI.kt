@@ -44,4 +44,4 @@ interface GameAPI : Logger {
     fun createStructure(world: World, structureId: String, pos: Vec3i, centerOffset: Vec3i, rotation: Int, mode: String, notify: Boolean)
 }
 
-lateinit var gameAPI: GameAPI
+lateinit var GAME_API: GameAPI

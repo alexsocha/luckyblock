@@ -49,8 +49,8 @@ class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier {
     }
 
     override fun readAdditionalSaveData(tag: CompoundTag) {
-        (javaGameAPI.readNBTKey(tag, "itemLuckyPotion") as? CompoundTag?)?.let {
-            javaGameAPI.writeNBTKey(tag, "Item", it)
+        (JAVA_GAME_API.readNBTKey(tag, "itemLuckyPotion") as? CompoundTag?)?.let {
+            JAVA_GAME_API.writeNBTKey(tag, "Item", it)
         }
         super.readAdditionalSaveData(tag)
         data = ThrownLuckyPotionData.readFromTag(tag)

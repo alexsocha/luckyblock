@@ -71,7 +71,7 @@ class DefaultRandom(
     override fun nextDouble(): Double = random.nextDouble()
 }
 
-val defaultRandom = DefaultRandom()
+val DEFAULT_RANDOM = DefaultRandom()
 
 fun <K, V>mapOfNotNull(vararg pairs: Pair<K, V?>): Map<K, V> {
     @Suppress("UNCHECKED_CAST")

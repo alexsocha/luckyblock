@@ -4,10 +4,10 @@ import mod.lucky.common.LuckyBlockSettings
 import mod.lucky.common.attribute.splitLines
 import mod.lucky.common.drop.WeightedDrop
 import mod.lucky.common.drop.dropsFromStrList
-import mod.lucky.common.logger
+import mod.lucky.common.LOGGER
 import mod.lucky.java.Addon
 import mod.lucky.java.JavaLuckyRegistry
-import mod.lucky.java.javaGameAPI
+import mod.lucky.java.JAVA_GAME_API
 import java.io.*
 import java.lang.Exception
 import java.util.zip.ZipFile
@@ -68,7 +68,7 @@ fun readLines(stream: InputStream): List<String> {
 }
 
 fun getConfigDir(gameDir: File): File {
-    return gameDir.resolve("config/lucky/${javaGameAPI.getModVersion()}-${javaGameAPI.getLoaderName()}")
+    return gameDir.resolve("config/lucky/${JAVA_GAME_API.getModVersion()}-${JAVA_GAME_API.getLoaderName()}")
 }
 
 fun parseDrops(lines: List<String>): List<WeightedDrop> {
@@ -80,7 +80,7 @@ fun extractDefaultConfig(configDir: File) {
     try {
         val stream = JavaLuckyRegistry::class.java.getResourceAsStream("lucky-config.zip")
         if (stream == null) {
-            logger.logInfo("No default resources found. Ignore this in a dev environment.")
+            LOGGER.logInfo("No default resources found. Ignore this in a dev environment.")
             return
         }
         val inputStream = ZipInputStream(stream)
@@ -98,7 +98,7 @@ fun extractDefaultConfig(configDir: File) {
         }
         inputStream.close()
     } catch (e: Exception) {
-        logger.logError("Error extracting default config", e)
+        LOGGER.logError("Error extracting default config", e)
     }
 }
 
@@ -106,7 +106,7 @@ fun loadMainResources(configDir: File): MainResources {
     val fileContents = commonConfigFiles.map { path ->
         val stream = getInputStream(configDir, path)
         if (stream == null) {
-            logger.logError("Missing resource '${path}' in ${configDir.path}")
+            LOGGER.logError("Missing resource '${path}' in ${configDir.path}")
             path to emptyList()
         } else path to readLines(stream)
     }.toMap()
@@ -136,7 +136,7 @@ fun loadAddonResources(addonFile: File): AddonResources? {
         val stream = getInputStream(addonFile, path)
         if (stream == null) {
             if (path == "plugin_init.txt") {
-                logger.logError("Missing resource '${path}' for addon '${addonFile.name}'")
+                LOGGER.logError("Missing resource '${path}' for addon '${addonFile.name}'")
                 return null
             }
             path to emptyList()

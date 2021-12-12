@@ -25,7 +25,7 @@ fun LuckyProjectileData.tick(world: World, entity: Entity, shooter: Entity?, tic
 
         if (trailFreqPerTick < 1.0 && trailFreqPerTick > 0) {
             val amount = (1.0 / trailFreqPerTick).toInt()
-            val velocity = javaGameAPI.getEntityVelocity(entity)
+            val velocity = JAVA_GAME_API.getEntityVelocity(entity)
             val pos = gameAPI.getEntityPos(entity)
             for (i in 0 until amount) {
                 val context = DropContext(

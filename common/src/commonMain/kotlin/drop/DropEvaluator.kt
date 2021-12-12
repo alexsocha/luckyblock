@@ -122,7 +122,7 @@ private fun chooseRandomDrop(drops: List<WeightedDrop>, luck: Int): WeightedDrop
         weightTotal += newChance
         weightPoints.add(weightTotal)
     }
-    val randomIndex = defaultRandom.randDouble(0.0, 1.0) * weightTotal
+    val randomIndex = DEFAULT_RANDOM.randDouble(0.0, 1.0) * weightTotal
     return drops[getDropIndexByWeight(weightPoints, randomIndex)]
 }
 

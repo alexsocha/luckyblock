@@ -4,18 +4,16 @@ import mod.lucky.common.Vec3d
 import mod.lucky.common.Vec3i
 import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.SingleDrop
-import mod.lucky.common.gameAPI
-import mod.lucky.common.logger
-import mod.lucky.java.javaGameAPI
-import mod.lucky.java.loader.DropStructureResource
+import mod.lucky.common.LOGGER
+import mod.lucky.java.JAVA_GAME_API
 import java.io.InputStream
 import java.lang.Exception
 
 fun readLegacySchematic(stream: InputStream): DropStructureResource {
     val nbt = try {
-        javaGameAPI.readCompressedNBT(stream) as DictAttr
+        JAVA_GAME_API.readCompressedNBT(stream) as DictAttr
     } catch (e: Exception) {
-        logger.logError("Error reading legacy schematic structure", e)
+        LOGGER.logError("Error reading legacy schematic structure", e)
         DictAttr()
     }
 
@@ -36,7 +34,7 @@ fun readLegacySchematic(stream: InputStream): DropStructureResource {
         val blockIdInt = blockIdBytes[i].toInt()
         val blockDataInt = blockDataBytes[i].toInt()
 
-        val blockId = javaGameAPI.convertLegacyItemId(blockIdInt, blockDataInt) ?: "minecraft:stone"
+        val blockId = JAVA_GAME_API.convertLegacyItemId(blockIdInt, blockDataInt) ?: "minecraft:stone"
         if (blockId != "minecraft:air") {
             blockDrops.add(SingleDrop("block", dictAttrOf(
                 "id" to stringAttrOf(blockId),

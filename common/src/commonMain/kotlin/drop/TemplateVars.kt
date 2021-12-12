@@ -380,7 +380,7 @@ fun registerCommonTemplateVars(gameType: GameType) {
 
     val evalSpec = TemplateVarSpec(listOf("jsScript" to ValueSpec(AttrType.INT)))
     registerTemplateVar("eval", evalSpec) { v, _ ->
-        val result = platformAPI.evalJS(v.args.getValue(0))
+        val result = PLATFORM_API.evalJS(v.args.getValue(0))
         if (result is String) stringAttrOf(unescapeSpecialChars(result))
         else stringAttrOf(result.toString())
     }

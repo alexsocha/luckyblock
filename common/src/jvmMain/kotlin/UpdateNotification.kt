@@ -28,7 +28,7 @@ private fun getModVersionInt(modVersionStr: String): Int {
 
 fun ModNotificationState.Companion.fromCache(): ModNotificationState {
     try {
-        val stream = getInputStream(getConfigDir(javaGameAPI.getGameDir()), ".showupdate.cache") ?: return ModNotificationState()
+        val stream = getInputStream(getConfigDir(JAVA_GAME_API.getGameDir()), ".showupdate.cache") ?: return ModNotificationState()
         val lines = readLines(stream)
         return ModNotificationState(
             didShowUpdate = lines.map { it to true }.toMap()
@@ -41,7 +41,7 @@ fun ModNotificationState.Companion.fromCache(): ModNotificationState {
 
 fun appendNotificationCache(modVersion: Int) {
    try {
-       val file = getConfigDir(javaGameAPI.getGameDir()).resolve(".showupdate.cache")
+       val file = getConfigDir(JAVA_GAME_API.getGameDir()).resolve(".showupdate.cache")
        val bw = BufferedWriter(FileWriter(file))
        bw.appendLine(modVersion.toString())
        bw.close()
@@ -56,8 +56,8 @@ fun checkForUpdates(state: ModNotificationState): ModNotificationState {
     try {
         val settings = JavaLuckyRegistry.globalSettings
         if (settings.checkForUpdates && !state.didCheckForUpdates) {
-            val curModVersionInt = getModVersionInt(javaGameAPI.getModVersion())
-            val url = URL("https://www.luckyblockmod.com/version-log-${javaGameAPI.getLoaderName()}")
+            val curModVersionInt = getModVersionInt(JAVA_GAME_API.getModVersion())
+            val url = URL("https://www.luckyblockmod.com/version-log-${JAVA_GAME_API.getLoaderName()}")
             val reader = BufferedReader(InputStreamReader(url.openStream()))
             for (line in generateSequence { reader.readLine() }) {
                 val splitLine = line.split("|").toTypedArray()
@@ -66,7 +66,7 @@ fun checkForUpdates(state: ModNotificationState): ModNotificationState {
 
                 // log version numbers <= 0 are reserved for special announcements
                 if (logVersionNumber.toString() !in state.didShowUpdate && (logVersionNumber <= 0 || logVersionNumber > curModVersionInt)) {
-                    javaGameAPI.showClientMessage(splitLine[2])
+                    JAVA_GAME_API.showClientMessage(splitLine[2])
                     appendNotificationCache(logVersionNumber)
                     return state.copy(
                         didCheckForUpdates = true,

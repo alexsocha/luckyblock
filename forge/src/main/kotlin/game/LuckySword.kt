@@ -2,7 +2,7 @@ package mod.lucky.forge.game
 
 import mod.lucky.forge.*
 import mod.lucky.java.game.doSwordDrop
-import mod.lucky.java.javaGameAPI
+import mod.lucky.java.JAVA_GAME_API
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.SwordItem
@@ -17,7 +17,7 @@ class LuckySword : SwordItem(Tiers.IRON, 3, 2.4f, Properties().defaultDurability
                 player = attacker,
                 hitEntity = target,
                 stackNBT = stack.tag,
-                sourceId = javaGameAPI.getItemId(this),
+                sourceId = JAVA_GAME_API.getItemId(this),
             )
         }
         return super.hurtEnemy(stack, target, attacker)

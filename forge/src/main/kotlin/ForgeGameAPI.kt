@@ -253,7 +253,7 @@ object ForgeGameAPI : GameAPI {
         val entityNBT = if (id == JavaLuckyRegistry.projectileId && "sourceId" !in nbt)
             nbt.with(mapOf("sourceId" to stringAttrOf(sourceId))) else nbt
 
-        val mcEntityNBT = javaGameAPI.attrToNBT(nbt.with(mapOf("id" to stringAttrOf(id)))) as CompoundTag
+        val mcEntityNBT = JAVA_GAME_API.attrToNBT(nbt.with(mapOf("id" to stringAttrOf(id)))) as CompoundTag
 
         val serverWorld = toServerWorld(world)
         val entity = EntityType.loadEntityRecursive(mcEntityNBT, serverWorld) { entity ->
@@ -296,7 +296,7 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean) {
-        val blockStateNBT = javaGameAPI.attrToNBT(dictAttrOf(
+        val blockStateNBT = JAVA_GAME_API.attrToNBT(dictAttrOf(
             "Name" to stringAttrOf(id),
             "Properties" to state,
         )) as CompoundTag
@@ -314,7 +314,7 @@ object ForgeGameAPI : GameAPI {
                 "y" to intAttrOf(pos.y),
                 "z" to intAttrOf(pos.z),
             ))
-            blockEntity.load(javaGameAPI.attrToNBT(fullNBT) as CompoundTag)
+            blockEntity.load(JAVA_GAME_API.attrToNBT(fullNBT) as CompoundTag)
             blockEntity.setChanged()
         }
     }
@@ -327,7 +327,7 @@ object ForgeGameAPI : GameAPI {
         }
 
         val itemStack = MCItemStack(item, 1)
-        if (nbt != null) itemStack.tag = javaGameAPI.attrToNBT(nbt) as CompoundTag
+        if (nbt != null) itemStack.tag = JAVA_GAME_API.attrToNBT(nbt) as CompoundTag
         MCBlock.popResource(toServerWorld(world), toMCBlockPos(pos.floor()), itemStack)
     }
 
@@ -441,7 +441,7 @@ object ForgeGameAPI : GameAPI {
                 settings: StructurePlaceSettings,
                 template: StructureTemplate?
             ): StructureTemplate.StructureBlockInfo {
-                val blockId = javaGameAPI.getBlockId(newBlockInfo.state.block) ?: return newBlockInfo
+                val blockId = JAVA_GAME_API.getBlockId(newBlockInfo.state.block) ?: return newBlockInfo
                 val blockIdWithMode = withBlockMode(mode, blockId)
 
                 if (blockIdWithMode == blockId) return newBlockInfo

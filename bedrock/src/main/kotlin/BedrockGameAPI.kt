@@ -342,9 +342,9 @@ object BedrockGameAPI : GameAPI {
         }
 
         val posComponent = serverSystem.getComponent<MCVecPos>(itemEntity, "minecraft:position")!!
-        posComponent.data.x = pos.x + (defaultRandom.randDouble(0.0, 1.0) - 0.5)
+        posComponent.data.x = pos.x + (DEFAULT_RANDOM.randDouble(0.0, 1.0) - 0.5)
         posComponent.data.y = pos.y + 0.5
-        posComponent.data.z = pos.z + (defaultRandom.randDouble(0.0, 1.0) - 0.5)
+        posComponent.data.z = pos.z + (DEFAULT_RANDOM.randDouble(0.0, 1.0) - 0.5)
         serverSystem.applyComponentChanges(itemEntity, posComponent)
 
         components?.children?.forEach {
@@ -371,9 +371,9 @@ object BedrockGameAPI : GameAPI {
     override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {
         for (i in 0 until amount) {
             val particlePos = Vec3d(
-                pos.x + defaultRandom.randDouble(-boxSize.x, boxSize.x),
-                pos.y + defaultRandom.randDouble(-boxSize.y, boxSize.y),
-                pos.z + defaultRandom.randDouble(-boxSize.z, boxSize.z),
+                pos.x + DEFAULT_RANDOM.randDouble(-boxSize.x, boxSize.x),
+                pos.y + DEFAULT_RANDOM.randDouble(-boxSize.y, boxSize.y),
+                pos.z + DEFAULT_RANDOM.randDouble(-boxSize.z, boxSize.z),
             )
             runCommand(serverSystem, "/particle ${getIDWithNamespace(id)} " +
                 "${particlePos.x} ${particlePos.y} ${particlePos.z}"

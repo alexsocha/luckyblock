@@ -3,6 +3,7 @@ package mod.lucky.forge.game
 import com.mojang.serialization.Codec
 import mod.lucky.common.Vec3i
 import mod.lucky.common.gameAPI
+import mod.lucky.common.DefaultRandom
 import mod.lucky.forge.MCBlockPos
 import mod.lucky.java.JavaLuckyRegistry
 import mod.lucky.java.game.generateLuckyFeature

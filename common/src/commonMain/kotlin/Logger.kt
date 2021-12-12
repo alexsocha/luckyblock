@@ -5,4 +5,4 @@ interface Logger {
     fun logInfo(msg: String)
 }
 
-lateinit var logger: Logger
+lateinit var LOGGER: Logger

@@ -37,7 +37,7 @@ fun LuckyItemStackData.Companion.fromBlockEntityData(entityData: LuckyBlockEntit
 
 fun doBowDrop(world: World, player: PlayerEntity, power: Double, stackNBT: NBTTag?, sourceId: String?) {
     val stackData = stackNBT?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
-    val (pos, _) = javaGameAPI.getArrowPosAndVelocity(world, player, power)
+    val (pos, _) = JAVA_GAME_API.getArrowPosAndVelocity(world, player, power)
 
     runRandomDrop(
         stackData.customDrops,

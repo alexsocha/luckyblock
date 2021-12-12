@@ -42,4 +42,4 @@ interface JavaGameAPI {
     fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i>
 }
 
-lateinit var javaGameAPI: JavaGameAPI
+lateinit var JAVA_GAME_API: JavaGameAPI

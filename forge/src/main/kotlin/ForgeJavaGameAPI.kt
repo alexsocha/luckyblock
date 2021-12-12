@@ -1,6 +1,8 @@
 package mod.lucky.forge
 
 import mod.lucky.common.*
+import mod.lucky.common.EnchantmentType
+import mod.lucky.common.StatusEffect
 import mod.lucky.common.attribute.*
 import mod.lucky.java.*
 import net.minecraft.client.Minecraft
@@ -20,7 +22,6 @@ import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.fml.loading.FMLLoader
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.versions.mcp.MCPVersion
-import java.awt.Color
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -40,7 +41,7 @@ fun toMCItemStack(stack: ItemStack): MCItemStack {
 }
 
 fun toItemStack(stack: MCItemStack): ItemStack {
-    return ItemStack(javaGameAPI.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.tag)
+    return ItemStack(JAVA_GAME_API.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.tag)
 }
 
 object ForgeJavaGameAPI : JavaGameAPI {
@@ -196,7 +197,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
 
         val tag = CompoundTag()
         chestEntity.save(tag)
-        return javaGameAPI.nbtToAttr(javaGameAPI.readNBTKey(tag, "Items")!!) as ListAttr
+        return JAVA_GAME_API.nbtToAttr(JAVA_GAME_API.readNBTKey(tag, "Items")!!) as ListAttr
     }
 
     override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {

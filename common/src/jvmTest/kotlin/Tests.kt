@@ -21,7 +21,7 @@ class Tests {
     fun beforeTest() {
         mockkObject(MockGameAPI)
         gameAPI = MockGameAPI
-        logger = MockGameAPI
+        LOGGER = MockGameAPI
     }
 
     @Test

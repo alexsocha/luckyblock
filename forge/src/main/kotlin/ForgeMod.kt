@@ -1,8 +1,8 @@
 package mod.lucky.forge
 
-import mod.lucky.common.attribute.stringAttrOf
 import mod.lucky.common.gameAPI
-import mod.lucky.common.platformAPI
+import mod.lucky.common.PLATFORM_API
+import mod.lucky.common.LOGGER
 import mod.lucky.java.JavaPlatformAPI
 import mod.lucky.forge.game.*
 import mod.lucky.java.*
@@ -63,10 +63,10 @@ private fun getAddonBlock(id: String): LuckyBlock {
 @Mod("lucky")
 class ForgeMod {
     init {
-        platformAPI = JavaPlatformAPI
-        logger = ForgeGameAPI
+        PLATFORM_API = JavaPlatformAPI
+        LOGGER = ForgeGameAPI
         gameAPI = ForgeGameAPI
-        javaGameAPI = ForgeJavaGameAPI
+        JAVA_GAME_API = ForgeJavaGameAPI
 
         ForgeLuckyRegistry.modVersion = ModLoadingContext.get().activeContainer.modInfo.version.toString()
 

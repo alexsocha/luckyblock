@@ -6,10 +6,9 @@ import mod.lucky.common.drop.BaseDrop
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.processProps
 import mod.lucky.common.drop.readLuckyStructure
-import mod.lucky.common.gameAPI
-import mod.lucky.common.logger
+import mod.lucky.common.LOGGER
 import mod.lucky.java.NBTStructure
-import mod.lucky.java.javaGameAPI
+import mod.lucky.java.JAVA_GAME_API
 import java.io.File
 import java.util.zip.ZipFile
 
@@ -42,7 +41,7 @@ fun readStructures(baseDir: File, configLines: List<String>): Map<String, Struct
             ) as DictAttr
             SingleDrop.processProps("structure", attr)
         } catch (e: Exception) {
-            logger.logError("Error reading structure settings: $it", e)
+            LOGGER.logError("Error reading structure settings: $it", e)
             null
         }
     }
@@ -54,7 +53,7 @@ fun readStructures(baseDir: File, configLines: List<String>): Map<String, Struct
             ZipFile(baseDir).entries().toList().filter { !it.isDirectory }.map { it.name }
         }
     } catch (e: Exception) {
-        logger.logError("Error searching for structures", e)
+        LOGGER.logError("Error searching for structures", e)
         emptyList()
     }
     val structPaths = filePaths
@@ -76,14 +75,14 @@ fun readStructures(baseDir: File, configLines: List<String>): Map<String, Struct
                     path to DropStructureResource(props, drops)
                 }
                 path.endsWith(".nbt") -> {
-                    val (structure, size) = javaGameAPI.readNBTStructure(stream)
+                    val (structure, size) = JAVA_GAME_API.readNBTStructure(stream)
                     val props = dictAttrOf("size" to vec3AttrOf(AttrType.DOUBLE, size.toDouble()))
                     path to NBTStructureResource(props, structure)
                 }
                 else -> null
             }
         } catch (e: Exception) {
-            logger.logError("Error reading structure '$path'", e)
+            LOGGER.logError("Error reading structure '$path'", e)
             null
         }
     }.toMap()
@@ -96,7 +95,7 @@ fun readStructures(baseDir: File, configLines: List<String>): Map<String, Struct
     val configuredStructures = overridePropsList.mapNotNull { props ->
         val path = props.getOptionalValue<String>("file")
         if (path == null || path !in structures) {
-            logger.logError("Error in structures.txt: Structure with path '$path' doesn't exist")
+            LOGGER.logError("Error in structures.txt: Structure with path '$path' doesn't exist")
             null
         } else props.getOptionalValue<String>("id")?.let {
             val newStruct = when (val struct = structures[path]!!) {
