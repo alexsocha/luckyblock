@@ -203,10 +203,10 @@ data class BlockConversion(
 @Serializable
 data class BlockConversions(
     val blockIdsFile: String? = null,
-    @SerialName("blocks") val blockConversions: List<BlockConversion>,
+    @SerialName("blocks") val conversions: List<BlockConversion>,
 ) {
     fun convert(fromGameType: GameType, toGameType: GameType, blockId: String, blockStates: BlockStates): Pair<String, BlockStates> {
-        return blockConversions.firstNotNullOfOrNull {
+        return conversions.firstNotNullOfOrNull {
             try { it.convert(fromGameType, toGameType, blockId, blockStates) }
             catch (e: BlockConversionException) { null }
         } ?: throw BlockConversionException("No block conversions available for ID '${blockId}', states '${blockStates}'")
@@ -215,10 +215,10 @@ data class BlockConversions(
     fun parseRegex(allBlockIds: List<BlockIdConversion>): BlockConversions {
         return BlockConversions(
             blockIdsFile=blockIdsFile,
-            blockConversions=blockConversions.map { blockConversion ->
+            conversions=conversions.map { conversion ->
                 BlockConversion(
-                    blockIdConversions=blockConversion.blockIdConversions.flatMap { it.parseRegex(allBlockIds) },
-                    partialBlockStateConversions=blockConversion.partialBlockStateConversions,
+                    blockIdConversions=conversion.blockIdConversions.flatMap { it.parseRegex(allBlockIds) },
+                    partialBlockStateConversions=conversion.partialBlockStateConversions,
                 )
             }
         )

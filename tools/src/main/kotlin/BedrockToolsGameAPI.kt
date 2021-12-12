@@ -4,6 +4,8 @@ import mod.lucky.common.*
 import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.*
 import mod.lucky.java.*
+import mod.lucky.common.Enchantment
+import mod.lucky.common.StatusEffect
 import java.io.File
 import java.io.InputStream
 
