@@ -6,25 +6,22 @@ import mod.lucky.common.drop.*
 import kotlin.math.floor
 
 fun resolveStructureId(id: String, sourceId: String): String {
-    return when (id.split(':').size) {
-        2 -> "lucky:$id"
-        1 -> {
-            val fullId = LuckyRegistry.sourceToAddonId[sourceId]?.let { "$it:$id" }
-            if (fullId != null && fullId in LuckyRegistry.structureProps) fullId
-            else LuckyRegistry.structureProps.keys.firstOrNull { it.endsWith(":$id") } ?: id
-        }
-        else -> id
+    // structure IDs should be in the form addonId:structureId, where addonId starts with lucky:
+    val numParts = id.split(":").size
+    if (numParts == 2 && !id.startsWith("lucky:")) return "lucky:$id"
+    if (numParts <= 2) {
+        val fullId = LuckyRegistry.sourceToAddonId[sourceId]?.let { "$it:${id.split(":").last()}" }
+        if (fullId != null && fullId in LuckyRegistry.structureProps) return fullId
+
+        // try to find an existing structure which matches the ID
+        return LuckyRegistry.structureProps.keys.firstOrNull { it.endsWith(":$id") } ?: fullId ?: id
     }
+    return id
 }
 
 fun doStructureDrop(drop: SingleDrop, context: DropContext) {
-    val structureId =  resolveStructureId(drop["id"], context.sourceId)
-    val defaultProps = LuckyRegistry.structureProps[structureId]
-
-    if (defaultProps == null) {
-        gameAPI.logError("Missing structure '$structureId'")
-        return
-    }
+    val structureId = resolveStructureId(drop["id"], context.sourceId)
+    val defaultProps = LuckyRegistry.structureProps[structureId] ?: DictAttr()
 
     val dropWithDefaults = drop.copy(props = drop.props.withDefaults(defaultProps.children))
     val rotation: Int = positiveMod(dropWithDefaults["rotation"], 4)
@@ -36,7 +33,7 @@ fun doStructureDrop(drop: SingleDrop, context: DropContext) {
     )
     val centerOffsetInt = centerOffset.floor()
 
-    val pos = drop.getPos(context.pos)
+    val pos = calculatePos(drop, context.pos, context.world)
     val posInt = pos.floor()
 
     val mode: String = dropWithDefaults["blockMode"]
@@ -52,8 +49,9 @@ fun doStructureDrop(drop: SingleDrop, context: DropContext) {
                     gameAPI.setBlock(
                         world = context.world,
                         pos = Vec3i(x, y, z),
-                        blockId = "minecraft:air",
+                        id = "minecraft:air",
                         state = null,
+                        components = null,
                         rotation = 0,
                         notify = notify,
                     )
@@ -74,12 +72,19 @@ fun doStructureDrop(drop: SingleDrop, context: DropContext) {
             "blockUpdate" to booleanAttrOf(notify),
         )
 
-        for (innerTemplateDrop in structureDrops) {
-            val innerProps = innerTemplateDrop.props.withDefaults(
-                if (innerTemplateDrop.type == "block") blockDefaults else commonDefaults
-            )
-            val innerDrop = innerTemplateDrop.copy(props=innerProps).eval(context)
-            runEvaluatedDrop(innerDrop, context)
+        fun mergeDefaultDropProps(drop: BaseDrop): BaseDrop {
+            return when (drop) {
+                is SingleDrop -> drop.copy(props=drop.props.withDefaults(
+                    if (drop.type == "block") blockDefaults else commonDefaults
+                ))
+                is GroupDrop -> drop.copy(drops=drop.drops.map { mergeDefaultDropProps(it) })
+                else -> throw Exception()
+            }
+        }
+
+        for (structureDrop in structureDrops) {
+            val evaluatedDrops = evalDrop(mergeDefaultDropProps(structureDrop), createDropEvalContext(context))
+            evaluatedDrops.forEach { runEvaluatedDrop(it, context) }
         }
     } else {
         gameAPI.createStructure(

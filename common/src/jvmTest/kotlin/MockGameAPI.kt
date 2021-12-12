@@ -10,16 +10,21 @@ object MockGameAPI : GameAPI {
         println("ERROR: $msg")
         throw error ?: Exception()
     }
-
     override fun logInfo(msg: String) {
         println("INFO: $msg")
     }
 
     override fun getUsefulPotionIds(): List<String> = listOf("minecraft:healing")
     override fun getSpawnEggIds(): List<String> = listOf("minecraft:pig_spawn_egg")
+    override fun getRGBPalette(): List<Int> = listOf(0)
+    override fun getEnchantments(): List<Enchantment> =
+        listOf(Enchantment("minecraft:sharpness", type = EnchantmentType.WEAPON, maxLevel = 4, isCurse = false))
+    override fun getUsefulStatusEffects(): List<StatusEffect> =
+        listOf(StatusEffect("minecraft:speed", 1, isNegative = false, isInstant = false))
+
     override fun getEntityPos(entity: Entity): Vec3d = (entity as MockEntity).pos
     override fun getPlayerName(player: PlayerEntity): String = "Test Player"
-    override fun applyStatusEffect(entity: Entity, effectId: String, durationSeconds: Double, amplifier: Int) {}
+    override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) {}
     override fun convertStatusEffectId(effectId: Int): String? = null
     override fun getLivingEntitiesInBox(world: World, boxMin: Vec3d, boxMax: Vec3d): List<Entity> = emptyList()
     override fun setEntityOnFire(entity: Entity, durationSeconds: Int) {}
@@ -31,12 +36,13 @@ object MockGameAPI : GameAPI {
     override fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double) {}
     override fun isAirBlock(world: World, pos: Vec3i): Boolean = true
 
-    override fun setBlock(world: World, pos: Vec3i, blockId: String, state: DictAttr?, rotation: Int, notify: Boolean) {}
+    override fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean) {}
     override fun spawnEntity(
         world: World,
         id: String,
         pos: Vec3d,
         nbt: DictAttr,
+        components: DictAttr?,
         rotation: Double,
         randomizeMob: Boolean,
         player: PlayerEntity?,
@@ -49,7 +55,7 @@ object MockGameAPI : GameAPI {
     override fun setDifficulty(world: World, difficulty: String) {}
 
     override fun setTime(world: World, time: Long) {}
-    override fun dropItem(world: World, pos: Vec3d, itemId: String, nbt: DictAttr?) {}
+    override fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?) {}
     override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {}
     override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {}
     override fun playParticleEvent(world: World, pos: Vec3d, eventId: Int, data: Int) {}

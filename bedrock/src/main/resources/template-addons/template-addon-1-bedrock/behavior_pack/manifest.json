@@ -1,0 +1,24 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "LuckyBlockCustom behavior pack",
+        "name": "LuckyBlockCustomBP",
+        "uuid": "9f206f22-517f-4d2a-bf04-0735a017f32a",
+        "version": [1, 0, 0],
+        "min_engine_version": [1, 17, 0]
+    },
+    "modules": [
+        {
+            "description": "LuckyBlockCustom behavior pack module",
+            "type": "data",
+            "uuid": "993b6447-e40f-4f29-99a1-24180252d096",
+            "version": [1, 0, 0]
+        }
+    ],
+    "dependencies": [
+        {
+            "uuid": "faabd410-2572-4443-a579-02784cf3a62b",
+            "version": [1, 0, 0]
+        }
+    ]
+}

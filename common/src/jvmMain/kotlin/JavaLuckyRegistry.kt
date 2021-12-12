@@ -1,6 +1,8 @@
 package mod.lucky.java
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.drop.WeightedDrop
+import mod.lucky.common.drop.registerCommonTemplateVars
+import mod.lucky.common.GameType
 import mod.lucky.java.loader.*
 import java.io.File
 
@@ -81,6 +83,7 @@ object JavaLuckyRegistry {
     }
 
     fun init() {
+        registerCommonTemplateVars(GameType.JAVA)
         registerJavaTemplateVars()
 
         val (mainResources, allAddonResources) = loadResources(javaGameAPI.getGameDir())

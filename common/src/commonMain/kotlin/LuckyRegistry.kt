@@ -5,8 +5,9 @@ import mod.lucky.common.attribute.EvalContext
 import mod.lucky.common.drop.*
 
 data class DropTemplateContext(
-    val drop: SingleDrop,
-    val dropContext: DropContext,
+    val drop: SingleDrop?,
+    val dropContext: DropContext?,
+    val random: Random,
 )
 
 data class LuckyBlockSettings(
@@ -26,7 +27,7 @@ object LuckyRegistry {
     val blockSettings = HashMap<String, LuckyBlockSettings>() // blockId -> settings
     val drops = HashMap<String, List<WeightedDrop>>() // sourceId -> drops
     val structureProps = HashMap<String, DictAttr>() // addonId:path -> props
-    val structureDrops = HashMap<String, List<SingleDrop>>() // addonId:path -> drops
+    val structureDrops = HashMap<String, List<BaseDrop>>() // addonId:path -> drops
 
     val sourceToAddonId = HashMap<String, String>() // sourceId -> addonId
 
@@ -39,7 +40,6 @@ object LuckyRegistry {
 
     init {
         registerDefaultDrops()
-        registerDefaultTemplateVars()
     }
 
     fun registerDropPropRenames(type: String, renames: Map<String, String>) {
@@ -55,17 +55,12 @@ object LuckyRegistry {
         dropPropRenames[type] = renames
     }
 
-    fun registerTemplateVar(name: String, spec: TemplateVarSpec = TemplateVarSpec(), needsContext: Boolean = false, fn: (TemplateVar, DropTemplateContext?) -> Attr) {
+    fun registerTemplateVar(name: String, spec: TemplateVarSpec = TemplateVarSpec(), fn: (TemplateVar, DropTemplateContext) -> Attr) {
         templateVarSpecs[name] = spec
         templateVarFns[name] = { args, context ->
             if (context is DropTemplateContext) fn(args, context)
-            else if (!needsContext) fn(args, null)
             else throw EvalError("Can't evaluate template variable '$name' without context")
         }
-    }
-
-    fun registerDropTemplateVar(name: String, spec: TemplateVarSpec = TemplateVarSpec(), fn: (TemplateVar, DropTemplateContext) -> Attr) {
-        registerTemplateVar(name, spec) { t, c -> fn(t, c!!) }
     }
 
     fun registerAction(type: String, action: (drop: SingleDrop, context: DropContext) -> Unit) {

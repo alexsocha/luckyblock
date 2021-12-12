@@ -1,0 +1,10 @@
+{
+  "versions": [
+    {
+      "folder": "template-addon-1-bedrock",
+      "version": "1",
+      "min_mod_version": "1.17-bedrock",
+      "min_minecraft_version": "1.17"
+    }
+  ]
+}

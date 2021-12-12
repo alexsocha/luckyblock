@@ -3,6 +3,7 @@ package mod.lucky.common.drop
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.attribute.*
 import mod.lucky.common.gameAPI
+import mod.lucky.common.drop.dropsFromStrList
 
 private fun parseDictOrList(spec: DictSpec, orderedSpecKeys: List<String>, value: String): DictAttr {
     val splitProps = splitBracketString(value, ',')
@@ -20,7 +21,7 @@ private fun parseDictOrList(spec: DictSpec, orderedSpecKeys: List<String>, value
 }
 
 @Throws(ParserError::class)
-fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<SingleDrop>> {
+fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<BaseDrop>> {
     val defaultBlockSpec = LuckyRegistry.dropSpecs["block"]!!
     // for legacy reasons block states might be provided as numbers, so we remove them from the spec
     val blockSpec = defaultBlockSpec.copy(children = defaultBlockSpec.children.minus("state"))
@@ -31,7 +32,12 @@ fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<SingleDrop>> {
 
     val sections = parseSectionedLines(lines)
 
-    val defaultPropsStr = sections.getOrElse("properties", { sections.getOrElse("default") { emptyList() } }).joinToString(",")
+    val isDropsOnly = sections.size == 1 && "default" in sections
+
+    val defaultPropsStr = if (isDropsOnly) "" else sections.getOrElse("properties", {
+        sections.getOrElse("default") { emptyList() }
+    }).joinToString(",")
+
     val defaultProps = try {
         val attr = parseAttr(defaultPropsStr, LuckyRegistry.dropSpecs["structure"]!!, LuckyRegistry.parserContext) as DictAttr
         SingleDrop.processProps("structure", attr)
@@ -43,6 +49,7 @@ fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<SingleDrop>> {
     val blockDrops = sections.getOrElse("blocks", { emptyList() }).mapNotNull {
         try {
             val props = parseDictOrList(blockSpec, orderedBlockSpecKeys, it)
+                .with(mapOf("type" to stringAttrOf("block")))
             val propsWithValidState = if (props["state"] is DictAttr) props else props.copy(children = props.children.minus("state"))
             SingleDrop("block", SingleDrop.processProps("block", propsWithValidState))
         } catch (e: ParserError) {
@@ -53,12 +60,14 @@ fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<SingleDrop>> {
     val entityDrops = sections.getOrElse("entities", { emptyList() }).mapNotNull {
         try {
             val props = parseDictOrList(entitySpec, orderedEntitySpecKeys, it)
+                .with(mapOf("type" to stringAttrOf("entity")))
             SingleDrop("entity", SingleDrop.processProps("entity", props))
         } catch (e: ParserError) {
             gameAPI.logError("Error reading structure entity '$it'", e)
             null
         }
     }
+    val otherDrops = dropsFromStrList(sections.getOrElse(if (isDropsOnly) "default" else "drops", { emptyList() })).map { it.drop }
 
-    return Pair(defaultProps, blockDrops + entityDrops)
+    return Pair(defaultProps, blockDrops + entityDrops + otherDrops)
 }

@@ -1,0 +1,18 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "LuckyBlockCustom resource pack",
+        "name": "LuckyBlockCustomRP",
+        "uuid": "faabd410-2572-4443-a579-02784cf3a62b",
+        "version": [1, 0, 0],
+        "min_engine_version": [1, 17, 0]
+    },
+    "modules": [
+        {
+            "description": "LuckyBlockCustom resource pack module",
+            "type": "resources",
+            "uuid": "a1cb171d-da5a-45c3-a515-b1a7e4c6f3ab",
+            "version": [1, 0, 0]
+        }
+    ]
+}

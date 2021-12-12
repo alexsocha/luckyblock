@@ -21,6 +21,7 @@ pluginManagement {
         kotlin("multiplatform") version kotlinVersion
         kotlin("jvm") version kotlinVersion
         kotlin("js") version kotlinVersion
+        kotlin("plugin.serialization") version kotlinVersion
         id("fabric-loom") version fabricLoomVersion
         id("org.ajoberstar.grgit") version grGitVersion
         id("com.github.johnrengelman.shadow") version shadowJarVersion
@@ -42,6 +43,7 @@ val isBedrockEnabledBool = isBedrockEnabled.toBoolean()
 
 rootProject.name = "luckyblock"
 include("common")
+include("tools")
 if (isForgeEnabledBool) include("forge")
 if (isFabricEnabledBool) include("fabric")
 if (isBedrockEnabledBool) include("bedrock")

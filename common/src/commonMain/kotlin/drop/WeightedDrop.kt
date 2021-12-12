@@ -7,7 +7,7 @@ data class WeightedDrop(
     val drop: BaseDrop,
     val dropString: String,
     val luck: Int = 0,
-    val chance: Double?
+    val chance: Double? = 1.0
 ) : BaseDrop {
     companion object
 }
@@ -55,7 +55,7 @@ fun dropsFromStrList(drops: List<String>): List<WeightedDrop> {
         try {
             WeightedDrop.fromString(it)
         } catch (e: Exception) {
-            gameAPI.logError("Error parsing drop: $it", e)
+            logger.logError("Error parsing drop: $it", e)
             null
         }
     }

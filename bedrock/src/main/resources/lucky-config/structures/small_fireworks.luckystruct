@@ -1,0 +1,4 @@
+posOffset=(0,-1,0),type=block,id=redstone_block
+posOffset=(0,0,0),type=block,id=dispenser,state=(facing_direction=1),nbttag=(id=Dispenser,Items=[
+    (Name=minecraft:firework_rocket, Slot=0b, Count=1b, tag=#randFireworksRocket)
+]),samples=3,seed=3345
