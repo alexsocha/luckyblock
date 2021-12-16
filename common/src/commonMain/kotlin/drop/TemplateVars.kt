@@ -78,7 +78,7 @@ fun registerEnchantments(
     registerMultiListTemplateVar(
         templateName,
         getValues = { context ->
-            val enchantments = gameAPI.getEnchantments().filter {
+            val enchantments = GAME_API.getEnchantments().filter {
                 if (it.type !in types) false 
                 else if (!includeCurses && it.isCurse) false
                 else true
@@ -100,8 +100,8 @@ fun registerStatusEffects(templateName: String, statusEffects: List<StatusEffect
 }
 
 fun registerCommonTemplateVars(gameType: GameType) {
-    registerTemplateVar("randPotion") { _, context -> stringAttrOf(chooseRandomFrom(context.random, gameAPI.getUsefulPotionIds())) }
-    registerTemplateVar("randSpawnEgg") { _, context -> stringAttrOf(chooseRandomFrom(context.random, gameAPI.getSpawnEggIds())) }
+    registerTemplateVar("randPotion") { _, context -> stringAttrOf(chooseRandomFrom(context.random, GAME_API.getUsefulPotionIds())) }
+    registerTemplateVar("randSpawnEgg") { _, context -> stringAttrOf(chooseRandomFrom(context.random, GAME_API.getSpawnEggIds())) }
     registerTemplateVar("randColor") { _, context -> stringAttrOf(chooseRandomFrom(context.random, colorNames)) }
 
     fun <T> ensureDropContext(context: DropTemplateContext, fn: (dropContext: DropContext) -> T): T {
@@ -111,7 +111,7 @@ fun registerCommonTemplateVars(gameType: GameType) {
 
     registerTemplateVar("time") { _, context ->
         ensureDropContext(context) {
-            stringAttrOf(gameAPI.getWorldTime(it.world).toString())
+            stringAttrOf(GAME_API.getWorldTime(it.world).toString())
         }
     }
 
@@ -124,35 +124,35 @@ fun registerCommonTemplateVars(gameType: GameType) {
 
     registerVec3TemplateVar("ePos", AttrType.INT) { _, context ->
         ensureDropContext(context) {
-            it.hitEntity?.let { gameAPI.getEntityPos(it).floor() }
+            it.hitEntity?.let { GAME_API.getEntityPos(it).floor() }
         }
     }
     registerVec3TemplateVar("eExactPos", AttrType.DOUBLE) { _, context ->
         ensureDropContext(context) {
-            it.hitEntity?.let { gameAPI.getEntityPos(it) }
+            it.hitEntity?.let { GAME_API.getEntityPos(it) }
         }
     }
     registerVec3TemplateVar("pPos", AttrType.INT) { _, context ->
         ensureDropContext(context) {
-            it.player?.let { gameAPI.getEntityPos(it).floor() }
+            it.player?.let { GAME_API.getEntityPos(it).floor() }
         }
     }
     registerVec3TemplateVar("pExactPos", AttrType.DOUBLE) { _, context ->
         ensureDropContext(context) {
-            it.player?.let { gameAPI.getEntityPos(it) }
+            it.player?.let { GAME_API.getEntityPos(it) }
         }
     }
 
     registerTemplateVar("pName") { _, context ->
         ensureDropContext(context) {
-            stringAttrOf(it.player?.let { gameAPI.getPlayerName(it) } ?: "")
+            stringAttrOf(it.player?.let { GAME_API.getPlayerName(it) } ?: "")
         }
     }
 
     registerTemplateVar("pDirect") { _, context ->
         ensureDropContext(context) {
             it.player?.let {
-                val rotInt = round((gameAPI.getPlayerHeadYawDeg(it) + 180.0) / 90.0).toInt() % 4
+                val rotInt = round((GAME_API.getPlayerHeadYawDeg(it) + 180.0) / 90.0).toInt() % 4
                 val rotIntClamped = if (rotInt < 0) (rotInt + 4) else rotInt
                 intAttrOf(rotIntClamped)
             } ?: intAttrOf(0)
@@ -160,12 +160,12 @@ fun registerCommonTemplateVars(gameType: GameType) {
     }
     registerTemplateVar("pYaw") { _, context ->
         ensureDropContext(context) {
-            doubleAttrOf(it.player?.let { gameAPI.getPlayerHeadYawDeg(it) } ?: 0.0)
+            doubleAttrOf(it.player?.let { GAME_API.getPlayerHeadYawDeg(it) } ?: 0.0)
         }
     }
     registerTemplateVar("pPitch") { _, context ->
         ensureDropContext(context) {
-            doubleAttrOf(it.player?.let { gameAPI.getPlayerHeadPitchDeg(it) } ?: 0.0)
+            doubleAttrOf(it.player?.let { GAME_API.getPlayerHeadPitchDeg(it) } ?: 0.0)
         }
     }
 
@@ -265,7 +265,7 @@ fun registerCommonTemplateVars(gameType: GameType) {
         val colorAmount = context.random.randInt(1..4)
         val fireworkColors = when(gameType) {
             GameType.JAVA -> ValueAttr(AttrType.INT_ARRAY, (0 until colorAmount).map {
-                chooseRandomFrom(context.random, gameAPI.getRGBPalette())
+                chooseRandomFrom(context.random, GAME_API.getRGBPalette())
             }.toIntArray())
             GameType.BEDROCK -> ValueAttr(AttrType.BYTE_ARRAY, (0 until colorAmount).map {
                 context.random.randInt(0..8).toByte()
@@ -369,12 +369,12 @@ fun registerCommonTemplateVars(gameType: GameType) {
 
     registerStatusEffects(
         "luckyPotionEffects",
-        gameAPI.getUsefulStatusEffects().filter { !it.isNegative },
+        GAME_API.getUsefulStatusEffects().filter { !it.isNegative },
         defaultAmount = 7..10
     )
     registerStatusEffects(
         "unluckyPotionEffects",
-        gameAPI.getUsefulStatusEffects().filter { it.isNegative },
+        GAME_API.getUsefulStatusEffects().filter { it.isNegative },
         defaultAmount = 5..7
     )
 

@@ -64,14 +64,14 @@ interface Random {
     }
 }
 
-class DefaultRandom(
-    private val random: kotlin.random.Random = kotlin.random.Random.Default,
+class KotlinRandom(
+    private val kotlinRandom: kotlin.random.Random = kotlin.random.Random.Default,
 ) : Random {
-    override fun randInt(range: IntRange): Int = range.random(random)
-    override fun nextDouble(): Double = random.nextDouble()
+    override fun randInt(range: IntRange): Int = range.random(kotlinRandom)
+    override fun nextDouble(): Double = kotlinRandom.nextDouble()
 }
 
-val DEFAULT_RANDOM = DefaultRandom()
+val DEFAULT_RANDOM = KotlinRandom()
 
 fun <K, V>mapOfNotNull(vararg pairs: Pair<K, V?>): Map<K, V> {
     @Suppress("UNCHECKED_CAST")

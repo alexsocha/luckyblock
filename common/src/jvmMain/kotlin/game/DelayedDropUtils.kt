@@ -8,7 +8,7 @@ import mod.lucky.common.attribute.intAttrOf
 import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.runDropAfterDelay
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.java.*
 
 data class DelayedDropData(
@@ -30,7 +30,7 @@ fun DelayedDropData.tick(world: World) {
             }
         }
     } catch (e: Exception) {
-        gameAPI.logError("Error running delayed drop: $singleDrop", e)
+        GAME_API.logError("Error running delayed drop: $singleDrop", e)
     }
 }
 
@@ -50,7 +50,7 @@ fun DelayedDropData.Companion.fromAttr(attr: DictAttr, world: World): DelayedDro
             ticksRemaining=attr.getValue("ticksRemaining"),
         )
     } catch (e: java.lang.Exception) {
-        gameAPI.logError("Error loading delayed drop", e)
+        GAME_API.logError("Error loading delayed drop", e)
         createDefault(world)
     }
 }

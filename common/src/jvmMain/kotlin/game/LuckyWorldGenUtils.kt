@@ -14,7 +14,7 @@ fun generateLuckyFeature(world: World, surfacePos: Vec3i, blockId: String, dimen
     val chosenDrops = drops.filter { random.randInt(0..(it.chance?.toInt() ?: 300)) == 0 }
     if (chosenDrops.isNotEmpty()) {
         val drop = chosenDrops[0]
-        if (DEBUG) gameAPI.logInfo("Generatring lucky feature at $surfacePos: $drop")
+        if (DEBUG) GAME_API.logInfo("Generatring lucky feature at $surfacePos: $drop")
 
         val context = DropContext(
             world = world,

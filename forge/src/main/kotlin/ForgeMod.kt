@@ -1,6 +1,6 @@
 package mod.lucky.forge
 
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.common.PLATFORM_API
 import mod.lucky.common.LOGGER
 import mod.lucky.java.JavaPlatformAPI
@@ -65,7 +65,7 @@ class ForgeMod {
     init {
         PLATFORM_API = JavaPlatformAPI
         LOGGER = ForgeGameAPI
-        gameAPI = ForgeGameAPI
+        GAME_API = ForgeGameAPI
         JAVA_GAME_API = ForgeJavaGameAPI
 
         ForgeLuckyRegistry.modVersion = ModLoadingContext.get().activeContainer.modInfo.version.toString()

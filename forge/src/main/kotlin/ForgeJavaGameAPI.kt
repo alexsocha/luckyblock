@@ -1,11 +1,11 @@
 package mod.lucky.forge
 
 import mod.lucky.common.*
-import mod.lucky.common.EnchantmentType
-import mod.lucky.common.StatusEffect
+import mod.lucky.common.Random
 import mod.lucky.common.attribute.*
 import mod.lucky.java.*
 import net.minecraft.client.Minecraft
+import net.minecraft.nbt.LongArrayTag
 import net.minecraft.nbt.NbtIo
 import net.minecraft.network.chat.Component
 import net.minecraft.util.datafix.fixes.ItemIdFix
@@ -74,6 +74,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
                 AttrType.DOUBLE -> DoubleTag.valueOf(attr.value as Double)
                 AttrType.INT_ARRAY -> IntArrayTag(attr.value as IntArray)
                 AttrType.BYTE_ARRAY -> ByteArrayTag(attr.value as ByteArray)
+                AttrType.LONG_ARRAY -> LongArrayTag(attr.value as LongArray)
                 AttrType.LIST, AttrType.DICT -> throw Exception()
             }
             is ListAttr -> {
@@ -102,6 +103,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
             is DoubleTag -> ValueAttr(AttrType.DOUBLE, tag.asDouble)
             is ByteArrayTag -> ValueAttr(AttrType.BYTE_ARRAY, tag.asByteArray)
             is IntArrayTag -> ValueAttr(AttrType.INT_ARRAY, tag.asIntArray)
+            is LongArrayTag -> ValueAttr(AttrType.INT_ARRAY, tag.asLongArray)
             is ListTag -> ListAttr(tag.map { nbtToAttr(it) })
             is CompoundTag -> {
                 dictAttrOf(*tag.allKeys.map {
@@ -135,14 +137,14 @@ object ForgeJavaGameAPI : JavaGameAPI {
         val arrowEntity = Arrow(world as MCServerWorld, player as MCPlayerEntity)
         arrowEntity.shootFromRotation(
             player,
-            (gameAPI.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
-            (gameAPI.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
+            (GAME_API.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
+            (GAME_API.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
             0.0f,
             (bowPower * 3.0).toFloat(),
             1.0f
         )
         return Pair(
-            gameAPI.getEntityPos(arrowEntity),
+            GAME_API.getEntityPos(arrowEntity),
             Vec3d(arrowEntity.deltaMovement.x, arrowEntity.deltaMovement.y, arrowEntity.deltaMovement.z)
         )
     }
@@ -164,7 +166,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
         val player = Minecraft.getInstance().player
         val mcText = Component.Serializer.fromJson(textJsonStr)
         if (mcText == null) {
-            gameAPI.logError("Invalid JSON text: $textJsonStr")
+            GAME_API.logError("Invalid JSON text: $textJsonStr")
             return
         }
         player?.sendMessage(mcText, UUID.fromString(getEntityUUID(player)))
@@ -187,30 +189,17 @@ object ForgeJavaGameAPI : JavaGameAPI {
         return key?.toString() ?: ""
     }
 
-    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr {
+    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String, random: Random): ListAttr {
         val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultBlockState())
 
         // world is needed to prevent a NullPointerException
         chestEntity.level = toServerWorld(world)
-        chestEntity.setLootTable(MCIdentifier(lootTableId), RANDOM.nextLong())
+        chestEntity.setLootTable(MCIdentifier(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
         chestEntity.unpackLootTable(null)
 
         val tag = CompoundTag()
         chestEntity.save(tag)
         return JAVA_GAME_API.nbtToAttr(JAVA_GAME_API.readNBTKey(tag, "Items")!!) as ListAttr
-    }
-
-    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
-        val mcTypes = types.map { toMCEnchantmentType(it)  }
-        return ForgeRegistries.ENCHANTMENTS.entries.filter { it.value.category in mcTypes }.map {
-            Enchantment(it.key.location().toString(), it.value.maxLevel, it.value.isCurse)
-        }
-    }
-
-    override fun getStatusEffect(id: String): StatusEffect? {
-        val mcId = MCIdentifier(id)
-        val effect = ForgeRegistries.MOB_EFFECTS.getValue(mcId) ?: return null
-        return StatusEffect(id = mcId.toString(), intId = MCStatusEffect.getId(effect), isInstant = effect.isInstantenous)
     }
 
     override fun isCreativeMode(player: PlayerEntity): Boolean {

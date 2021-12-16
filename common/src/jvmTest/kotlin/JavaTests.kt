@@ -1,6 +1,6 @@
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.drop.*
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.java.JavaLuckyRegistry
 import mod.lucky.java.JAVA_GAME_API
 import kotlin.test.BeforeTest
@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 class JavaTests {
     @BeforeTest
     fun beforeTest() {
-        gameAPI = MockGameAPI
+        GAME_API = MockGameAPI
         JAVA_GAME_API = MockJavaGameAPI
     }
 

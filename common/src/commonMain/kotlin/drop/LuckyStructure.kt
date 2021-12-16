@@ -2,7 +2,7 @@ package mod.lucky.common.drop
 
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.attribute.*
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.common.drop.dropsFromStrList
 
 private fun parseDictOrList(spec: DictSpec, orderedSpecKeys: List<String>, value: String): DictAttr {
@@ -42,7 +42,7 @@ fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<BaseDrop>> {
         val attr = parseAttr(defaultPropsStr, LuckyRegistry.dropSpecs["structure"]!!, LuckyRegistry.parserContext) as DictAttr
         SingleDrop.processProps("structure", attr)
     } catch (e: ParserError) {
-        gameAPI.logError("Error reading structure props '$defaultPropsStr'", e)
+        GAME_API.logError("Error reading structure props '$defaultPropsStr'", e)
         throw e
     }
 
@@ -53,7 +53,7 @@ fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<BaseDrop>> {
             val propsWithValidState = if (props["state"] is DictAttr) props else props.copy(children = props.children.minus("state"))
             SingleDrop("block", SingleDrop.processProps("block", propsWithValidState))
         } catch (e: ParserError) {
-            gameAPI.logError("Error reading structure drop '$it'", e)
+            GAME_API.logError("Error reading structure drop '$it'", e)
             null
         }
     }
@@ -63,7 +63,7 @@ fun readLuckyStructure(lines: List<String>): Pair<DictAttr, List<BaseDrop>> {
                 .with(mapOf("type" to stringAttrOf("entity")))
             SingleDrop("entity", SingleDrop.processProps("entity", props))
         } catch (e: ParserError) {
-            gameAPI.logError("Error reading structure entity '$it'", e)
+            GAME_API.logError("Error reading structure entity '$it'", e)
             null
         }
     }

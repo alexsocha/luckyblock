@@ -111,7 +111,7 @@ fun DropContainer.Companion.readFromTag(tag: NBTTag): DropContainer {
     try {
         return DropContainer.fromAttr(readNBTKeys(tag, attrKeys))
     } catch (e: Exception) {
-        gameAPI.logError("Error reading drops", e)
+        GAME_API.logError("Error reading drops", e)
     }
     return DropContainer()
 }

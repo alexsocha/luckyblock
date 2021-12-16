@@ -5,7 +5,7 @@ import mod.lucky.common.BlockPos
 import mod.lucky.common.Vec3d
 import mod.lucky.common.drop.*
 import mod.lucky.common.attribute.*
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.common.LOGGER
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.LuckyBlockSettings
@@ -64,7 +64,7 @@ fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayerEntity, pos: Blo
 }
 
 fun initServer(server: MCServer, serverSystem: MCServerSystem) {
-    gameAPI = BedrockGameAPI
+    GAME_API = BedrockGameAPI
     LOGGER = BedrockGameAPI
     registerCommonTemplateVars(GameType.BEDROCK)
     registerBedrockTemplateVars()

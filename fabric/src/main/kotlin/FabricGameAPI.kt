@@ -202,7 +202,7 @@ object FabricGameAPI : GameAPI {
     override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) {
         val statusEffect = Registry.STATUS_EFFECT.get(MCIdentifier(effectId))
         if (statusEffect == null) {
-            gameAPI.logError("Unknown status effect: $effectId")
+            GAME_API.logError("Unknown status effect: $effectId")
             return
         }
         val duration = if (statusEffect.isInstant) 1 else (durationSeconds * 20.0).toInt()
@@ -250,7 +250,7 @@ object FabricGameAPI : GameAPI {
         val entityNBT = if (id == JavaLuckyRegistry.projectileId && "sourceId" !in nbt)
             nbt.with(mapOf("sourceId" to stringAttrOf(sourceId))) else nbt
 
-        val mcEntityNBT = javaGameAPI.attrToNBT(nbt.with(mapOf("id" to stringAttrOf(id)))) as CompoundTag
+        val mcEntityNBT = JAVA_GAME_API.attrToNBT(nbt.with(mapOf("id" to stringAttrOf(id)))) as CompoundTag
 
         val serverWorld = toServerWorld(world)
         val entity = EntityType.loadEntityWithPassengers(mcEntityNBT, serverWorld) { entity ->
@@ -293,7 +293,7 @@ object FabricGameAPI : GameAPI {
     }
 
     override fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean) {
-        val blockStateNBT = javaGameAPI.attrToNBT(dictAttrOf(
+        val blockStateNBT = JAVA_GAME_API.attrToNBT(dictAttrOf(
             "Name" to stringAttrOf(id),
             "Properties" to state,
         )) as CompoundTag
@@ -311,7 +311,7 @@ object FabricGameAPI : GameAPI {
                 "y" to intAttrOf(pos.y),
                 "z" to intAttrOf(pos.z),
             ))
-            blockEntity.readNbt(javaGameAPI.attrToNBT(fullNBT) as CompoundTag)
+            blockEntity.readNbt(JAVA_GAME_API.attrToNBT(fullNBT) as CompoundTag)
             blockEntity.markDirty()
             //if (world is MCWorld) world.setBlockEntity(mcPos, blockEntity)
         }
@@ -320,12 +320,12 @@ object FabricGameAPI : GameAPI {
     override fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?) {
         val item = Registry.ITEM.getOrEmpty(MCIdentifier(id)).orElse(null)
         if (item == null) {
-            gameAPI.logError("Invalid item ID: '$id'")
+            GAME_API.logError("Invalid item ID: '$id'")
             return
         }
 
         val itemStack = MCItemStack(item, 1)
-        if (nbt != null) itemStack.nbt = javaGameAPI.attrToNBT(nbt) as CompoundTag
+        if (nbt != null) itemStack.nbt = JAVA_GAME_API.attrToNBT(nbt) as CompoundTag
         MCBlock.dropStack(toServerWorld(world), toMCBlockPos(pos.floor()), itemStack)
     }
 
@@ -334,7 +334,7 @@ object FabricGameAPI : GameAPI {
             val commandSource = createCommandSource(toServerWorld(world), pos, senderName, showOutput)
             commandSource.server.commandManager.execute(commandSource, command)
         } catch (e: Exception) {
-            gameAPI.logError("Invalid command: $command", e)
+            GAME_API.logError("Invalid command: $command", e)
         }
     }
 
@@ -359,7 +359,7 @@ object FabricGameAPI : GameAPI {
     override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {
         val soundEvent = Registry.SOUND_EVENT.get(MCIdentifier(id))
         if (soundEvent == null) {
-            gameAPI.logError("Invalid sound event: $id")
+            GAME_API.logError("Invalid sound event: $id")
             return
         }
         toServerWorld(world).playSound(
@@ -375,7 +375,7 @@ object FabricGameAPI : GameAPI {
         @Suppress("UNCHECKED_CAST")
         val particleType = Registry.PARTICLE_TYPE.get(MCIdentifier(id)) as ParticleType<ParticleEffect>?
         if (particleType == null) {
-            gameAPI.logError("Invalid partical: $id")
+            GAME_API.logError("Invalid partical: $id")
             return
         }
 
@@ -383,7 +383,7 @@ object FabricGameAPI : GameAPI {
             val particleData = try {
                 particleType.parametersFactory.read(particleType, StringReader(" " + args.joinToString(" ")))
             } catch (e: CommandSyntaxException) {
-                gameAPI.logError("Error processing partice '$id' with arguments '$args'", e)
+                GAME_API.logError("Error processing partice '$id' with arguments '$args'", e)
                 return
             }
             toServerWorld(world).spawnParticles(
@@ -394,7 +394,7 @@ object FabricGameAPI : GameAPI {
                 0.0 // spread
             )
         } catch (e: Exception) {
-            gameAPI.logError("Invalid partical arguments: $args", e)
+            GAME_API.logError("Invalid partical arguments: $args", e)
             return
         }
     }
@@ -407,7 +407,7 @@ object FabricGameAPI : GameAPI {
         if (potionName != null) {
             val potion = Registry.POTION.getOrEmpty(MCIdentifier(potionName)).orElse(null)
             if (potion == null) {
-                gameAPI.logError("Invalid splash potion name: $potionName")
+                GAME_API.logError("Invalid splash potion name: $potionName")
                 return
             }
 
@@ -425,7 +425,7 @@ object FabricGameAPI : GameAPI {
     override fun createStructure(world: World, structureId: String, pos: Vec3i, centerOffset: Vec3i, rotation: Int, mode: String, notify: Boolean) {
         val nbtStructure = JavaLuckyRegistry.nbtStructures[structureId]
         if (nbtStructure == null) {
-            gameAPI.logError("Missing structure '$structureId'")
+            GAME_API.logError("Missing structure '$structureId'")
             return
         }
 
@@ -438,7 +438,7 @@ object FabricGameAPI : GameAPI {
                 newBlockInfo: Structure.StructureBlockInfo,
                 settings: StructurePlacementData,
             ): Structure.StructureBlockInfo {
-                val blockId = javaGameAPI.getBlockId(newBlockInfo.state.block) ?: return newBlockInfo
+                val blockId = JAVA_GAME_API.getBlockId(newBlockInfo.state.block) ?: return newBlockInfo
                 val blockIdWithMode = withBlockMode(mode, blockId)
 
                 if (blockIdWithMode == blockId) return newBlockInfo

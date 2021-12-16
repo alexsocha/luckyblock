@@ -24,7 +24,7 @@ data class DropContext(
 
 
 fun createDropEvalContext(dropContext: DropContext, drop: SingleDrop? = null): EvalContext {
-    return EvalContext(LuckyRegistry.templateVarFns, DropTemplateContext(drop, dropContext, random=DefaultRandom()))
+    return EvalContext(LuckyRegistry.templateVarFns, DropTemplateContext(drop, dropContext, random=KotlinRandom()))
 }
 
 fun createVecSpec(baseName: String, partNames: Triple<String, String, String>, type: AttrType? = null): Array<Pair<String, AttrSpec>> {
@@ -128,7 +128,7 @@ private fun chooseRandomDrop(drops: List<WeightedDrop>, luck: Int): WeightedDrop
 
 fun runEvaluatedDrop(drop: SingleDrop, context: DropContext) {
     if ("delay" in drop && drop.get<Double>("delay") > 0.0) {
-        gameAPI.scheduleDrop(drop, context, drop["delay"])
+        GAME_API.scheduleDrop(drop, context, drop["delay"])
     } else {
         val fn = LuckyRegistry.dropActions[drop.type]!!
         fn(drop, context)
@@ -136,7 +136,7 @@ fun runEvaluatedDrop(drop: SingleDrop, context: DropContext) {
 }
 
 fun runDrop(drop: WeightedDrop, context: DropContext, showOutput: Boolean) {
-    if (showOutput) gameAPI.logInfo("Chosen Lucky Drop: ${drop.dropString}")
+    if (showOutput) GAME_API.logInfo("Chosen Lucky Drop: ${drop.dropString}")
     val singleDrops = evalDrop(drop, createDropEvalContext(context))
     singleDrops.forEach { runEvaluatedDrop(it, context) }
 }

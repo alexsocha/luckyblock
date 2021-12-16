@@ -28,7 +28,7 @@ private fun readLuckChance(dropStr: String): Pair<String, DictAttr> {
         val attr = try {
             parseEvalAttr(attrStr, luckChanceSpec, LuckyRegistry.parserContext, LuckyRegistry.simpleEvalContext) as DictAttr
         } catch (e: ParserError) {
-            gameAPI.logError("Error reading extra drop properties '$attrStr' for drop: $dropStr", e)
+            GAME_API.logError("Error reading extra drop properties '$attrStr' for drop: $dropStr", e)
             DictAttr()
         }
         Pair(newDropStr, attr)

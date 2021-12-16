@@ -1,6 +1,6 @@
 package mod.lucky.fabric
 
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.common.platformAPI
 import mod.lucky.java.*
 import net.fabricmc.api.ClientModInitializer
@@ -56,8 +56,8 @@ class FabricMod : ModInitializer {
     init {
         platformAPI = JavaPlatformAPI
         logger = FabricGameAPI
-        gameAPI = FabricGameAPI
-        javaGameAPI = FabricJavaGameAPI
+        GAME_API = FabricGameAPI
+        JAVA_GAME_API = FabricJavaGameAPI
     }
 
     private fun registerWorldGen(blockId: String) {

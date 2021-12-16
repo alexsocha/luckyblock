@@ -88,7 +88,7 @@ object ToolsJavaGameAPI : JavaGameAPI {
     override fun getBlockId(block: Block): String? = throw NoGameContextException()
     override fun getItemId(item: Item): String? = throw NoGameContextException()
     override fun isValidItemId(id: String): Boolean = throw NoGameContextException()
-    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr = throw NoGameContextException()
+    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String, random: Random): ListAttr = throw NoGameContextException()
 
     override fun getEntityTypeId(entity: Entity): String? = throw NoGameContextException()
     override fun isCreativeMode(player: PlayerEntity): Boolean = throw NoGameContextException()

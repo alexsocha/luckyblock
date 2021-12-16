@@ -46,7 +46,7 @@ fun doStructureDrop(drop: SingleDrop, context: DropContext) {
         for (x in minPos.x..maxPos.x) {
             for (y in minPos.y..maxPos.y) {
                 for (z in minPos.z..maxPos.z) {
-                    gameAPI.setBlock(
+                    GAME_API.setBlock(
                         world = context.world,
                         pos = Vec3i(x, y, z),
                         id = "minecraft:air",
@@ -87,7 +87,7 @@ fun doStructureDrop(drop: SingleDrop, context: DropContext) {
             evaluatedDrops.forEach { runEvaluatedDrop(it, context) }
         }
     } else {
-        gameAPI.createStructure(
+        GAME_API.createStructure(
             world = context.world,
             structureId = structureId,
             pos = posInt,

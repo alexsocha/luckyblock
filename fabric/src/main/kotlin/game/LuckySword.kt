@@ -4,7 +4,7 @@ import mod.lucky.fabric.MCItemStack
 import mod.lucky.fabric.OnlyInClient
 import mod.lucky.fabric.isClientWorld
 import mod.lucky.java.game.doSwordDrop
-import mod.lucky.java.javaGameAPI
+import mod.lucky.java.JAVA_GAME_API
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.LivingEntity
@@ -20,7 +20,7 @@ class LuckySword : SwordItem(ToolMaterials.IRON, 3, 2.4f, FabricItemSettings().m
                 player = attacker,
                 hitEntity = target,
                 stackNBT = stack.nbt,
-                sourceId = javaGameAPI.getItemId(this),
+                sourceId = JAVA_GAME_API.getItemId(this),
             )
         }
         return super.postHit(stack, target, attacker)

@@ -5,7 +5,7 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.util.*
 
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.java.loader.getConfigDir
 import mod.lucky.java.loader.getInputStream
 import mod.lucky.java.loader.readLines
@@ -34,7 +34,7 @@ fun ModNotificationState.Companion.fromCache(): ModNotificationState {
             didShowUpdate = lines.map { it to true }.toMap()
         )
     } catch (e: Exception) {
-        gameAPI.logError("Error reading .showupdate.cache", e)
+        GAME_API.logError("Error reading .showupdate.cache", e)
         return ModNotificationState()
     }
 }
@@ -46,7 +46,7 @@ fun appendNotificationCache(modVersion: Int) {
        bw.appendLine(modVersion.toString())
        bw.close()
    } catch (e: Exception) {
-       gameAPI.logError("Error writing .showupdate.cache", e)
+       GAME_API.logError("Error writing .showupdate.cache", e)
    }
 }
 
@@ -78,7 +78,7 @@ fun checkForUpdates(state: ModNotificationState): ModNotificationState {
             }
         }
     } catch (e: Exception) {
-        gameAPI.logError("Error checking for updates", e)
+        GAME_API.logError("Error checking for updates", e)
     }
     return state.copy(didCheckForUpdates = true)
 }

@@ -1,6 +1,6 @@
 package mod.lucky.forge.game
 
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.forge.*
 import mod.lucky.java.*
 import mod.lucky.java.loader.ShapedCraftingRecipe
@@ -19,7 +19,7 @@ typealias MCShapedCraftingRecipe = net.minecraft.world.item.crafting.ShapedRecip
 fun getIngredient(id: String): Ingredient? {
     val item = ForgeRegistries.ITEMS.getValue(MCIdentifier(id))
     if (item == null) {
-        gameAPI.logError("Invalid item in recipe: $id")
+        GAME_API.logError("Invalid item in recipe: $id")
         return null
     }
     return Ingredient.of(item)

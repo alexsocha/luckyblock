@@ -45,7 +45,7 @@ class LuckyBow : BowItem(FabricItemSettings()
                             player = player,
                             power = power.toDouble(),
                             stackNBT = stack.nbt,
-                            sourceId = javaGameAPI.getItemId(this),
+                            sourceId = JAVA_GAME_API.getItemId(this),
                         )
                     }
 

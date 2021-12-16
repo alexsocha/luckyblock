@@ -7,7 +7,7 @@ import mod.lucky.common.attribute.DictAttr
 import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.WeightedDrop
 import mod.lucky.common.drop.runRandomDrop
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.java.*
 
 object LuckyItemValues {
@@ -62,7 +62,7 @@ fun doSwordDrop(world: World, player: PlayerEntity, hitEntity: Entity, stackNBT:
             world = world,
             player = player,
             hitEntity = hitEntity,
-            pos = gameAPI.getEntityPos(hitEntity),
+            pos = GAME_API.getEntityPos(hitEntity),
             sourceId = sourceId ?: JavaLuckyRegistry.swordId
         ),
         showOutput = true,

@@ -34,7 +34,7 @@ interface JavaGameAPI {
     fun getBlockId(block: Block): String?
     fun getItemId(item: Item): String?
     fun isValidItemId(id: String): Boolean
-    fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr
+    fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String, random: Random): ListAttr
     fun getEntityTypeId(entity: Entity): String?
     fun isCreativeMode(player: PlayerEntity): Boolean
     fun hasSilkTouch(player: PlayerEntity): Boolean

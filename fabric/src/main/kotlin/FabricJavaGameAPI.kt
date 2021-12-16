@@ -1,6 +1,7 @@
 package mod.lucky.fabric
 
 import mod.lucky.common.*
+import mod.lucky.common.Random
 import mod.lucky.common.attribute.*
 import mod.lucky.java.*
 import mod.lucky.fabric.*
@@ -38,7 +39,7 @@ fun toMCItemStack(stack: ItemStack): MCItemStack {
 }
 
 fun toItemStack(stack: MCItemStack): ItemStack {
-    return ItemStack(javaGameAPI.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.nbt)
+    return ItemStack(JAVA_GAME_API.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.nbt)
 }
 
 object FabricJavaGameAPI : JavaGameAPI {
@@ -134,14 +135,14 @@ object FabricJavaGameAPI : JavaGameAPI {
         val arrowEntity = ArrowEntity(world as ServerWorld, player as MCPlayerEntity)
         arrowEntity.setProperties( // setArrowMotion
             player,
-            (gameAPI.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
-            (gameAPI.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
+            (GAME_API.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
+            (GAME_API.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
             0.0f,
             (bowPower * 3.0).toFloat(),
             1.0f
         )
         return Pair(
-            gameAPI.getEntityPos(arrowEntity),
+            GAME_API.getEntityPos(arrowEntity),
             Vec3d(arrowEntity.velocity.x, arrowEntity.velocity.y, arrowEntity.velocity.z)
         )
     }
@@ -163,7 +164,7 @@ object FabricJavaGameAPI : JavaGameAPI {
         val player = MinecraftClient.getInstance().player
         val mcText = Text.Serializer.fromJson(textJsonStr)
         if (mcText == null) {
-            gameAPI.logError("Invalid JSON text: $textJsonStr")
+            GAME_API.logError("Invalid JSON text: $textJsonStr")
             return
         }
         player?.sendSystemMessage(mcText, UUID.fromString(getEntityUUID(player)))
@@ -186,16 +187,16 @@ object FabricJavaGameAPI : JavaGameAPI {
         return key?.value?.toString() ?: ""
     }
 
-    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr {
+    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String, random: Random): ListAttr {
         val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultState)
         // world is needed to prevent a NullPointerException
         chestEntity.world = toServerWorld(world)
-        chestEntity.setLootTable(MCIdentifier(lootTableId), RANDOM.nextLong())
+        chestEntity.setLootTable(MCIdentifier(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
         chestEntity.checkLootInteraction(null)
 
         val tag = CompoundTag()
         chestEntity.writeNbt(tag)
-        return javaGameAPI.nbtToAttr(javaGameAPI.readNBTKey(tag, "Items")!!) as ListAttr
+        return JAVA_GAME_API.nbtToAttr(JAVA_GAME_API.readNBTKey(tag, "Items")!!) as ListAttr
     }
 
     override fun isCreativeMode(player: PlayerEntity): Boolean {

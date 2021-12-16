@@ -6,7 +6,8 @@ import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.WeightedDrop
 import mod.lucky.common.drop.runRandomDrop
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
+import mod.lucky.common.LOGGER
 import mod.lucky.java.*
 
 data class ThrownLuckyPotionData(
@@ -25,12 +26,12 @@ fun ThrownLuckyPotionData.onImpact(world: World, thrownPotionEntity: Entity, use
             world = world,
             player = user,
             hitEntity = hitEntity,
-            pos = if (hitEntity != null) gameAPI.getEntityPos(hitEntity) else gameAPI.getEntityPos(thrownPotionEntity),
+            pos = if (hitEntity != null) GAME_API.getEntityPos(hitEntity) else GAME_API.getEntityPos(thrownPotionEntity),
             sourceId = sourceId,
         )
         runRandomDrop(customDrops, luck = luck, context = context, showOutput = true)
     } catch (e: Exception) {
-        gameAPI.logError("Error in lucky_potion impact", e)
+        LOGGER.logError("Error in lucky_potion impact", e)
     }
 }
 
@@ -50,7 +51,7 @@ fun ThrownLuckyPotionData.Companion.fromAttr(attr: DictAttr): ThrownLuckyPotionD
             sourceId = attr.getOptionalValue<String>("sourceId") ?: JavaLuckyRegistry.potionId,
         )
     } catch (e: java.lang.Exception) {
-        gameAPI.logError("Error loading lucky_potion", e)
+        LOGGER.logError("Error loading lucky_potion", e)
         ThrownLuckyPotionData()
     }
 }

@@ -269,7 +269,7 @@ fun createEmptyGeneratedDrops(): GeneratedDrops {
 }
 
 fun prepareToGenerateDrops() {
-    gameAPI = BedrockToolsGameAPI
+    GAME_API = BedrockToolsGameAPI
     logger = ToolsLogger
     registerCommonTemplateVars(GameType.BEDROCK)
     registerBedrockTemplateVars()

@@ -54,20 +54,37 @@ fun registerJavaTemplateVars() {
     val chestLootSpec = TemplateVarSpec(listOf("lootTableId" to ValueSpec(AttrType.STRING)))
     LuckyRegistry.registerTemplateVar("chestLootTable", chestLootSpec) { templateVar, context ->
         JAVA_GAME_API.generateChestLoot(
-            context.dropContext!!.world,
-            context.dropContext.pos.floor(),
-            (templateVar.args[0] as ValueAttr).value as String
+            world=context.dropContext!!.world,
+            pos=context.dropContext.pos.floor(),
+            lootTableId=(templateVar.args[0] as ValueAttr).value as String,
+            random=context.random,
+
         )
     }
 
     // compatibility
     LuckyRegistry.registerTemplateVar("chestVillageArmorer") { _, context ->
-        JAVA_GAME_API.generateChestLoot(context.dropContext!!.world, context.dropContext.pos.floor(), "chests/village/village_armorer")
+        JAVA_GAME_API.generateChestLoot(
+            world=context.dropContext!!.world,
+            pos=context.dropContext.pos.floor(),
+            "chests/village/village_armorer",
+            random=context.random,
+        )
     }
     LuckyRegistry.registerTemplateVar("chestBonusChest") { _, context ->
-        JAVA_GAME_API.generateChestLoot(context.dropContext!!.world, context.dropContext.pos.floor(), "chests/spawn_bonus_chest")
+        JAVA_GAME_API.generateChestLoot(
+            world=context.dropContext!!.world,
+            pos=context.dropContext.pos.floor(),
+            lootTableId="chests/spawn_bonus_chest",
+            random=context.random
+        )
     }
     LuckyRegistry.registerTemplateVar("chestDungeonChest") { _, context ->
-        JAVA_GAME_API.generateChestLoot(context.dropContext!!.world, context.dropContext.pos.floor(), "chests/simple_dungeon")
+        JAVA_GAME_API.generateChestLoot(
+            world=context.dropContext!!.world,
+            pos=context.dropContext.pos.floor(),
+            lootTableId="chests/simple_dungeon",
+            random=context.random
+        )
     }
 }

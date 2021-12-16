@@ -6,9 +6,9 @@ import mod.lucky.common.drop.*
 import kotlin.math.atan2
 
 private fun applyKnockbackEffect(drop: SingleDrop, dropPos: Vec3d, targetEntity: Entity) {
-    val entityPos = gameAPI.getEntityPos(targetEntity)
+    val entityPos = GAME_API.getEntityPos(targetEntity)
 
-    val isClose = distanceBetween(dropPos, gameAPI.getEntityPos(targetEntity)) < 0.01
+    val isClose = distanceBetween(dropPos, GAME_API.getEntityPos(targetEntity)) < 0.01
 
     val yawRad = if ("directionYaw" in drop) degToRad(drop["directionYaw"]) else atan2(
         (entityPos.x - dropPos.x) * -1,
@@ -18,20 +18,20 @@ private fun applyKnockbackEffect(drop: SingleDrop, dropPos: Vec3d, targetEntity:
     val power = if ("target" !in drop && isClose) drop.get<Double>("power") * 0.5 else drop["power"]
 
     val motion = directionToVelocity(yawRad, pitchRad, power)
-    gameAPI.setEntityMotion(targetEntity, motion)
+    GAME_API.setEntityMotion(targetEntity, motion)
 }
 
 fun applyEffect(drop: SingleDrop, dropPos: Vec3d, target: String?, targetEntity: Entity?, effectId: String) {
     when (effectId) {
         "special_fire" -> {
             if (targetEntity == null) throw Exception("Entity required")
-            gameAPI.setEntityOnFire(targetEntity, drop["duration"])
+            GAME_API.setEntityOnFire(targetEntity, drop["duration"])
         }
         "special_knockback" -> {
             if (targetEntity == null) throw Exception("Entity required")
             applyKnockbackEffect(drop, dropPos, targetEntity)
         }
-        else -> gameAPI.applyStatusEffect(
+        else -> GAME_API.applyStatusEffect(
             target=target,
             targetEntity=targetEntity,
             effectId=effectId,
@@ -60,7 +60,7 @@ fun doEffectDrop(drop: SingleDrop, context: DropContext) {
         else -> {
             try {
                 val intId = dropId.toInt()
-                gameAPI.convertStatusEffectId(intId) ?: dropId
+                GAME_API.convertStatusEffectId(intId) ?: dropId
             } catch (e: NumberFormatException) {
                 dropId
             }
@@ -79,11 +79,11 @@ fun doEffectDrop(drop: SingleDrop, context: DropContext) {
         val range: Double = drop["range"]
         val effectBoxMin = pos - Vec3d(range, range, range)
         val effectBoxMax = pos + Vec3d(range, range, range)
-        val entities = gameAPI.getLivingEntitiesInBox(context.world, effectBoxMin, effectBoxMax)
+        val entities = GAME_API.getLivingEntitiesInBox(context.world, effectBoxMin, effectBoxMax)
 
         for (entity in entities) {
             if (drop["excludePlayer"] && entity == context.player) continue
-            val distance = distanceBetween(pos, gameAPI.getEntityPos(entity))
+            val distance = distanceBetween(pos, GAME_API.getEntityPos(entity))
             if (distance <= range) {
                 applyEffect(
                     drop=drop,

@@ -7,7 +7,7 @@ import mod.lucky.common.drop.*
 fun adjustY(world: World, pos: Vec3d, adjustRange: IntRange): Vec3d {
     for (y in adjustRange) {
         val newPos = Vec3d(pos.x, pos.y + y, pos.z)
-        if (gameAPI.isAirBlock(world, newPos.floor())) return newPos
+        if (GAME_API.isAirBlock(world, newPos.floor())) return newPos
     }
     return pos
 }
@@ -41,7 +41,7 @@ fun withBlockMode(mode: String, blockId: String): String? {
         "overlay" -> if (blockId != "minecraft:air") blockId else null
         "replace" -> blockId
         else -> {
-            gameAPI.logError("Invalid block mode '$mode'")
+            GAME_API.logError("Invalid block mode '$mode'")
             null
         }
     }
@@ -51,7 +51,7 @@ fun setBlock(world: World, pos: Vec3i, drop: SingleDrop) {
     if ("id" !in drop) throw DropError("Missing block ID")
     val blockId = withBlockMode(drop["blockMode"], drop["id"]) ?: return
 
-    gameAPI.setBlock(
+    GAME_API.setBlock(
         world = world,
         pos = pos,
         id = blockId,
@@ -61,7 +61,7 @@ fun setBlock(world: World, pos: Vec3i, drop: SingleDrop) {
         notify = drop["blockUpdate"],
     )
     if ("nbttag" in drop) {
-        gameAPI.setBlockEntity(world, pos, drop["nbttag"])
+        GAME_API.setBlockEntity(world, pos, drop["nbttag"])
     }
 }
 
@@ -89,7 +89,7 @@ fun doFillDrop(drop: SingleDrop, context: DropContext) {
 }
 
 fun doItemDrop(drop: SingleDrop, context: DropContext) {
-    gameAPI.dropItem(
+    GAME_API.dropItem(
         world = context.world,
         pos = calculatePos(drop, context.pos, context.world),
         id = drop["id"],
@@ -99,15 +99,15 @@ fun doItemDrop(drop: SingleDrop, context: DropContext) {
 }
 
 fun doMessageDrop(drop: SingleDrop, context: DropContext) {
-    val player = context.player ?: gameAPI.getNearestPlayer(
+    val player = context.player ?: GAME_API.getNearestPlayer(
         context.world,
         calculatePos(drop, context.pos, context.world),
     )
-    if (player != null) gameAPI.sendMessage(player, drop["id"])
+    if (player != null) GAME_API.sendMessage(player, drop["id"])
 }
 
 fun doCommandDrop(drop: SingleDrop, context: DropContext) {
-    gameAPI.runCommand(
+    GAME_API.runCommand(
         world = context.world,
         pos = calculatePos(drop, context.pos, context.world),
         command = drop["id"],
@@ -124,11 +124,11 @@ fun doDifficultyDrop(drop: SingleDrop, context: DropContext) {
         in listOf("normal", "n", "2") -> "normal"
         in listOf("hard", "h", "3") -> "hard"
         else -> {
-            gameAPI.logError("Invalid diffictulty: $value")
+            GAME_API.logError("Invalid diffictulty: $value")
             return
         }
     }
-    gameAPI.setDifficulty(context.world, difficulty)
+    GAME_API.setDifficulty(context.world, difficulty)
 }
 
 fun doTimeDrop(drop: SingleDrop, context: DropContext) {
@@ -138,22 +138,22 @@ fun doTimeDrop(drop: SingleDrop, context: DropContext) {
             "day" -> 1000L
             "night" -> 13000L
             else -> {
-                gameAPI.logError("Invalid time: ${timeAttr.value}")
+                GAME_API.logError("Invalid time: ${timeAttr.value}")
                 return
             }
         }
 
-    gameAPI.setTime(context.world, time)
+    GAME_API.setTime(context.world, time)
 }
 
 fun doSoundDrop(drop: SingleDrop, context: DropContext) {
     val pos = calculatePos(drop, context.pos, context.world)
-    gameAPI.playSound(context.world, pos, drop["id"], drop["volume"], drop["pitch"])
+    GAME_API.playSound(context.world, pos, drop["id"], drop["volume"], drop["pitch"])
 }
 
 fun doExplosionDrop(drop: SingleDrop, context: DropContext) {
     val pos = calculatePos(drop, context.pos, context.world) + Vec3d(0.0, 0.5, 0.0)
-    gameAPI.createExplosion(context.world, pos, drop["damage"], drop["fire"])
+    GAME_API.createExplosion(context.world, pos, drop["damage"], drop["fire"])
 }
 
 fun doParticleDrop(drop: SingleDrop, context: DropContext) {
@@ -163,16 +163,16 @@ fun doParticleDrop(drop: SingleDrop, context: DropContext) {
 
     if (isNumType(effectIdAttr.type)) {
         val particleIdInt = castNum(AttrType.INT, effectIdAttr.value as Number) as Int
-        gameAPI.playParticleEvent(context.world, pos, particleIdInt, particleData)
+        GAME_API.playParticleEvent(context.world, pos, particleIdInt, particleData)
     } else {
         val particleId = effectIdAttr.value as String
         if (particleId.equals("splashpotion", ignoreCase = true)) {
             val potionName = drop.getOrNull<String>("potion")
-            gameAPI.playSplashPotionEvent(context.world, pos, potionName, if (potionName == null) particleData else null)
+            GAME_API.playSplashPotionEvent(context.world, pos, potionName, if (potionName == null) particleData else null)
         } else {
             val splitId = particleId.split('.')
             val particleArgs = if (splitId.size >= 2) splitId.subList(1, splitId.size) else emptyList()
-            gameAPI.spawnParticle(context.world, pos, splitId[0], particleArgs, drop.getVec3("size"), drop["particleAmount"])
+            GAME_API.spawnParticle(context.world, pos, splitId[0], particleArgs, drop.getVec3("size"), drop["particleAmount"])
         }
     }
 }
@@ -186,7 +186,7 @@ fun doEntityDrop(drop: SingleDrop, context: DropContext) {
         else -> initId
     }
 
-    gameAPI.spawnEntity(
+    GAME_API.spawnEntity(
         world=context.world,
         id=id,
         pos=pos,

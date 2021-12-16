@@ -116,7 +116,7 @@ class LuckyBlockEntity(
         return BlockEntityUpdateS2CPacket(
             BlockPos(pos.x, pos.y, pos.z),
             1, // block entity type
-            javaGameAPI.attrToNBT(data.toAttr()) as CompoundTag
+            JAVA_GAME_API.attrToNBT(data.toAttr()) as CompoundTag
         )
     }
 }

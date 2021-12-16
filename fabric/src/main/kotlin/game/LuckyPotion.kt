@@ -43,7 +43,7 @@ class LuckyPotion : MCItem(FabricItemSettings().group(ItemGroup.COMBAT)) {
                 data = ThrownLuckyPotionData(
                     customDrops = stackData.customDrops,
                     luck = stackData.luck,
-                    sourceId = javaGameAPI.getItemId(stack.item) ?: JavaLuckyRegistry.potionId,
+                    sourceId = JAVA_GAME_API.getItemId(stack.item) ?: JavaLuckyRegistry.potionId,
                 )
             )
             potionEntity.setItem(stack)

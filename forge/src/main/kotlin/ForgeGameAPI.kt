@@ -95,7 +95,7 @@ private fun toEnchantmentType(mcType: MCEnchantmentType): EnchantmentType {
     return when (mcType) {
         MCEnchantmentType.ARMOR -> EnchantmentType.ARMOR
         MCEnchantmentType.ARMOR_FEET -> EnchantmentType.ARMOR_FEET
-        MCEnchantmentType.ARMOR_LEGS -> EnchantmentType.ARMOR_LEGS
+        MCEnchantmentType.ARMOR_LEGS  -> EnchantmentType.ARMOR_LEGS
         MCEnchantmentType.ARMOR_CHEST -> EnchantmentType.ARMOR_CHEST
         MCEnchantmentType.ARMOR_HEAD -> EnchantmentType.ARMOR_HEAD
         MCEnchantmentType.WEAPON -> EnchantmentType.WEAPON
@@ -205,7 +205,7 @@ object ForgeGameAPI : GameAPI {
     override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) {
         val statusEffect = ForgeRegistries.MOB_EFFECTS.getValue(MCIdentifier(effectId))
         if (statusEffect == null) {
-            gameAPI.logError("Unknown status effect: $effectId")
+            GAME_API.logError("Unknown status effect: $effectId")
             return
         }
         val duration = if (statusEffect.isInstantenous) 1 else (durationSeconds * 20.0).toInt()
@@ -322,7 +322,7 @@ object ForgeGameAPI : GameAPI {
     override fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?) {
         val item = ForgeRegistries.ITEMS.getValue(MCIdentifier(id))
         if (item == null) {
-            gameAPI.logError("Invalid item ID: '$id'")
+            GAME_API.logError("Invalid item ID: '$id'")
             return
         }
 
@@ -336,7 +336,7 @@ object ForgeGameAPI : GameAPI {
             val commandSource = createCommandSource(toServerWorld(world), pos, senderName, showOutput)
             commandSource.server.commands.performCommand(commandSource, command)
         } catch (e: Exception) {
-            gameAPI.logError("Invalid command: $command", e)
+            GAME_API.logError("Invalid command: $command", e)
         }
     }
 
@@ -361,7 +361,7 @@ object ForgeGameAPI : GameAPI {
     override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {
         val soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(MCIdentifier(id))
         if (soundEvent == null) {
-            gameAPI.logError("Invalid sound event: $id")
+            GAME_API.logError("Invalid sound event: $id")
             return
         }
         toServerWorld(world).playSound(
@@ -377,7 +377,7 @@ object ForgeGameAPI : GameAPI {
         @Suppress("UNCHECKED_CAST")
         val particleType = ForgeRegistries.PARTICLE_TYPES.getValue(MCIdentifier(id)) as ParticleType<ParticleOptions>?
         if (particleType == null) {
-            gameAPI.logError("Invalid partical: $id")
+            GAME_API.logError("Invalid partical: $id")
             return
         }
 
@@ -385,7 +385,7 @@ object ForgeGameAPI : GameAPI {
             val particleData = try {
                 particleType.deserializer.fromCommand(particleType, StringReader(" " + args.joinToString(" ")))
             } catch (e: CommandSyntaxException) {
-                gameAPI.logError("Error processing partice '$id' with arguments '$args'", e)
+                GAME_API.logError("Error processing partice '$id' with arguments '$args'", e)
                 return
             }
             toServerWorld(world).sendParticles(
@@ -396,7 +396,7 @@ object ForgeGameAPI : GameAPI {
                 0.0 // spread
             )
         } catch (e: Exception) {
-            gameAPI.logError("Invalid partical arguments: $args", e)
+            GAME_API.logError("Invalid partical arguments: $args", e)
             return
         }
     }
@@ -409,7 +409,7 @@ object ForgeGameAPI : GameAPI {
         if (potionName != null) {
             val potion = ForgeRegistries.POTIONS.getValue(MCIdentifier(potionName))
             if (potion == null) {
-                gameAPI.logError("Invalid splash potion name: $potionName")
+                GAME_API.logError("Invalid splash potion name: $potionName")
                 return
             }
 
@@ -427,7 +427,7 @@ object ForgeGameAPI : GameAPI {
     override fun createStructure(world: World, structureId: String, pos: Vec3i, centerOffset: Vec3i, rotation: Int, mode: String, notify: Boolean) {
         val nbtStructure = JavaLuckyRegistry.nbtStructures[structureId]
         if (nbtStructure == null) {
-            gameAPI.logError("Missing structure '$structureId'")
+            GAME_API.logError("Missing structure '$structureId'")
             return
         }
 

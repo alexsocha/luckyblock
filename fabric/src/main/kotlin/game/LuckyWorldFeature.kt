@@ -2,7 +2,7 @@ package mod.lucky.fabric.game
 
 import com.mojang.serialization.Codec
 import mod.lucky.common.Vec3i
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.fabric.MCIdentifier
 import mod.lucky.fabric.toVec3i
 import mod.lucky.java.JavaLuckyRegistry
@@ -58,7 +58,7 @@ class LuckyWorldFeature(
             }
             false
         } catch (e: Exception) {
-            gameAPI.logError("Error during natural generation", e)
+            GAME_API.logError("Error during natural generation", e)
             false
         }
     }
