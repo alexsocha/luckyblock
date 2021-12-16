@@ -411,7 +411,7 @@ fun registerCommonTemplateVars(gameType: GameType) {
 
     fun getStructurePos(templateVar: TemplateVar, context: DropTemplateContext): ListAttr {
         val args = templateVar.args
-        val type = when {
+        val posNumberType = when {
             isDecimalType(args[0]!!.type) -> args[0]!!.type
             isDecimalType(args[1]!!.type) -> args[1]!!.type
             isDecimalType(args[2]!!.type) -> args[2]!!.type
@@ -426,7 +426,9 @@ fun registerCommonTemplateVars(gameType: GameType) {
         val rotation: Int = structDrop["rotation"]
 
         val worldPos = getWorldPos(args.toVec3<Number>().toDouble(), centerOffset, pos, rotation)
-        return vec3AttrOf(type, worldPos)
+
+        if (isDecimalType(posNumberType)) return vec3AttrOf(AttrType.DOUBLE, worldPos)
+        else return vec3AttrOf(AttrType.INT, worldPos.floor())
     }
     registerTemplateVar("sPos", sPosSpec) { templateVar, context -> getStructurePos(templateVar, context) }
 
