@@ -89,7 +89,7 @@ fun doEffectDrop(drop: SingleDrop, context: DropContext) {
                     drop=drop,
                     dropPos=pos,
                     target=target,
-                    targetEntity=targetEntity,
+                    targetEntity=entity,
                     effectId=effectId
                 )
             }
