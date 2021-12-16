@@ -14,7 +14,7 @@ jobs:
                       - /root/.gradle/wrapper/
                   key: ${{ runner.os }}-${{ hashFiles('gradle.properties') }}
             - name: Build with Docker
-              run: HOME=/root && ./docker-build.sh
+              run: ./docker-build.sh
             - name: Variables
               id: variables
               uses: actions/github-script@0.9.0

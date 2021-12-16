@@ -20,4 +20,7 @@ RUN ./gradlew :tools:test
 #
 FROM base as build
 
+WORKDIR /app
+COPY . .
+
 CMD ["bash", "-c", "./gradlew build"]
