@@ -37,5 +37,5 @@ jobs:
                   username: root
                   key: ${{ secrets.LUCKYBLOCKMOD_COM_KEY }}
                   source: dist/${{ steps.variables.outputs.releaseFolderName }}
-                  target: "~/luckyblock-dist"
+                  target: "/root/luckyblock-dist"
                   strip_components: 1
