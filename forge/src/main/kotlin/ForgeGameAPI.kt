@@ -164,7 +164,7 @@ object ForgeGameAPI : GameAPI {
 
         enchantments = ForgeRegistries.ENCHANTMENTS.entries.map {
             Enchantment(
-                it.key.toString(),
+                it.key.location().toString(),
                 type = toEnchantmentType(it.value.category),
                 maxLevel = it.value.maxLevel,
                 isCurse = it.value.isCurse,
