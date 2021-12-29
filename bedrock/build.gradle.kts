@@ -91,9 +91,9 @@ tasks.register<JavaExec>("nbtToMcstructure") {
         "--outputStructuresFolder",
         "$addonDistDir/behavior_pack/structures/lucky",
         "--blockConversionFile",
-        "$rootDir/tools/block_conversion.yaml",
+        "$rootDir/tools/block-conversion.yaml",
         "--outputGeneratedBlockConversionFile",
-        "$rootDir/tools/.debug/block_conversion.generated.yaml",
+        "$rootDir/tools/.debug/block-conversion.generated.yaml",
     )
     dependsOn(project(":tools").tasks.getByName("installDist"))
 }

@@ -8,18 +8,22 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertContains
 import java.nio.ByteOrder
 
-fun testBlockConversion(
+fun testBlockConvertor(
     blockConversions: BlockConversions,
-    fromGameType: GameType, 
-    fromBlockId: String,
-    fromBlockStates: BlockStates,
-    toGameType: GameType,
-    toBlockId: String,
-    toBlockStates: BlockStates,
+    blockIds: Map<GameType, String>,
+    blockStates: Map<GameType, BlockStates>,
+    fromGameTypes: List<GameType> = GameType.values().toList(),
+    toGameTypes: List<GameType> = GameType.values().toList(),
 ) {
-    val (convertedBlockId, convertedBlockStates) = blockConversions.convert(fromGameType, toGameType, fromBlockId, fromBlockStates)
-    assertEquals(convertedBlockId, toBlockId)
-    assertEquals(toBlockStates, convertedBlockStates)
+    for (fromGameType in fromGameTypes) {
+        for (toGameType in toGameTypes) {
+            if (fromGameType != toGameType) {
+                val (convertedBlockId, convertedBlockStates) = blockConversions.convert(fromGameType, toGameType, blockIds[fromGameType]!!, blockStates[fromGameType]!!)
+                assertEquals(blockIds[toGameType], convertedBlockId)
+                assertEquals(blockStates[toGameType], convertedBlockStates)
+            }
+        }
+    }
 }
 
 internal class TestBlockConversion {
@@ -35,7 +39,7 @@ internal class TestBlockConversion {
         """.trimIndent()
 
         val blockConversionsYaml = """
-            blockIdsFile: block_ids.yaml
+            blockIdsFile: block-ids.yaml
             blocks:
               - ids:
                 - blockIdRegex:.*_stairs
@@ -43,12 +47,12 @@ internal class TestBlockConversion {
         """.trimIndent()
 
         val blockConversions = BlockConversions.readAndParseRegexFromYaml(blockConversionsYaml) { yamlFileName ->
-            if (yamlFileName == "block_ids.yaml") blockIdsYaml 
+            if (yamlFileName == "block-ids.yaml") blockIdsYaml 
             else throw Exception()
         }
 
         val expectedResult = """
-            blockIdsFile: "block_ids.yaml"
+            blockIdsFile: "block-ids.yaml"
             blocks:
             - ids:
               - "minecraft:andesite_stairs"
@@ -147,14 +151,61 @@ internal class TestBlockConversion {
                 states: []
         """.trimIndent()
 
-        testBlockConversion(
+        testBlockConvertor(
             blockConversions=BlockConversions.readAndParseRegexFromYaml(blockConversionsYaml),
-            fromGameType=GameType.JAVA,
-            fromBlockId="minecraft:beetroots",
-            fromBlockStates=emptyMap(),
-            toGameType=GameType.BEDROCK,
-            toBlockId="minecraft:beetroot",
-            toBlockStates=emptyMap(),
+            blockStates=mapOf(
+                GameType.JAVA to emptyMap(),
+                GameType.BEDROCK to emptyMap(),
+            ),
+            blockIds=mapOf(
+                GameType.JAVA to "minecraft:beetroots",
+                GameType.BEDROCK to "minecraft:beetroot",
+            ),
+        )
+    }
+
+    @Test
+    fun testOneSidedState() {
+        val blockConversionsYaml = """
+            blocks:
+              - ids:
+                - oak_stairs
+                states:
+                - java: 
+                    waterlogged: [false, true]
+                  bedrock: {}
+        """.trimIndent()
+
+        testBlockConvertor(
+            blockConversions=BlockConversions.readAndParseRegexFromYaml(blockConversionsYaml),
+            blockIds=mapOf(
+                GameType.JAVA to "minecraft:oak_stairs",
+                GameType.BEDROCK to "minecraft:oak_stairs",
+            ),
+            blockStates=mapOf(
+                GameType.JAVA to mapOf(
+                    "waterlogged" to BlockState(BlockStateType.BOOLEAN, true),
+                ),
+                GameType.BEDROCK to emptyMap(),
+            ),
+            fromGameTypes=listOf(GameType.JAVA),
+            toGameTypes=listOf(GameType.BEDROCK),
+        )
+
+        testBlockConvertor(
+            blockConversions=BlockConversions.readAndParseRegexFromYaml(blockConversionsYaml),
+            blockIds=mapOf(
+                GameType.JAVA to "minecraft:oak_stairs",
+                GameType.BEDROCK to "minecraft:oak_stairs",
+            ),
+            blockStates=mapOf(
+                GameType.JAVA to mapOf(
+                    "waterlogged" to BlockState(BlockStateType.BOOLEAN, false),
+                ),
+                GameType.BEDROCK to emptyMap(),
+            ),
+            fromGameTypes=listOf(GameType.BEDROCK),
+            toGameTypes=listOf(GameType.JAVA),
         )
     }
 
@@ -173,28 +224,32 @@ internal class TestBlockConversion {
                     half: [bottom, top]
                   bedrock:
                     upside_down_bit: [false, true]
+                - java:
+                    shape: [straight, inner_left, inner_right, outer_left, outer_right]
+                  bedrock: {}
+                - java: 
+                    waterlogged: [false, true]
+                  bedrock: {}
         """.trimIndent()
-        // TODO: include these states:
-        //      - java: 
-        //          waterlogged: [False, True]
-        //      - bedrock:
-        //          waterlogged: null
 
-        testBlockConversion(
+        testBlockConvertor(
             blockConversions=BlockConversions.readAndParseRegexFromYaml(blockConversionsYaml),
-            fromGameType=GameType.JAVA,
-            fromBlockId="minecraft:oak_stairs",
-            fromBlockStates=mapOf(
-                "facing" to BlockState(BlockStateType.STRING, "south"),
-                "half" to BlockState(BlockStateType.STRING, "top"),
-                // "waterlogged" to BlockState(BlockStateType.BOOLEAN, "false"), // TODO
+            blockIds=mapOf(
+                GameType.JAVA to "minecraft:oak_stairs",
+                GameType.BEDROCK to "minecraft:oak_stairs",
             ),
-            toGameType=GameType.BEDROCK,
-            toBlockId="minecraft:oak_stairs",
-            toBlockStates=mapOf(
-                "weirdo_direction" to BlockState(BlockStateType.NUMBER, 2),
-                "upside_down_bit" to BlockState(BlockStateType.BOOLEAN, true),
-            ),
+            blockStates=mapOf(
+                GameType.JAVA to mapOf(
+                    "facing" to BlockState(BlockStateType.STRING, "south"),
+                    "half" to BlockState(BlockStateType.STRING, "top"),
+                    "shape" to BlockState(BlockStateType.STRING, "straight"),
+                    "waterlogged" to BlockState(BlockStateType.BOOLEAN, false),
+                ),
+                GameType.BEDROCK to mapOf(
+                    "weirdo_direction" to BlockState(BlockStateType.NUMBER, 2),
+                    "upside_down_bit" to BlockState(BlockStateType.BOOLEAN, true),
+                ),
+            )
         )
     }
 
@@ -215,19 +270,21 @@ internal class TestBlockConversion {
 
         val blockConversions = BlockConversions.readAndParseRegexFromYaml(blockConversionsYaml)
 
-        testBlockConversion(
+        testBlockConvertor(
             blockConversions=blockConversions,
-            fromGameType=GameType.JAVA,
-            fromBlockId="minecraft:quartz_pillar",
-            fromBlockStates=mapOf(
-                "axis" to BlockState(BlockStateType.STRING, "z"),
+            blockIds=mapOf(
+                GameType.JAVA to "minecraft:quartz_pillar",
+                GameType.BEDROCK to "minecraft:quartz_block",
             ),
-            toGameType=GameType.BEDROCK,
-            toBlockId="minecraft:quartz_block",
-            toBlockStates=mapOf(
-                "chisel_type" to BlockState(BlockStateType.STRING, "lines"),
-                "pillar_axis" to BlockState(BlockStateType.STRING, "z"),
-            ),
+            blockStates=mapOf(
+                GameType.JAVA to mapOf(
+                    "axis" to BlockState(BlockStateType.STRING, "z"),
+                ),
+                GameType.BEDROCK to mapOf(
+                    "chisel_type" to BlockState(BlockStateType.STRING, "lines"),
+                    "pillar_axis" to BlockState(BlockStateType.STRING, "z"),
+                ),
+            )
         )
     }
 }

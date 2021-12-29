@@ -52,8 +52,7 @@ fun getDropAttrOrDefault(drop: SingleDrop, k: String): Attr {
 }
 
 fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Random): DictAttr {
-    return when(dropType) {
-        "item" -> dictAttrOf(
+    return when(dropType) { "item" -> dictAttrOf(
             "format_version" to intAttrOf(1),
             "size" to listAttrOf(intAttrOf(1), intAttrOf(1), intAttrOf(1)),
             "structure" to dictAttrOf(
@@ -336,7 +335,12 @@ ${v.joinToString("\n") { it.replace("`", "\\`") } }
         File(outputJSFile).writeText(outputJS)
 
         generatedDrops.dropStructures.forEach { (k, v) ->
-            writeNbtFile(File(outputStructuresFolder).resolve("${k}.mcstructure"), v, compressed=false, isLittleEndian=true)
+            writeNbtFile(
+                File(outputStructuresFolder).resolve("${k}.mcstructure"),
+                dictAttrOf("" to v),
+                compressed=false,
+                isLittleEndian=true,
+            )
         }
     }
 }

@@ -63,7 +63,7 @@ fun downloadUrlWithCache(url: String): Document {
 }
 
 class DownloadBlockIds: Subcommand("download-block-ids", "Download a block ID mapping using Minecraft Wiki pages") {
-    val outputFile by option(ArgType.String, description = "Output YAML file").default("block_ids.yaml")
+    val outputFile by option(ArgType.String, description = "Output YAML file").default("block-ids.yaml")
 
     override fun execute() {
         val bedrockIdsPage = downloadUrlWithCache("https://minecraft.fandom.com/wiki/Bedrock_Edition_data_values")
@@ -75,7 +75,7 @@ class DownloadBlockIds: Subcommand("download-block-ids", "Download a block ID ma
         val blockNames = (javaBlockNameToId.keys + bedrockBlockNameToId.keys).distinct()
 
         val blockIdConversions = blockNames.map {
-            BlockIdConversion(conversion=mapOf(
+            BlockIdConversion(mapOf(
                 GameType.JAVA to javaBlockNameToId[it],
                 GameType.BEDROCK to bedrockBlockNameToId[it],
             ))

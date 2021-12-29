@@ -1,0 +1,33 @@
+blockIdsFile: block-ids.yaml
+blocks:
+  - ids:
+    - blockIdRegex:.*_stairs
+    states:
+    - java:
+        facing: [east, north, south, west]
+      bedrock:
+        weirdo_direction: [0, 1, 2, 3]
+    - java:
+        half: [bottom, top]
+      bedrock:
+        upside_down_bit: [false, true]
+    - java:
+        shape: [straight, inner_left, inner_right, outer_left, outer_right]
+      bedrock: {}
+    - java: 
+        waterlogged: [false, true]
+      bedrock: {}
+
+  - ids:
+    - java: quartz_pillar
+      bedrock: quartz_block
+    states:
+    - java:
+        axis: [x, y, z]
+      bedrock:
+        chisel_type: lines
+        pillar_axis: [x, y, z]
+
+  - ids:
+    - blockIdRegex:.*
+    states: []

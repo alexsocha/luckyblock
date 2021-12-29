@@ -7,6 +7,7 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.builtins.*
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.json.*
+import mod.lucky.common.GameType
 import mod.lucky.common.attribute.*
 import com.charleskorn.kaml.*
 import java.io.File
@@ -21,11 +22,18 @@ class BlockState(
     val blockStateType: BlockStateType,
     val value: Any,
 ) {
-    fun toAttr(): Attr {
-        return when(blockStateType) {
-            BlockStateType.BOOLEAN -> booleanAttrOf(value as Boolean)
-            BlockStateType.NUMBER -> ValueAttr(AttrType.BYTE, (value as Number).toByte())
-            BlockStateType.STRING -> stringAttrOf(value as String)
+    fun toAttr(gameType: GameType): Attr {
+        return when (gameType) {
+            GameType.JAVA -> when (blockStateType) {
+                BlockStateType.BOOLEAN -> stringAttrOf(if (value as Boolean) "true" else "false")
+                BlockStateType.NUMBER -> intAttrOf(value as Int)
+                BlockStateType.STRING -> stringAttrOf(value as String)
+            }
+            GameType.BEDROCK -> when (blockStateType) {
+                BlockStateType.BOOLEAN -> booleanAttrOf(value as Boolean)
+                BlockStateType.NUMBER -> intAttrOf(value as Int)
+                BlockStateType.STRING -> stringAttrOf(value as String)
+            }
         }
     }
 
@@ -34,7 +42,12 @@ class BlockState(
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is BlockState && value == other.value
+        return other is BlockState && when {
+            // in Java edition, booleans are encoded as strings
+            blockStateType == BlockStateType.BOOLEAN || other.blockStateType == BlockStateType.BOOLEAN ->
+                value.toString() == other.value.toString()
+            else -> value == other.value
+        }
     }
 
     private object ValueSerializer : AnySerializer() {
@@ -55,7 +68,7 @@ class BlockState(
 
         override fun deserialize(decoder: Decoder): BlockState {
             val valueDecoder = decoder.beginStructure(descriptor)
-            val value = valueDecoder.decodeSerializableElement<Any>(descriptor, 0, ValueSerializer)
+            val value = valueDecoder.decodeSerializableElement(descriptor, 0, ValueSerializer)
             return when(value) {
                 is Boolean -> BlockState(BlockStateType.BOOLEAN, value)
                 is Number -> BlockState(BlockStateType.NUMBER, value)
@@ -67,7 +80,7 @@ class BlockState(
         fun fromAttr(attr: Attr): BlockState {
             return when(attr.type) {
                 AttrType.BOOLEAN -> BlockState(BlockStateType.BOOLEAN, (attr as ValueAttr).value)
-                AttrType.BYTE -> BlockState(BlockStateType.NUMBER, ((attr as ValueAttr).value as Byte).toInt())
+                AttrType.INT -> BlockState(BlockStateType.NUMBER, ((attr as ValueAttr).value as Byte).toInt())
                 AttrType.STRING -> BlockState(BlockStateType.STRING, (attr as ValueAttr).value)
                 else -> throw Exception()
             }

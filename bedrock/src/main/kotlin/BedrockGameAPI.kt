@@ -49,7 +49,7 @@ fun posToString(pos: BlockPos): String {
     return "${pos.x},${pos.y},${pos.z}"
 }
 
-fun getIDWithNamespace(id: String): String {
+fun getIdWithNamespace(id: String): String {
     return if (":" in id) id else "minecraft:$id"
 }
 
@@ -231,7 +231,7 @@ object BedrockGameAPI : GameAPI {
 
         runCommand(serverSystem, "/setblock " +
             "${pos.x} ${pos.y} ${pos.z} " +
-            "${getIDWithNamespace(id)} " +
+            "${getIdWithNamespace(id)} " +
             if (blockStatesStr != null) blockStatesStr else "",
             ignoreErrorCode=-2147352576, // ignore "block couldn't be placed" when trying to replace a block with itself
         )
@@ -239,7 +239,7 @@ object BedrockGameAPI : GameAPI {
         if (components != null) {
             val block = serverSystem.getBlock((world as MCWorld).ticking_area, toMCBlockPos(pos))
             components.children.forEach {
-                val componentId = getIDWithNamespace(it.key)
+                val componentId = getIdWithNamespace(it.key)
                 val component = serverSystem.getComponent<Any>(block, componentId)
                 if (component != null) {
                     component.data = attrToJson(it.value)
@@ -262,7 +262,7 @@ object BedrockGameAPI : GameAPI {
         player: PlayerEntity?,
         sourceId: String,
     ) {
-        val entity = serverSystem.createEntity("entity", getIDWithNamespace(id))
+        val entity = serverSystem.createEntity("entity", getIdWithNamespace(id))
         if (entity == null) {
             logError("Invalid entity ID: ${id}")
             return
@@ -275,7 +275,7 @@ object BedrockGameAPI : GameAPI {
         serverSystem.applyComponentChanges(entity, posComponent)
 
         components?.children?.forEach {
-            val componentId = getIDWithNamespace(it.key)
+            val componentId = getIdWithNamespace(it.key)
             val component = serverSystem.getComponent<Any>(entity, componentId)
             if (component != null) {
                 component.data = attrToJson(it.value)
@@ -335,7 +335,7 @@ object BedrockGameAPI : GameAPI {
     }
 
     override fun dropItem(world: World, pos: Vec3d, id: String, nbt: DictAttr?, components: DictAttr?) {
-        val itemEntity = serverSystem.createEntity("item_entity", getIDWithNamespace(id))
+        val itemEntity = serverSystem.createEntity("item_entity", getIdWithNamespace(id))
         if (itemEntity == null) {
             logError("Invalid item ID: ${id}")
             return
@@ -348,7 +348,7 @@ object BedrockGameAPI : GameAPI {
         serverSystem.applyComponentChanges(itemEntity, posComponent)
 
         components?.children?.forEach {
-            val componentId = getIDWithNamespace(it.key)
+            val componentId = getIdWithNamespace(it.key)
             val component = serverSystem.getComponent<Any>(itemEntity, componentId)
             if (component != null) {
                 component.data = attrToJson(it.value)
@@ -375,7 +375,7 @@ object BedrockGameAPI : GameAPI {
                 pos.y + DEFAULT_RANDOM.randDouble(-boxSize.y, boxSize.y),
                 pos.z + DEFAULT_RANDOM.randDouble(-boxSize.z, boxSize.z),
             )
-            runCommand(serverSystem, "/particle ${getIDWithNamespace(id)} " +
+            runCommand(serverSystem, "/particle ${getIdWithNamespace(id)} " +
                 "${particlePos.x} ${particlePos.y} ${particlePos.z}"
             )
         }

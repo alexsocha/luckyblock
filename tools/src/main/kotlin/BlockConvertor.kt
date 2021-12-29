@@ -13,10 +13,11 @@ import java.io.File
 
 class BlockConversionException(message: String = "") : Exception(message)
 
-class BlockIdConversion {
-    val conversion: Map<GameType, String?>
-    constructor(conversion: Map<GameType, String?>) {
-        this.conversion = conversion.mapValues { (_, id) -> id?.let { getIdWithNamespace(it) } }
+class BlockIdConversion(
+    private val _conversion: Map<GameType, String?>
+) {
+    val conversion: Map<GameType, String?> = _conversion.mapValues { (_, id) ->
+        id?.let { getIdWithNamespace(it) }
     }
 
     fun convert(toGameType: GameType): String {
@@ -83,7 +84,7 @@ data class BlockIdConversions(
     }
 }
 
-data class BlockStateArray(
+data class BlockStateConversionValue(
     val blockStates: Array<BlockState>
 ) {
     private object BlockStateOrArraySerializer : AnySerializer() {
@@ -95,23 +96,23 @@ data class BlockStateArray(
         )
     }
 
-    @Serializer(forClass = BlockStateArray::class) 
-    companion object : KSerializer<BlockStateArray> {
-        override val descriptor: SerialDescriptor = buildSerialDescriptor("BlockStateArray", SerialKind.CONTEXTUAL)
+    @Serializer(forClass = BlockStateConversionValue::class) 
+    companion object : KSerializer<BlockStateConversionValue> {
+        override val descriptor: SerialDescriptor = buildSerialDescriptor("BlockStateConversionValue", SerialKind.CONTEXTUAL)
 
-        override fun serialize(encoder: Encoder, value: BlockStateArray) {
-            if (value.blockStates.size == 1) {
-                encoder.encodeSerializableValue(BlockState.Companion, value.blockStates.first())
-            } else {
-                encoder.encodeSerializableValue(ArraySerializer(BlockState.Companion), value.blockStates)
+        override fun serialize(encoder: Encoder, value: BlockStateConversionValue) {
+            when (value.blockStates.size) {
+                1 -> encoder.encodeSerializableValue(BlockState.Companion, value.blockStates.first())
+                else -> encoder.encodeSerializableValue(ArraySerializer(BlockState.Companion), value.blockStates)
             }
         }
 
-        override fun deserialize(decoder: Decoder): BlockStateArray {
-            val blockStateOrArray = decoder.decodeSerializableValue(BlockStateOrArraySerializer)
-            return when (blockStateOrArray) {
-                is BlockState -> BlockStateArray(arrayOf(blockStateOrArray))
-                is Array<*> -> BlockStateArray(blockStateOrArray.map { it as BlockState }.toTypedArray())
+        override fun deserialize(decoder: Decoder): BlockStateConversionValue {
+            return when (
+                val blockStateOrArray = decoder.decodeSerializableValue(BlockStateOrArraySerializer)
+            ) {
+                is BlockState -> BlockStateConversionValue(arrayOf(blockStateOrArray))
+                is Array<*> -> BlockStateConversionValue(blockStateOrArray.map { it as BlockState }.toTypedArray())
                 else -> throw Exception()
             }
         }
@@ -120,58 +121,65 @@ data class BlockStateArray(
 
 @Serializable
 data class PartialBlockStateConversion(
-    @SerialName("java") val _java: Map<String, BlockStateArray>,
-    @SerialName("bedrock") val _bedrock: Map<String, BlockStateArray>,
-    @Transient val conversion: Map<GameType, Map<String, BlockStateArray>> = mapOf(GameType.JAVA to _java, GameType.BEDROCK to _bedrock)
+    @SerialName("java") val _java: Map<String, BlockStateConversionValue>,
+    @SerialName("bedrock") val _bedrock: Map<String, BlockStateConversionValue>,
+    @Transient val conversion: Map<GameType, Map<String, BlockStateConversionValue>> = mapOf(GameType.JAVA to _java, GameType.BEDROCK to _bedrock)
 ) {
     init {
         this.validate()
     }
 
     fun validate() {
-        val conversionWithMultiArraysOnly = conversion.mapValues { (_, stateMap) ->
+        val conversionValueArrays = conversion.mapValues { (_, stateMap) ->
             stateMap.filterValues { it.blockStates.size > 1 }
         }
 
-        for ((gameType, stateMap) in conversionWithMultiArraysOnly.entries) {
+        for ((gameType, stateMap) in conversionValueArrays.entries) {
             if (stateMap.values.size > 1)
                 throw Exception("Only one property can be an array. Found multiple for '${gameType}': ${stateMap.keys}")
         }
 
-        val expectedArraySize = conversionWithMultiArraysOnly.values.first().values.firstOrNull()?.blockStates?.size
-        val isEveryArraySizeSame = conversionWithMultiArraysOnly.values.all { stateMap ->
+        val expectedArraySize = conversionValueArrays.values.first().values.firstOrNull()?.blockStates?.size
+        val isEveryArraySizeSame = conversionValueArrays.values.all { stateMap ->
             stateMap.values.all { it.blockStates.size == 1 || it.blockStates.size == expectedArraySize }
         }
         if (!isEveryArraySizeSame) {
-            throw Exception("Array properties have different sizes: \n" + conversionWithMultiArraysOnly.entries.joinToString("\n") { (gameType, stateMap) ->
+            throw Exception("Array properties have different sizes: \n" + conversionValueArrays.entries.joinToString("\n") { (gameType, stateMap) ->
                 "- ${gameType}: Property '${stateMap.keys.firstOrNull()}', size ${stateMap.values.firstOrNull()?.blockStates?.size ?: 0}"
             })
         }
     }
 
     fun convert(fromGameType: GameType, toGameType: GameType, blockStates: BlockStates): BlockStates {
-        val blockStateArrayIndex = conversion[fromGameType]!!.entries.firstNotNullOfOrNull { (k, blockStateArray) ->
-            if (blockStateArray.blockStates.size > 1) {
-                if (k !in blockStates) throw BlockConversionException("Missing block state '${k}'")
-                val index = blockStateArray.blockStates.indexOf(blockStates[k])
-                if (index < 0) throw BlockConversionException("Block state '${k}=${blockStates[k]}' not found in block state array '${blockStateArray}'")
+        val conversionArrayIndex = conversion[fromGameType]!!.entries.firstNotNullOfOrNull { (k, fromConversionValue) ->
+            if (k !in blockStates) throw BlockConversionException("Missing block state '${k}'")
+            if (fromConversionValue.blockStates.size <= 1) null
+            else {
+                val index = fromConversionValue.blockStates.indexOf(blockStates[k])
+                if (index < 0) throw BlockConversionException("Block state '${k}=${blockStates[k]}' not found in '${fromConversionValue}'")
                 index
-            } else null
+            }
         } ?: 0
 
         // check if the block states match the conversion
-        conversion[fromGameType]!!.forEach { (k, blockStateArray) ->
-            if (k !in blockStates) throw BlockConversionException("Missing block state '${k}'")
-            if (blockStateArray.blockStates[blockStateArrayIndex] != blockStates[k])
+        conversion[fromGameType]!!.forEach { (k, fromConversionValue) ->
+            val fromBlockState =
+                if (fromConversionValue.blockStates.size == 1) fromConversionValue.blockStates.first()
+                else fromConversionValue.blockStates[conversionArrayIndex]
+
+            if (fromBlockState != blockStates[k])
                 throw BlockConversionException(
-                    "Expected block state '${k}=${blockStateArray.blockStates.first()}' at index ${blockStateArrayIndex}, got '${blockStates[k]}'"
+                    "Expected block state '${k}=${fromConversionValue.blockStates[conversionArrayIndex]}' at index ${conversionArrayIndex}, got '${blockStates[k]}'"
                 )
         }
 
-        return conversion[toGameType]!!.mapValues { (_, blockStateArray) ->
-            if (blockStateArray.blockStates.size == 1) blockStateArray.blockStates.first()
-            else blockStateArray.blockStates[blockStateArrayIndex]
-        }
+        return conversion[toGameType]!!.mapNotNull { (k, toConversionValue) ->
+            when(toConversionValue.blockStates.size) {
+                1 -> k to toConversionValue.blockStates.first()
+                else -> k to toConversionValue.blockStates[conversionArrayIndex]
+
+            }
+        }.toMap()
     }
 }
 
@@ -182,12 +190,11 @@ data class BlockConversion(
 ) {
 
     fun convert(fromGameType: GameType, toGameType: GameType, blockId: String, blockStates: BlockStates): Pair<String, BlockStates> {
-        val convertedBlockId = blockIdConversions.firstOrNull { it.conversion[fromGameType] == blockId }?.convert(toGameType)
-        if (convertedBlockId == null) throw BlockConversionException("Block ID '${blockId}' is not listed in this conversion")
+        val convertedBlockId = blockIdConversions.firstOrNull {
+            it.conversion[fromGameType] == blockId
+        }?.convert(toGameType) ?: throw BlockConversionException("Block ID '${blockId}' is not listed in this conversion")
 
-        val conversionKeys = partialBlockStateConversions.flatMap {
-            it.conversion[fromGameType]!!.keys
-        }
+        val conversionKeys = partialBlockStateConversions.flatMap { it.conversion[fromGameType]!!.keys  }
         if (blockStates.keys != conversionKeys.toSet()) throw BlockConversionException("Block state keys '${blockStates.keys}' do not match conversion keys '${conversionKeys}'")
 
         val convertedBlockStates = partialBlockStateConversions.fold(blockStates) { acc, conversion ->
@@ -209,7 +216,7 @@ data class BlockConversions(
         return conversions.firstNotNullOfOrNull {
             try { it.convert(fromGameType, toGameType, blockId, blockStates) }
             catch (e: BlockConversionException) { null }
-        } ?: throw BlockConversionException("No block conversions available for ID '${blockId}', states '${blockStates}'")
+        } ?: throw BlockConversionException("No block conversions available for 'id=${blockId}', 'states=${blockStates}'")
     }
 
     fun parseRegex(allBlockIds: List<BlockIdConversion>): BlockConversions {
