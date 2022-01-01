@@ -1,6 +1,8 @@
 import com.moowork.gradle.node.task.NodeTask
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.File
+import java.util.UUID
+import org.apache.commons.text.CaseUtils
 
 plugins {
     kotlin("js")
@@ -19,6 +21,7 @@ dependencies {
 buildscript {
     dependencies {
         classpath(files("$rootDir/tools/build/classes"))
+        classpath("org.apache.commons:commons-text:1.9")
     }
 }
 
@@ -37,6 +40,7 @@ kotlin {
 }
 
 val addonDistDir = "$rootDir/bedrock/build/processedResources/js/main/addon"
+val bedrockTemplateAddonBlockId: String by project
 
 tasks.named<ProcessResources>("processResources") {
     from("../common/src/jvmMain/resources/game/assets/lucky/textures/blocks") {
@@ -92,6 +96,40 @@ tasks.register<JavaExec>("nbtToMcstructure") {
         "$rootDir/tools/.debug/block_conversion.generated.yaml",
     )
     dependsOn(project(":tools").tasks.getByName("installDist"))
+}
+
+tasks.register<Copy>("copyTemplateAddon") {
+    fun getUuid(suffix: String): String {
+        val bedrockTemplateAddonUuid = UUID.nameUUIDFromBytes(
+            "lucky:${bedrockTemplateAddonBlockId}".toByteArray()
+        ).toString()
+        return UUID.nameUUIDFromBytes("${bedrockTemplateAddonUuid}-${suffix}".toByteArray()).toString()
+    }
+
+    doFirst {
+        delete(fileTree("./build/processedResources/template-addon"))
+    }
+
+    from("./template-addon")
+    into("./build/processedResources/template-addon")
+
+    inputs.property("blockId", bedrockTemplateAddonBlockId)
+    filesMatching(listOf("**/*.json", "**/*.lang")) {
+        expand(
+            "blockId" to bedrockTemplateAddonBlockId,
+            "addonId" to CaseUtils.toCamelCase(bedrockTemplateAddonBlockId, true, '_'),
+            "blockName" to bedrockTemplateAddonBlockId.split("_").joinToString(" ") {
+                it.capitalize() // TODO: use replaceFirstChar once gradle is updated to Kotlin 1.6
+            },
+            "behaviorPackUuid" to getUuid("behavior-pack"),
+            "behaviorPackModuleUuid" to getUuid("behavior-pack-module"),
+            "resourcePackUuid" to getUuid("resource-pack"),
+            "resourcePackModuleUuid" to getUuid("resource-pack-module"),
+        )
+    }
+    rename { fileName ->
+        fileName.replace("\${blockId}", "$bedrockTemplateAddonBlockId")
+    }
 }
 
 tasks.register<Sync>("copyRuntimePacks") {

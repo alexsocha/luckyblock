@@ -2,21 +2,17 @@
     "format_version": "1.16.0",
     "minecraft:block": {
         "description": {
-            "identifier": "lucky:lucky_block_custom",
-            "is_experimental": false,
-            "register_to_creative_menu": true
+            "identifier": "lucky:very_lucky_${blockId}",
+            "register_to_creative_menu": false
         },
         "components": {
             "minecraft:destroy_time": 0.1,
             "minecraft:explosion_resistance": 20,
-            "minecraft:friction": 0.6,
             "minecraft:flammable": {
                 "flame_odds": 0,
                 "burn_odds": 0
             },
-            "minecraft:map_color": "#F3C428",
-            "minecraft:block_light_absorption": 0,
-            "minecraft:block_light_emission": 0
+            "minecraft:map_color": "#F3C428"
         }
     }
 }

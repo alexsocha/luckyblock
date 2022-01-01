@@ -1,0 +1,3 @@
+tile.lucky:${blockId}.name=${blockName}
+tile.lucky:very_lucky_${blockId}.name=${blockName} (Very Lucky)
+tile.lucky:unlucky_${blockId}.name=${blockName} (Unlucky)
