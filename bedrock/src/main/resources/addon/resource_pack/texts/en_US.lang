@@ -1,1 +1,3 @@
 tile.lucky:lucky_block.name=Lucky Block
+tile.lucky:unlucky_block.name=Unlucky Block
+tile.lucky:very_lucky_block.name=Very Lucky Block

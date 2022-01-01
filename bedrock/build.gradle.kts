@@ -61,23 +61,19 @@ tasks.register<Delete>("clearStructures") {
 tasks.register<JavaExec>("generateBedrockDrops") {
     classpath = fileTree("$rootDir/tools/build/install/tools/lib")
     mainClass.set("mod.lucky.tools.MainKt")
-    val outputJSFile = "$rootDir/bedrock/build/processedResources/generated-config.js"
     args = listOf(
         "generate-bedrock-drops",
+        "--inputConfigFolder",
         "$rootDir/bedrock/src/main/resources/lucky-config",
+        "--inputJsTemplateFile",
+        "$rootDir/bedrock/src/main/resources/serverScript.template.js",
         "--blockId",
         "lucky_block",
-        "--outputJSFile",
-        outputJSFile,
+        "--outputJsFile",
+        "$rootDir/bedrock/build/processedResources/serverScript.js",
         "--outputStructuresFolder",
         "$addonDistDir/behavior_pack/structures/lucky",
     )
-
-    doLast {
-        // allow serverSystem to be imported from the generated JS file,
-        // so that we can configure it further
-        File(outputJSFile).appendText("\n\nmodule.exports = { \"serverSystem\": serverSystem }\n")
-    }
 
     dependsOn(project(":tools").tasks.getByName("installDist"))
 }
@@ -141,7 +137,7 @@ tasks.register<Zip>("zipPack") {
 
 tasks.named("build").configure {
     tasks.getByName("browserProductionWebpack").dependsOn("generateBedrockDrops")
-    tasks.getByName("browserProductionWebpack").inputs.file("./build/processedResources/generated-config.js")
+    tasks.getByName("browserProductionWebpack").inputs.file("./build/processedResources/serverScript.js")
     tasks.getByName("copyServerScript").dependsOn("browserProductionWebpack")
     tasks.getByName("dist").dependsOn("browserProductionWebpack")
     dependsOn("browserProductionWebpack")

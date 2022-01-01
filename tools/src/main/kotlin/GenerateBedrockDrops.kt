@@ -285,17 +285,24 @@ fun generateDrops(drops: List<WeightedDrop>, seed: Int, blockId: String, generat
     return Pair(newDropsList, allGeneratedDrops)
 }
 
-class GenerateBedrockDrops: Subcommand("generate-bedrock-drops", "Generate JS script containing pre-processed and aggregated drops for use in Bedrock edition") {
-    val blockId by option(ArgType.String, description = "Lucky Block ID, e.g. lucky_block_red").required()
-    val inputFolder by argument(ArgType.String, description = "Input config folder").optional().default(".")
-    val outputJSFile by option(ArgType.String, description = "Output generated JS file").default("serverScript.js")
-    val outputStructuresFolder by option(ArgType.String, description = "Output folder for generated structures").default("structures")
-    val seed by option(ArgType.Int, description = "Drop generation seed").default(0)
+class GenerateBedrockDrops: Subcommand("generate-bedrock-drops", "Generate drops and structures from the provided config folder, and inject them into a JS template file.") {
+    private val inputConfigFolder by option(ArgType.String, description = "Input config folder").default(".")
+    private val inputJsTemplateFile by option(ArgType.String, description = "Input JS template file").default("serverScript.template.js")
+
+    private val dropsTemplateVariable by option(ArgType.String).default("\$drops")
+    private val structuresTemplateVariable by option(ArgType.String).default("\$structures")
+
+    private val outputStructuresFolder by option(ArgType.String, description = "Output folder for generated structures").default("structures")
+    private val outputJsFile by option(ArgType.String, description = "Output JS file").default("serverScript.js")
+
+    private val blockId by option(ArgType.String, description = "Lucky Block ID, e.g. custom_lucky_block").required()
+
+    private val seed by option(ArgType.Int, description = "Random seed used when generating drops").default(0)
 
     override fun execute() {
         prepareToGenerateDrops()
 
-        val resources = loadAddonResources(File(inputFolder))!!
+        val resources = loadAddonResources(File(inputConfigFolder))!!
 
         var generatedDrops = createEmptyGeneratedDrops()
         val (blockDrops, generatedDropsWithBlock) = generateDrops(resources.drops[resources.addon.ids.block]!!, seed, blockId, generatedDrops)
@@ -315,25 +322,22 @@ class GenerateBedrockDrops: Subcommand("generate-bedrock-drops", "Generate JS sc
             }
         }.toMap()
 
-        val outputJS = """
-const serverSystem = server.registerSystem(0, 0);
+        val jsDrops = "`\n" +
+            blockDrops.joinToString("\n") { dropToString(it).replace("`", "\\`") } +
+            "\n`"
 
-serverSystem.registerEventData("lucky:${blockId}_config", {
-    "drops": `
-${blockDrops.joinToString("\n") { dropToString(it).replace("`", "\\`") } }
-    `,
-    "structures": {
-        ${luckyStructs.map { (k, v) -> """"$k": `
-${v.joinToString("\n") { it.replace("`", "\\`") } }
-        `,
-    """.trimIndent()
-    }.joinToString("\n")}
-    },
-    "luck": 0,
-});
-        """.trimIndent()
+        val jsStructures = "{\n" +
+            luckyStructs.map { (k, v) -> "\"$k\": `\n" +
+                v.joinToString("\n") { it.replace("`", "\\`") } +
+                "\n`,"
+            }.joinToString("\n") + "\n}"
 
-        File(outputJSFile).writeText(outputJS)
+        val inputTemplateJs = File(inputJsTemplateFile).readText()
+        val outputJs = inputTemplateJs
+            .replace(dropsTemplateVariable, jsDrops)
+            .replace(structuresTemplateVariable, jsStructures)
+
+        File(outputJsFile).writeText(outputJs)
 
         generatedDrops.dropStructures.forEach { (k, v) ->
             writeNbtFile(File(outputStructuresFolder).resolve("${k}.mcstructure"), v, compressed=false, isLittleEndian=true)

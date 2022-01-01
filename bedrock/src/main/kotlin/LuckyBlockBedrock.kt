@@ -11,16 +11,16 @@ import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.LuckyBlockSettings
 import mod.lucky.bedrock.common.registerBedrockTemplateVars
 
-class UnparsedModConfig(
+data class LuckyBlockVariant(
     val luck: Int,
-    val drops: String,
-    val doDropsOnCreativeMode: Boolean = false,
-    val structures: dynamic,
 )
 
-data class LuckyBlockConfig(
-    val dropContainer: DropContainer,
-    val doDropsOnCreativeMode: Boolean,
+data class UnparsedModConfig(
+    val drops: String,
+    val doDropsOnCreativeMode: Boolean = false,
+    val structures: dynamic, // structureId -> String
+    val luck: Int,
+    val variants: dynamic, // blockId -> LuckyBlockVariant
 )
 
 object BedrockLuckyRegistry {
@@ -28,17 +28,29 @@ object BedrockLuckyRegistry {
 }
 
 fun registerModConfig(blockId: String, unparsedConfig: UnparsedModConfig) {
-    LuckyRegistry.drops[blockId] = dropsFromStrList(splitLines(unparsedConfig.drops.split('\n')))
-    LuckyRegistry.blockSettings[blockId] = LuckyBlockSettings(doDropsOnCreativeMode=unparsedConfig.doDropsOnCreativeMode)
+    val drops = dropsFromStrList(splitLines(unparsedConfig.drops.split('\n')))
+    val settings =  LuckyBlockSettings(doDropsOnCreativeMode=unparsedConfig.doDropsOnCreativeMode)
+
+    LuckyRegistry.drops[blockId] = drops
+    LuckyRegistry.blockSettings[blockId] = settings
     BedrockLuckyRegistry.blockLuck[blockId] = unparsedConfig.luck
+
+    if (unparsedConfig.variants != null) {
+        for (k in js("Object").keys(unparsedConfig.variants)) {
+            val variant: LuckyBlockVariant = unparsedConfig.variants[k]
+            LuckyRegistry.drops[k] = drops
+            LuckyRegistry.blockSettings[k] = settings
+            BedrockLuckyRegistry.blockLuck[k] = variant.luck
+        }
+    }
 
     if (unparsedConfig.structures != null) {
         for (k in js("Object").keys(unparsedConfig.structures)) {
             val unparsedStruct: String = unparsedConfig.structures[k]
-            val (props, drops) = readLuckyStructure(unparsedStruct.split('\n'))
+            val (structureProps, structureDrops) = readLuckyStructure(unparsedStruct.split('\n'))
             val structureId = "$blockId:$k"
-            LuckyRegistry.structureProps[structureId] = props
-            LuckyRegistry.structureDrops[structureId] = drops
+            LuckyRegistry.structureProps[structureId] = structureProps
+            LuckyRegistry.structureDrops[structureId] = structureDrops
         }
     }
 }
@@ -92,7 +104,9 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
 
             val world = serverSystem.getComponent<MCTickWorldComponent>(event.player, "minecraft:tick_world")!!.data
 
-            BedrockGameAPI.serverSystem.log(event.player)
+            val block = serverSystem.getBlock(world.ticking_area, event.block_position)
+            BedrockGameAPI.serverSystem.log(BedrockLuckyRegistry.blockLuck)
+
             onPlayerDestroyedLuckyBlock(
                 world = world,
                 player = event.player,

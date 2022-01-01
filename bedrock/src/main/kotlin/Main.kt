@@ -1,12 +1,12 @@
 package mod.lucky.bedrock
 
 external val server: MCServer
-external class GeneratedConfigJS {
+external class ServerScriptJs {
     val serverSystem: MCServerSystem
 }
 
-val generatedConfig: GeneratedConfigJS = js("require(\"../../../../../bedrock/build/processedResources/generated-config.js\")")
+val serverScript: ServerScriptJs = js("require(\"../../../../../bedrock/build/processedResources/serverScript.js\")")
 
 fun main() {
-    initServer(server, generatedConfig.serverSystem)
+    initServer(server, serverScript.serverSystem)
 }
