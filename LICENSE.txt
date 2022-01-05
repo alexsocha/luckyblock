@@ -12,7 +12,7 @@ Lucky Block Mod Lisence
 
 
 3. countributer agreement:
-- when you make a pull request or make a commit you give alexsocha to all the submited work
+- when you make a pull request or make a commit you give alexsocha to all rights towards the submited work
 
 4. Legal:
 LuckyBlock mod and everything in the mod, all copyright go towards alexsocha/PlayerInDistress
