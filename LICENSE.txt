@@ -1,0 +1,20 @@
+Lucky Block Mod Lisence
+
+
+1. you can not
+- claim that you own the mod
+- redistrubute/reupload the mods on site like 9minecraft the mod shall only be on the luckyblockmod.com website
+- use all of the code without alexsocha premission
+- use this mod in your modpack
+
+2. you may:
+- make a video on the mod just credit the original author the mod alexsocha/PlayerInDistress
+
+
+3. countributer agreement:
+- when you make a pull request or make a commit you give alexsocha to all rights towards the submited work
+
+4. Legal:
+the LuckyBlock mod and everything in the mod, all copyright go towards alexsocha/PlayerInDistress
+Copyright (c) 2022 alexsocha
+
