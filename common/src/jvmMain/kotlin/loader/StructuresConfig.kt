@@ -75,25 +75,26 @@ data class StructureWithProps<T>(
     val props: DictAttr,
     val structure: T,
 )
+
 /*
  * Merges the properties in StructuresConfig with the individual properties of each structure, and
  * creates ID aliases.
  */
 fun <T>configureStructures(
-    structures: Map<String, StructureWithProps<T>>,
+    structuresByPath: Map<String, StructureWithProps<T>>,
     structuresConfig: StructuresConfig,
 ): Map<String, StructureWithProps<T>> {
-    val aliasedStructures = structures.mapNotNull { (_, structure) ->
+    val aliasedStructuresByPath = structuresByPath.mapNotNull { (_, structure) ->
         structure.props.getOptionalValue<String>("id")?.let { it to structure }
     }.toMap()
 
-    val configuredStructures = structuresConfig.structurePropsById.mapNotNull { (k, overrideStructureProps) ->
+    val configuredStructuresByPath = structuresConfig.structurePropsById.mapNotNull { (k, overrideStructureProps) ->
         val path = overrideStructureProps.getValue<String>("file")
-        val structure = structures[path] ?: return@mapNotNull null
+        val structure = structuresByPath[path] ?: return@mapNotNull null
         val newProps = overrideStructureProps.withDefaults(structure.props.children)
         k to structure.copy(props=newProps)
     }.toMap()
 
-    return structures + aliasedStructures + configuredStructures
+    return structuresByPath + aliasedStructuresByPath + configuredStructuresByPath
 }
 

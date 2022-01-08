@@ -19,7 +19,7 @@ data class NbtStructureWithProps(
 )
 
 fun readDropStructures(baseDir: File, structuresConfig: StructuresConfig): Map<String, DropStructure> {
-    val dropStructures = getStructurePathsById(baseDir).mapNotNull { (k, path) ->
+    val dropStructuresByPath = getStructureFilesById(baseDir).mapNotNull { (k, file) ->
         try {
             when {
                 k.endsWith(".luckystruct") -> {
@@ -41,7 +41,7 @@ fun readDropStructures(baseDir: File, structuresConfig: StructuresConfig): Map<S
     }.toMap()
 
     return configureStructures(
-        dropStructures.mapValues { (_, v) -> StructureWithProps(v.defaultProps, v) },
+        dropStructuresByPath.mapValues { (_, v) -> StructureWithProps(v.defaultProps, v) },
         structuresConfig,
     ).mapValues { (_, v) -> v.structure.copy(defaultProps = v.props) }
 }
