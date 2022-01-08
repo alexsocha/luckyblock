@@ -4,6 +4,7 @@ import mod.lucky.common.LuckyBlockSettings
 import mod.lucky.common.attribute.splitLines
 import mod.lucky.common.drop.WeightedDrop
 import mod.lucky.common.drop.dropsFromStrList
+import mod.lucky.common.drop.DropStructure
 import mod.lucky.common.LOGGER
 import mod.lucky.java.Addon
 import mod.lucky.java.JavaLuckyRegistry
@@ -26,7 +27,8 @@ data class MainResources(
     val settings: LocalSettings,
     val drops: Map<String, List<WeightedDrop>>,
     val worldGenDrops: Map<String, List<WeightedDrop>>,
-    val structures: Map<String, StructureResource>,
+    val dropStructures: Map<String, DropStructure>,
+    val nbtStructures: Map<String, NbtStructureWithProps>,
     val craftingLuckModifiers: Map<String, Int>,
 )
 
@@ -34,7 +36,8 @@ data class AddonResources(
     val addon: Addon,
     val settings: LocalSettings,
     val drops: Map<String, List<WeightedDrop>>,
-    val structures: Map<String, StructureResource>,
+    val dropStructures: Map<String, DropStructure>,
+    val nbtStructures: Map<String, NbtStructureWithProps>,
     val worldGenDrops: Map<String, List<WeightedDrop>>,
     val craftingLuckModifiers: Map<String, Int>,
     val blockCraftingRecipes: List<CraftingRecipe>
@@ -120,13 +123,16 @@ fun loadMainResources(configDir: File): MainResources {
         fileContents[v]?.let { parseDrops(it) } ?: emptyList()
     }
 
+    val structuresConfig = StructuresConfig.read(configDir, fileContents["structures.txt"]!!)
+
     return MainResources(
         globalSettings = parseGlobalSettings(fileContents["properties.txt"]!!),
         settings = parseLocalSettings(fileContents["properties.txt"]!!),
         drops = drops,
         worldGenDrops = readWorldGenDrops(fileContents["natural_gen.txt"]!!),
         craftingLuckModifiers = readCraftingLuckModifiers(fileContents["luck_crafting.txt"]!!),
-        structures = readStructures(configDir, fileContents["structures.txt"]!!)
+        dropStructures = readDropStructures(configDir, structuresConfig),
+        nbtStructures = readNbtStructures(configDir, structuresConfig),
     )
 }
 
@@ -155,16 +161,21 @@ fun loadAddonResources(addonFile: File): AddonResources? {
     }
 
     val addonId = listOfNotNull(addonIds.block, addonIds.sword, addonIds.bow, addonIds.potion).first()
+    val structuresConfig = fileContents["structures.txt"]?.let {
+        StructuresConfig.read(addonFile, it)
+    } ?: StructuresConfig(emptyMap())
+
     return AddonResources(
         addon = Addon(ids = addonIds, file = addonFile, addonId = addonId),
         settings = parseLocalSettings(fileContents["properties.txt"]!!),
         drops = drops,
-        structures = readStructures(addonFile, fileContents["structures.txt"] ?: emptyList()),
         worldGenDrops = fileContents["natural_gen.txt"]?.let { readWorldGenDrops(it) } ?: emptyMap(),
         craftingLuckModifiers = fileContents["luck_crafting.txt"]?.let { readCraftingLuckModifiers(it) } ?: emptyMap(),
         blockCraftingRecipes = if (addonIds.block != null && "recipes.txt" in fileContents)
             readAddonCraftingRecipes(fileContents["recipes.txt"]!!, addonIds.block)
-            else emptyList()
+            else emptyList(),
+        dropStructures = readDropStructures(addonFile, structuresConfig),
+        nbtStructures = readNbtStructures(addonFile, structuresConfig),
     )
 }
 

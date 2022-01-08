@@ -4,12 +4,13 @@ import mod.lucky.common.Vec3d
 import mod.lucky.common.Vec3i
 import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.SingleDrop
+import mod.lucky.common.drop.DropStructure
 import mod.lucky.common.LOGGER
 import mod.lucky.java.JAVA_GAME_API
 import java.io.InputStream
 import java.lang.Exception
 
-fun readLegacySchematic(stream: InputStream): DropStructureResource {
+fun readLegacySchematic(stream: InputStream): DropStructure {
     val nbt = try {
         JAVA_GAME_API.readCompressedNBT(stream) as DictAttr
     } catch (e: Exception) {
@@ -60,7 +61,7 @@ fun readLegacySchematic(stream: InputStream): DropStructureResource {
         ))
     }
 
-    return DropStructureResource(
+    return DropStructure(
         defaultProps = dictAttrOf("size" to vec3AttrOf(AttrType.DOUBLE, size.toDouble())),
         drops = blockDrops + entityDrops,
     )

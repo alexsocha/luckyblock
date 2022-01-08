@@ -7,7 +7,7 @@ import java.io.File
 import java.io.InputStream
 
 typealias NBTTag = Any
-typealias NBTStructure = Any
+typealias MinecraftNbtStructure = Any
 
 data class ItemStack(
     val itemId: String,
@@ -39,7 +39,7 @@ interface JavaGameAPI {
     fun isCreativeMode(player: PlayerEntity): Boolean
     fun hasSilkTouch(player: PlayerEntity): Boolean
     fun convertLegacyItemId(id: Int, data: Int): String?
-    fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i>
+    fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i>
 }
 
 lateinit var JAVA_GAME_API: JavaGameAPI

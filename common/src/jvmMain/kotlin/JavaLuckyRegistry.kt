@@ -1,8 +1,8 @@
 package mod.lucky.java
 import mod.lucky.common.LuckyRegistry
-import mod.lucky.common.drop.WeightedDrop
-import mod.lucky.common.drop.registerCommonTemplateVars
 import mod.lucky.common.GameType
+import mod.lucky.common.drop.*
+import mod.lucky.common.attribute.*
 import mod.lucky.java.loader.*
 import java.io.File
 
@@ -26,7 +26,7 @@ object JavaLuckyRegistry {
     lateinit var globalSettings: GlobalSettings
     lateinit var allAddonResources: List<AddonResources>
     var addons = ArrayList<Addon>()
-    val nbtStructures = HashMap<String, NBTStructure>() // addonId:path -> structure
+    val nbtStructures = HashMap<String, MinecraftNbtStructure>() // addonId:path -> structure
     val craftingLuckModifiers = HashMap<String, Map<String, Int>>() // luckyItemId -> itemId -> luck modifier
     val worldGenDrops = HashMap<String, Map<String, List<WeightedDrop>>>() // blockId -> dimensionId -> drops
 
@@ -41,27 +41,23 @@ object JavaLuckyRegistry {
     lateinit var allLuckyItemIds: List<String>
     lateinit var allLuckyItemIdsByType: Map<String, List<String>>
 
-    private fun registerStructure(structureId: String, structure: StructureResource) {
-        LuckyRegistry.structureProps[structureId] = structure.defaultProps
-        when (structure) {
-            is DropStructureResource -> LuckyRegistry.structureDrops[structureId] = structure.drops
-            is NBTStructureResource -> nbtStructures[structureId] = structure.structure
-        }
-    }
-
     private fun registerMainResources(mainResources: MainResources) {
         globalSettings = mainResources.globalSettings
         LuckyRegistry.blockSettings[blockId] = mainResources.settings.block
         LuckyRegistry.drops.putAll(mainResources.drops)
         worldGenDrops[blockId] = mainResources.worldGenDrops
 
-        for ((path, structure) in mainResources.structures) {
-            registerStructure("$blockId:$path", structure)
-        }
-
         craftingLuckModifiers.putAll(itemIds.associateWith {
             mainResources.craftingLuckModifiers
         })
+
+        for ((path, structure) in mainResources.dropStructures) {
+            LuckyRegistry.registerDropStructure("$blockId:$path", structure)
+        }
+        for ((path, structure) in mainResources.nbtStructures) {
+            nbtStructures["$blockId:$path"] = structure.structure
+            LuckyRegistry.defaultStructureProps["$blockId:$path"] = structure.defaultProps
+        }
     }
 
     private fun registerAddon(addonResources: AddonResources) {
@@ -77,8 +73,12 @@ object JavaLuckyRegistry {
             addonResources.craftingLuckModifiers
         })
 
-        for ((path, structure) in addonResources.structures) {
-            registerStructure("${addon.addonId}:$path", structure)
+        for ((path, structure) in addonResources.dropStructures) {
+            LuckyRegistry.registerDropStructure("$blockId:$path", structure)
+        }
+        for ((path, structure) in addonResources.nbtStructures) {
+            nbtStructures["$blockId:$path"] = structure.structure
+            LuckyRegistry.defaultStructureProps["$blockId:$path"] = structure.defaultProps
         }
     }
 

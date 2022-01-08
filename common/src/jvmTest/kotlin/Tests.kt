@@ -157,8 +157,8 @@ class Tests {
     }
 
     @Test
-    fun testReadLuckyStructure() {
-        val (props, drops) = readLuckyStructure(listOf(
+    fun testReadDropStructure() {
+        val dropStructure = readDropStructure(listOf(
             ">properties",
             "width=9,length=10",
             ">blocks",
@@ -168,36 +168,36 @@ class Tests {
             ">drops",
             "group(type=nothing,type=nothing)"
         ))
-        assertEquals(9.0, props.getValue("width"))
-        assertEquals(10.0, props.getValue("length"))
+        assertEquals(9.0, dropStructure.defaultProps.getValue("width"))
+        assertEquals(10.0, dropStructure.defaultProps.getValue("length"))
 
-        assertEquals("block", (drops[0] as SingleDrop).type)
-        assertEquals("lucky:lucky_block", (drops[0] as SingleDrop).get("id"))
+        assertEquals("block", (dropStructure.drops[0] as SingleDrop).type)
+        assertEquals("lucky:lucky_block", (dropStructure.drops[0] as SingleDrop).get("id"))
         assertEquals(
             Vec3d(1.0, 2.0, 3.0),
-            (drops[0] as SingleDrop).getVec3<Double>("posOffset"),
+            (dropStructure.drops[0] as SingleDrop).getVec3<Double>("posOffset"),
         )
-        assertEquals(3, (drops[0] as SingleDrop).get<DictAttr>("nbttag").getValue("Luck"))
+        assertEquals(3, (dropStructure.drops[0] as SingleDrop).get<DictAttr>("nbttag").getValue("Luck"))
 
-        assertEquals("entity", (drops[1] as SingleDrop).type)
-        assertEquals("bat", (drops[1] as SingleDrop).get("id"))
+        assertEquals("entity", (dropStructure.drops[1] as SingleDrop).type)
+        assertEquals("bat", (dropStructure.drops[1] as SingleDrop).get("id"))
         assertEquals(
             Vec3d(4.0, 5.0, 6.0),
-            (drops[1] as SingleDrop).getVec3<Double>("posOffset"),
+            (dropStructure.drops[1] as SingleDrop).getVec3<Double>("posOffset"),
         )
 
-        assert(drops[2] is GroupDrop)
+        assert(dropStructure.drops[2] is GroupDrop)
     }
 
     @Test
-    fun testReadLuckyStructureWithDropsOnly() {
-        val (props, drops) = readLuckyStructure(listOf(
+    fun testReadDropStructureWithDropsOnly() {
+        val dropStructure = readDropStructure(listOf(
             "posOffset=(1,2,3),type=entity,ID=pig",
         ))
 
-        assertEquals(0, props.children.size)
-        assertEquals("entity", (drops[0] as SingleDrop).type)
-        assertEquals("pig", (drops[0] as SingleDrop).get("id"))
+        assertEquals(0, dropStructure.defaultProps.children.size)
+        assertEquals("entity", (dropStructure.drops[0] as SingleDrop).type)
+        assertEquals("pig", (dropStructure.drops[0] as SingleDrop).get("id"))
     }
 
     @Test

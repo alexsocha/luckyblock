@@ -213,7 +213,7 @@ object FabricJavaGameAPI : JavaGameAPI {
         return ItemInstanceTheFlatteningFix.getItem(legacyName, data) ?: legacyName
     }
 
-    override fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i> {
+    override fun readNBTStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> {
         val structure = Structure()
         structure.readNbt(NbtIo.readCompressed(stream))
         return Pair(structure, toVec3i(structure.size))

@@ -47,10 +47,8 @@ fun registerModConfig(blockId: String, unparsedConfig: UnparsedModConfig) {
     if (unparsedConfig.structures != null) {
         for (k in js("Object").keys(unparsedConfig.structures)) {
             val unparsedStruct: String = unparsedConfig.structures[k]
-            val (structureProps, structureDrops) = readLuckyStructure(unparsedStruct.split('\n'))
-            val structureId = "$blockId:$k"
-            LuckyRegistry.structureProps[structureId] = structureProps
-            LuckyRegistry.structureDrops[structureId] = structureDrops
+            val dropStructure = readDropStructure(unparsedStruct.split('\n'))
+            LuckyRegistry.registerDropStructure("$blockId:$k", dropStructure)
         }
     }
 }

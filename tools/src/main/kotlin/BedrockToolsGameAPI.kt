@@ -94,5 +94,5 @@ object ToolsJavaGameAPI : JavaGameAPI {
     override fun isCreativeMode(player: PlayerEntity): Boolean = throw NoGameContextException()
     override fun hasSilkTouch(player: PlayerEntity): Boolean = throw NoGameContextException()
     override fun convertLegacyItemId(id: Int, data: Int): String? = throw NoGameContextException()
-    override fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i> = throw NoGameContextException()
+    override fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> = throw NoGameContextException()
 }

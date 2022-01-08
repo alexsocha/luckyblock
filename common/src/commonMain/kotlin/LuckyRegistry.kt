@@ -26,8 +26,8 @@ object LuckyRegistry {
 
     val blockSettings = HashMap<String, LuckyBlockSettings>() // blockId -> settings
     val drops = HashMap<String, List<WeightedDrop>>() // sourceId -> drops
-    val structureProps = HashMap<String, DictAttr>() // addonId:path -> props
-    val structureDrops = HashMap<String, List<BaseDrop>>() // addonId:path -> drops
+    val defaultStructureProps = HashMap<String, DictAttr>() // addonId:path -> props
+    val dropStructures = HashMap<String, DropStructure>() // addonId:path -> DropStructure
 
     val sourceToAddonId = HashMap<String, String>() // sourceId -> addonId
 
@@ -40,6 +40,11 @@ object LuckyRegistry {
 
     init {
         registerDefaultDrops()
+    }
+
+    fun registerDropStructure(id: String, dropStructure: DropStructure) {
+        dropStructures[id] = dropStructure
+        defaultStructureProps[id] = dropStructure.defaultProps
     }
 
     fun registerDropPropRenames(type: String, renames: Map<String, String>) {

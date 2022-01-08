@@ -111,7 +111,7 @@ tasks.register<Copy>("copyTemplateAddon") {
     }
 
     from("./template-addon")
-    into("./build/processedResources/template-addon")
+    into("./build/template-addon")
 
     inputs.property("blockId", bedrockTemplateAddonBlockId)
     filesMatching(listOf("**/*.json", "**/*.lang")) {
@@ -130,6 +130,20 @@ tasks.register<Copy>("copyTemplateAddon") {
     rename { fileName ->
         fileName.replace("\${blockId}", "$bedrockTemplateAddonBlockId")
     }
+}
+
+tasks.register<JavaExec>("buildTemplateAddon") {
+    classpath = fileTree("$rootDir/tools/build/install/tools/lib")
+    mainClass.set("mod.lucky.tools.MainKt")
+    args = listOf(
+        "generate-bedrock-config",
+        "--inputConfigFolder",
+        "./template-addon",
+        "--outputAddonFolder",
+        "./build/template-addon",
+    )
+    dependsOn(project(":tools").tasks.getByName("installDist"))
+    dependsOn("copyTemplateAddon")
 }
 
 tasks.register<Sync>("copyRuntimePacks") {

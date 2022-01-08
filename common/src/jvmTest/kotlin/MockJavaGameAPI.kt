@@ -45,5 +45,5 @@ object MockJavaGameAPI : JavaGameAPI {
     override fun isCreativeMode(player: PlayerEntity): Boolean = false
     override fun hasSilkTouch(player: PlayerEntity): Boolean = false
     override fun convertLegacyItemId(id: Int, data: Int): String? = null
-    override fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i> = Pair("", Vec3i(0, 0, 0))
+    override fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> = Pair("", Vec3i(0, 0, 0))
 }

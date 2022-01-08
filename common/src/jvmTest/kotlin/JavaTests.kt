@@ -7,6 +7,7 @@ import mod.lucky.java.JAVA_GAME_API
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
 class JavaTests {
@@ -19,11 +20,29 @@ class JavaTests {
     }
 
     @Test
-    fun testAllDrops() {
+    fun testLoadResources() {
         assertEquals(true, JavaLuckyRegistry.globalSettings.checkForUpdates)
         assertEquals(false, LuckyRegistry.blockSettings["lucky:lucky_block"]?.doDropsOnCreativeMode)
         assertEquals(false, LuckyRegistry.blockSettings["lucky:custom_lucky_block"]?.doDropsOnCreativeMode)
 
+        listOf(
+            "lucky:lucky_block:giant_lucky_block_inner_good",
+            "lucky:lucky_block:giant_blocks/lucky_block_inner_good.luckystruct"
+        ).forEach {
+            assertContains(LuckyRegistry.dropStructures.keys, it)
+        }
+
+        listOf(
+            "lucky:lucky_block:giant_lucky_block_good",
+            "lucky:lucky_block:giant_lucky_block_bad",
+            "lucky:lucky_block:giant_blocks/lucky_block.nbt",
+        ).forEach {
+            assertContains(JavaLuckyRegistry.nbtStructures.keys, it)
+        }
+    }
+
+    @Test
+    fun testAllDrops() {
         val sourceIds = listOf(
             "lucky:lucky_block",
             "lucky:lucky_sword",

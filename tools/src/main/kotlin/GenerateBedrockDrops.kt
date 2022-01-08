@@ -9,7 +9,6 @@ import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.action.calculatePos
 import mod.lucky.bedrock.common.registerBedrockTemplateVars
 
-import mod.lucky.java.loader.DropStructureResource
 import mod.lucky.java.loader.loadAddonResources
 import mod.lucky.java.loader.loadMainResources
 import java.nio.ByteOrder
@@ -308,18 +307,15 @@ class GenerateBedrockDrops: Subcommand("generate-bedrock-drops", "Generate drops
         val (blockDrops, generatedDropsWithBlock) = generateDrops(resources.drops[resources.addon.ids.block]!!, seed, blockId, generatedDrops)
         generatedDrops = generatedDropsWithBlock
 
-        val luckyStructs = resources.structures.mapNotNull { (k, v) ->
-            if (v !is DropStructureResource) null
-            else {
-                val (drops, generatedDropsWithStruct) = generateDrops(
-                    v.drops.map { WeightedDrop(it, "") },
-                    seed,
-                    blockId,
-                    generatedDrops
-                )
-                generatedDrops = generatedDropsWithStruct
-                k to luckyStructToString(v.defaultProps, drops)
-            }
+        val luckyStructs = resources.dropStructures.mapNotNull { (k, v) ->
+            val (drops, generatedDropsWithStruct) = generateDrops(
+                v.drops.map { WeightedDrop(it, "") },
+                seed,
+                blockId,
+                generatedDrops
+            )
+            generatedDrops = generatedDropsWithStruct
+            k to luckyStructToString(v.defaultProps, drops)
         }.toMap()
 
         val jsDrops = "`\n" +
