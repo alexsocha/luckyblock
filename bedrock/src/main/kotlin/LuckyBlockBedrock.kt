@@ -9,6 +9,7 @@ import mod.lucky.common.GAME_API
 import mod.lucky.common.LOGGER
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.LuckyBlockSettings
+import mod.lucky.bedrock.common.registerCommonTemplateVars
 import mod.lucky.bedrock.common.registerBedrockTemplateVars
 
 data class LuckyBlockVariant(
@@ -17,8 +18,8 @@ data class LuckyBlockVariant(
 
 data class UnparsedModConfig(
     val drops: String,
+    val dropStructures: dynamic, // structureId -> String
     val doDropsOnRightClick: Boolean = false,
-    val structures: dynamic, // structureId -> String
     val luck: Int,
     val variants: dynamic, // blockId -> LuckyBlockVariant
 )
@@ -44,9 +45,9 @@ fun registerModConfig(blockId: String, unparsedConfig: UnparsedModConfig) {
         }
     }
 
-    if (unparsedConfig.structures != null) {
-        for (k in js("Object").keys(unparsedConfig.structures)) {
-            val unparsedStruct: String = unparsedConfig.structures[k]
+    if (unparsedConfig.dropStructures != null) {
+        for (k in js("Object").keys(unparsedConfig.dropStructures)) {
+            val unparsedStruct: String = unparsedConfig.dropStructures[k]
             val dropStructure = readDropStructure(unparsedStruct.split('\n'))
             LuckyRegistry.registerDropStructure("$blockId:$k", dropStructure)
         }
@@ -57,14 +58,12 @@ fun onPlayerDestroyedLuckyBlock(world: MCWorld, player: MCPlayerEntity, pos: Blo
     try {
         val vecPos = Vec3d(pos.x + 0.5, pos.y.toDouble(), pos.z + 0.5)
 
-        val blockEntityDropContainer = BedrockGameAPI.readAndDestroyLuckyBlockEntity(world, pos)
-
         // run a randrom drop
         val context = DropContext(world = world, pos = vecPos, player = player, sourceId = blockId)
 
         runRandomDrop(
             customDrops = blockEntityDropContainer?.drops,
-            luck = blockEntityDropContainer?.luck ?: BedrockLuckyRegistry.blockLuck[blockId] ?: 0,
+            luck = BedrockLuckyRegistry.blockLuck[blockId] ?: 0,
             context,
             showOutput = DEBUG
         )
@@ -83,7 +82,6 @@ fun initServer(server: MCServer, serverSystem: MCServerSystem) {
 
     // (optimization) parse all drops for the default block
     registerModConfig("lucky:lucky_block", serverSystem.createEventData<UnparsedModConfig>("lucky:lucky_block_config").data)
-
 
     serverSystem.listenForEvent<MCPlayerDestroyedBlockEvent>("minecraft:player_destroyed_block") { eventWrapper ->
         val event = eventWrapper.data

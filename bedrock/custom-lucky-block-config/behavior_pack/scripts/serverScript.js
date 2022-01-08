@@ -1,8 +1,8 @@
 const serverSystem = server.registerSystem(0, 0);
 
-serverSystem.registerEventData("lucky:lucky_block_config", {
-    "drops": $drops,
-    "structures": $structures,
+serverSystem.registerEventData("lucky:${blockId}_config", {
+    "drops": ${drops},
+    "dropStructures": ${dropStructures},
     "luck": 0,
     "variants": {
         "lucky:unlucky_block": {

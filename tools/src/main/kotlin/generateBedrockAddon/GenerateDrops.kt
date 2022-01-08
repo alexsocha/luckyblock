@@ -1,8 +1,9 @@
 @file:OptIn(ExperimentalCli::class)
 
-package mod.lucky.tools
+package mod.lucky.tools.generateBedrockConfig
 
 import kotlinx.cli.*
+import mod.lucky.tools.*
 import mod.lucky.common.*
 import mod.lucky.common.drop.*
 import mod.lucky.common.attribute.*
@@ -11,13 +12,15 @@ import mod.lucky.bedrock.common.registerBedrockTemplateVars
 
 import mod.lucky.java.loader.loadAddonResources
 import mod.lucky.java.loader.loadMainResources
+import mod.lucky.java.loader.AddonResources
 import java.nio.ByteOrder
 import java.io.File
 
-data class GeneratedDrops(
-    val dropStructures: HashMap<String, DictAttr>,
+data class McStructureDrops(
+    val structures: HashMap<String, DictAttr>,
     // drop string -> List<structreId>
-    val dropStructureCache: HashMap<String, List<String>>
+    // used to cache the IDs of the already-generated structure variants for a particular drop
+    val structureCache: HashMap<String, List<String>>
 )
 
 class SeededRandom(
@@ -137,14 +140,14 @@ fun createDropStructure(dropType: String, drops: List<SingleDrop>, random: Rando
     }
 }
 
-fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDrops: GeneratedDrops): Pair<SingleDrop, GeneratedDrops> {
+fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, curMcStructureDrops: McStructureDrops): Pair<SingleDrop, McStructureDrops> {
     val shouldGenerate = when(drop.type) {
         "item" -> "nbttag" in drop.props || "data" in drop.props
         "block" -> "nbttag" in drop.props
         "entity" -> "nbttag" in drop.props
         else -> false
     }
-    if (!shouldGenerate) return Pair(drop, generatedDrops)
+    if (!shouldGenerate) return Pair(drop, curMcStructureDrops)
 
     val dropSamples = drop.props.getWithDefault("samples", 2)
     val dropSeed = drop.props.getWithDefault("seed", seed)
@@ -178,9 +181,9 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
         return createDropStructure(drop.type, evaluatedDrops, seededRandom)
     }
 
-    val hasCached = cacheKey in generatedDrops.dropStructureCache
-    val (structureIds, newGeneratedDrops) =
-        if (hasCached) Pair(generatedDrops.dropStructureCache[cacheKey]!!, generatedDrops)
+    val hasCached = cacheKey in curMcStructureDrops.structureCache
+    val (structureIds, mcStructureDrops) =
+        if (hasCached) Pair(curMcStructureDrops.structureCache[cacheKey]!!, curMcStructureDrops)
         else {
             val firstStructure = try {
                 generate()
@@ -193,19 +196,20 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
             val newStructures: List<Pair<String, DictAttr>> = if (spyRandom.wasUsed()) {
                 (0 until dropSamples).mapIndexed { i, it ->
                     val k = dropStructurePrefix +
-                        "${generatedDrops.dropStructureCache.size + 1}" +
+                        "${curMcStructureDrops.structureCache.size + 1}" +
                         if (dropSamples > 1) ".${it + 1}" else ""
 
                     k to if (i == 0) firstStructure else generate()
                 }
             } else {
-                listOf("${dropStructurePrefix}${generatedDrops.dropStructureCache.size + 1}" to firstStructure)
+                listOf("${dropStructurePrefix}${curMcStructureDrops.structureCache.size + 1}" to firstStructure)
             }
 
             val newStructureIds = newStructures.map { it.first }
-            generatedDrops.dropStructureCache[cacheKey] = newStructureIds
-            generatedDrops.dropStructures.putAll(newStructures)
-            Pair(newStructureIds, generatedDrops)
+            // optimisation: mutate the current McStructureDrops
+            curMcStructureDrops.structureCache[cacheKey] = newStructureIds
+            curMcStructureDrops.structures.putAll(newStructures)
+            Pair(newStructureIds, curMcStructureDrops)
         }
 
     val structureIdAttr = if (structureIds.size == 1) {
@@ -236,107 +240,40 @@ fun generateSingleDrop(drop: SingleDrop, seed: Int, blockId: String, generatedDr
             ).minus(ignoredProps)
         ),
     )
-    return Pair(newDrop, newGeneratedDrops)
+    return Pair(newDrop, mcStructureDrops)
 }
 
-fun <T : BaseDrop> replaceNbtWithGeneratedDrops(drop: T, seed: Int, blockId: String, generatedDrops: GeneratedDrops): Pair<T, GeneratedDrops> {
+fun <T : BaseDrop> recursivelyGenerateDrops(drop: T, blockId: String, seed: Int, curMcStructureDrops: McStructureDrops): Pair<T, McStructureDrops> {
     @Suppress("UNCHECKED_CAST")
     return when (drop) {
         is WeightedDrop -> {
-            val (newDrop, newGeneratedDrops) = replaceNbtWithGeneratedDrops(drop.drop, seed, blockId, generatedDrops)
-            Pair(drop.copy(drop = newDrop) as T, newGeneratedDrops)
+            val (newDrop, mcStructureDrops) = recursivelyGenerateDrops(drop.drop,  blockId, seed, curMcStructureDrops)
+            Pair(drop.copy(drop = newDrop) as T, mcStructureDrops)
         }
         is GroupDrop -> {
-            var allGeneratedDrops = generatedDrops
+            var mcStructureDropsAcc = curMcStructureDrops
             val newDrops = drop.drops.map {
-                val (newDrop, newGeneratedDrops) = replaceNbtWithGeneratedDrops(it, seed, blockId, generatedDrops)
-                allGeneratedDrops = newGeneratedDrops
+                val (newDrop, newMcStructureDrops) = recursivelyGenerateDrops(it, blockId, seed, curMcStructureDrops)
+                mcStructureDropsAcc = newMcStructureDrops
                 newDrop
             }
-            Pair(drop.copy(drops = newDrops) as T, allGeneratedDrops)
+            Pair(drop.copy(drops = newDrops) as T, mcStructureDropsAcc)
         }
-        is SingleDrop -> generateSingleDrop(drop, seed, blockId, generatedDrops) as Pair<T, GeneratedDrops>
+        is SingleDrop -> generateSingleDrop(drop, seed, blockId, curMcStructureDrops) as Pair<T, McStructureDrops>
         else -> throw Exception()
     }
 }
 
-fun createEmptyGeneratedDrops(): GeneratedDrops {
-    return GeneratedDrops(
-        dropStructures = HashMap(),
-        dropStructureCache = HashMap(),
+fun generateDrops(drops: List<BaseDrop>, blockId: String, seed: Int, curMcStructureDrops: McStructureDrops? = null): Pair<List<BaseDrop>, McStructureDrops> {
+    var mcStructureDropsAcc = curMcStructureDrops ?: McStructureDrops(
+        structures = HashMap(),
+        structureCache = HashMap(),
     )
-}
 
-fun prepareToGenerateDrops() {
-    GAME_API = BedrockToolsGameAPI
-    LOGGER = ToolsLogger
-    registerCommonTemplateVars(GameType.BEDROCK)
-    registerBedrockTemplateVars()
-}
-
-fun generateDrops(drops: List<WeightedDrop>, seed: Int, blockId: String, generatedDrops: GeneratedDrops): Pair<List<BaseDrop>, GeneratedDrops> {
-    var allGeneratedDrops = generatedDrops
-    val newDropsList = drops.map {
-        val (newDrop, newGeneratedDrops) = replaceNbtWithGeneratedDrops(it, seed, blockId, generatedDrops)
-        allGeneratedDrops = newGeneratedDrops
+    val newDrops = drops.map {
+        val (newDrop, newMcStructureDrops) = recursivelyGenerateDrops(it, blockId, seed, mcStructureDropsAcc)
+        mcStructureDropsAcc = newMcStructureDrops
         newDrop
     }
-    return Pair(newDropsList, allGeneratedDrops)
-}
-
-class GenerateBedrockDrops: Subcommand("generate-bedrock-drops", "Generate drops and structures from the provided config folder, and inject them into a JS template file.") {
-    private val inputConfigFolder by option(ArgType.String, description = "Input config folder").default(".")
-    private val inputJsTemplateFile by option(ArgType.String, description = "Input JS template file").default("serverScript.template.js")
-
-    private val dropsTemplateVariable by option(ArgType.String).default("\$drops")
-    private val structuresTemplateVariable by option(ArgType.String).default("\$structures")
-
-    private val outputStructuresFolder by option(ArgType.String, description = "Output folder for generated structures").default("structures")
-    private val outputJsFile by option(ArgType.String, description = "Output JS file").default("serverScript.js")
-
-    private val blockId by option(ArgType.String, description = "Lucky Block ID, e.g. custom_lucky_block").required()
-
-    private val seed by option(ArgType.Int, description = "Random seed used when generating drops").default(0)
-
-    override fun execute() {
-        prepareToGenerateDrops()
-
-        val resources = loadAddonResources(File(inputConfigFolder))!!
-
-        var generatedDrops = createEmptyGeneratedDrops()
-        val (blockDrops, generatedDropsWithBlock) = generateDrops(resources.drops[resources.addon.ids.block]!!, seed, blockId, generatedDrops)
-        generatedDrops = generatedDropsWithBlock
-
-        val luckyStructs = resources.dropStructures.mapNotNull { (k, v) ->
-            val (drops, generatedDropsWithStruct) = generateDrops(
-                v.drops.map { WeightedDrop(it, "") },
-                seed,
-                blockId,
-                generatedDrops
-            )
-            generatedDrops = generatedDropsWithStruct
-            k to luckyStructToString(v.defaultProps, drops)
-        }.toMap()
-
-        val jsDrops = "`\n" +
-            blockDrops.joinToString("\n") { dropToString(it).replace("`", "\\`") } +
-            "\n`"
-
-        val jsStructures = "{\n" +
-            luckyStructs.map { (k, v) -> "\"$k\": `\n" +
-                v.joinToString("\n") { it.replace("`", "\\`") } +
-                "\n`,"
-            }.joinToString("\n") + "\n}"
-
-        val inputTemplateJs = File(inputJsTemplateFile).readText()
-        val outputJs = inputTemplateJs
-            .replace(dropsTemplateVariable, jsDrops)
-            .replace(structuresTemplateVariable, jsStructures)
-
-        File(outputJsFile).writeText(outputJs)
-
-        generatedDrops.dropStructures.forEach { (k, v) ->
-            writeNbtFile(File(outputStructuresFolder).resolve("${k}.mcstructure"), v, compressed=false, isLittleEndian=true)
-        }
-    }
+    return Pair(newDrops, mcStructureDropsAcc)
 }

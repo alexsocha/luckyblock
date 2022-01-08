@@ -1,0 +1,18 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "${addonId} resource pack",
+        "name": "${addonId}RP",
+        "uuid": "${resourcePackUuid}",
+        "version": [1, 0, 0],
+        "min_engine_version": [1, 17, 0]
+    },
+    "modules": [
+        {
+            "description": "${addonId} resource pack module",
+            "type": "resources",
+            "uuid": "${resourcePackModuleUuid}",
+            "version": [1, 0, 0]
+        }
+    ]
+}

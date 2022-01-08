@@ -2,7 +2,7 @@
     "format_version": "1.16.0",
     "minecraft:block": {
         "description": {
-            "identifier": "lucky:lucky_block",
+            "identifier": "lucky:${blockId}",
             "register_to_creative_menu": true
         },
         "components": {

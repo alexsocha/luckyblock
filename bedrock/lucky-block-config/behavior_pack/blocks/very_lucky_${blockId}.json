@@ -2,8 +2,8 @@
     "format_version": "1.16.0",
     "minecraft:block": {
         "description": {
-            "identifier": "lucky:unlucky_block",
-            "register_to_creative_menu": true
+            "identifier": "lucky:very_lucky_${blockId}",
+            "register_to_creative_menu": false
         },
         "components": {
             "minecraft:destroy_time": 0.1,
@@ -12,10 +12,7 @@
                 "flame_odds": 0,
                 "burn_odds": 0
             },
-            "minecraft:map_color": "#F3C428",
-            "minecraft:creative_category": {
-		"category": "Items"
-            }
+            "minecraft:map_color": "#F3C428"
         }
     }
 }

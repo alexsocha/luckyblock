@@ -2,13 +2,13 @@ package mod.lucky.bedrock
 
 external fun setTimeout(fn: () -> Unit, delay: Number)
 
-external interface BlockPos {
+external interface MCBlockPos {
     val x: Int
     val y: Int
     val z: Int
 }
 
-external interface VecPos {
+external interface MCVecPos {
     var x: Double
     var y: Double
     var z: Double

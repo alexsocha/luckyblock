@@ -1,10 +1,7 @@
 package mod.lucky.tools
 
 import mod.lucky.common.attribute.*
-import mod.lucky.common.drop.BaseDrop
-import mod.lucky.common.drop.GroupDrop
-import mod.lucky.common.drop.SingleDrop
-import mod.lucky.common.drop.WeightedDrop
+import mod.lucky.common.drop.*
 
 fun attrToSerializedString(attr: Attr): String {
     return when(attr) {
@@ -62,15 +59,13 @@ fun dropToString(drop: BaseDrop): String {
     }
 }
 
-
-fun luckyStructToString(defaultProps: DictAttr, drops: List<BaseDrop>): List<String> {
-    val lines = if (defaultProps.children.size == 0) drops.map { dropToString(it) }
-        else listOf(
-            ">properties",
-            attrToSerializedString(defaultProps),
-            ">drops",
-            *(drops.map { dropToString(it) }).toTypedArray()
-        )
-
-    return lines
+fun dropStructureToString(dropStructure: DropStructure): List<String> {
+    return if (dropStructure.defaultProps.children.isEmpty()) {
+        dropStructure.drops.map { dropToString(it) }
+    } else listOf(
+        ">properties",
+        attrToSerializedString(dropStructure.defaultProps),
+        ">drops",
+        *(dropStructure.drops.map { dropToString(it) }).toTypedArray()
+    )
 }

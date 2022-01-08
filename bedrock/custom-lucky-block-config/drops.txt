@@ -1,0 +1,11 @@
+/ iron tools
+group(ID=iron_shovel;ID=iron_pickaxe;ID=iron_axe;ID=iron_sword;ID=iron_hoe)@luck=1
+
+/ pickaxe with enchantments
+ID=diamond_pickaxe,NBTTag=(tag=(ench=#luckyToolEnchantments,display=(Name="$l$9Lucky Pickaxe")))@luck=2
+
+/ explosion
+type=explosion,radius=4,fire=true@luck=-2
+
+/ house structure
+type=structure,ID=house,pos=#pPos

@@ -20,6 +20,7 @@ dependencies {
     implementation("com.github.kittinunf.fuel:fuel-coroutines:2.3.1")
     implementation("io.github.g00fy2:versioncompare:1.5.0")
     implementation("io.github.cdimascio:dotenv-kotlin:6.2.2")
+    implementation("org.apache.commons:commons-text:1.9")
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:1.+")
 }
