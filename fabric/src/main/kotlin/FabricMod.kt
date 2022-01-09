@@ -75,7 +75,6 @@ class FabricMod : ModInitializer {
     override fun onInitialize() {
         FabricGameAPI.init()
         JavaLuckyRegistry.init()
-        registerAddonCraftingRecipes()
 
         FabricLuckyRegistry.luckyBlockEntity = Registry.register(
             Registry.BLOCK_ENTITY_TYPE,
@@ -136,6 +135,8 @@ class FabricMod : ModInitializer {
             if (addon.ids.sword != null) Registry.register(Registry.ITEM, Identifier(addon.ids.sword), LuckySword())
             if (addon.ids.potion != null) Registry.register(Registry.ITEM, Identifier(addon.ids.potion), LuckyPotion())
         }
+
+        registerAddonCraftingRecipes()
     }
 }
 
