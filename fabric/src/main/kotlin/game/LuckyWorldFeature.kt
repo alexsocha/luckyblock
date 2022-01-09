@@ -7,6 +7,7 @@ import mod.lucky.fabric.MCIdentifier
 import mod.lucky.fabric.toVec3i
 import mod.lucky.java.JavaLuckyRegistry
 import mod.lucky.java.game.generateLuckyFeature
+import mod.lucky.java.JavaRandom
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.util.math.BlockPos
@@ -53,7 +54,7 @@ class LuckyWorldFeature(
                     surfacePos = Vec3i(topPos.x, surfaceY, topPos.z),
                     blockId = blockId,
                     dimensionKey = world.toServerWorld().registryKey.value.toString(),
-                    random = DefaultRandom(random),
+                    random = JavaRandom(random),
                 )
             }
             false

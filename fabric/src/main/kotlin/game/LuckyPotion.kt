@@ -1,6 +1,6 @@
 package mod.lucky.fabric.game
 
-import mod.lucky.common.RANDOM
+import mod.lucky.common.DEFAULT_RANDOM
 import mod.lucky.fabric.*
 import mod.lucky.java.*
 import mod.lucky.java.game.LuckyItemStackData
@@ -32,7 +32,7 @@ class LuckyPotion : MCItem(FabricItemSettings().group(ItemGroup.COMBAT)) {
             SoundEvents.ENTITY_SPLASH_POTION_THROW,
             SoundCategory.PLAYERS,
             0.5f,
-            0.4f / (RANDOM.nextFloat() * 0.4f + 0.8f)
+            0.4f / (DEFAULT_RANDOM.nextDouble().toFloat() * 0.4f + 0.8f)
         )
 
         if (!isClientWorld(world)) {
@@ -47,7 +47,7 @@ class LuckyPotion : MCItem(FabricItemSettings().group(ItemGroup.COMBAT)) {
                 )
             )
             potionEntity.setItem(stack)
-            potionEntity.setProperties(user, user.pitch, user.yaw, -20.0f, 0.5f, 1.0f)
+            potionEntity.setVelocity(user, user.pitch, user.yaw, -20.0f, 0.5f, 1.0f)
             world.spawnEntity(potionEntity)
         }
 

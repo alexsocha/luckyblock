@@ -26,9 +26,9 @@ import mod.lucky.java.game.spawnEggSuffix
 import mod.lucky.java.game.uselessPostionNames
 import mod.lucky.java.game.usefulStatusEffectIds
 import net.minecraft.entity.*
+import net.minecraft.entity.effect.StatusEffectCategory
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.projectile.ArrowEntity
-import net.minecraft.entity.effect.StatusEffectType
 import net.minecraft.nbt.NbtHelper
 import net.minecraft.particle.ParticleEffect
 import net.minecraft.particle.ParticleType
@@ -74,6 +74,7 @@ typealias LongTag = net.minecraft.nbt.NbtLong
 typealias StringTag = net.minecraft.nbt.NbtString
 typealias ByteArrayTag = net.minecraft.nbt.NbtByteArray
 typealias IntArrayTag = net.minecraft.nbt.NbtIntArray
+typealias LongArrayTag = net.minecraft.nbt.NbtLongArray
 typealias ListTag = net.minecraft.nbt.NbtList
 typealias CompoundTag = net.minecraft.nbt.NbtCompound
 
@@ -149,7 +150,7 @@ object FabricGameAPI : GameAPI {
 
         enchantments = Registry.ENCHANTMENT.entries.map {
             Enchantment(
-                it.key.toString(),
+                it.key.value.toString(),
                 type = toEnchantmentType(it.value.type),
                 maxLevel = it.value.maxLevel,
                 isCurse = it.value.isCursed,
@@ -162,7 +163,7 @@ object FabricGameAPI : GameAPI {
             StatusEffect(
                 id = mcId.toString(),
                 intId = MCStatusEffect.getRawId(mcStatusEffect),
-                isNegative = mcStatusEffect.type == StatusEffectType.HARMFUL,
+                isNegative = mcStatusEffect.category == StatusEffectCategory.HARMFUL,
                 isInstant = mcStatusEffect.isInstant,
             )
         }

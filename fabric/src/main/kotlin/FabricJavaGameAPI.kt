@@ -8,18 +8,20 @@ import mod.lucky.fabric.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.loader.api.FabricLoader
+import net.fabricmc.loader.impl.FabricLoaderImpl
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.datafixer.fix.ItemIdFix
 import net.minecraft.datafixer.fix.ItemInstanceTheFlatteningFix
+import net.minecraft.enchantment.EnchantmentHelper
+import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.nbt.NbtIo
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.structure.Structure
 import net.minecraft.text.Text
 import net.minecraft.util.registry.Registry
-import java.awt.Color
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -48,16 +50,16 @@ object FabricJavaGameAPI : JavaGameAPI {
     }
 
     override fun getModVersion(): String {
-        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).getModContainer("lucky")
+        return FabricLoader.getInstance().getModContainer("lucky")
             .get().metadata.version.friendlyString
 
     }
     override fun getMinecraftVersion(): String {
-        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).gameProvider.normalizedGameVersion
+        return (FabricLoader.getInstance() as FabricLoaderImpl).gameProvider.normalizedGameVersion
     }
 
     override fun getGameDir(): File {
-        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).gameProvider.launchDirectory.toFile()
+        return FabricLoader.getInstance().gameDir.toFile()
     }
 
     override fun attrToNBT(attr: Attr): Tag {
@@ -71,8 +73,9 @@ object FabricJavaGameAPI : JavaGameAPI {
                 AttrType.LONG -> LongTag.of(attr.value as Long)
                 AttrType.FLOAT -> FloatTag.of(attr.value as Float)
                 AttrType.DOUBLE -> DoubleTag.of(attr.value as Double)
-                AttrType.INT_ARRAY -> IntArrayTag(attr.value as IntArray)
                 AttrType.BYTE_ARRAY -> ByteArrayTag(attr.value as ByteArray)
+                AttrType.INT_ARRAY -> IntArrayTag(attr.value as IntArray)
+                AttrType.LONG_ARRAY -> LongArrayTag(attr.value as LongArray)
                 AttrType.LIST, AttrType.DICT -> throw Exception()
             }
             is ListAttr -> {
@@ -133,7 +136,7 @@ object FabricJavaGameAPI : JavaGameAPI {
         pitchOffsetDeg: Double,
     ): Pair<Vec3d, Vec3d> {
         val arrowEntity = ArrowEntity(world as ServerWorld, player as MCPlayerEntity)
-        arrowEntity.setProperties( // setArrowMotion
+        arrowEntity.setVelocity(
             player,
             (GAME_API.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
             (GAME_API.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
@@ -194,8 +197,7 @@ object FabricJavaGameAPI : JavaGameAPI {
         chestEntity.setLootTable(MCIdentifier(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
         chestEntity.checkLootInteraction(null)
 
-        val tag = CompoundTag()
-        chestEntity.writeNbt(tag)
+        val tag = chestEntity.createNbtWithIdentifyingData()
         return JAVA_GAME_API.nbtToAttr(JAVA_GAME_API.readNBTKey(tag, "Items")!!) as ListAttr
     }
 
@@ -213,7 +215,7 @@ object FabricJavaGameAPI : JavaGameAPI {
         return ItemInstanceTheFlatteningFix.getItem(legacyName, data) ?: legacyName
     }
 
-    override fun readNBTStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> {
+    override fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> {
         val structure = Structure()
         structure.readNbt(NbtIo.readCompressed(stream))
         return Pair(structure, toVec3i(structure.size))

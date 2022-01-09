@@ -1,6 +1,6 @@
 package mod.lucky.fabric.game
 
-import mod.lucky.common.RANDOM
+import mod.lucky.common.DEFAULT_RANDOM
 import mod.lucky.fabric.MCItemStack
 import mod.lucky.fabric.OnlyInClient
 import mod.lucky.fabric.isClientWorld
@@ -56,7 +56,7 @@ class LuckyBow : BowItem(FabricItemSettings()
                         SoundEvents.ENTITY_ARROW_SHOOT,
                         SoundCategory.PLAYERS,
                         1.0f,
-                        1.0f / (RANDOM.nextFloat() * 0.4f + 1.2f) + power * 0.5f
+                        1.0f / (DEFAULT_RANDOM.nextDouble().toFloat() * 0.4f + 1.2f) + power * 0.5f
                     )
 
                     if (!unlimitedArrows && !player.abilities.creativeMode) {
