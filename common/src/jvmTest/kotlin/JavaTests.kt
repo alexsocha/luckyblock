@@ -20,7 +20,7 @@ class JavaTests {
     }
 
     @Test
-    fun testLoadResources() {
+    fun testLuckyRegistry() {
         assertEquals(true, JavaLuckyRegistry.globalSettings.checkForUpdates)
         assertEquals(false, LuckyRegistry.blockSettings["lucky:lucky_block"]?.doDropsOnCreativeMode)
         assertEquals(false, LuckyRegistry.blockSettings["lucky:custom_lucky_block"]?.doDropsOnCreativeMode)
@@ -39,6 +39,17 @@ class JavaTests {
         ).forEach {
             assertContains(JavaLuckyRegistry.nbtStructures.keys, it)
         }
+
+        assertEquals(mapOf(
+            "lucky:lucky_block" to "lucky:lucky_block",
+            "lucky:lucky_sword" to "lucky:lucky_block",
+            "lucky:lucky_bow" to "lucky:lucky_block",
+            "lucky:lucky_potion" to "lucky:lucky_block",
+            "lucky:custom_lucky_block" to "lucky:custom_lucky_block",
+            "lucky:custom_lucky_sword" to "lucky:custom_lucky_block",
+            "lucky:custom_lucky_bow" to "lucky:custom_lucky_block",
+            "lucky:custom_lucky_potion" to "lucky:custom_lucky_block",
+        ), LuckyRegistry.sourceToAddonId)
     }
 
     @Test

@@ -102,7 +102,7 @@ object JavaLuckyRegistry {
         )
         allLuckyItemIds = itemIds + addons.flatMap { it.ids.getItemIds() }
 
-        LuckyRegistry.sourceToAddonId.putAll(itemIds.associateBy { blockId } + addons.flatMap { addon ->
+        LuckyRegistry.sourceToAddonId.putAll(itemIds.associateWith { blockId } + addons.flatMap { addon ->
             addon.ids.getItemIds().map { it to addon.addonId }
         }.toMap())
 
