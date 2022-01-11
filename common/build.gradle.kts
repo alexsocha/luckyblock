@@ -108,7 +108,7 @@ fun getModVersionNumber(modVersion: String): Int {
 fun writeMeta(distDir: String, version: String, versionNumber: Int, minMinecraftVersion: String, extraInfo: Map<String, String> = emptyMap()) {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     dateFormat.timeZone = TimeZone.getTimeZone("UTC")
-    val git = Grgit.open()
+    val git = Grgit.open(mapOf("currentDir" to project.rootDir))
 
     file(distDir).mkdirs()
     val meta = mapOf(
