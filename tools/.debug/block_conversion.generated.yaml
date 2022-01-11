@@ -1,0 +1,1905 @@
+blockIdsFile: "block_ids.yaml"
+blocks:
+- ids:
+  - "java": null
+    "bedrock": "minecraft:deepslate_tile_stairs"
+  - "minecraft:acacia_stairs"
+  - "minecraft:andesite_stairs"
+  - "minecraft:birch_stairs"
+  - "minecraft:blackstone_stairs"
+  - "minecraft:brick_stairs"
+  - "minecraft:cobbled_deepslate_stairs"
+  - "java": "minecraft:cobblestone_stairs"
+    "bedrock": "minecraft:stone_stairs"
+  - "minecraft:crimson_stairs"
+  - "minecraft:cut_copper_stairs"
+  - "minecraft:dark_oak_stairs"
+  - "minecraft:dark_prismarine_stairs"
+  - "minecraft:deepslate_brick_stairs"
+  - "minecraft:diorite_stairs"
+  - "java": "minecraft:end_stone_brick_stairs"
+    "bedrock": "minecraft:end_brick_stairs"
+  - "minecraft:exposed_cut_copper_stairs"
+  - "minecraft:granite_stairs"
+  - "minecraft:jungle_stairs"
+  - "minecraft:mossy_cobblestone_stairs"
+  - "minecraft:mossy_stone_brick_stairs"
+  - "minecraft:nether_brick_stairs"
+  - "minecraft:oak_stairs"
+  - "minecraft:oxidized_cut_copper_stairs"
+  - "minecraft:polished_andesite_stairs"
+  - "minecraft:polished_blackstone_brick_stairs"
+  - "minecraft:polished_blackstone_stairs"
+  - "minecraft:polished_deepslate_stairs"
+  - "minecraft:polished_diorite_stairs"
+  - "minecraft:polished_granite_stairs"
+  - "java": "minecraft:prismarine_brick_stairs"
+    "bedrock": "minecraft:prismarine_bricks_stairs"
+  - "minecraft:prismarine_stairs"
+  - "minecraft:purpur_stairs"
+  - "minecraft:quartz_stairs"
+  - "minecraft:red_nether_brick_stairs"
+  - "minecraft:red_sandstone_stairs"
+  - "minecraft:sandstone_stairs"
+  - "minecraft:smooth_quartz_stairs"
+  - "minecraft:smooth_red_sandstone_stairs"
+  - "minecraft:smooth_sandstone_stairs"
+  - "minecraft:spruce_stairs"
+  - "minecraft:stone_brick_stairs"
+  - "java": "minecraft:stone_stairs"
+    "bedrock": "minecraft:normal_stone_stairs"
+  - "minecraft:warped_stairs"
+  - "minecraft:waxed_cut_copper_stairs"
+  - "minecraft:waxed_exposed_cut_copper_stairs"
+  - "minecraft:waxed_oxidized_cut_copper_stairs"
+  - "minecraft:waxed_weathered_cut_copper_stairs"
+  - "minecraft:weathered_cut_copper_stairs"
+  states:
+  - java:
+      "facing":
+      - "east"
+      - "north"
+      - "south"
+      - "west"
+    bedrock:
+      "weirdo_direction":
+      - 0
+      - 1
+      - 2
+      - 3
+  - java:
+      "half":
+      - "bottom"
+      - "top"
+    bedrock:
+      "upside_down_bit":
+      - false
+      - true
+- ids:
+  - "java": null
+    "bedrock": "minecraft:acacia_standing_sign"
+  - "java": null
+    "bedrock": "minecraft:allow"
+  - "java": null
+    "bedrock": "minecraft:amethyst_block"
+  - "java": null
+    "bedrock": "minecraft:bamboo_sapling"
+  - "java": null
+    "bedrock": "minecraft:bed"
+  - "java": null
+    "bedrock": "minecraft:birch_standing_sign"
+  - "java": null
+    "bedrock": "minecraft:blackstone_double_slab"
+  - "java": null
+    "bedrock": "minecraft:border_block"
+  - "java": null
+    "bedrock": "minecraft:brick_block"
+  - "java": null
+    "bedrock": "minecraft:camera"
+  - "java": null
+    "bedrock": "minecraft:carpet"
+  - "java": null
+    "bedrock": "minecraft:cave_vines_body_berries"
+  - "java": null
+    "bedrock": "minecraft:cave_vines_head_berries"
+  - "java": null
+    "bedrock": "minecraft:chalkboard"
+  - "java": null
+    "bedrock": "minecraft:chemical_heat"
+  - "java": null
+    "bedrock": "minecraft:chemistry_table"
+  - "java": null
+    "bedrock": "minecraft:cobbled_deepslate_double_slab"
+  - "java": null
+    "bedrock": "minecraft:colored_torch_bp"
+  - "java": null
+    "bedrock": "minecraft:colored_torch_rg"
+  - "java": null
+    "bedrock": "minecraft:command_block"
+  - "java": null
+    "bedrock": "minecraft:concrete"
+  - "java": null
+    "bedrock": "minecraft:concretepowder"
+  - "java": null
+    "bedrock": "minecraft:copper_block"
+  - "java": null
+    "bedrock": "minecraft:coral"
+  - "java": null
+    "bedrock": "minecraft:coral_block"
+  - "java": null
+    "bedrock": "minecraft:coral_fan_dead"
+  - "java": null
+    "bedrock": "minecraft:coral_fan_hang3"
+  - "java": null
+    "bedrock": "minecraft:crimson_double_slab"
+  - "java": null
+    "bedrock": "minecraft:crimson_standing_sign"
+  - "java": null
+    "bedrock": "minecraft:darkoak_standing_sign"
+  - "java": null
+    "bedrock": "minecraft:daylight_detector"
+  - "java": null
+    "bedrock": "minecraft:daylight_detector_inverted"
+  - "java": null
+    "bedrock": "minecraft:deepslate_brick_double_slab"
+  - "java": null
+    "bedrock": "minecraft:deepslate_tile_double_slab"
+  - "java": null
+    "bedrock": "minecraft:deepslate_tile_slab"
+  - "java": null
+    "bedrock": "minecraft:deepslate_tile_stairs"
+  - "java": null
+    "bedrock": "minecraft:deepslate_tile_wall"
+  - "java": null
+    "bedrock": "minecraft:deepslate_tiles"
+  - "java": null
+    "bedrock": "minecraft:deny"
+  - "java": null
+    "bedrock": "minecraft:double_stone_slab"
+  - "java": null
+    "bedrock": "minecraft:double_stone_slab2"
+  - "java": null
+    "bedrock": "minecraft:double_stone_slab3"
+  - "java": null
+    "bedrock": "minecraft:double_stone_slab4"
+  - "java": null
+    "bedrock": "minecraft:double_wooden_slab"
+  - "java": null
+    "bedrock": "minecraft:element_0"
+  - "java": null
+    "bedrock": "minecraft:element_1"
+  - "java": null
+    "bedrock": "minecraft:element_1-element_118"
+  - "java": null
+    "bedrock": "minecraft:element_10"
+  - "java": null
+    "bedrock": "minecraft:element_100"
+  - "java": null
+    "bedrock": "minecraft:element_101"
+  - "java": null
+    "bedrock": "minecraft:element_102"
+  - "java": null
+    "bedrock": "minecraft:element_103"
+  - "java": null
+    "bedrock": "minecraft:element_104"
+  - "java": null
+    "bedrock": "minecraft:element_105"
+  - "java": null
+    "bedrock": "minecraft:element_106"
+  - "java": null
+    "bedrock": "minecraft:element_107"
+  - "java": null
+    "bedrock": "minecraft:element_108"
+  - "java": null
+    "bedrock": "minecraft:element_109"
+  - "java": null
+    "bedrock": "minecraft:element_11"
+  - "java": null
+    "bedrock": "minecraft:element_110"
+  - "java": null
+    "bedrock": "minecraft:element_111"
+  - "java": null
+    "bedrock": "minecraft:element_112"
+  - "java": null
+    "bedrock": "minecraft:element_113"
+  - "java": null
+    "bedrock": "minecraft:element_114"
+  - "java": null
+    "bedrock": "minecraft:element_115"
+  - "java": null
+    "bedrock": "minecraft:element_116"
+  - "java": null
+    "bedrock": "minecraft:element_117"
+  - "java": null
+    "bedrock": "minecraft:element_118"
+  - "java": null
+    "bedrock": "minecraft:element_12"
+  - "java": null
+    "bedrock": "minecraft:element_13"
+  - "java": null
+    "bedrock": "minecraft:element_14"
+  - "java": null
+    "bedrock": "minecraft:element_15"
+  - "java": null
+    "bedrock": "minecraft:element_16"
+  - "java": null
+    "bedrock": "minecraft:element_17"
+  - "java": null
+    "bedrock": "minecraft:element_18"
+  - "java": null
+    "bedrock": "minecraft:element_19"
+  - "java": null
+    "bedrock": "minecraft:element_2"
+  - "java": null
+    "bedrock": "minecraft:element_20"
+  - "java": null
+    "bedrock": "minecraft:element_21"
+  - "java": null
+    "bedrock": "minecraft:element_22"
+  - "java": null
+    "bedrock": "minecraft:element_23"
+  - "java": null
+    "bedrock": "minecraft:element_24"
+  - "java": null
+    "bedrock": "minecraft:element_25"
+  - "java": null
+    "bedrock": "minecraft:element_26"
+  - "java": null
+    "bedrock": "minecraft:element_27"
+  - "java": null
+    "bedrock": "minecraft:element_28"
+  - "java": null
+    "bedrock": "minecraft:element_29"
+  - "java": null
+    "bedrock": "minecraft:element_3"
+  - "java": null
+    "bedrock": "minecraft:element_30"
+  - "java": null
+    "bedrock": "minecraft:element_31"
+  - "java": null
+    "bedrock": "minecraft:element_32"
+  - "java": null
+    "bedrock": "minecraft:element_33"
+  - "java": null
+    "bedrock": "minecraft:element_34"
+  - "java": null
+    "bedrock": "minecraft:element_35"
+  - "java": null
+    "bedrock": "minecraft:element_36"
+  - "java": null
+    "bedrock": "minecraft:element_37"
+  - "java": null
+    "bedrock": "minecraft:element_38"
+  - "java": null
+    "bedrock": "minecraft:element_39"
+  - "java": null
+    "bedrock": "minecraft:element_4"
+  - "java": null
+    "bedrock": "minecraft:element_40"
+  - "java": null
+    "bedrock": "minecraft:element_41"
+  - "java": null
+    "bedrock": "minecraft:element_42"
+  - "java": null
+    "bedrock": "minecraft:element_43"
+  - "java": null
+    "bedrock": "minecraft:element_44"
+  - "java": null
+    "bedrock": "minecraft:element_45"
+  - "java": null
+    "bedrock": "minecraft:element_46"
+  - "java": null
+    "bedrock": "minecraft:element_47"
+  - "java": null
+    "bedrock": "minecraft:element_48"
+  - "java": null
+    "bedrock": "minecraft:element_49"
+  - "java": null
+    "bedrock": "minecraft:element_5"
+  - "java": null
+    "bedrock": "minecraft:element_50"
+  - "java": null
+    "bedrock": "minecraft:element_51"
+  - "java": null
+    "bedrock": "minecraft:element_52"
+  - "java": null
+    "bedrock": "minecraft:element_53"
+  - "java": null
+    "bedrock": "minecraft:element_54"
+  - "java": null
+    "bedrock": "minecraft:element_55"
+  - "java": null
+    "bedrock": "minecraft:element_56"
+  - "java": null
+    "bedrock": "minecraft:element_57"
+  - "java": null
+    "bedrock": "minecraft:element_58"
+  - "java": null
+    "bedrock": "minecraft:element_59"
+  - "java": null
+    "bedrock": "minecraft:element_6"
+  - "java": null
+    "bedrock": "minecraft:element_60"
+  - "java": null
+    "bedrock": "minecraft:element_61"
+  - "java": null
+    "bedrock": "minecraft:element_62"
+  - "java": null
+    "bedrock": "minecraft:element_63"
+  - "java": null
+    "bedrock": "minecraft:element_64"
+  - "java": null
+    "bedrock": "minecraft:element_65"
+  - "java": null
+    "bedrock": "minecraft:element_66"
+  - "java": null
+    "bedrock": "minecraft:element_67"
+  - "java": null
+    "bedrock": "minecraft:element_68"
+  - "java": null
+    "bedrock": "minecraft:element_69"
+  - "java": null
+    "bedrock": "minecraft:element_7"
+  - "java": null
+    "bedrock": "minecraft:element_70"
+  - "java": null
+    "bedrock": "minecraft:element_71"
+  - "java": null
+    "bedrock": "minecraft:element_72"
+  - "java": null
+    "bedrock": "minecraft:element_73"
+  - "java": null
+    "bedrock": "minecraft:element_74"
+  - "java": null
+    "bedrock": "minecraft:element_75"
+  - "java": null
+    "bedrock": "minecraft:element_76"
+  - "java": null
+    "bedrock": "minecraft:element_77"
+  - "java": null
+    "bedrock": "minecraft:element_78"
+  - "java": null
+    "bedrock": "minecraft:element_79"
+  - "java": null
+    "bedrock": "minecraft:element_8"
+  - "java": null
+    "bedrock": "minecraft:element_80"
+  - "java": null
+    "bedrock": "minecraft:element_81"
+  - "java": null
+    "bedrock": "minecraft:element_82"
+  - "java": null
+    "bedrock": "minecraft:element_83"
+  - "java": null
+    "bedrock": "minecraft:element_84"
+  - "java": null
+    "bedrock": "minecraft:element_85"
+  - "java": null
+    "bedrock": "minecraft:element_86"
+  - "java": null
+    "bedrock": "minecraft:element_87"
+  - "java": null
+    "bedrock": "minecraft:element_88"
+  - "java": null
+    "bedrock": "minecraft:element_89"
+  - "java": null
+    "bedrock": "minecraft:element_9"
+  - "java": null
+    "bedrock": "minecraft:element_90"
+  - "java": null
+    "bedrock": "minecraft:element_91"
+  - "java": null
+    "bedrock": "minecraft:element_92"
+  - "java": null
+    "bedrock": "minecraft:element_93"
+  - "java": null
+    "bedrock": "minecraft:element_94"
+  - "java": null
+    "bedrock": "minecraft:element_95"
+  - "java": null
+    "bedrock": "minecraft:element_96"
+  - "java": null
+    "bedrock": "minecraft:element_97"
+  - "java": null
+    "bedrock": "minecraft:element_98"
+  - "java": null
+    "bedrock": "minecraft:element_99"
+  - "java": null
+    "bedrock": "minecraft:enchanting_table"
+  - "java": null
+    "bedrock": "minecraft:flowered_azalea_leaves"
+  - "java": null
+    "bedrock": "minecraft:frame"
+  - "java": null
+    "bedrock": "minecraft:glow_frame"
+  - "java": null
+    "bedrock": "minecraft:glow_stick"
+  - "java": null
+    "bedrock": "minecraft:glowingobsidian"
+  - "java": null
+    "bedrock": "minecraft:grass_path"
+  - "java": null
+    "bedrock": "minecraft:hard_glass"
+  - "java": null
+    "bedrock": "minecraft:hard_glass_pane"
+  - "java": null
+    "bedrock": "minecraft:hard_stained_glass"
+  - "java": null
+    "bedrock": "minecraft:hard_stained_glass_pane"
+  - "java": null
+    "bedrock": "minecraft:heavy_weighted_pressure_plate"
+  - "java": null
+    "bedrock": "minecraft:info_update"
+  - "java": null
+    "bedrock": "minecraft:info_update2"
+  - "java": null
+    "bedrock": "minecraft:invisiblebedrock"
+  - "java": null
+    "bedrock": "minecraft:jigsaw"
+  - "java": null
+    "bedrock": "minecraft:jungle_standing_sign"
+  - "java": null
+    "bedrock": "minecraft:lapis_block"
+  - "java": null
+    "bedrock": "minecraft:leaves"
+  - "java": null
+    "bedrock": "minecraft:light_block"
+  - "java": null
+    "bedrock": "minecraft:lit_blast_furnace"
+  - "java": null
+    "bedrock": "minecraft:lit_furnace"
+  - "java": null
+    "bedrock": "minecraft:lit_smoker"
+  - "java": null
+    "bedrock": "minecraft:log"
+  - "java": null
+    "bedrock": "minecraft:monster_egg"
+  - "java": null
+    "bedrock": "minecraft:movingblock"
+  - "java": null
+    "bedrock": "minecraft:nether_brick"
+  - "java": null
+    "bedrock": "minecraft:netherreactor"
+  - "java": null
+    "bedrock": "minecraft:planks"
+  - "java": null
+    "bedrock": "minecraft:polished_blackstone_brick_double_slab"
+  - "java": null
+    "bedrock": "minecraft:polished_blackstone_double_slab"
+  - "java": null
+    "bedrock": "minecraft:polished_deepslate_double_slab"
+  - "java": null
+    "bedrock": "minecraft:portal"
+  - "java": null
+    "bedrock": "minecraft:powered_repeater"
+  - "java": null
+    "bedrock": "minecraft:red_flower"
+  - "java": null
+    "bedrock": "minecraft:red_nether_brick"
+  - "java": null
+    "bedrock": "minecraft:reserved6"
+  - "java": null
+    "bedrock": "minecraft:sapling"
+  - "java": null
+    "bedrock": "minecraft:skull"
+  - "java": null
+    "bedrock": "minecraft:snow_layer"
+  - "java": null
+    "bedrock": "minecraft:spruce_standing_sign"
+  - "java": null
+    "bedrock": "minecraft:stained_glass"
+  - "java": null
+    "bedrock": "minecraft:stained_glass_pane"
+  - "java": null
+    "bedrock": "minecraft:standing_sign"
+  - "java": null
+    "bedrock": "minecraft:stickypistonarmcollision"
+  - "java": null
+    "bedrock": "minecraft:stonecutter_block"
+  - "java": null
+    "bedrock": "minecraft:turtle_egg"
+  - "java": null
+    "bedrock": "minecraft:underwater_torch"
+  - "java": null
+    "bedrock": "minecraft:unknown"
+  - "java": null
+    "bedrock": "minecraft:unlit_redstone_torch"
+  - "java": null
+    "bedrock": "minecraft:wall_banner"
+  - "java": null
+    "bedrock": "minecraft:warped_double_slab"
+  - "java": null
+    "bedrock": "minecraft:warped_standing_sign"
+  - "java": null
+    "bedrock": "minecraft:waxed_copper"
+  - "java": null
+    "bedrock": "minecraft:waxed_oxidized_double_cut_copper_slab"
+  - "java": null
+    "bedrock": "minecraft:wheat"
+  - "java": null
+    "bedrock": "minecraft:wood"
+  - "java": null
+    "bedrock": "minecraft:wooden_slab"
+  - "java": null
+    "bedrock": "minecraft:wool"
+  - "minecraft:acacia_button"
+  - "minecraft:acacia_door"
+  - "java": "minecraft:acacia_fence"
+    "bedrock": null
+  - "minecraft:acacia_fence_gate"
+  - "java": "minecraft:acacia_leaves"
+    "bedrock": "minecraft:leaves2"
+  - "java": "minecraft:acacia_log"
+    "bedrock": "minecraft:log2"
+  - "java": "minecraft:acacia_planks"
+    "bedrock": null
+  - "minecraft:acacia_pressure_plate"
+  - "java": "minecraft:acacia_sapling"
+    "bedrock": null
+  - "java": "minecraft:acacia_sign"
+    "bedrock": null
+  - "java": "minecraft:acacia_slab"
+    "bedrock": null
+  - "minecraft:acacia_stairs"
+  - "minecraft:acacia_trapdoor"
+  - "minecraft:acacia_wall_sign"
+  - "java": "minecraft:acacia_wood"
+    "bedrock": null
+  - "minecraft:activator_rail"
+  - "minecraft:air"
+  - "java": "minecraft:allium"
+    "bedrock": null
+  - "java": "minecraft:amethyst_block"
+    "bedrock": null
+  - "minecraft:amethyst_cluster"
+  - "minecraft:ancient_debris"
+  - "java": "minecraft:andesite"
+    "bedrock": null
+  - "java": "minecraft:andesite_slab"
+    "bedrock": null
+  - "minecraft:andesite_stairs"
+  - "java": "minecraft:andesite_wall"
+    "bedrock": null
+  - "minecraft:anvil"
+  - "java": "minecraft:attached_melon_stem"
+    "bedrock": null
+  - "java": "minecraft:attached_pumpkin_stem"
+    "bedrock": null
+  - "minecraft:azalea"
+  - "minecraft:azalea_leaves"
+  - "java": "minecraft:azure_bluet"
+    "bedrock": null
+  - "minecraft:bamboo"
+  - "java": "minecraft:bamboo_sapling"
+    "bedrock": null
+  - "minecraft:barrel"
+  - "minecraft:barrier"
+  - "minecraft:basalt"
+  - "minecraft:beacon"
+  - "minecraft:bedrock"
+  - "minecraft:bee_nest"
+  - "minecraft:beehive"
+  - "java": "minecraft:beetroots"
+    "bedrock": "minecraft:beetroot"
+  - "minecraft:bell"
+  - "minecraft:big_dripleaf"
+  - "java": "minecraft:big_dripleaf_stem"
+    "bedrock": null
+  - "minecraft:birch_button"
+  - "minecraft:birch_door"
+  - "java": "minecraft:birch_fence"
+    "bedrock": null
+  - "minecraft:birch_fence_gate"
+  - "java": "minecraft:birch_leaves"
+    "bedrock": null
+  - "java": "minecraft:birch_log"
+    "bedrock": null
+  - "java": "minecraft:birch_planks"
+    "bedrock": null
+  - "minecraft:birch_pressure_plate"
+  - "java": "minecraft:birch_sapling"
+    "bedrock": null
+  - "java": "minecraft:birch_sign"
+    "bedrock": null
+  - "java": "minecraft:birch_slab"
+    "bedrock": null
+  - "minecraft:birch_stairs"
+  - "minecraft:birch_trapdoor"
+  - "minecraft:birch_wall_sign"
+  - "java": "minecraft:birch_wood"
+    "bedrock": null
+  - "java": "minecraft:black_banner"
+    "bedrock": null
+  - "java": "minecraft:black_bed"
+    "bedrock": null
+  - "minecraft:black_candle"
+  - "minecraft:black_candle_cake"
+  - "java": "minecraft:black_carpet"
+    "bedrock": null
+  - "java": "minecraft:black_concrete"
+    "bedrock": null
+  - "java": "minecraft:black_concrete_powder"
+    "bedrock": null
+  - "minecraft:black_glazed_terracotta"
+  - "java": "minecraft:black_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:black_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:black_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:black_terracotta"
+    "bedrock": null
+  - "java": "minecraft:black_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:black_wool"
+    "bedrock": null
+  - "minecraft:blackstone"
+  - "minecraft:blackstone_slab"
+  - "minecraft:blackstone_stairs"
+  - "minecraft:blackstone_wall"
+  - "minecraft:blast_furnace"
+  - "java": "minecraft:blue_banner"
+    "bedrock": null
+  - "java": "minecraft:blue_bed"
+    "bedrock": null
+  - "minecraft:blue_candle"
+  - "minecraft:blue_candle_cake"
+  - "java": "minecraft:blue_carpet"
+    "bedrock": null
+  - "java": "minecraft:blue_concrete"
+    "bedrock": null
+  - "java": "minecraft:blue_concrete_powder"
+    "bedrock": null
+  - "minecraft:blue_glazed_terracotta"
+  - "minecraft:blue_ice"
+  - "java": "minecraft:blue_orchid"
+    "bedrock": null
+  - "java": "minecraft:blue_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:blue_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:blue_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:blue_terracotta"
+    "bedrock": null
+  - "java": "minecraft:blue_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:blue_wool"
+    "bedrock": null
+  - "minecraft:bone_block"
+  - "minecraft:bookshelf"
+  - "java": "minecraft:brain_coral"
+    "bedrock": null
+  - "java": "minecraft:brain_coral_block"
+    "bedrock": null
+  - "java": "minecraft:brain_coral_fan"
+    "bedrock": null
+  - "java": "minecraft:brain_coral_wall_fan"
+    "bedrock": null
+  - "minecraft:brewing_stand"
+  - "java": "minecraft:brick_slab"
+    "bedrock": null
+  - "minecraft:brick_stairs"
+  - "java": "minecraft:brick_wall"
+    "bedrock": null
+  - "java": "minecraft:bricks"
+    "bedrock": null
+  - "java": "minecraft:brown_banner"
+    "bedrock": null
+  - "java": "minecraft:brown_bed"
+    "bedrock": null
+  - "minecraft:brown_candle"
+  - "minecraft:brown_candle_cake"
+  - "java": "minecraft:brown_carpet"
+    "bedrock": null
+  - "java": "minecraft:brown_concrete"
+    "bedrock": null
+  - "java": "minecraft:brown_concrete_powder"
+    "bedrock": null
+  - "minecraft:brown_glazed_terracotta"
+  - "minecraft:brown_mushroom"
+  - "minecraft:brown_mushroom_block"
+  - "java": "minecraft:brown_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:brown_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:brown_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:brown_terracotta"
+    "bedrock": null
+  - "java": "minecraft:brown_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:brown_wool"
+    "bedrock": null
+  - "minecraft:bubble_column"
+  - "java": "minecraft:bubble_coral"
+    "bedrock": null
+  - "java": "minecraft:bubble_coral_block"
+    "bedrock": null
+  - "java": "minecraft:bubble_coral_fan"
+    "bedrock": null
+  - "java": "minecraft:bubble_coral_wall_fan"
+    "bedrock": null
+  - "minecraft:budding_amethyst"
+  - "minecraft:cactus"
+  - "minecraft:cake"
+  - "minecraft:calcite"
+  - "minecraft:campfire"
+  - "minecraft:candle"
+  - "minecraft:candle_cake"
+  - "minecraft:carrots"
+  - "minecraft:cartography_table"
+  - "minecraft:carved_pumpkin"
+  - "minecraft:cauldron"
+  - "java": "minecraft:cave_air"
+    "bedrock": null
+  - "minecraft:cave_vines"
+  - "java": "minecraft:cave_vines_plant"
+    "bedrock": null
+  - "minecraft:chain"
+  - "minecraft:chain_command_block"
+  - "minecraft:chest"
+  - "java": "minecraft:chipped_anvil"
+    "bedrock": null
+  - "minecraft:chiseled_deepslate"
+  - "minecraft:chiseled_nether_bricks"
+  - "minecraft:chiseled_polished_blackstone"
+  - "java": "minecraft:chiseled_quartz_block"
+    "bedrock": null
+  - "java": "minecraft:chiseled_red_sandstone"
+    "bedrock": null
+  - "java": "minecraft:chiseled_sandstone"
+    "bedrock": null
+  - "java": "minecraft:chiseled_stone_bricks"
+    "bedrock": null
+  - "minecraft:chorus_flower"
+  - "minecraft:chorus_plant"
+  - "minecraft:clay"
+  - "minecraft:coal_block"
+  - "minecraft:coal_ore"
+  - "java": "minecraft:coarse_dirt"
+    "bedrock": null
+  - "minecraft:cobbled_deepslate"
+  - "minecraft:cobbled_deepslate_slab"
+  - "minecraft:cobbled_deepslate_stairs"
+  - "minecraft:cobbled_deepslate_wall"
+  - "minecraft:cobblestone"
+  - "java": "minecraft:cobblestone_slab"
+    "bedrock": null
+  - "java": "minecraft:cobblestone_stairs"
+    "bedrock": "minecraft:stone_stairs"
+  - "minecraft:cobblestone_wall"
+  - "java": "minecraft:cobweb"
+    "bedrock": "minecraft:web"
+  - "minecraft:cocoa"
+  - "java": "minecraft:command_block"
+    "bedrock": null
+  - "java": "minecraft:comparator"
+    "bedrock": "minecraft:powered_comparator"
+  - "minecraft:composter"
+  - "minecraft:conduit"
+  - "java": "minecraft:copper_block"
+    "bedrock": null
+  - "minecraft:copper_ore"
+  - "java": "minecraft:cornflower"
+    "bedrock": null
+  - "minecraft:cracked_deepslate_bricks"
+  - "minecraft:cracked_deepslate_tiles"
+  - "minecraft:cracked_nether_bricks"
+  - "minecraft:cracked_polished_blackstone_bricks"
+  - "java": "minecraft:cracked_stone_bricks"
+    "bedrock": null
+  - "minecraft:crafting_table"
+  - "java": "minecraft:creeper_head"
+    "bedrock": null
+  - "java": "minecraft:creeper_wall_head"
+    "bedrock": null
+  - "minecraft:crimson_button"
+  - "minecraft:crimson_door"
+  - "minecraft:crimson_fence"
+  - "minecraft:crimson_fence_gate"
+  - "minecraft:crimson_fungus"
+  - "minecraft:crimson_hyphae"
+  - "minecraft:crimson_nylium"
+  - "minecraft:crimson_planks"
+  - "minecraft:crimson_pressure_plate"
+  - "minecraft:crimson_roots"
+  - "java": "minecraft:crimson_sign"
+    "bedrock": null
+  - "minecraft:crimson_slab"
+  - "minecraft:crimson_stairs"
+  - "minecraft:crimson_stem"
+  - "minecraft:crimson_trapdoor"
+  - "minecraft:crimson_wall_sign"
+  - "minecraft:crying_obsidian"
+  - "minecraft:cut_copper"
+  - "minecraft:cut_copper_slab"
+  - "minecraft:cut_copper_stairs"
+  - "java": "minecraft:cut_red_sandstone"
+    "bedrock": null
+  - "java": "minecraft:cut_red_sandstone_slab"
+    "bedrock": null
+  - "java": "minecraft:cut_sandstone"
+    "bedrock": null
+  - "java": "minecraft:cut_sandstone_slab"
+    "bedrock": null
+  - "java": "minecraft:cyan_banner"
+    "bedrock": null
+  - "java": "minecraft:cyan_bed"
+    "bedrock": null
+  - "minecraft:cyan_candle"
+  - "minecraft:cyan_candle_cake"
+  - "java": "minecraft:cyan_carpet"
+    "bedrock": null
+  - "java": "minecraft:cyan_concrete"
+    "bedrock": null
+  - "java": "minecraft:cyan_concrete_powder"
+    "bedrock": null
+  - "minecraft:cyan_glazed_terracotta"
+  - "java": "minecraft:cyan_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:cyan_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:cyan_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:cyan_terracotta"
+    "bedrock": null
+  - "java": "minecraft:cyan_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:cyan_wool"
+    "bedrock": null
+  - "java": "minecraft:damaged_anvil"
+    "bedrock": null
+  - "java": "minecraft:dandelion"
+    "bedrock": "minecraft:yellow_flower"
+  - "minecraft:dark_oak_button"
+  - "minecraft:dark_oak_door"
+  - "java": "minecraft:dark_oak_fence"
+    "bedrock": null
+  - "minecraft:dark_oak_fence_gate"
+  - "java": "minecraft:dark_oak_leaves"
+    "bedrock": null
+  - "java": "minecraft:dark_oak_log"
+    "bedrock": null
+  - "java": "minecraft:dark_oak_planks"
+    "bedrock": null
+  - "minecraft:dark_oak_pressure_plate"
+  - "java": "minecraft:dark_oak_sapling"
+    "bedrock": null
+  - "java": "minecraft:dark_oak_sign"
+    "bedrock": null
+  - "java": "minecraft:dark_oak_slab"
+    "bedrock": null
+  - "minecraft:dark_oak_stairs"
+  - "minecraft:dark_oak_trapdoor"
+  - "java": "minecraft:dark_oak_wall_sign"
+    "bedrock": "minecraft:darkoak_wall_sign"
+  - "java": "minecraft:dark_oak_wood"
+    "bedrock": null
+  - "java": "minecraft:dark_prismarine"
+    "bedrock": null
+  - "java": "minecraft:dark_prismarine_slab"
+    "bedrock": null
+  - "minecraft:dark_prismarine_stairs"
+  - "java": "minecraft:daylight_detector"
+    "bedrock": null
+  - "java": "minecraft:dead_brain_coral"
+    "bedrock": null
+  - "java": "minecraft:dead_brain_coral_block"
+    "bedrock": null
+  - "java": "minecraft:dead_brain_coral_fan"
+    "bedrock": null
+  - "java": "minecraft:dead_brain_coral_wall_fan"
+    "bedrock": null
+  - "java": "minecraft:dead_bubble_coral"
+    "bedrock": null
+  - "java": "minecraft:dead_bubble_coral_block"
+    "bedrock": null
+  - "java": "minecraft:dead_bubble_coral_fan"
+    "bedrock": null
+  - "java": "minecraft:dead_bubble_coral_wall_fan"
+    "bedrock": null
+  - "java": "minecraft:dead_bush"
+    "bedrock": "minecraft:deadbush"
+  - "java": "minecraft:dead_fire_coral"
+    "bedrock": null
+  - "java": "minecraft:dead_fire_coral_block"
+    "bedrock": null
+  - "java": "minecraft:dead_fire_coral_fan"
+    "bedrock": null
+  - "java": "minecraft:dead_fire_coral_wall_fan"
+    "bedrock": null
+  - "java": "minecraft:dead_horn_coral"
+    "bedrock": null
+  - "java": "minecraft:dead_horn_coral_block"
+    "bedrock": null
+  - "java": "minecraft:dead_horn_coral_fan"
+    "bedrock": null
+  - "java": "minecraft:dead_horn_coral_wall_fan"
+    "bedrock": null
+  - "java": "minecraft:dead_tube_coral"
+    "bedrock": null
+  - "java": "minecraft:dead_tube_coral_block"
+    "bedrock": null
+  - "java": "minecraft:dead_tube_coral_fan"
+    "bedrock": null
+  - "java": "minecraft:dead_tube_coral_wall_fan"
+    "bedrock": null
+  - "minecraft:deepslate"
+  - "minecraft:deepslate_brick_slab"
+  - "minecraft:deepslate_brick_stairs"
+  - "minecraft:deepslate_brick_wall"
+  - "minecraft:deepslate_bricks"
+  - "minecraft:deepslate_coal_ore"
+  - "minecraft:deepslate_copper_ore"
+  - "minecraft:deepslate_diamond_ore"
+  - "minecraft:deepslate_emerald_ore"
+  - "minecraft:deepslate_gold_ore"
+  - "minecraft:deepslate_iron_ore"
+  - "java": "minecraft:deepslate_lapis_ore"
+    "bedrock": "minecraft:deepslate_lapis_lazuli_ore"
+  - "java": "minecraft:deepslate_redstone_ore"
+    "bedrock": "minecraft:lit_deepslate_redstone_ore"
+  - "minecraft:detector_rail"
+  - "minecraft:diamond_block"
+  - "minecraft:diamond_ore"
+  - "java": "minecraft:diorite"
+    "bedrock": null
+  - "java": "minecraft:diorite_slab"
+    "bedrock": null
+  - "minecraft:diorite_stairs"
+  - "java": "minecraft:diorite_wall"
+    "bedrock": null
+  - "minecraft:dirt"
+  - "java": "minecraft:dirt_path"
+    "bedrock": null
+  - "minecraft:dispenser"
+  - "minecraft:dragon_egg"
+  - "java": "minecraft:dragon_head"
+    "bedrock": null
+  - "java": "minecraft:dragon_wall_head"
+    "bedrock": null
+  - "minecraft:dried_kelp_block"
+  - "minecraft:dripstone_block"
+  - "minecraft:dropper"
+  - "minecraft:emerald_block"
+  - "minecraft:emerald_ore"
+  - "java": "minecraft:enchanting_table"
+    "bedrock": null
+  - "minecraft:end_gateway"
+  - "minecraft:end_portal"
+  - "minecraft:end_portal_frame"
+  - "minecraft:end_rod"
+  - "minecraft:end_stone"
+  - "java": "minecraft:end_stone_brick_slab"
+    "bedrock": "minecraft:stone_slab3"
+  - "java": "minecraft:end_stone_brick_stairs"
+    "bedrock": "minecraft:end_brick_stairs"
+  - "java": "minecraft:end_stone_brick_wall"
+    "bedrock": null
+  - "java": "minecraft:end_stone_bricks"
+    "bedrock": "minecraft:end_bricks"
+  - "minecraft:ender_chest"
+  - "minecraft:exposed_copper"
+  - "minecraft:exposed_cut_copper"
+  - "minecraft:exposed_cut_copper_slab"
+  - "minecraft:exposed_cut_copper_stairs"
+  - "minecraft:farmland"
+  - "java": "minecraft:fern"
+    "bedrock": null
+  - "minecraft:fire"
+  - "java": "minecraft:fire_coral"
+    "bedrock": null
+  - "java": "minecraft:fire_coral_block"
+    "bedrock": null
+  - "java": "minecraft:fire_coral_fan"
+    "bedrock": null
+  - "java": "minecraft:fire_coral_wall_fan"
+    "bedrock": null
+  - "minecraft:fletching_table"
+  - "minecraft:flower_pot"
+  - "minecraft:flowering_azalea"
+  - "java": "minecraft:flowering_azalea_leaves"
+    "bedrock": null
+  - "minecraft:frosted_ice"
+  - "minecraft:furnace"
+  - "minecraft:gilded_blackstone"
+  - "minecraft:glass"
+  - "minecraft:glass_pane"
+  - "minecraft:glow_lichen"
+  - "minecraft:glowstone"
+  - "minecraft:gold_block"
+  - "minecraft:gold_ore"
+  - "java": "minecraft:granite"
+    "bedrock": null
+  - "java": "minecraft:granite_slab"
+    "bedrock": null
+  - "minecraft:granite_stairs"
+  - "java": "minecraft:granite_wall"
+    "bedrock": null
+  - "java": "minecraft:grass"
+    "bedrock": null
+  - "java": "minecraft:grass_block"
+    "bedrock": "minecraft:grass"
+  - "minecraft:gravel"
+  - "java": "minecraft:gray_banner"
+    "bedrock": null
+  - "java": "minecraft:gray_bed"
+    "bedrock": null
+  - "minecraft:gray_candle"
+  - "minecraft:gray_candle_cake"
+  - "java": "minecraft:gray_carpet"
+    "bedrock": null
+  - "java": "minecraft:gray_concrete"
+    "bedrock": null
+  - "java": "minecraft:gray_concrete_powder"
+    "bedrock": null
+  - "minecraft:gray_glazed_terracotta"
+  - "java": "minecraft:gray_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:gray_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:gray_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:gray_terracotta"
+    "bedrock": null
+  - "java": "minecraft:gray_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:gray_wool"
+    "bedrock": null
+  - "java": "minecraft:green_banner"
+    "bedrock": null
+  - "java": "minecraft:green_bed"
+    "bedrock": null
+  - "minecraft:green_candle"
+  - "minecraft:green_candle_cake"
+  - "java": "minecraft:green_carpet"
+    "bedrock": null
+  - "java": "minecraft:green_concrete"
+    "bedrock": null
+  - "java": "minecraft:green_concrete_powder"
+    "bedrock": null
+  - "minecraft:green_glazed_terracotta"
+  - "java": "minecraft:green_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:green_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:green_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:green_terracotta"
+    "bedrock": null
+  - "java": "minecraft:green_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:green_wool"
+    "bedrock": null
+  - "minecraft:grindstone"
+  - "minecraft:hanging_roots"
+  - "minecraft:hay_block"
+  - "java": "minecraft:heavy_weighted_pressure_plate"
+    "bedrock": null
+  - "minecraft:honey_block"
+  - "minecraft:honeycomb_block"
+  - "minecraft:hopper"
+  - "java": "minecraft:horn_coral"
+    "bedrock": null
+  - "java": "minecraft:horn_coral_block"
+    "bedrock": null
+  - "java": "minecraft:horn_coral_fan"
+    "bedrock": null
+  - "java": "minecraft:horn_coral_wall_fan"
+    "bedrock": null
+  - "minecraft:ice"
+  - "java": "minecraft:infested_chiseled_stone_bricks"
+    "bedrock": null
+  - "java": "minecraft:infested_cobblestone"
+    "bedrock": null
+  - "java": "minecraft:infested_cracked_stone_bricks"
+    "bedrock": null
+  - "java": "minecraft:infested_deepslate"
+    "bedrock": null
+  - "java": "minecraft:infested_mossy_stone_bricks"
+    "bedrock": null
+  - "java": "minecraft:infested_stone"
+    "bedrock": null
+  - "java": "minecraft:infested_stone_bricks"
+    "bedrock": null
+  - "minecraft:iron_bars"
+  - "minecraft:iron_block"
+  - "minecraft:iron_door"
+  - "minecraft:iron_ore"
+  - "minecraft:iron_trapdoor"
+  - "java": "minecraft:jack_o_lantern"
+    "bedrock": "minecraft:lit_pumpkin"
+  - "java": "minecraft:jigsaw"
+    "bedrock": null
+  - "minecraft:jukebox"
+  - "minecraft:jungle_button"
+  - "minecraft:jungle_door"
+  - "java": "minecraft:jungle_fence"
+    "bedrock": null
+  - "minecraft:jungle_fence_gate"
+  - "java": "minecraft:jungle_leaves"
+    "bedrock": null
+  - "java": "minecraft:jungle_log"
+    "bedrock": null
+  - "java": "minecraft:jungle_planks"
+    "bedrock": null
+  - "minecraft:jungle_pressure_plate"
+  - "java": "minecraft:jungle_sapling"
+    "bedrock": null
+  - "java": "minecraft:jungle_sign"
+    "bedrock": null
+  - "java": "minecraft:jungle_slab"
+    "bedrock": null
+  - "minecraft:jungle_stairs"
+  - "minecraft:jungle_trapdoor"
+  - "minecraft:jungle_wall_sign"
+  - "java": "minecraft:jungle_wood"
+    "bedrock": null
+  - "minecraft:kelp"
+  - "java": "minecraft:kelp_plant"
+    "bedrock": null
+  - "minecraft:ladder"
+  - "minecraft:lantern"
+  - "java": "minecraft:lapis_block"
+    "bedrock": null
+  - "minecraft:lapis_ore"
+  - "minecraft:large_amethyst_bud"
+  - "java": "minecraft:large_fern"
+    "bedrock": null
+  - "minecraft:lava"
+  - "minecraft:lava_cauldron"
+  - "minecraft:lectern"
+  - "minecraft:lever"
+  - "java": "minecraft:light"
+    "bedrock": null
+  - "java": "minecraft:light_blue_banner"
+    "bedrock": null
+  - "java": "minecraft:light_blue_bed"
+    "bedrock": null
+  - "minecraft:light_blue_candle"
+  - "minecraft:light_blue_candle_cake"
+  - "java": "minecraft:light_blue_carpet"
+    "bedrock": null
+  - "java": "minecraft:light_blue_concrete"
+    "bedrock": null
+  - "java": "minecraft:light_blue_concrete_powder"
+    "bedrock": null
+  - "minecraft:light_blue_glazed_terracotta"
+  - "java": "minecraft:light_blue_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:light_blue_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:light_blue_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:light_blue_terracotta"
+    "bedrock": null
+  - "java": "minecraft:light_blue_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:light_blue_wool"
+    "bedrock": null
+  - "java": "minecraft:light_gray_banner"
+    "bedrock": null
+  - "java": "minecraft:light_gray_bed"
+    "bedrock": null
+  - "minecraft:light_gray_candle"
+  - "minecraft:light_gray_candle_cake"
+  - "java": "minecraft:light_gray_carpet"
+    "bedrock": null
+  - "java": "minecraft:light_gray_concrete"
+    "bedrock": null
+  - "java": "minecraft:light_gray_concrete_powder"
+    "bedrock": null
+  - "java": "minecraft:light_gray_glazed_terracotta"
+    "bedrock": "minecraft:silver_glazed_terracotta"
+  - "java": "minecraft:light_gray_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:light_gray_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:light_gray_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:light_gray_terracotta"
+    "bedrock": null
+  - "java": "minecraft:light_gray_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:light_gray_wool"
+    "bedrock": null
+  - "java": "minecraft:light_weighted_pressure_plate"
+    "bedrock": null
+  - "minecraft:lightning_rod"
+  - "java": "minecraft:lilac"
+    "bedrock": null
+  - "java": "minecraft:lily_of_the_valley"
+    "bedrock": null
+  - "java": "minecraft:lily_pad"
+    "bedrock": "minecraft:waterlily"
+  - "java": "minecraft:lime_banner"
+    "bedrock": null
+  - "java": "minecraft:lime_bed"
+    "bedrock": null
+  - "minecraft:lime_candle"
+  - "minecraft:lime_candle_cake"
+  - "java": "minecraft:lime_carpet"
+    "bedrock": null
+  - "java": "minecraft:lime_concrete"
+    "bedrock": null
+  - "java": "minecraft:lime_concrete_powder"
+    "bedrock": null
+  - "minecraft:lime_glazed_terracotta"
+  - "java": "minecraft:lime_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:lime_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:lime_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:lime_terracotta"
+    "bedrock": null
+  - "java": "minecraft:lime_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:lime_wool"
+    "bedrock": null
+  - "minecraft:lodestone"
+  - "minecraft:loom"
+  - "java": "minecraft:magenta_banner"
+    "bedrock": null
+  - "java": "minecraft:magenta_bed"
+    "bedrock": null
+  - "minecraft:magenta_candle"
+  - "minecraft:magenta_candle_cake"
+  - "java": "minecraft:magenta_carpet"
+    "bedrock": null
+  - "java": "minecraft:magenta_concrete"
+    "bedrock": null
+  - "java": "minecraft:magenta_concrete_powder"
+    "bedrock": null
+  - "minecraft:magenta_glazed_terracotta"
+  - "java": "minecraft:magenta_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:magenta_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:magenta_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:magenta_terracotta"
+    "bedrock": null
+  - "java": "minecraft:magenta_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:magenta_wool"
+    "bedrock": null
+  - "java": "minecraft:magma_block"
+    "bedrock": "minecraft:magma"
+  - "minecraft:medium_amethyst_bud"
+  - "java": "minecraft:melon"
+    "bedrock": "minecraft:melon_block"
+  - "minecraft:melon_stem"
+  - "minecraft:moss_block"
+  - "minecraft:moss_carpet"
+  - "minecraft:mossy_cobblestone"
+  - "java": "minecraft:mossy_cobblestone_slab"
+    "bedrock": null
+  - "minecraft:mossy_cobblestone_stairs"
+  - "java": "minecraft:mossy_cobblestone_wall"
+    "bedrock": null
+  - "java": "minecraft:mossy_stone_brick_slab"
+    "bedrock": "minecraft:stone_slab4"
+  - "minecraft:mossy_stone_brick_stairs"
+  - "java": "minecraft:mossy_stone_brick_wall"
+    "bedrock": null
+  - "java": "minecraft:mossy_stone_bricks"
+    "bedrock": null
+  - "java": "minecraft:moving_piston"
+    "bedrock": null
+  - "java": "minecraft:mushroom_stem"
+    "bedrock": null
+  - "minecraft:mycelium"
+  - "minecraft:nether_brick_fence"
+  - "java": "minecraft:nether_brick_slab"
+    "bedrock": null
+  - "minecraft:nether_brick_stairs"
+  - "java": "minecraft:nether_brick_wall"
+    "bedrock": null
+  - "java": "minecraft:nether_bricks"
+    "bedrock": null
+  - "minecraft:nether_gold_ore"
+  - "java": "minecraft:nether_portal"
+    "bedrock": null
+  - "java": "minecraft:nether_quartz_ore"
+    "bedrock": "minecraft:quartz_ore"
+  - "minecraft:nether_sprouts"
+  - "minecraft:nether_wart"
+  - "minecraft:nether_wart_block"
+  - "minecraft:netherite_block"
+  - "minecraft:netherrack"
+  - "java": "minecraft:note_block"
+    "bedrock": "minecraft:noteblock"
+  - "java": "minecraft:oak_button"
+    "bedrock": "minecraft:wooden_button"
+  - "minecraft:oak_door"
+  - "java": "minecraft:oak_fence"
+    "bedrock": "minecraft:fence"
+  - "java": "minecraft:oak_fence_gate"
+    "bedrock": "minecraft:fence_gate"
+  - "java": "minecraft:oak_leaves"
+    "bedrock": null
+  - "java": "minecraft:oak_log"
+    "bedrock": null
+  - "java": "minecraft:oak_planks"
+    "bedrock": null
+  - "java": "minecraft:oak_pressure_plate"
+    "bedrock": "minecraft:wooden_pressure_plate"
+  - "java": "minecraft:oak_sapling"
+    "bedrock": null
+  - "java": "minecraft:oak_sign"
+    "bedrock": null
+  - "java": "minecraft:oak_slab"
+    "bedrock": null
+  - "minecraft:oak_stairs"
+  - "java": "minecraft:oak_trapdoor"
+    "bedrock": "minecraft:wooden_trapdoor"
+  - "java": "minecraft:oak_wall_sign"
+    "bedrock": "minecraft:wall_sign"
+  - "java": "minecraft:oak_wood"
+    "bedrock": null
+  - "minecraft:observer"
+  - "minecraft:obsidian"
+  - "java": "minecraft:orange_banner"
+    "bedrock": null
+  - "java": "minecraft:orange_bed"
+    "bedrock": null
+  - "minecraft:orange_candle"
+  - "minecraft:orange_candle_cake"
+  - "java": "minecraft:orange_carpet"
+    "bedrock": null
+  - "java": "minecraft:orange_concrete"
+    "bedrock": null
+  - "java": "minecraft:orange_concrete_powder"
+    "bedrock": null
+  - "minecraft:orange_glazed_terracotta"
+  - "java": "minecraft:orange_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:orange_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:orange_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:orange_terracotta"
+    "bedrock": null
+  - "java": "minecraft:orange_tulip"
+    "bedrock": null
+  - "java": "minecraft:orange_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:orange_wool"
+    "bedrock": null
+  - "java": "minecraft:oxeye_daisy"
+    "bedrock": null
+  - "minecraft:oxidized_copper"
+  - "minecraft:oxidized_cut_copper"
+  - "minecraft:oxidized_cut_copper_slab"
+  - "minecraft:oxidized_cut_copper_stairs"
+  - "minecraft:packed_ice"
+  - "java": "minecraft:peony"
+    "bedrock": null
+  - "java": "minecraft:petrified_oak_slab"
+    "bedrock": null
+  - "java": "minecraft:pink_banner"
+    "bedrock": null
+  - "java": "minecraft:pink_bed"
+    "bedrock": null
+  - "minecraft:pink_candle"
+  - "minecraft:pink_candle_cake"
+  - "java": "minecraft:pink_carpet"
+    "bedrock": null
+  - "java": "minecraft:pink_concrete"
+    "bedrock": null
+  - "java": "minecraft:pink_concrete_powder"
+    "bedrock": null
+  - "minecraft:pink_glazed_terracotta"
+  - "java": "minecraft:pink_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:pink_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:pink_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:pink_terracotta"
+    "bedrock": null
+  - "java": "minecraft:pink_tulip"
+    "bedrock": null
+  - "java": "minecraft:pink_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:pink_wool"
+    "bedrock": null
+  - "minecraft:piston"
+  - "java": "minecraft:piston_head"
+    "bedrock": "minecraft:pistonarmcollision"
+  - "java": "minecraft:player_head"
+    "bedrock": null
+  - "java": "minecraft:player_wall_head"
+    "bedrock": null
+  - "minecraft:podzol"
+  - "minecraft:pointed_dripstone"
+  - "java": "minecraft:polished_andesite"
+    "bedrock": null
+  - "java": "minecraft:polished_andesite_slab"
+    "bedrock": null
+  - "minecraft:polished_andesite_stairs"
+  - "minecraft:polished_basalt"
+  - "minecraft:polished_blackstone"
+  - "minecraft:polished_blackstone_brick_slab"
+  - "minecraft:polished_blackstone_brick_stairs"
+  - "minecraft:polished_blackstone_brick_wall"
+  - "minecraft:polished_blackstone_bricks"
+  - "minecraft:polished_blackstone_button"
+  - "minecraft:polished_blackstone_pressure_plate"
+  - "minecraft:polished_blackstone_slab"
+  - "minecraft:polished_blackstone_stairs"
+  - "minecraft:polished_blackstone_wall"
+  - "minecraft:polished_deepslate"
+  - "minecraft:polished_deepslate_slab"
+  - "minecraft:polished_deepslate_stairs"
+  - "minecraft:polished_deepslate_wall"
+  - "java": "minecraft:polished_diorite"
+    "bedrock": null
+  - "java": "minecraft:polished_diorite_slab"
+    "bedrock": null
+  - "minecraft:polished_diorite_stairs"
+  - "java": "minecraft:polished_granite"
+    "bedrock": null
+  - "java": "minecraft:polished_granite_slab"
+    "bedrock": null
+  - "minecraft:polished_granite_stairs"
+  - "java": "minecraft:poppy"
+    "bedrock": null
+  - "minecraft:potatoes"
+  - "java": "minecraft:potted_acacia_sapling"
+    "bedrock": null
+  - "java": "minecraft:potted_allium"
+    "bedrock": null
+  - "java": "minecraft:potted_azalea_bush"
+    "bedrock": null
+  - "java": "minecraft:potted_azure_bluet"
+    "bedrock": null
+  - "java": "minecraft:potted_bamboo"
+    "bedrock": null
+  - "java": "minecraft:potted_birch_sapling"
+    "bedrock": null
+  - "java": "minecraft:potted_blue_orchid"
+    "bedrock": null
+  - "java": "minecraft:potted_brown_mushroom"
+    "bedrock": null
+  - "java": "minecraft:potted_cactus"
+    "bedrock": null
+  - "java": "minecraft:potted_cornflower"
+    "bedrock": null
+  - "java": "minecraft:potted_crimson_fungus"
+    "bedrock": null
+  - "java": "minecraft:potted_crimson_roots"
+    "bedrock": null
+  - "java": "minecraft:potted_dandelion"
+    "bedrock": null
+  - "java": "minecraft:potted_dark_oak_sapling"
+    "bedrock": null
+  - "java": "minecraft:potted_dead_bush"
+    "bedrock": null
+  - "java": "minecraft:potted_fern"
+    "bedrock": null
+  - "java": "minecraft:potted_flowering_azalea_bush"
+    "bedrock": null
+  - "java": "minecraft:potted_jungle_sapling"
+    "bedrock": null
+  - "java": "minecraft:potted_lily_of_the_valley"
+    "bedrock": null
+  - "java": "minecraft:potted_oak_sapling"
+    "bedrock": null
+  - "java": "minecraft:potted_orange_tulip"
+    "bedrock": null
+  - "java": "minecraft:potted_oxeye_daisy"
+    "bedrock": null
+  - "java": "minecraft:potted_pink_tulip"
+    "bedrock": null
+  - "java": "minecraft:potted_poppy"
+    "bedrock": null
+  - "java": "minecraft:potted_red_mushroom"
+    "bedrock": null
+  - "java": "minecraft:potted_red_tulip"
+    "bedrock": null
+  - "java": "minecraft:potted_spruce_sapling"
+    "bedrock": null
+  - "java": "minecraft:potted_warped_fungus"
+    "bedrock": null
+  - "java": "minecraft:potted_warped_roots"
+    "bedrock": null
+  - "java": "minecraft:potted_white_tulip"
+    "bedrock": null
+  - "java": "minecraft:potted_wither_rose"
+    "bedrock": null
+  - "minecraft:powder_snow"
+  - "java": "minecraft:powder_snow_cauldron"
+    "bedrock": null
+  - "java": "minecraft:powered_rail"
+    "bedrock": "minecraft:golden_rail"
+  - "minecraft:prismarine"
+  - "java": "minecraft:prismarine_brick_slab"
+    "bedrock": null
+  - "java": "minecraft:prismarine_brick_stairs"
+    "bedrock": "minecraft:prismarine_bricks_stairs"
+  - "java": "minecraft:prismarine_bricks"
+    "bedrock": null
+  - "java": "minecraft:prismarine_slab"
+    "bedrock": null
+  - "minecraft:prismarine_stairs"
+  - "java": "minecraft:prismarine_wall"
+    "bedrock": null
+  - "minecraft:pumpkin"
+  - "minecraft:pumpkin_stem"
+  - "java": "minecraft:purple_banner"
+    "bedrock": null
+  - "java": "minecraft:purple_bed"
+    "bedrock": null
+  - "minecraft:purple_candle"
+  - "minecraft:purple_candle_cake"
+  - "java": "minecraft:purple_carpet"
+    "bedrock": null
+  - "java": "minecraft:purple_concrete"
+    "bedrock": null
+  - "java": "minecraft:purple_concrete_powder"
+    "bedrock": null
+  - "minecraft:purple_glazed_terracotta"
+  - "java": "minecraft:purple_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:purple_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:purple_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:purple_terracotta"
+    "bedrock": null
+  - "java": "minecraft:purple_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:purple_wool"
+    "bedrock": null
+  - "minecraft:purpur_block"
+  - "java": "minecraft:purpur_pillar"
+    "bedrock": null
+  - "java": "minecraft:purpur_slab"
+    "bedrock": null
+  - "minecraft:purpur_stairs"
+  - "minecraft:quartz_block"
+  - "minecraft:quartz_bricks"
+  - "java": "minecraft:quartz_pillar"
+    "bedrock": null
+  - "java": "minecraft:quartz_slab"
+    "bedrock": null
+  - "minecraft:quartz_stairs"
+  - "minecraft:rail"
+  - "java": "minecraft:raw_copper_block"
+    "bedrock": "minecraft:block_of_raw_copper"
+  - "java": "minecraft:raw_gold_block"
+    "bedrock": "minecraft:block_of_raw_gold"
+  - "java": "minecraft:raw_iron_block"
+    "bedrock": "minecraft:block_of_raw_iron"
+  - "java": "minecraft:red_banner"
+    "bedrock": null
+  - "java": "minecraft:red_bed"
+    "bedrock": null
+  - "minecraft:red_candle"
+  - "minecraft:red_candle_cake"
+  - "java": "minecraft:red_carpet"
+    "bedrock": null
+  - "java": "minecraft:red_concrete"
+    "bedrock": null
+  - "java": "minecraft:red_concrete_powder"
+    "bedrock": null
+  - "minecraft:red_glazed_terracotta"
+  - "minecraft:red_mushroom"
+  - "minecraft:red_mushroom_block"
+  - "java": "minecraft:red_nether_brick_slab"
+    "bedrock": null
+  - "minecraft:red_nether_brick_stairs"
+  - "java": "minecraft:red_nether_brick_wall"
+    "bedrock": null
+  - "java": "minecraft:red_nether_bricks"
+    "bedrock": null
+  - "java": "minecraft:red_sand"
+    "bedrock": null
+  - "minecraft:red_sandstone"
+  - "java": "minecraft:red_sandstone_slab"
+    "bedrock": "minecraft:stone_slab2"
+  - "minecraft:red_sandstone_stairs"
+  - "java": "minecraft:red_sandstone_wall"
+    "bedrock": null
+  - "java": "minecraft:red_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:red_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:red_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:red_terracotta"
+    "bedrock": null
+  - "java": "minecraft:red_tulip"
+    "bedrock": null
+  - "java": "minecraft:red_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:red_wool"
+    "bedrock": null
+  - "minecraft:redstone_block"
+  - "java": "minecraft:redstone_lamp"
+    "bedrock": "minecraft:lit_redstone_lamp"
+  - "java": "minecraft:redstone_ore"
+    "bedrock": "minecraft:lit_redstone_ore"
+  - "minecraft:redstone_torch"
+  - "java": "minecraft:redstone_wall_torch"
+    "bedrock": null
+  - "minecraft:redstone_wire"
+  - "java": "minecraft:repeater"
+    "bedrock": "minecraft:unpowered_repeater"
+  - "minecraft:repeating_command_block"
+  - "minecraft:respawn_anchor"
+  - "minecraft:rooted_dirt"
+  - "java": "minecraft:rose_bush"
+    "bedrock": null
+  - "minecraft:sand"
+  - "minecraft:sandstone"
+  - "java": "minecraft:sandstone_slab"
+    "bedrock": null
+  - "minecraft:sandstone_stairs"
+  - "java": "minecraft:sandstone_wall"
+    "bedrock": null
+  - "minecraft:scaffolding"
+  - "minecraft:sculk_sensor"
+  - "java": "minecraft:sea_lantern"
+    "bedrock": "minecraft:sealantern"
+  - "minecraft:sea_pickle"
+  - "minecraft:seagrass"
+  - "minecraft:shroomlight"
+  - "minecraft:shulker_box"
+  - "java": "minecraft:skeleton_skull"
+    "bedrock": null
+  - "java": "minecraft:skeleton_wall_skull"
+    "bedrock": null
+  - "java": "minecraft:slime_block"
+    "bedrock": "minecraft:slime"
+  - "minecraft:small_amethyst_bud"
+  - "minecraft:small_dripleaf"
+  - "minecraft:smithing_table"
+  - "minecraft:smoker"
+  - "minecraft:smooth_basalt"
+  - "java": "minecraft:smooth_quartz"
+    "bedrock": null
+  - "java": "minecraft:smooth_quartz_slab"
+    "bedrock": null
+  - "minecraft:smooth_quartz_stairs"
+  - "java": "minecraft:smooth_red_sandstone"
+    "bedrock": null
+  - "java": "minecraft:smooth_red_sandstone_slab"
+    "bedrock": null
+  - "minecraft:smooth_red_sandstone_stairs"
+  - "java": "minecraft:smooth_sandstone"
+    "bedrock": null
+  - "java": "minecraft:smooth_sandstone_slab"
+    "bedrock": null
+  - "minecraft:smooth_sandstone_stairs"
+  - "minecraft:smooth_stone"
+  - "java": "minecraft:smooth_stone_slab"
+    "bedrock": null
+  - "minecraft:snow"
+  - "java": "minecraft:snow_block"
+    "bedrock": null
+  - "minecraft:soul_campfire"
+  - "minecraft:soul_fire"
+  - "minecraft:soul_lantern"
+  - "minecraft:soul_sand"
+  - "minecraft:soul_soil"
+  - "minecraft:soul_torch"
+  - "java": "minecraft:soul_wall_torch"
+    "bedrock": null
+  - "java": "minecraft:spawner"
+    "bedrock": "minecraft:mob_spawner"
+  - "minecraft:sponge"
+  - "minecraft:spore_blossom"
+  - "minecraft:spruce_button"
+  - "minecraft:spruce_door"
+  - "java": "minecraft:spruce_fence"
+    "bedrock": null
+  - "minecraft:spruce_fence_gate"
+  - "java": "minecraft:spruce_leaves"
+    "bedrock": null
+  - "java": "minecraft:spruce_log"
+    "bedrock": null
+  - "java": "minecraft:spruce_planks"
+    "bedrock": null
+  - "minecraft:spruce_pressure_plate"
+  - "java": "minecraft:spruce_sapling"
+    "bedrock": null
+  - "java": "minecraft:spruce_sign"
+    "bedrock": null
+  - "java": "minecraft:spruce_slab"
+    "bedrock": null
+  - "minecraft:spruce_stairs"
+  - "minecraft:spruce_trapdoor"
+  - "minecraft:spruce_wall_sign"
+  - "java": "minecraft:spruce_wood"
+    "bedrock": null
+  - "minecraft:sticky_piston"
+  - "minecraft:stone"
+  - "java": "minecraft:stone_brick_slab"
+    "bedrock": null
+  - "minecraft:stone_brick_stairs"
+  - "java": "minecraft:stone_brick_wall"
+    "bedrock": null
+  - "java": "minecraft:stone_bricks"
+    "bedrock": "minecraft:stonebrick"
+  - "minecraft:stone_button"
+  - "minecraft:stone_pressure_plate"
+  - "minecraft:stone_slab"
+  - "java": "minecraft:stone_stairs"
+    "bedrock": "minecraft:normal_stone_stairs"
+  - "minecraft:stonecutter"
+  - "minecraft:stripped_acacia_log"
+  - "java": "minecraft:stripped_acacia_wood"
+    "bedrock": null
+  - "minecraft:stripped_birch_log"
+  - "java": "minecraft:stripped_birch_wood"
+    "bedrock": null
+  - "minecraft:stripped_crimson_hyphae"
+  - "minecraft:stripped_crimson_stem"
+  - "minecraft:stripped_dark_oak_log"
+  - "java": "minecraft:stripped_dark_oak_wood"
+    "bedrock": null
+  - "minecraft:stripped_jungle_log"
+  - "java": "minecraft:stripped_jungle_wood"
+    "bedrock": null
+  - "minecraft:stripped_oak_log"
+  - "java": "minecraft:stripped_oak_wood"
+    "bedrock": null
+  - "minecraft:stripped_spruce_log"
+  - "java": "minecraft:stripped_spruce_wood"
+    "bedrock": null
+  - "minecraft:stripped_warped_hyphae"
+  - "minecraft:stripped_warped_stem"
+  - "minecraft:structure_block"
+  - "minecraft:structure_void"
+  - "java": "minecraft:sugar_cane"
+    "bedrock": "minecraft:reeds"
+  - "java": "minecraft:sunflower"
+    "bedrock": "minecraft:double_plant"
+  - "minecraft:sweet_berry_bush"
+  - "java": "minecraft:tall_grass"
+    "bedrock": "minecraft:tallgrass"
+  - "java": "minecraft:tall_seagrass"
+    "bedrock": null
+  - "minecraft:target"
+  - "java": "minecraft:terracotta"
+    "bedrock": "minecraft:hardened_clay"
+  - "minecraft:tinted_glass"
+  - "minecraft:tnt"
+  - "minecraft:torch"
+  - "minecraft:trapped_chest"
+  - "minecraft:tripwire"
+  - "minecraft:tripwire_hook"
+  - "java": "minecraft:tube_coral"
+    "bedrock": null
+  - "java": "minecraft:tube_coral_block"
+    "bedrock": null
+  - "java": "minecraft:tube_coral_fan"
+    "bedrock": null
+  - "java": "minecraft:tube_coral_wall_fan"
+    "bedrock": null
+  - "minecraft:tuff"
+  - "java": "minecraft:turtle_egg"
+    "bedrock": null
+  - "minecraft:twisting_vines"
+  - "java": "minecraft:twisting_vines_plant"
+    "bedrock": null
+  - "minecraft:vine"
+  - "java": "minecraft:void_air"
+    "bedrock": null
+  - "java": "minecraft:wall_torch"
+    "bedrock": null
+  - "minecraft:warped_button"
+  - "minecraft:warped_door"
+  - "minecraft:warped_fence"
+  - "minecraft:warped_fence_gate"
+  - "minecraft:warped_fungus"
+  - "minecraft:warped_hyphae"
+  - "minecraft:warped_nylium"
+  - "minecraft:warped_planks"
+  - "minecraft:warped_pressure_plate"
+  - "minecraft:warped_roots"
+  - "java": "minecraft:warped_sign"
+    "bedrock": null
+  - "minecraft:warped_slab"
+  - "minecraft:warped_stairs"
+  - "minecraft:warped_stem"
+  - "minecraft:warped_trapdoor"
+  - "minecraft:warped_wall_sign"
+  - "minecraft:warped_wart_block"
+  - "minecraft:water"
+  - "java": "minecraft:water_cauldron"
+    "bedrock": null
+  - "java": "minecraft:waxed_copper_block"
+    "bedrock": null
+  - "minecraft:waxed_cut_copper"
+  - "minecraft:waxed_cut_copper_slab"
+  - "minecraft:waxed_cut_copper_stairs"
+  - "minecraft:waxed_exposed_copper"
+  - "minecraft:waxed_exposed_cut_copper"
+  - "minecraft:waxed_exposed_cut_copper_slab"
+  - "minecraft:waxed_exposed_cut_copper_stairs"
+  - "minecraft:waxed_oxidized_copper"
+  - "minecraft:waxed_oxidized_cut_copper"
+  - "minecraft:waxed_oxidized_cut_copper_slab"
+  - "minecraft:waxed_oxidized_cut_copper_stairs"
+  - "minecraft:waxed_weathered_copper"
+  - "minecraft:waxed_weathered_cut_copper"
+  - "minecraft:waxed_weathered_cut_copper_slab"
+  - "minecraft:waxed_weathered_cut_copper_stairs"
+  - "minecraft:weathered_copper"
+  - "minecraft:weathered_cut_copper"
+  - "minecraft:weathered_cut_copper_slab"
+  - "minecraft:weathered_cut_copper_stairs"
+  - "minecraft:weeping_vines"
+  - "java": "minecraft:weeping_vines_plant"
+    "bedrock": null
+  - "java": "minecraft:wet_sponge"
+    "bedrock": null
+  - "java": "minecraft:wheat"
+    "bedrock": null
+  - "java": "minecraft:white_banner"
+    "bedrock": null
+  - "java": "minecraft:white_bed"
+    "bedrock": null
+  - "minecraft:white_candle"
+  - "minecraft:white_candle_cake"
+  - "java": "minecraft:white_carpet"
+    "bedrock": null
+  - "java": "minecraft:white_concrete"
+    "bedrock": null
+  - "java": "minecraft:white_concrete_powder"
+    "bedrock": null
+  - "minecraft:white_glazed_terracotta"
+  - "java": "minecraft:white_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:white_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:white_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:white_terracotta"
+    "bedrock": null
+  - "java": "minecraft:white_tulip"
+    "bedrock": null
+  - "java": "minecraft:white_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:white_wool"
+    "bedrock": null
+  - "minecraft:wither_rose"
+  - "java": "minecraft:wither_skeleton_skull"
+    "bedrock": null
+  - "java": "minecraft:wither_skeleton_wall_skull"
+    "bedrock": null
+  - "java": "minecraft:yellow_banner"
+    "bedrock": null
+  - "java": "minecraft:yellow_bed"
+    "bedrock": null
+  - "minecraft:yellow_candle"
+  - "minecraft:yellow_candle_cake"
+  - "java": "minecraft:yellow_carpet"
+    "bedrock": null
+  - "java": "minecraft:yellow_concrete"
+    "bedrock": null
+  - "java": "minecraft:yellow_concrete_powder"
+    "bedrock": null
+  - "minecraft:yellow_glazed_terracotta"
+  - "java": "minecraft:yellow_shulker_box"
+    "bedrock": null
+  - "java": "minecraft:yellow_stained_glass"
+    "bedrock": null
+  - "java": "minecraft:yellow_stained_glass_pane"
+    "bedrock": null
+  - "java": "minecraft:yellow_terracotta"
+    "bedrock": null
+  - "java": "minecraft:yellow_wall_banner"
+    "bedrock": null
+  - "java": "minecraft:yellow_wool"
+    "bedrock": null
+  - "java": "minecraft:zombie_head"
+    "bedrock": null
+  - "java": "minecraft:zombie_wall_head"
+    "bedrock": null
+  states: []
