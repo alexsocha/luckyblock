@@ -6,12 +6,36 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - name: Cache gradle
-              uses: actions/cache@v2
+
+            - name: Build with Docker
+              run: ./build.sh
+
+            - name: Set deployment variables
+              id: variables
+              uses: actions/github-script@0.9.0
               with:
-                  path: |
-                      - /root/.gradle/caches/
-                      - /root/.gradle/wrapper/
-                  key: ${{ runner.os }}-${{ hashFiles('build.gradle') }}
-            - name: Build with docker-compose
-              run: HOME=/root && ./docker-build.sh
+                script: |
+                    const refName = context.ref.split("/").pop();
+                    const isRelease = context.eventName === "push"
+                        && context.ref.startsWith("refs/tags/")
+                        && refName.includes("@");
+                    const releaseName = refName.split("@")[0];
+                    const releaseVersion = refName.split("@")[1];
+
+                    const releaseFolderName = releaseName.startsWith("luckyblock")
+                        ? `luckyblock-${releaseVersion}-${releaseName.split("-")[1]}`
+                        : `${releaseName}-${releaseVersion}`;
+                    
+                    core.setOutput("isRelease", isRelease.toString());
+                    core.setOutput("releaseFolderName", releaseFolderName);
+
+            - name: Deploy
+              if: ${{ steps.variables.outputs.isRelease == 'true' }}
+              uses: appleboy/scp-action@master
+              with:
+                  host: luckyblockmod.com
+                  username: root
+                  key: ${{ secrets.LUCKYBLOCKMOD_COM_KEY }}
+                  source: dist/${{ steps.variables.outputs.releaseFolderName }}
+                  target: "/root/luckyblock-dist"
+                  strip_components: 1
