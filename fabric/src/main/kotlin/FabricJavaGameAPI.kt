@@ -8,6 +8,7 @@ import mod.lucky.java.loader.ShapelessCraftingRecipe
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.loader.api.FabricLoader
+import net.fabricmc.loader.impl.FabricLoaderImpl
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
@@ -79,16 +80,16 @@ object FabricJavaGameAPI : JavaGameAPI {
     }
 
     override fun getModVersion(): String {
-        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).getModContainer("lucky")
+        return FabricLoader.getInstance().getModContainer("lucky")
             .get().metadata.version.friendlyString
 
     }
     override fun getMinecraftVersion(): String {
-        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).gameProvider.normalizedGameVersion
+        return (FabricLoader.getInstance() as FabricLoaderImpl).gameProvider.normalizedGameVersion
     }
 
     override fun getGameDir(): File {
-        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).gameProvider.launchDirectory.toFile()
+        return FabricLoader.getInstance().gameDir.toFile()
     }
 
     override fun attrToNBT(attr: Attr): Tag {
