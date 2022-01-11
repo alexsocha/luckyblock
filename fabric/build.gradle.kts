@@ -13,6 +13,7 @@ val fabricLatestMCVersion: String by project
 val fabricMinMCVersion: String by project
 val fabricAPIVersion: String by project
 val fabricMinLoaderVersion: String by project
+val fabricLoaderVersion: String by project
 val fabricMappingsVersion: String by project
 
 base.archivesBaseName = rootProject.name
@@ -27,7 +28,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     minecraft("com.mojang:minecraft:$fabricLatestMCVersion")
     mappings("net.fabricmc:yarn:$fabricMappingsVersion:v2")
-    modImplementation("net.fabricmc:fabric-loader:[$fabricMinLoaderVersion,)")
+    modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricAPIVersion")
 
     shadow(project(":common"))
