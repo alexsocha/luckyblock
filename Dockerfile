@@ -43,6 +43,6 @@ FROM base as build
 
 WORKDIR /app
 COPY . .
-RUN ./gradlew :forge:build
+#RUN ./gradlew :forge:build
 RUN ./gradlew :fabric:build
-RUN ./gradlew :bedrock:build
+#RUN ./gradlew :bedrock:build

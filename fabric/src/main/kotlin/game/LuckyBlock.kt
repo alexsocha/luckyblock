@@ -106,14 +106,17 @@ class LuckyBlockEntity(
         data = LuckyBlockEntityData.readFromTag(tag)
     }
 
-    override fun writeNbt(tag: CompoundTag) {
+    override fun writeNbt(tag: CompoundTag): CompoundTag {
         super.writeNbt(tag)
         data.writeToTag(tag)
+        return tag
     }
 
     override fun toUpdatePacket(): BlockEntityUpdateS2CPacket {
-        return BlockEntityUpdateS2CPacket.create(this) { blockEntity ->
-            JAVA_GAME_API.attrToNBT((blockEntity as LuckyBlockEntity).data.toAttr()) as CompoundTag
-        }
+        return BlockEntityUpdateS2CPacket(
+            BlockPos(pos.x, pos.y, pos.z),
+            1, // block entity type
+            JAVA_GAME_API.attrToNBT(data.toAttr()) as CompoundTag
+        )
     }
 }

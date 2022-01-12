@@ -60,14 +60,13 @@ class FabricMod : ModInitializer {
 
     private fun registerWorldGen(blockId: String) {
         val feature = LuckyWorldFeature(DefaultFeatureConfig.CODEC, blockId)
-        val placedFeature = feature.configure(FeatureConfig.DEFAULT).withPlacement()
-            //.decorate(Decorator.COUNT.configure(CountConfig(1)))
+        val configuredFeature = feature.configure(FeatureConfig.DEFAULT)
         val featureId = "${blockId}_world_gen"
 
         Registry.register<Feature<*>, Feature<*>>(Registry.FEATURE, Identifier(featureId), feature)
-        val placedId = RegistryKey.of(Registry.PLACED_FEATURE_KEY, MCIdentifier(featureId))
-        Registry.register(BuiltinRegistries.PLACED_FEATURE, placedId.value, placedFeature)
-        BiomeModifications.addFeature(BiomeSelectors.all(), GenerationStep.Feature.SURFACE_STRUCTURES, placedId)
+        val configuredId = RegistryKey.of(Registry.CONFIGURED_FEATURE_KEY, MCIdentifier(featureId))
+        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, configuredId.value, configuredFeature)
+        BiomeModifications.addFeature(BiomeSelectors.all(), GenerationStep.Feature.SURFACE_STRUCTURES, configuredId)
     }
 
     override fun onInitialize() {

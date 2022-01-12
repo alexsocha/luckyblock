@@ -47,7 +47,7 @@ class LuckyPotion : MCItem(FabricItemSettings().group(ItemGroup.COMBAT)) {
                 )
             )
             potionEntity.setItem(stack)
-            potionEntity.setVelocity(user, user.pitch, user.yaw, -20.0f, 0.5f, 1.0f)
+            potionEntity.setProperties(user, user.pitch, user.yaw, -20.0f, 0.5f, 1.0f)
             world.spawnEntity(potionEntity)
         }
 

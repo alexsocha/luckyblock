@@ -8,7 +8,6 @@ import mod.lucky.fabric.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.loader.api.FabricLoader
-import net.fabricmc.loader.impl.FabricLoaderImpl
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
@@ -50,16 +49,16 @@ object FabricJavaGameAPI : JavaGameAPI {
     }
 
     override fun getModVersion(): String {
-        return FabricLoader.getInstance().getModContainer("lucky")
+        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).getModContainer("lucky")
             .get().metadata.version.friendlyString
 
     }
     override fun getMinecraftVersion(): String {
-        return (FabricLoader.getInstance() as FabricLoaderImpl).gameProvider.normalizedGameVersion
+        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).gameProvider.normalizedGameVersion
     }
 
     override fun getGameDir(): File {
-        return FabricLoader.getInstance().gameDir.toFile()
+        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).gameProvider.launchDirectory.toFile()
     }
 
     override fun attrToNBT(attr: Attr): Tag {
@@ -136,7 +135,7 @@ object FabricJavaGameAPI : JavaGameAPI {
         pitchOffsetDeg: Double,
     ): Pair<Vec3d, Vec3d> {
         val arrowEntity = ArrowEntity(world as ServerWorld, player as MCPlayerEntity)
-        arrowEntity.setVelocity(
+        arrowEntity.setProperties(
             player,
             (GAME_API.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
             (GAME_API.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
@@ -197,7 +196,9 @@ object FabricJavaGameAPI : JavaGameAPI {
         chestEntity.setLootTable(MCIdentifier(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
         chestEntity.checkLootInteraction(null)
 
-        val tag = chestEntity.createNbtWithIdentifyingData()
+        val tag = CompoundTag()
+        chestEntity.writeNbt(tag)
+
         return JAVA_GAME_API.nbtToAttr(JAVA_GAME_API.readNBTKey(tag, "Items")!!) as ListAttr
     }
 
