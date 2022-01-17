@@ -1,7 +1,6 @@
 package mod.lucky.common
 
 import kotlin.math.*
-import kotlin.random.Random
 
 val colorNames = listOf(
     "black",
@@ -44,6 +43,7 @@ fun <T : Number>subtract(n1: T, n2: T): T {
 data class Vec3<T : Number>(val x: T, val y: T, val z: T) {
     constructor(pos: Vec3<T>): this(pos.x, pos.y, pos.z)
     fun toDouble(): Vec3d = Vec3d(x.toDouble(), y.toDouble(), z.toDouble())
+    fun toFloat(): Vec3<Float> = Vec3<Float>(x.toFloat(), y.toFloat(), z.toFloat())
     fun floor(): Vec3i = Vec3i(floor(x.toDouble()).toInt(), floor(y.toDouble()).toInt(), floor(z.toDouble())
         .toInt())
     operator fun plus(vec: Vec3<T>): Vec3<T> = Vec3(add(this.x, vec.x), add(this.y, vec.y), add(this.z, vec.z))
@@ -55,7 +55,23 @@ typealias Vec3d = Vec3<Double>
 typealias BlockPos = Vec3i
 val zeroVec3d = Vec3d(0.0, 0.0, 0.0)
 
-val RANDOM = Random.Default
+interface Random {
+    fun randInt(range: IntRange): Int
+    fun nextDouble(): Double
+
+    fun randDouble(min: Double, max: Double): Double {
+        return min + (max - min) * nextDouble()
+    }
+}
+
+class KotlinRandom(
+    private val kotlinRandom: kotlin.random.Random = kotlin.random.Random.Default,
+) : Random {
+    override fun randInt(range: IntRange): Int = range.random(kotlinRandom)
+    override fun nextDouble(): Double = kotlinRandom.nextDouble()
+}
+
+val DEFAULT_RANDOM = KotlinRandom()
 
 fun <K, V>mapOfNotNull(vararg pairs: Pair<K, V?>): Map<K, V> {
     @Suppress("UNCHECKED_CAST")
@@ -83,16 +99,8 @@ fun distanceBetween(vec1: Vec3d, vec2: Vec3d): Double {
     return sqrt(dx * dx + dy * dy + dz * dz)
 }
 
-fun randInt(range: IntRange): Int {
-    return range.random(RANDOM)
-}
-
-fun randDouble(min: Double, max: Double): Double {
-    return min + (max - min) * RANDOM.nextDouble()
-}
-
-fun <T> chooseRandomFrom(list: List<T>): T {
-    return list[randInt(list.indices)]
+fun <T> chooseRandomFrom(random: Random, list: List<T>): T {
+    return list[random.randInt(list.indices)]
 }
 
 fun directionToVelocity(yawRad: Double, pitchRad: Double, speed: Double): Vec3d {
@@ -111,10 +119,10 @@ fun rotateVec3d(vec: Vec3d, rotationRad: Double): Vec3d {
     )
 }
 
-fun <T>chooseMultiRandomFrom(list: List<T>, amountRange: IntRange): List<T> {
-    val removeAmount = list.size - randInt(amountRange)
+fun <T>chooseMultiRandomFrom(random: Random, list: List<T>, amountRange: IntRange): List<T> {
+    val removeAmount = list.size - random.randInt(amountRange)
     val newList = ArrayList(list)
-    (0 until removeAmount).forEach { _ -> newList.removeAt(randInt(newList.indices)) }
+    (0 until removeAmount).forEach { _ -> newList.removeAt(random.randInt(newList.indices)) }
     return newList
 }
 

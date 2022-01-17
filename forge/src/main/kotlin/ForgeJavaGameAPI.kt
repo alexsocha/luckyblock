@@ -1,15 +1,16 @@
 package mod.lucky.forge
 
 import mod.lucky.common.*
+import mod.lucky.common.Random
 import mod.lucky.common.attribute.*
 import mod.lucky.java.*
 import net.minecraft.client.Minecraft
+import net.minecraft.nbt.LongArrayTag
 import net.minecraft.nbt.NbtIo
 import net.minecraft.network.chat.Component
 import net.minecraft.util.datafix.fixes.ItemIdFix
 import net.minecraft.util.datafix.fixes.ItemStackTheFlatteningFix
 import net.minecraft.world.entity.projectile.Arrow
-import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.item.enchantment.Enchantments
@@ -21,7 +22,6 @@ import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.fml.loading.FMLLoader
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.versions.mcp.MCPVersion
-import java.awt.Color
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -34,25 +34,6 @@ annotation class OnlyInServer
 
 fun isClientWorld(world: MCIWorld): Boolean = world.isClientSide
 
-private fun toMCEnchantmentType(type: EnchantmentType): MCEnchantmentType {
-    return when (type) {
-        EnchantmentType.ARMOR -> MCEnchantmentType.ARMOR
-        EnchantmentType.ARMOR_FEET -> MCEnchantmentType.ARMOR_FEET
-        EnchantmentType.ARMOR_LEGS -> MCEnchantmentType.ARMOR_LEGS
-        EnchantmentType.ARMOR_CHEST -> MCEnchantmentType.ARMOR_CHEST
-        EnchantmentType.ARMOR_HEAD -> MCEnchantmentType.ARMOR_HEAD
-        EnchantmentType.WEAPON -> MCEnchantmentType.WEAPON
-        EnchantmentType.DIGGER -> MCEnchantmentType.DIGGER
-        EnchantmentType.FISHING_ROD -> MCEnchantmentType.FISHING_ROD
-        EnchantmentType.TRIDENT -> MCEnchantmentType.TRIDENT
-        EnchantmentType.BREAKABLE -> MCEnchantmentType.BOW
-        EnchantmentType.BOW -> MCEnchantmentType.BOW
-        EnchantmentType.WEARABLE -> MCEnchantmentType.WEARABLE
-        EnchantmentType.CROSSBOW -> MCEnchantmentType.CROSSBOW
-        EnchantmentType.VANISHABLE -> MCEnchantmentType.VANISHABLE
-    }
-}
-
 fun toMCItemStack(stack: ItemStack): MCItemStack {
     val mcStack = MCItemStack(ForgeRegistries.ITEMS.getValue(MCIdentifier(stack.itemId)) ?: Items.AIR, stack.count)
     if (stack.nbt != null) mcStack.tag = stack.nbt as CompoundTag
@@ -60,7 +41,7 @@ fun toMCItemStack(stack: ItemStack): MCItemStack {
 }
 
 fun toItemStack(stack: MCItemStack): ItemStack {
-    return ItemStack(javaGameAPI.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.tag)
+    return ItemStack(JAVA_GAME_API.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.tag)
 }
 
 object ForgeJavaGameAPI : JavaGameAPI {
@@ -93,6 +74,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
                 AttrType.DOUBLE -> DoubleTag.valueOf(attr.value as Double)
                 AttrType.INT_ARRAY -> IntArrayTag(attr.value as IntArray)
                 AttrType.BYTE_ARRAY -> ByteArrayTag(attr.value as ByteArray)
+                AttrType.LONG_ARRAY -> LongArrayTag(attr.value as LongArray)
                 AttrType.LIST, AttrType.DICT -> throw Exception()
             }
             is ListAttr -> {
@@ -121,6 +103,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
             is DoubleTag -> ValueAttr(AttrType.DOUBLE, tag.asDouble)
             is ByteArrayTag -> ValueAttr(AttrType.BYTE_ARRAY, tag.asByteArray)
             is IntArrayTag -> ValueAttr(AttrType.INT_ARRAY, tag.asIntArray)
+            is LongArrayTag -> ValueAttr(AttrType.INT_ARRAY, tag.asLongArray)
             is ListTag -> ListAttr(tag.map { nbtToAttr(it) })
             is CompoundTag -> {
                 dictAttrOf(*tag.allKeys.map {
@@ -154,14 +137,14 @@ object ForgeJavaGameAPI : JavaGameAPI {
         val arrowEntity = Arrow(world as MCServerWorld, player as MCPlayerEntity)
         arrowEntity.shootFromRotation(
             player,
-            (gameAPI.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
-            (gameAPI.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
+            (GAME_API.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
+            (GAME_API.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
             0.0f,
             (bowPower * 3.0).toFloat(),
             1.0f
         )
         return Pair(
-            gameAPI.getEntityPos(arrowEntity),
+            GAME_API.getEntityPos(arrowEntity),
             Vec3d(arrowEntity.deltaMovement.x, arrowEntity.deltaMovement.y, arrowEntity.deltaMovement.z)
         )
     }
@@ -183,7 +166,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
         val player = Minecraft.getInstance().player
         val mcText = Component.Serializer.fromJson(textJsonStr)
         if (mcText == null) {
-            gameAPI.logError("Invalid JSON text: $textJsonStr")
+            GAME_API.logError("Invalid JSON text: $textJsonStr")
             return
         }
         player?.sendMessage(mcText, UUID.fromString(getEntityUUID(player)))
@@ -206,38 +189,16 @@ object ForgeJavaGameAPI : JavaGameAPI {
         return key?.toString() ?: ""
     }
 
-    override fun getRBGPalette(): List<Int> {
-        return DyeColor.values().toList().map {
-            val c = it.textureDiffuseColors
-            Color(c[0], c[1], c[2]).rgb
-        }
-    }
-
-    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr {
+    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String, random: Random): ListAttr {
         val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultBlockState())
 
         // world is needed to prevent a NullPointerException
         chestEntity.level = toServerWorld(world)
-        chestEntity.setLootTable(MCIdentifier(lootTableId), RANDOM.nextLong())
+        chestEntity.setLootTable(MCIdentifier(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
         chestEntity.unpackLootTable(null)
 
-        val tag = CompoundTag()
-        chestEntity.save(tag)
-        return javaGameAPI.nbtToAttr(javaGameAPI.readNBTKey(tag, "Items")!!) as ListAttr
-    }
-
-
-    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
-        val mcTypes = types.map { toMCEnchantmentType(it)  }
-        return ForgeRegistries.ENCHANTMENTS.entries.filter { it.value.category in mcTypes }.map {
-            Enchantment(it.key.location().toString(), it.value.maxLevel, it.value.isCurse)
-        }
-    }
-
-    override fun getStatusEffect(id: String): StatusEffect? {
-        val mcId = MCIdentifier(id)
-        val effect = ForgeRegistries.MOB_EFFECTS.getValue(mcId) ?: return null
-        return StatusEffect(id = mcId.toString(), intId = MCStatusEffect.getId(effect), isInstant = effect.isInstantenous)
+        val tag = chestEntity.saveWithFullMetadata()
+        return JAVA_GAME_API.nbtToAttr(JAVA_GAME_API.readNBTKey(tag, "Items")!!) as ListAttr
     }
 
     override fun isCreativeMode(player: PlayerEntity): Boolean {
@@ -254,7 +215,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
         return ItemStackTheFlatteningFix.updateItem(legacyName, data) ?: legacyName
     }
 
-    override fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i> {
+    override fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> {
         val structure = StructureTemplate()
         structure.load(NbtIo.readCompressed(stream))
         return Pair(structure, toVec3i(structure.size))

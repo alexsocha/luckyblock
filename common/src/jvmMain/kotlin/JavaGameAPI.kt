@@ -3,48 +3,16 @@ package mod.lucky.java
 import mod.lucky.common.*
 import mod.lucky.common.attribute.Attr
 import mod.lucky.common.attribute.ListAttr
-import mod.lucky.java.loader.ShapedCraftingRecipe
-import mod.lucky.java.loader.ShapelessCraftingRecipe
 import java.io.File
 import java.io.InputStream
-import java.util.*
 
 typealias NBTTag = Any
-typealias NBTStructure = Any
+typealias MinecraftNbtStructure = Any
 
 data class ItemStack(
     val itemId: String,
     val count: Int = 1,
     val nbt: NBTTag? = null,
-)
-
-enum class EnchantmentType {
-    ARMOR,
-    ARMOR_FEET,
-    ARMOR_LEGS,
-    ARMOR_CHEST,
-    ARMOR_HEAD,
-    WEAPON,
-    DIGGER,
-    FISHING_ROD,
-    TRIDENT,
-    BREAKABLE,
-    BOW,
-    WEARABLE,
-    CROSSBOW,
-    VANISHABLE,
-}
-
-data class Enchantment(
-    val id: String,
-    val maxLevel: Int,
-    val isCurse: Boolean,
-)
-
-data class StatusEffect(
-    val id: String,
-    val intId: Int,
-    val isInstant: Boolean,
 )
 
 interface JavaGameAPI {
@@ -66,15 +34,12 @@ interface JavaGameAPI {
     fun getBlockId(block: Block): String?
     fun getItemId(item: Item): String?
     fun isValidItemId(id: String): Boolean
-    fun getRBGPalette(): List<Int>
-    fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr
-    fun getEnchantments(types: List<EnchantmentType>): List<Enchantment>
-    fun getStatusEffect(id: String): StatusEffect?
+    fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String, random: Random): ListAttr
     fun getEntityTypeId(entity: Entity): String?
     fun isCreativeMode(player: PlayerEntity): Boolean
     fun hasSilkTouch(player: PlayerEntity): Boolean
     fun convertLegacyItemId(id: Int, data: Int): String?
-    fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i>
+    fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i>
 }
 
-lateinit var javaGameAPI: JavaGameAPI
+lateinit var JAVA_GAME_API: JavaGameAPI

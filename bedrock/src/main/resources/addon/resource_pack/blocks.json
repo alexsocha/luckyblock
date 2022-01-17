@@ -1,0 +1,15 @@
+{
+    "format_version": "1.16.0",
+    "lucky:lucky_block": {
+        "textures": "lucky_block",
+        "sound":"wood"
+    },
+    "lucky:unlucky_block": {
+        "textures": "lucky_block",
+        "sound":"wood"
+    },
+    "lucky:very_lucky_block": {
+        "textures": "lucky_block",
+        "sound":"wood"
+    }
+}    

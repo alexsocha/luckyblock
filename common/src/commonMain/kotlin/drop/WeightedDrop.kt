@@ -7,7 +7,7 @@ data class WeightedDrop(
     val drop: BaseDrop,
     val dropString: String,
     val luck: Int = 0,
-    val chance: Double?
+    val chance: Double? = 1.0
 ) : BaseDrop {
     companion object
 }
@@ -28,7 +28,7 @@ private fun readLuckChance(dropStr: String): Pair<String, DictAttr> {
         val attr = try {
             parseEvalAttr(attrStr, luckChanceSpec, LuckyRegistry.parserContext, LuckyRegistry.simpleEvalContext) as DictAttr
         } catch (e: ParserError) {
-            gameAPI.logError("Error reading extra drop properties '$attrStr' for drop: $dropStr", e)
+            GAME_API.logError("Error reading extra drop properties '$attrStr' for drop: $dropStr", e)
             DictAttr()
         }
         Pair(newDropStr, attr)
@@ -39,7 +39,7 @@ fun WeightedDrop.Companion.fromString(dropStr: String): WeightedDrop {
     val (strippedDropStr, extraProps) = readLuckChance(dropStr)
 
     val innerDrop: BaseDrop =
-        if (strippedDropStr.toLowerCase().startsWith("group")) GroupDrop.fromString(strippedDropStr)
+        if (strippedDropStr.lowercase().startsWith("group")) GroupDrop.fromString(strippedDropStr)
         else SingleDrop.fromString(strippedDropStr)
 
     return WeightedDrop(
@@ -55,7 +55,7 @@ fun dropsFromStrList(drops: List<String>): List<WeightedDrop> {
         try {
             WeightedDrop.fromString(it)
         } catch (e: Exception) {
-            gameAPI.logError("Error parsing drop: $it", e)
+            LOGGER.logError("Error parsing drop: $it", e)
             null
         }
     }

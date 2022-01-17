@@ -2,9 +2,10 @@ package mod.lucky.forge.game
 
 import com.mojang.serialization.Codec
 import mod.lucky.common.Vec3i
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.forge.MCBlockPos
 import mod.lucky.java.JavaLuckyRegistry
+import mod.lucky.java.JavaRandom
 import mod.lucky.java.game.generateLuckyFeature
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Blocks
@@ -47,12 +48,12 @@ class LuckyWorldFeature(
                     surfacePos = Vec3i(topPos.x, surfaceY, topPos.z),
                     blockId = blockId,
                     dimensionKey = world.level.dimension().location().toString(),
-                    random = random,
+                    random = JavaRandom(random),
                 )
             }
             false
         } catch (e: Exception) {
-            gameAPI.logError("Error during natural generation", e)
+            GAME_API.logError("Error during natural generation", e)
             false
         }
     }

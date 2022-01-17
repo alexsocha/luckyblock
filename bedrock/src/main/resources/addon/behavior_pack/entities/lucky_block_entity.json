@@ -1,0 +1,35 @@
+{
+  "format_version": "1.16.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "lucky:lucky_block_entity",
+      "is_summonable": true,
+      "is_spawnable": false,
+      "is_experimental": false
+    },
+    "components": {
+      "minecraft:custom_hit_test": {
+        "hitboxes": [
+          {
+            "pivot": [ 0, 100, 0 ],
+            "width": 0,
+            "height": 0
+          }
+        ]
+      },
+      "minecraft:damage_sensor": {
+        "triggers": {
+          "deals_damage": false
+        }
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": true
+      },
+      "minecraft:collision_box": {
+        "width": 0,
+        "height": 0
+      }
+    }
+  }
+}

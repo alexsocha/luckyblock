@@ -1,0 +1,21 @@
+{
+    "format_version": "1.16.0",
+    "minecraft:block": {
+        "description": {
+            "identifier": "lucky:unlucky_block",
+            "register_to_creative_menu": true
+        },
+        "components": {
+            "minecraft:destroy_time": 0.1,
+            "minecraft:explosion_resistance": 20,
+            "minecraft:flammable": {
+                "flame_odds": 0,
+                "burn_odds": 0
+            },
+            "minecraft:map_color": "#F3C428",
+            "minecraft:creative_category": {
+		"category": "Items"
+            }
+        }
+    }
+}

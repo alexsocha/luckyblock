@@ -14,6 +14,7 @@ enum class AttrType {
     DOUBLE,
     BYTE_ARRAY,
     INT_ARRAY,
+    LONG_ARRAY,
     DICT,
     LIST,
 }
@@ -172,6 +173,7 @@ fun attrToJsonStr(attr: Attr): String {
             AttrType.DOUBLE -> "${attr.value}"
             AttrType.INT_ARRAY -> "[${(attr.value as IntArray).joinToString(";")}]"
             AttrType.BYTE_ARRAY -> "[${(attr.value as ByteArray).joinToString(";") { "${it}b" }}]"
+            AttrType.LONG_ARRAY -> "[${(attr.value as LongArray).joinToString(";") { "${it}l" }}]"
             AttrType.STRING -> "\"${attr.value}\""
             AttrType.BOOLEAN -> "${attr.value}"
             AttrType.LIST -> throw Exception()
@@ -191,6 +193,7 @@ fun isNumType(type: AttrType) = type in listOf(AttrType.BYTE, AttrType.SHORT, At
 fun intAttrOf(v: Int) = ValueAttr(AttrType.INT, v)
 fun booleanAttrOf(v: Boolean) = ValueAttr(AttrType.BOOLEAN, v)
 fun doubleAttrOf(v: Double) = ValueAttr(AttrType.DOUBLE, v)
+fun floatAttrOf(v: Float) = ValueAttr(AttrType.FLOAT, v)
 fun stringAttrOf(v: String) = ValueAttr(AttrType.STRING, v)
 fun listAttrOf(vararg attrs: Attr) = ListAttr(listOf(*attrs))
 

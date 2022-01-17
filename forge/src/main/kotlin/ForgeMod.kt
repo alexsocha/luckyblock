@@ -1,8 +1,8 @@
 package mod.lucky.forge
 
-import mod.lucky.common.attribute.stringAttrOf
-import mod.lucky.common.gameAPI
-import mod.lucky.common.platformAPI
+import mod.lucky.common.GAME_API
+import mod.lucky.common.PLATFORM_API
+import mod.lucky.common.LOGGER
 import mod.lucky.java.JavaPlatformAPI
 import mod.lucky.forge.game.*
 import mod.lucky.java.*
@@ -63,9 +63,10 @@ private fun getAddonBlock(id: String): LuckyBlock {
 @Mod("lucky")
 class ForgeMod {
     init {
-        platformAPI = JavaPlatformAPI
-        gameAPI = ForgeGameAPI
-        javaGameAPI = ForgeJavaGameAPI
+        PLATFORM_API = JavaPlatformAPI
+        LOGGER = ForgeGameAPI
+        GAME_API = ForgeGameAPI
+        JAVA_GAME_API = ForgeJavaGameAPI
 
         ForgeLuckyRegistry.modVersion = ModLoadingContext.get().activeContainer.modInfo.version.toString()
 
@@ -86,8 +87,8 @@ class ForgeMod {
         val blockIds = listOf(JavaLuckyRegistry.blockId) + JavaLuckyRegistry.addons.mapNotNull { it.ids.block }
         blockIds.forEach {
             val feature = LuckyWorldFeature(NoneFeatureConfiguration.CODEC, it)
-            val configuredFeature = feature.configured(NoneFeatureConfiguration.INSTANCE)
-            event.generation.getFeatures(GenerationStep.Decoration.SURFACE_STRUCTURES).add { configuredFeature }
+            val placedFeature = feature.configured(NoneFeatureConfiguration.INSTANCE).placed()
+            event.generation.getFeatures(GenerationStep.Decoration.SURFACE_STRUCTURES).add { placedFeature }
         }
     }
 

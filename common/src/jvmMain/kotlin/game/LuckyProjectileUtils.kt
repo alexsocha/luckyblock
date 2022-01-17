@@ -25,8 +25,8 @@ fun LuckyProjectileData.tick(world: World, entity: Entity, shooter: Entity?, tic
 
         if (trailFreqPerTick < 1.0 && trailFreqPerTick > 0) {
             val amount = (1.0 / trailFreqPerTick).toInt()
-            val velocity = javaGameAPI.getEntityVelocity(entity)
-            val pos = gameAPI.getEntityPos(entity)
+            val velocity = JAVA_GAME_API.getEntityVelocity(entity)
+            val pos = GAME_API.getEntityPos(entity)
             for (i in 0 until amount) {
                 val context = DropContext(
                     world = world,
@@ -44,13 +44,13 @@ fun LuckyProjectileData.tick(world: World, entity: Entity, shooter: Entity?, tic
             val context = DropContext(
                 world = world,
                 player = shooter,
-                pos = gameAPI.getEntityPos(entity),
+                pos = GAME_API.getEntityPos(entity),
                 sourceId = sourceId,
             )
             runRandomDrop(trailDrops, 0, context = context, showOutput = false)
         }
     } catch (e: java.lang.Exception) {
-        gameAPI.logError("Error in lucky_projectile tick", e)
+        GAME_API.logError("Error in lucky_projectile tick", e)
     }
 }
 
@@ -61,12 +61,12 @@ fun LuckyProjectileData.onImpact(world: World, entity: Entity, user: Entity?, hi
             world = world,
             player = user,
             hitEntity = hitEntity,
-            pos = if (hitEntity != null) gameAPI.getEntityPos(hitEntity) else gameAPI.getEntityPos(entity),
+            pos = if (hitEntity != null) GAME_API.getEntityPos(hitEntity) else GAME_API.getEntityPos(entity),
             sourceId = sourceId,
         )
         runRandomDrop(impactDrops, luck = 0, context = context, showOutput = true)
     } catch (e: java.lang.Exception) {
-        gameAPI.logError("Error in lucky_projectile impact", e)
+        GAME_API.logError("Error in lucky_projectile impact", e)
     }
 }
 
@@ -90,7 +90,7 @@ fun LuckyProjectileData.Companion.fromAttr(attr: DictAttr): LuckyProjectileData 
             sourceId = attr.getOptionalValue<String>("sourceId") ?: JavaLuckyRegistry.blockId,
         )
     } catch (e: java.lang.Exception) {
-        gameAPI.logError("Error loading lucky_projectile", e)
+        GAME_API.logError("Error loading lucky_projectile", e)
         LuckyProjectileData()
     }
 }

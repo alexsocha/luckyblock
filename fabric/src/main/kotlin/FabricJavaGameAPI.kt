@@ -1,28 +1,27 @@
 package mod.lucky.fabric
 
 import mod.lucky.common.*
+import mod.lucky.common.Random
 import mod.lucky.common.attribute.*
 import mod.lucky.java.*
 import mod.lucky.fabric.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.loader.api.FabricLoader
+import net.fabricmc.loader.impl.FabricLoaderImpl
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.ChestBlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.datafixer.fix.ItemIdFix
 import net.minecraft.datafixer.fix.ItemInstanceTheFlatteningFix
 import net.minecraft.enchantment.EnchantmentHelper
-import net.minecraft.enchantment.EnchantmentTarget
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.nbt.NbtIo
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.structure.Structure
 import net.minecraft.text.Text
-import net.minecraft.util.DyeColor
 import net.minecraft.util.registry.Registry
-import java.awt.Color
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -35,26 +34,6 @@ annotation class OnlyInServer
 
 fun isClientWorld(world: MCIWorld): Boolean = world.isClient
 
-
-private fun toMCEnchantmentType(type: EnchantmentType): EnchantmentTarget {
-    return when (type) {
-        EnchantmentType.ARMOR -> EnchantmentTarget.ARMOR
-        EnchantmentType.ARMOR_FEET -> EnchantmentTarget.ARMOR_FEET
-        EnchantmentType.ARMOR_LEGS -> EnchantmentTarget.ARMOR_LEGS
-        EnchantmentType.ARMOR_CHEST -> EnchantmentTarget.ARMOR_CHEST
-        EnchantmentType.ARMOR_HEAD -> EnchantmentTarget.ARMOR_HEAD
-        EnchantmentType.WEAPON -> EnchantmentTarget.WEAPON
-        EnchantmentType.DIGGER -> EnchantmentTarget.DIGGER
-        EnchantmentType.FISHING_ROD -> EnchantmentTarget.FISHING_ROD
-        EnchantmentType.TRIDENT -> EnchantmentTarget.TRIDENT
-        EnchantmentType.BREAKABLE -> EnchantmentTarget.BOW
-        EnchantmentType.BOW -> EnchantmentTarget.BOW
-        EnchantmentType.WEARABLE -> EnchantmentTarget.WEARABLE
-        EnchantmentType.CROSSBOW -> EnchantmentTarget.CROSSBOW
-        EnchantmentType.VANISHABLE -> EnchantmentTarget.VANISHABLE
-    }
-}
-
 fun toMCItemStack(stack: ItemStack): MCItemStack {
     val mcStack = MCItemStack(Registry.ITEM.get(MCIdentifier(stack.itemId)), stack.count)
     if (stack.nbt != null) mcStack.nbt = stack.nbt as CompoundTag
@@ -62,7 +41,7 @@ fun toMCItemStack(stack: ItemStack): MCItemStack {
 }
 
 fun toItemStack(stack: MCItemStack): ItemStack {
-    return ItemStack(javaGameAPI.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.nbt)
+    return ItemStack(JAVA_GAME_API.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.nbt)
 }
 
 object FabricJavaGameAPI : JavaGameAPI {
@@ -71,16 +50,16 @@ object FabricJavaGameAPI : JavaGameAPI {
     }
 
     override fun getModVersion(): String {
-        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).getModContainer("lucky")
+        return FabricLoader.getInstance().getModContainer("lucky")
             .get().metadata.version.friendlyString
 
     }
     override fun getMinecraftVersion(): String {
-        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).gameProvider.normalizedGameVersion
+        return (FabricLoader.getInstance() as FabricLoaderImpl).gameProvider.normalizedGameVersion
     }
 
     override fun getGameDir(): File {
-        return (FabricLoader.getInstance() as net.fabricmc.loader.FabricLoader).gameProvider.launchDirectory.toFile()
+        return FabricLoader.getInstance().gameDir.toFile()
     }
 
     override fun attrToNBT(attr: Attr): Tag {
@@ -94,8 +73,9 @@ object FabricJavaGameAPI : JavaGameAPI {
                 AttrType.LONG -> LongTag.of(attr.value as Long)
                 AttrType.FLOAT -> FloatTag.of(attr.value as Float)
                 AttrType.DOUBLE -> DoubleTag.of(attr.value as Double)
-                AttrType.INT_ARRAY -> IntArrayTag(attr.value as IntArray)
                 AttrType.BYTE_ARRAY -> ByteArrayTag(attr.value as ByteArray)
+                AttrType.INT_ARRAY -> IntArrayTag(attr.value as IntArray)
+                AttrType.LONG_ARRAY -> LongArrayTag(attr.value as LongArray)
                 AttrType.LIST, AttrType.DICT -> throw Exception()
             }
             is ListAttr -> {
@@ -156,16 +136,16 @@ object FabricJavaGameAPI : JavaGameAPI {
         pitchOffsetDeg: Double,
     ): Pair<Vec3d, Vec3d> {
         val arrowEntity = ArrowEntity(world as ServerWorld, player as MCPlayerEntity)
-        arrowEntity.setProperties( // setArrowMotion
+        arrowEntity.setVelocity(
             player,
-            (gameAPI.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
-            (gameAPI.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
+            (GAME_API.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
+            (GAME_API.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
             0.0f,
             (bowPower * 3.0).toFloat(),
             1.0f
         )
         return Pair(
-            gameAPI.getEntityPos(arrowEntity),
+            GAME_API.getEntityPos(arrowEntity),
             Vec3d(arrowEntity.velocity.x, arrowEntity.velocity.y, arrowEntity.velocity.z)
         )
     }
@@ -187,7 +167,7 @@ object FabricJavaGameAPI : JavaGameAPI {
         val player = MinecraftClient.getInstance().player
         val mcText = Text.Serializer.fromJson(textJsonStr)
         if (mcText == null) {
-            gameAPI.logError("Invalid JSON text: $textJsonStr")
+            GAME_API.logError("Invalid JSON text: $textJsonStr")
             return
         }
         player?.sendSystemMessage(mcText, UUID.fromString(getEntityUUID(player)))
@@ -210,37 +190,15 @@ object FabricJavaGameAPI : JavaGameAPI {
         return key?.value?.toString() ?: ""
     }
 
-    override fun getRBGPalette(): List<Int> {
-        return DyeColor.values().toList().map {
-            val c = it.colorComponents
-            Color(c[0], c[1], c[2]).rgb
-        }
-    }
-
-    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr {
+    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String, random: Random): ListAttr {
         val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultState)
         // world is needed to prevent a NullPointerException
         chestEntity.world = toServerWorld(world)
-        chestEntity.setLootTable(MCIdentifier(lootTableId), RANDOM.nextLong())
+        chestEntity.setLootTable(MCIdentifier(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
         chestEntity.checkLootInteraction(null)
 
-        val tag = CompoundTag()
-        chestEntity.writeNbt(tag)
-        return javaGameAPI.nbtToAttr(javaGameAPI.readNBTKey(tag, "Items")!!) as ListAttr
-    }
-
-
-    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> {
-        val mcTypes = types.map { toMCEnchantmentType(it)  }
-        return Registry.ENCHANTMENT.entries.filter { it.value.type in mcTypes }.map {
-            Enchantment(it.key.value.toString(), it.value.maxLevel, it.value.isCursed)
-        }
-    }
-
-    override fun getStatusEffect(id: String): StatusEffect? {
-        val mcId = MCIdentifier(id)
-        val effect = Registry.STATUS_EFFECT.get(mcId) ?: return null
-        return StatusEffect(id = mcId.toString(), intId = MCStatusEffect.getRawId(effect), isInstant = effect.isInstant)
+        val tag = chestEntity.createNbtWithIdentifyingData()
+        return JAVA_GAME_API.nbtToAttr(JAVA_GAME_API.readNBTKey(tag, "Items")!!) as ListAttr
     }
 
     override fun isCreativeMode(player: PlayerEntity): Boolean {
@@ -257,7 +215,7 @@ object FabricJavaGameAPI : JavaGameAPI {
         return ItemInstanceTheFlatteningFix.getItem(legacyName, data) ?: legacyName
     }
 
-    override fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i> {
+    override fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> {
         val structure = Structure()
         structure.readNbt(NbtIo.readCompressed(stream))
         return Pair(structure, toVec3i(structure.size))

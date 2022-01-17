@@ -1,0 +1,30 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "Lucky Block behavior pack",
+        "name": "LuckyBlockBP",
+        "uuid": "ee649bcf-256c-4013-9068-6a802b89d756",
+        "version": [1, 0, 0],
+        "min_engine_version": [1, 17, 0]
+    },
+    "modules": [
+        {
+            "description": "Lucky Block behavior pack module",
+            "type": "data",
+            "uuid": "fa6e90c8-c925-460f-8155-c8a60b753caa",
+            "version": [1, 0, 0]
+        },
+        {
+            "description": "Lucky Block client scripts module",
+            "type": "client_data",
+            "uuid": "c05a992e-482a-455f-898c-58bbb4975e47",
+            "version": [1, 0, 0]
+        }
+    ],
+    "dependencies": [
+        {
+            "uuid": "91f840c7-86ab-4883-a835-3f430b62ef09",
+            "version": [1, 0, 0]
+        }
+    ]
+}

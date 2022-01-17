@@ -3,7 +3,7 @@ package mod.lucky.java.loader
 import mod.lucky.common.LuckyBlockSettings
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.attribute.*
-import mod.lucky.common.gameAPI
+import mod.lucky.common.LOGGER
 import mod.lucky.java.AddonIds
 
 fun parseGlobalSettings(lines: List<String>): GlobalSettings {
@@ -15,7 +15,7 @@ fun parseGlobalSettings(lines: List<String>): GlobalSettings {
         val propsStr = splitLines(lines).joinToString(",")
         parseEvalAttr(propsStr, spec, LuckyRegistry.parserContext, LuckyRegistry.simpleEvalContext) as DictAttr
     } catch (e: Exception) {
-        gameAPI.logError("Error reading global settings", e)
+        LOGGER.logError("Error reading global settings", e)
         DictAttr()
     }
 
@@ -31,7 +31,7 @@ fun parseLocalSettings(lines: List<String>): LocalSettings {
         val propsStr = splitLines(lines).joinToString(",")
         parseEvalAttr(propsStr, spec, LuckyRegistry.parserContext, LuckyRegistry.simpleEvalContext) as DictAttr
     } catch (e: Exception) {
-        gameAPI.logError("Error reading global settings", e)
+        LOGGER.logError("Error reading global settings", e)
         DictAttr()
     }
 
@@ -54,7 +54,7 @@ fun readAddonIds(lines: List<String>): AddonIds {
         val propsStr = splitLines(lines).joinToString(",")
         parseEvalAttr(propsStr, spec, LuckyRegistry.parserContext, LuckyRegistry.simpleEvalContext) as DictAttr
     } catch (e: Exception) {
-        gameAPI.logError("Error reading addon info", e)
+        LOGGER.logError("Error reading addon info", e)
         DictAttr()
     }
 

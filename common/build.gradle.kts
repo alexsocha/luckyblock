@@ -29,11 +29,7 @@ val bedrockModVersion: String by project
 val bedrockTemplateAddonVersion: String by project
 
 kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
-        }
-    }
+    jvm {}
 
     js {
         browser {
@@ -43,6 +39,7 @@ kotlin {
 
     sourceSets {
         val commonMain by getting
+
         val jvmMain by getting
         val jvmTest by getting {
             dependencies {
@@ -55,9 +52,7 @@ kotlin {
             }
         }
 
-        if (isBedrockEnabledBool) {
-            val jsMain by getting
-        }
+        val jsMain by getting
     }
 }
 
@@ -109,7 +104,7 @@ fun getModVersionNumber(modVersion: String): Int {
     val mcVersion = splitVersion[0].split('.')
     return (mcVersion[0].toInt()) * 1000000 +
         (mcVersion[1].toInt()) * 10000 +
-        (mcVersion[2].toInt()) * 100 +
+        (mcVersion.getOrElse(2) { "0" }.toInt()) * 100 +
         splitVersion[1].toInt()
 }
 
@@ -200,8 +195,7 @@ if (isBedrockEnabledBool) {
             )
         }
 
-        from("$rootDir/bedrock/build/mcpack/$distName")
-        //dependsOn(tasks.getByName("processResources")) // TODO
+        from("$rootDir/bedrock/build/processedResources/js/main/pack")
     }
 }
 

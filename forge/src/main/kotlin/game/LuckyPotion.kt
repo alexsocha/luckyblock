@@ -1,6 +1,6 @@
 package mod.lucky.forge.game
 
-import mod.lucky.common.RANDOM
+import mod.lucky.common.DEFAULT_RANDOM
 import mod.lucky.forge.*
 import mod.lucky.java.*
 import mod.lucky.java.game.LuckyItemStackData
@@ -27,7 +27,7 @@ class LuckyPotion : MCItem(Properties().tab(CreativeModeTab.TAB_COMBAT)) {
             SoundEvents.SPLASH_POTION_THROW,
             SoundSource.PLAYERS,
             0.5f,
-            0.4f / (RANDOM.nextFloat() * 0.4f + 0.8f)
+            0.4f / (DEFAULT_RANDOM.nextDouble().toFloat() * 0.4f + 0.8f)
         )
         if (!isClientWorld(world)) {
             val stackData = stack.tag?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
@@ -37,7 +37,7 @@ class LuckyPotion : MCItem(Properties().tab(CreativeModeTab.TAB_COMBAT)) {
                 data = ThrownLuckyPotionData(
                     customDrops = stackData.customDrops,
                     luck = stackData.luck,
-                    sourceId = javaGameAPI.getItemId(stack.item) ?: JavaLuckyRegistry.potionId,
+                    sourceId = JAVA_GAME_API.getItemId(stack.item) ?: JavaLuckyRegistry.potionId,
                 )
             )
             potionEntity.item = stack

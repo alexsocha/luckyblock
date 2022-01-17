@@ -17,7 +17,7 @@ import net.minecraft.world.entity.projectile.Arrow
 import net.minecraft.world.item.Items
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
-import net.minecraftforge.fmllegacy.network.NetworkHooks
+import net.minecraftforge.network.NetworkHooks
 
 private val defaultDisplayItemStack = MCItemStack(Items.STICK)
 
@@ -68,7 +68,7 @@ class LuckyProjectile(
     override fun readAdditionalSaveData(tag: CompoundTag) {
         super.readAdditionalSaveData(tag)
         data = LuckyProjectileData.readFromTag(tag)
-        val stackNBT = (javaGameAPI.readNBTKey(tag, "item") ?: javaGameAPI.readNBTKey(tag, "Item")) as? CompoundTag?
+        val stackNBT = (JAVA_GAME_API.readNBTKey(tag, "item") ?: JAVA_GAME_API.readNBTKey(tag, "Item")) as? CompoundTag?
         val stack = stackNBT?.let { MCItemStack.of(it) } ?: defaultDisplayItemStack
         stack.count = 1
         stack.count = 1
@@ -79,7 +79,7 @@ class LuckyProjectile(
         super.addAdditionalSaveData(tag)
         data.writeToTag(tag)
         val stack = entityData.get(ITEM_STACK)
-        javaGameAPI.writeNBTKey(tag, "Item", stack.save(CompoundTag()))
+        JAVA_GAME_API.writeNBTKey(tag, "Item", stack.save(CompoundTag()))
     }
 
     override fun getAddEntityPacket(): Packet<*> {

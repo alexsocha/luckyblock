@@ -39,16 +39,11 @@ object MockJavaGameAPI : JavaGameAPI {
     override fun getBlockId(block: Block): String? = null
     override fun getItemId(item: Item): String? = null
     override fun isValidItemId(id: String): Boolean = true
-    override fun getRBGPalette(): List<Int> = listOf(0)
-    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String): ListAttr = ListAttr()
-    override fun getEnchantments(types: List<EnchantmentType>): List<Enchantment> =
-        listOf(Enchantment("minecraft:sharpness", 4, false))
-    override fun getStatusEffect(id: String): StatusEffect =
-        StatusEffect(id = "minecraft:speed", intId = 0, isInstant = false)
+    override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String, random: Random): ListAttr = ListAttr()
 
     override fun getEntityTypeId(entity: Entity): String? = null
     override fun isCreativeMode(player: PlayerEntity): Boolean = false
     override fun hasSilkTouch(player: PlayerEntity): Boolean = false
     override fun convertLegacyItemId(id: Int, data: Int): String? = null
-    override fun readNBTStructure(stream: InputStream): Pair<NBTStructure, Vec3i> = Pair("", Vec3i(0, 0, 0))
+    override fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> = Pair("", Vec3i(0, 0, 0))
 }

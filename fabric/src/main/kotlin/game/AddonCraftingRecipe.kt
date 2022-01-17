@@ -1,6 +1,6 @@
 package mod.lucky.fabric.game
 
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.fabric.*
 import mod.lucky.java.*
 import mod.lucky.java.loader.ShapedCraftingRecipe
@@ -20,7 +20,7 @@ typealias MCShapedCraftingRecipe = net.minecraft.recipe.ShapedRecipe
 fun getIngredient(id: String): Ingredient? {
     val item = Registry.ITEM.getOrEmpty(MCIdentifier(id)).orElse(null)
     if (item == null) {
-        gameAPI.logError("Invalid item in recipe: $id")
+        GAME_API.logError("Invalid item in recipe: $id")
         return null
     }
     return Ingredient.ofItems(item)

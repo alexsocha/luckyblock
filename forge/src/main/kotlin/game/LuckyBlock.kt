@@ -108,10 +108,8 @@ class LuckyBlockEntity(
     }
 
     override fun getUpdatePacket(): ClientboundBlockEntityDataPacket {
-        return ClientboundBlockEntityDataPacket(
-            MCBlockPos(blockPos.x, blockPos.y, blockPos.z),
-            1, // block entity type
-            javaGameAPI.attrToNBT(data.toAttr()) as CompoundTag
-        )
+        return ClientboundBlockEntityDataPacket.create(this) { blockEntity ->
+            JAVA_GAME_API.attrToNBT((blockEntity as LuckyBlockEntity).data.toAttr()) as CompoundTag
+        }
     }
 }

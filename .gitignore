@@ -12,5 +12,6 @@ build/
 # other
 dist/
 logs/
-bedrock/
 run/
+tools/.cached-pages/
+tools/.debug/

@@ -34,28 +34,34 @@ fun onLuckyBlockBreak(
 ) {
     try {
         // check for doDropsOnCreativeMode
-        val blockId = javaGameAPI.getBlockId(block) ?: return
+        val blockId = JAVA_GAME_API.getBlockId(block) ?: return
         val settings = LuckyRegistry.blockSettings[blockId]!!
-        if (player != null && javaGameAPI.isCreativeMode(player) && !settings.doDropsOnCreativeMode && !removedByRedstone) return
+        if (player != null && JAVA_GAME_API.isCreativeMode(player) && !settings.doDropsOnCreativeMode && !removedByRedstone) return
 
         val vecPos = Vec3d(pos.x + 0.5, pos.y.toDouble(), pos.z + 0.5)
 
         // drop just the block when using silk touch
-        if (player != null && javaGameAPI.hasSilkTouch(player) && !removedByRedstone) {
+        if (player != null && JAVA_GAME_API.hasSilkTouch(player) && !removedByRedstone) {
             val stackData = blockEntityData?.let { LuckyItemStackData.fromBlockEntityData(blockEntityData).toAttr() }
-            gameAPI.dropItem(world, vecPos, blockId, stackData)
+            GAME_API.dropItem(
+                world = world,
+                pos = vecPos,
+                id = blockId,
+                nbt = stackData,
+                components = null,
+            )
             return
         }
 
         // get target player
         val targetPlayer = player
-            ?: gameAPI.getNearestPlayer(world, vecPos)
+            ?: GAME_API.getNearestPlayer(world, vecPos)
             ?: return
 
         // run a randrom drop
         val context = DropContext(world = world, pos = vecPos, player = targetPlayer, sourceId = blockId)
         runRandomDrop(blockEntityData?.customDrops, blockEntityData?.luck ?: 0, context, showOutput = true)
     } catch (e: Exception) {
-        gameAPI.logError("Error performing Lucky Block function", e)
+        GAME_API.logError("Error performing Lucky Block function", e)
     }
 }

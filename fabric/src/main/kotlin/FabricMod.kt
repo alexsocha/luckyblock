@@ -1,13 +1,13 @@
 package mod.lucky.fabric
 
-import mod.lucky.common.gameAPI
-import mod.lucky.common.platformAPI
+import mod.lucky.common.GAME_API
+import mod.lucky.common.LOGGER
+import mod.lucky.common.PLATFORM_API
 import mod.lucky.java.*
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.EntityType
@@ -22,14 +22,12 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModifications
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
 import net.minecraft.recipe.SpecialRecipeSerializer
 import net.minecraft.util.registry.BuiltinRegistries
 
 import net.minecraft.util.registry.RegistryKey
-import net.minecraft.world.gen.CountConfig
 import net.minecraft.world.gen.GenerationStep
-import net.minecraft.world.gen.decorator.ChanceDecoratorConfig
-import net.minecraft.world.gen.decorator.Decorator
 
 import net.minecraft.world.gen.feature.DefaultFeatureConfig
 import net.minecraft.world.gen.feature.Feature
@@ -54,27 +52,27 @@ object FabricLuckyRegistry {
 
 class FabricMod : ModInitializer {
     init {
-        platformAPI = JavaPlatformAPI
-        gameAPI = FabricGameAPI
-        javaGameAPI = FabricJavaGameAPI
+        PLATFORM_API = JavaPlatformAPI
+        LOGGER = FabricGameAPI
+        GAME_API = FabricGameAPI
+        JAVA_GAME_API = FabricJavaGameAPI
     }
 
     private fun registerWorldGen(blockId: String) {
         val feature = LuckyWorldFeature(DefaultFeatureConfig.CODEC, blockId)
-        val configuredFeature = feature.configure(FeatureConfig.DEFAULT)
+        val placedFeature = feature.configure(FeatureConfig.DEFAULT).withPlacement()
             //.decorate(Decorator.COUNT.configure(CountConfig(1)))
         val featureId = "${blockId}_world_gen"
 
         Registry.register<Feature<*>, Feature<*>>(Registry.FEATURE, Identifier(featureId), feature)
-        val configuredId = RegistryKey.of(Registry.CONFIGURED_FEATURE_KEY, MCIdentifier(featureId))
-        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, configuredId.value, configuredFeature)
-        BiomeModifications.addFeature(BiomeSelectors.all(), GenerationStep.Feature.SURFACE_STRUCTURES, configuredId);
+        val placedId = RegistryKey.of(Registry.PLACED_FEATURE_KEY, MCIdentifier(featureId))
+        Registry.register(BuiltinRegistries.PLACED_FEATURE, placedId.value, placedFeature)
+        BiomeModifications.addFeature(BiomeSelectors.all(), GenerationStep.Feature.SURFACE_STRUCTURES, placedId)
     }
 
     override fun onInitialize() {
         FabricGameAPI.init()
         JavaLuckyRegistry.init()
-        registerAddonCraftingRecipes()
 
         FabricLuckyRegistry.luckyBlockEntity = Registry.register(
             Registry.BLOCK_ENTITY_TYPE,
@@ -127,14 +125,16 @@ class FabricMod : ModInitializer {
         JavaLuckyRegistry.addons.map { addon ->
             if (addon.ids.block != null) {
                 val block = LuckyBlock()
-                Registry.register(Registry.BLOCK, Identifier(addon.ids.block), block)
-                Registry.register(Registry.ITEM, Identifier(addon.ids.block), LuckyBlockItem(block))
+                Registry.register(Registry.BLOCK, Identifier(addon.ids.block!!), block)
+                Registry.register(Registry.ITEM, Identifier(addon.ids.block!!), LuckyBlockItem(block))
                 registerWorldGen(addon.ids.block!!)
             }
-            if (addon.ids.bow != null) Registry.register(Registry.ITEM, Identifier(addon.ids.bow), LuckyBow())
-            if (addon.ids.sword != null) Registry.register(Registry.ITEM, Identifier(addon.ids.sword), LuckySword())
-            if (addon.ids.potion != null) Registry.register(Registry.ITEM, Identifier(addon.ids.potion), LuckyPotion())
+            if (addon.ids.bow != null) Registry.register(Registry.ITEM, Identifier(addon.ids.bow!!), LuckyBow())
+            if (addon.ids.sword != null) Registry.register(Registry.ITEM, Identifier(addon.ids.sword!!), LuckySword())
+            if (addon.ids.potion != null) Registry.register(Registry.ITEM, Identifier(addon.ids.potion!!), LuckyPotion())
         }
+
+        registerAddonCraftingRecipes()
     }
 }
 
@@ -159,16 +159,18 @@ class FabricModClient : ClientModInitializer {
 
         registerLuckyBowModels(FabricLuckyRegistry.luckyBow)
         JavaLuckyRegistry.addons.map { addon ->
-            registerLuckyBowModels(Registry.ITEM.get(Identifier(addon.ids.bow)) as LuckyBow)
+            addon.ids.bow?.let {
+                registerLuckyBowModels(Registry.ITEM.get(Identifier(it)) as LuckyBow)
+            }
         }
 
-        EntityRendererRegistry.INSTANCE.register(FabricLuckyRegistry.luckyProjectile) { ctx ->
+        EntityRendererRegistry.register(FabricLuckyRegistry.luckyProjectile) { ctx ->
             LuckyProjectileRenderer(ctx)
         }
-        EntityRendererRegistry.INSTANCE.register(FabricLuckyRegistry.thrownLuckyPotion) { ctx ->
+        EntityRendererRegistry.register(FabricLuckyRegistry.thrownLuckyPotion) { ctx ->
             ThrownLuckyPotionRenderer(ctx)
         }
-        EntityRendererRegistry.INSTANCE.register(FabricLuckyRegistry.delayedDrop) { ctx ->
+        EntityRendererRegistry.register(FabricLuckyRegistry.delayedDrop) { ctx ->
             DelayedDropRenderer(ctx)
         }
 

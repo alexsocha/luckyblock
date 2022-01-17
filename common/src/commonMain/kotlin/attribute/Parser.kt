@@ -267,13 +267,13 @@ fun parseAttr(value: String, spec: AttrSpec?, context: ParserContext, parentKey:
 
         val lowerKeyMap = if (spec !is DictSpec) emptyMap() else spec.children
             .mapValues { (k, _) -> k }
-            .mapKeys { (k, _) -> k.toLowerCase() }
+            .mapKeys { (k, _) -> k.lowercase() }
 
         val children = HashMap<String, Attr>()
         contents.forEach {
             if ("=" !in it) throw ParserError("Invalid dictionary entry '$it' for attribute '$value'")
             val childKey = it.substring(0, it.indexOf("=")).trim()
-            val lowerChildKey = childKey.toLowerCase()
+            val lowerChildKey = childKey.lowercase()
             val newChildKey = lowerKeyMap[lowerChildKey] ?: childKey
             val v = it.substring(it.indexOf("=") + 1).trim()
 

@@ -1,0 +1,18 @@
+{
+    "format_version": "1.16.0",
+    "minecraft:block": {
+        "description": {
+            "identifier": "lucky:unlucky_${blockId}",
+            "register_to_creative_menu": false
+        },
+        "components": {
+            "minecraft:destroy_time": 0.1,
+            "minecraft:explosion_resistance": 20,
+            "minecraft:flammable": {
+                "flame_odds": 0,
+                "burn_odds": 0
+            },
+            "minecraft:map_color": "#F3C428"
+        }
+    }
+}

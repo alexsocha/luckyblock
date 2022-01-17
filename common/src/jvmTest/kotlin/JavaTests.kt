@@ -1,28 +1,59 @@
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.drop.*
-import mod.lucky.common.gameAPI
+import mod.lucky.common.LOGGER
+import mod.lucky.common.GAME_API
 import mod.lucky.java.JavaLuckyRegistry
-import mod.lucky.java.javaGameAPI
+import mod.lucky.java.JAVA_GAME_API
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
 class JavaTests {
     @BeforeTest
     fun beforeTest() {
-        gameAPI = MockGameAPI
-        javaGameAPI = MockJavaGameAPI
+        LOGGER = MockGameAPI
+        GAME_API = MockGameAPI
+        JAVA_GAME_API = MockJavaGameAPI
+        JavaLuckyRegistry.init()
     }
 
     @Test
-    fun integrationTest() {
-        JavaLuckyRegistry.init()
-
+    fun testLuckyRegistry() {
         assertEquals(true, JavaLuckyRegistry.globalSettings.checkForUpdates)
         assertEquals(false, LuckyRegistry.blockSettings["lucky:lucky_block"]?.doDropsOnCreativeMode)
         assertEquals(false, LuckyRegistry.blockSettings["lucky:custom_lucky_block"]?.doDropsOnCreativeMode)
 
+        listOf(
+            "lucky:lucky_block:giant_lucky_block_inner_good",
+            "lucky:lucky_block:giant_blocks/lucky_block_inner_good.luckystruct"
+        ).forEach {
+            assertContains(LuckyRegistry.dropStructures.keys, it)
+        }
+
+        listOf(
+            "lucky:lucky_block:giant_lucky_block_good",
+            "lucky:lucky_block:giant_lucky_block_bad",
+            "lucky:lucky_block:giant_blocks/lucky_block.nbt",
+        ).forEach {
+            assertContains(JavaLuckyRegistry.nbtStructures.keys, it)
+        }
+
+        assertEquals(mapOf(
+            "lucky:lucky_block" to "lucky:lucky_block",
+            "lucky:lucky_sword" to "lucky:lucky_block",
+            "lucky:lucky_bow" to "lucky:lucky_block",
+            "lucky:lucky_potion" to "lucky:lucky_block",
+            "lucky:custom_lucky_block" to "lucky:custom_lucky_block",
+            "lucky:custom_lucky_sword" to "lucky:custom_lucky_block",
+            "lucky:custom_lucky_bow" to "lucky:custom_lucky_block",
+            "lucky:custom_lucky_potion" to "lucky:custom_lucky_block",
+        ), LuckyRegistry.sourceToAddonId)
+    }
+
+    @Test
+    fun testAllDrops() {
         val sourceIds = listOf(
             "lucky:lucky_block",
             "lucky:lucky_sword",

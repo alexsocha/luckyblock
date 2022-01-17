@@ -1,0 +1,24 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "${addonId} behavior pack",
+        "name": "${addonId}BP",
+        "uuid": "${behaviorPackUuid}",
+        "version": [1, 0, 0],
+        "min_engine_version": [1, 17, 0]
+    },
+    "modules": [
+        {
+            "description": "${addonId} behavior pack module",
+            "type": "data",
+            "uuid": "${behaviorPackModuleUuid}",
+            "version": [1, 0, 0]
+        }
+    ],
+    "dependencies": [
+        {
+            "uuid": "${resourcePackUuid}",
+            "version": [1, 0, 0]
+        }
+    ]
+}

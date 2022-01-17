@@ -1,6 +1,6 @@
 package mod.lucky.fabric.game
 
-import mod.lucky.common.gameAPI
+import mod.lucky.common.GAME_API
 import mod.lucky.fabric.*
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
@@ -32,7 +32,7 @@ fun SpawnPacket.execute(world: ClientWorld) {
     }
 
     if (entity == null) {
-        gameAPI.logError("Error spawning client entity with NBT '$entityNBT'")
+        GAME_API.logError("Error spawning client entity with NBT '$entityNBT'")
         return
     }
 }
@@ -40,7 +40,7 @@ fun SpawnPacket.execute(world: ClientWorld) {
 fun SpawnPacket.Companion.decode(buf: PacketByteBuf): SpawnPacket? {
     val nbt = buf.readNbt()
     if (nbt == null) {
-        gameAPI.logError("Error decoding entity spawn packet")
+        GAME_API.logError("Error decoding entity spawn packet")
         return null
     }
     return SpawnPacket(nbt)

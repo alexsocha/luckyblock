@@ -1,6 +1,6 @@
 package mod.lucky.forge.game
 
-import mod.lucky.common.RANDOM
+import mod.lucky.common.DEFAULT_RANDOM
 import mod.lucky.forge.*
 import mod.lucky.java.*
 import mod.lucky.java.game.doBowDrop
@@ -36,7 +36,7 @@ class LuckyBow : BowItem(Properties()
                             player = player,
                             power = power.toDouble(),
                             stackNBT = stack.tag,
-                            sourceId = javaGameAPI.getItemId(this),
+                            sourceId = JAVA_GAME_API.getItemId(this),
                         )
                     }
 
@@ -47,7 +47,7 @@ class LuckyBow : BowItem(Properties()
                         SoundEvents.ARROW_SHOOT,
                         SoundSource.PLAYERS,
                         1.0f,
-                        1.0f / (RANDOM.nextFloat() * 0.4f + 1.2f) + power * 0.5f
+                        1.0f / (DEFAULT_RANDOM.nextDouble().toFloat() * 0.4f + 1.2f) + power * 0.5f
                     )
 
                     if (!unlimitedArrows && !player.abilities.instabuild) {

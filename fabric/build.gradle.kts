@@ -50,11 +50,11 @@ tasks.getByName("runClient").dependsOn(tasks.getByName("copyRuntimeResources"))
 tasks.getByName("runServer").dependsOn(tasks.getByName("copyRuntimeResources"))
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "16"
+compileKotlin.kotlinOptions.jvmTarget = "17"
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
-    options.release.set(16)
+    options.release.set(17)
 }
 
 tasks.jar {
@@ -74,7 +74,7 @@ tasks.getByName<RemapJarTask>("remapJar") {
 }
 
 tasks {
-    val javaVersion = JavaVersion.VERSION_16
+    val javaVersion = JavaVersion.VERSION_17
     java {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(javaVersion.toString()))
