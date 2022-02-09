@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "Lucky Block",
+    "item.lucky.lucky_block.luck": "geluk",
+    "item.lucky.lucky_block.customDrop": "Heeft aangepaste drops",
+
+    "item.lucky.lucky_sword": "Lucky Sword",
+    "item.lucky.lucky_bow": "Lucky Bow",
+    "item.lucky.lucky_potion": "Lucky Potion",
+
+    "block.lucky.lucky_block.veryLucky": "Very Lucky Block",
+    "block.lucky.lucky_block.unlucky": "Ongelukkig blok",
+    "item.lucky.lucky_potion.veryLucky": "Very Lucky Potion",
+    "item.lucky.lucky_potion.unlucky": "Ongelukkig drankje"
+}
