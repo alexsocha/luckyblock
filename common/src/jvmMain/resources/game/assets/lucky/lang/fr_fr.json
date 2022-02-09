@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "Bloc chanceux",
+    "item.lucky.lucky_block.luck": "la chance",
+    "item.lucky.lucky_block.customDrop": "A des gouttes personnalisées",
+
+    "item.lucky.lucky_sword": "Épée porte-bonheur",
+    "item.lucky.lucky_bow": "Arc chanceux",
+    "item.lucky.lucky_potion": "Potion chanceuse",
+
+    "block.lucky.lucky_block.veryLucky": "Bloc très chanceux",
+    "block.lucky.lucky_block.unlucky": "Bloc malchanceux",
+    "item.lucky.lucky_potion.veryLucky": "Potion très chanceuse",
+    "item.lucky.lucky_potion.unlucky": "Potion de malchance"
+}
