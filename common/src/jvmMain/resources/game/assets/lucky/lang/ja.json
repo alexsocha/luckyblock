@@ -1,4 +1,4 @@
-{{
+{
     "block.lucky.lucky_block"： "ラッキーブロック"、
     "item.lucky.lucky_block.luck"： "運"、
     "item.lucky.lucky_block.customDrop"： "カスタムドロップがあります"、
