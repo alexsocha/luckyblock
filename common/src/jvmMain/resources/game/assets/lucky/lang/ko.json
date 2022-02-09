@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "럭키 블록",
+    "item.lucky.lucky_block.luck": "행운",
+    "item.lucky.lucky_block.customDrop": "맞춤형 드롭이 있음",
+
+    "item.lucky.lucky_sword": "럭키 소드",
+    "item.lucky.lucky_bow": "행운의 활",
+    "item.lucky.lucky_potion": "행운의 물약",
+
+    "block.lucky.lucky_block.veryLucky": "매우 행운의 블록",
+    "block.lucky.lucky_block.unlucky": "불운 블록",
+    "item.lucky.lucky_potion.veryLucky": "매우 행운의 물약",
+    "item.lucky.lucky_potion.unlucky": "불운의 물약"
+}
