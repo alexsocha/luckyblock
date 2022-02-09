@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "Bloque de la suerte",
+    "item.lucky.lucky_block.luck": "suerte",
+    "item.lucky.lucky_block.customDrop": "Tiene caídas personalizadas",
+
+    "item.lucky.lucky_sword": "Espada de la suerte",
+    "item.lucky.lucky_bow": "Arco de la suerte",
+    "item.lucky.lucky_potion": "Poción de la suerte",
+
+    "block.lucky.lucky_block.veryLucky": "Bloque muy afortunado",
+    "block.lucky.lucky_block.unlucky": "Bloque desafortunado",
+    "item.lucky.lucky_potion.veryLucky": "Poción muy afortunada",
+    "item.lucky.lucky_potion.unlucky": "Poción de mala suerte"
+}
