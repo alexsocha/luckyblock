@@ -12,6 +12,8 @@ repositories {
     mavenCentral()
 }
 
+val minJavaVersion: String by project
+
 val isForgeEnabled: String by project
 val isForgeEnabledBool = isForgeEnabled.toBoolean()
 val forgeModVersion: String by project
@@ -122,6 +124,7 @@ fun writeMeta(distDir: String, version: String, versionNumber: Int, minMinecraft
         "version" to version,
         "version_number" to versionNumber,
         "min_minecraft_version" to minMinecraftVersion,
+        "min_java_version" to minJavaVersion,
         "revision" to revision,
         "datetime" to dateFormat.format(Date())
     ) + extraInfo
