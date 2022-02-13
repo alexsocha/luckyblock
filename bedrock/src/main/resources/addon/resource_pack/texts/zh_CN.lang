@@ -1,0 +1,3 @@
+tile.lucky:lucky_block.name=幸运方块
+tile.lucky:unlucky_block.name=不幸方块
+tile.lucky:very_lucky_block.name=非常幸运的方块
