@@ -102,10 +102,12 @@ tasks.register<Zip>("jvmConfigDist") {
 fun getModVersionNumber(modVersion: String): Int {
     val splitVersion = modVersion.split('-')
     val mcVersion = splitVersion[0].split('.')
-    return (mcVersion[0].toInt()) * 1000000 +
-        (mcVersion[1].toInt()) * 10000 +
-        (mcVersion.getOrElse(2) { "0" }.toInt()) * 100 +
-        splitVersion[1].toInt()
+    val luckyBlockVersion = splitVersion[1].split('.')
+    return (mcVersion[0].toInt()) * 100000000 +
+        (mcVersion[1].toInt()) * 1000000 +
+        (mcVersion.getOrElse(2) { "0" }.toInt()) * 10000 +
+        luckyBlockVersion[0].toInt() * 100 +
+        luckyBlockVersion[1].toInt()
 }
 
 fun writeMeta(distDir: String, version: String, versionNumber: Int, minMinecraftVersion: String, extraInfo: Map<String, String> = emptyMap()) {
@@ -157,7 +159,7 @@ if (isBedrockEnabledBool) {
 
 fun jvmJarDist(projectName: String, minMCVersion: String, modVersion: String) {
     project(":$projectName").tasks.register<Zip>("jarDist") {
-        val distName = "${rootProject.name}-$modVersion-$projectName"
+        val distName = "${rootProject.name}-$projectName-$modVersion"
         destinationDirectory.set(file("$rootDir/dist/$distName"))
         archiveFileName.set("$distName.jar")
 

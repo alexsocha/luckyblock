@@ -19,12 +19,10 @@ jobs:
                     const isRelease = context.eventName === "push"
                         && context.ref.startsWith("refs/tags/")
                         && refName.includes("@");
+                    
                     const releaseName = refName.split("@")[0];
                     const releaseVersion = refName.split("@")[1];
-
-                    const releaseFolderName = releaseName.startsWith("luckyblock")
-                        ? `luckyblock-${releaseVersion}-${releaseName.split("-")[1]}`
-                        : `${releaseName}-${releaseVersion}`;
+                    const releaseFolderName = `${releaseName}-${releaseVersion}`
                     
                     core.setOutput("isRelease", isRelease.toString());
                     core.setOutput("releaseFolderName", releaseFolderName);

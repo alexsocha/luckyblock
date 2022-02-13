@@ -25,7 +25,7 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 - [Minecraft Forum](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/1292247-lucky-block-mod-drops-items-spawns-mobs-structures)
 - [Planet Minecraft](https://www.planetminecraft.com/mod/lucky-block/)
 
-## Installing
+## Install
 1. Download and install [Forge](https://files.minecraftforge.net) or [Fabric](https://fabricmc.net), then run Minecraft at least once.
 2. Download the Lucky Block mod and put it into your [.minecraft](https://minecraft.gamepedia.com/.minecraft)/mods/</a> folder.
 3. Run Minecraft and enjoy!
@@ -33,10 +33,22 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 ## Add-ons
 <img src="img/addons_3d.png" width="400px">
 
-### Installing
+### Install
 1. Install the Lucky Block mod and run Minecraft at least once.
 2. Put add-ons into your [.minecraft](https://minecraft.gamepedia.com/.minecraft)/addons/lucky/ folder.
 3. Run Minecraft and enjoy!
+
+## Versioning
+
+All Lucky Block releases follow the format:
+```
+lucky-block-{loader}@{minecraft}-{major}.{minor}
+```
+
+- `loader`: forge/fabric/bedrock
+- `minecraft`: Minimum compatible Minecraft version
+- `major`: Incremented on every feature/fix to the core mod.
+- `minor`: Incremented on every fix to this particular `loader`/`minecraft` combo.
 
 ## Development
 
