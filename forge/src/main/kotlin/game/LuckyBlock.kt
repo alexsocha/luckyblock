@@ -101,10 +101,9 @@ class LuckyBlockEntity(
         data = LuckyBlockEntityData.readFromTag(tag)
     }
 
-    override fun save(tag: CompoundTag): CompoundTag {
-        super.save(tag)
+    override fun saveAdditional(tag: CompoundTag) {
+        super.saveAdditional(tag)
         data.writeToTag(tag)
-        return tag
     }
 
     override fun getUpdatePacket(): ClientboundBlockEntityDataPacket {
