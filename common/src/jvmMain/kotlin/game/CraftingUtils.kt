@@ -28,5 +28,5 @@ fun getLuckModifierCraftingResult(stacks: List<ItemStack>): ItemStack? {
     val newLuckUnbounded = stackData.luck + luckModifier
     val newLuck = if (newLuckUnbounded > 100) 100 else if (newLuckUnbounded < -100) -100 else newLuckUnbounded
     val newNBT = JAVA_GAME_API.attrToNBT(LuckyItemStackData(luck = newLuck).toAttr())
-    return ItemStack(luckyStack.itemId, luckyStack.count, newNBT)
+    return ItemStack(luckyStack.itemId, 1, newNBT)
 }

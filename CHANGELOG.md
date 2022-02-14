@@ -1,5 +1,10 @@
 # Changelog
 
+## v10
+
+- fix: duplicate stacks when crafting with luck modifiers
+    - https://github.com/alexsocha/luckyblock/issues/60
+
 ## v9
 
 - fix: register addon crafting recipes after registering items
