@@ -24,6 +24,7 @@ val isFabricEnabled: String by project
 val isFabricEnabledBool = isFabricEnabled.toBoolean()
 val fabricModVersion: String by project
 val fabricMinMCVersion: String by project
+val fabricMinLoaderVersion: String by project
 
 val isBedrockEnabled: String by project
 val isBedrockEnabledBool = isBedrockEnabled.toBoolean()
@@ -172,7 +173,11 @@ fun jvmJarDist(projectName: String, minMCVersion: String, modVersion: String) {
                 version = modVersion,
                 versionNumber = getModVersionNumber(modVersion),
                 minMinecraftVersion = minMCVersion,
-                extraInfo = if (projectName == "forge") mapOf("min_forge_version" to forgeMinForgeVersion) else emptyMap()
+                extraInfo = when (projectName) {
+                    "forge" -> mapOf("min_forge_version" to forgeMinForgeVersion)
+                    "fabric" -> mapOf("min_fabric_loader_version" to fabricMinLoaderVersion)
+                    else -> emptyMap()
+                }
             )
         }
 
