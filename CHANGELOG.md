@@ -1,23 +1,23 @@
 # Changelog
 
-## v8
+## v9
 
 - fix: register addon crafting recipes after registering items
 - fix: correctly resolve structure IDs from multiple addons
 - refactor: separate NBT structures and drop structures
 
-## v7
+## v8
+
 - fix: 'sPos' template variable edge case with negative positions
 - fix: effect drops which act on entities in a range
 - feat: make adjustY a common attribute
 - fix: resolving structure IDs starting with lucky:
 
-
-## v6
+## v7
 
 - fix: type casting for template variables which return nested structures
 
-## v5 ## luckyblock-1.16.5-2-forge, luckyblock-1.16.5-1-fabric
+## v6
 
 - Added the following drop properties:
     - `type=entity,randomizeMob=true/false`
@@ -70,16 +70,15 @@ group(
 ),pos=#pPos,centerOffset=(0,0,2),rotation=#pDirect
 ```
 
-
-## v4 v1.16.4-3-forge
+## v5
 
 - Added `#luckyCrossbowEnchantments` and `#luckyTridentEnchantments`.
 
-## v3
+## v4
 
 - Removed custom loot tables (sorry!).
 
-## v2 - v1.13.2-1
+## v3
 
 - Add-ons should now be placed in `.minecraft/addons/lucky`. However, the old `addons/luckyBlock`
   folder will continue to work.
