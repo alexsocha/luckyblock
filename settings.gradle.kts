@@ -41,7 +41,7 @@ val isForgeEnabledBool = isForgeEnabled.toBoolean()
 val isBedrockEnabled: String by settings
 val isBedrockEnabledBool = isBedrockEnabled.toBoolean()
 
-rootProject.name = "luckyblock"
+rootProject.name = "lucky-block"
 include("common")
 include("tools")
 if (isForgeEnabledBool) include("forge")
