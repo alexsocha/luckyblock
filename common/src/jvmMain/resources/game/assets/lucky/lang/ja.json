@@ -1,14 +1,14 @@
 {
-    "block.lucky.lucky_block: "ラッキーブロック"
-    "item.lucky.lucky_block.luck: "運"
-    "item.lucky.lucky_block.customDrop: "カスタムドロップがあります"
+    "block.lucky.lucky_block: "ラッキーブロック",
+    "item.lucky.lucky_block.luck: "運",
+    "item.lucky.lucky_block.customDrop: "カスタムドロップがあります",
 
-    "item.lucky.lucky_sword: "ラッキーソード"
-    "item.lucky.lucky_bow: "ラッキーボウ"
-    "item.lucky.lucky_potion: "ラッキーポーション"
+    "item.lucky.lucky_sword: "ラッキーソード",
+    "item.lucky.lucky_bow: "ラッキーボウ",
+    "item.lucky.lucky_potion: "ラッキーポーション",
 
-    "block.lucky.lucky_block.veryLucky： "Very Lucky Block"
-    "block.lucky.lucky_block.unlucky： "Unlucky Block"
-    "item.lucky.lucky_potion.veryLucky： "非常に幸運なポーション"
-    "item.lucky.lucky_potion.unlucky： "不運なポーション"
+    "block.lucky.lucky_block.veryLucky： "Very Lucky Block",
+    "block.lucky.lucky_block.unlucky： "Unlucky Block",
+    "item.lucky.lucky_potion.veryLucky： "非常に幸運なポーション",
+    "item.lucky.lucky_potion.unlucky： "不運なポーション",
 }
