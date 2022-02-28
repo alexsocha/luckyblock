@@ -17,7 +17,7 @@ data class LuckyBlockVariant(
 
 data class UnparsedModConfig(
     val drops: String,
-    val doDropsOnCreativeMode: Boolean = false,
+    val doDropsOnRightClick: Boolean = false,
     val structures: dynamic, // structureId -> String
     val luck: Int,
     val variants: dynamic, // blockId -> LuckyBlockVariant
@@ -29,7 +29,7 @@ object BedrockLuckyRegistry {
 
 fun registerModConfig(blockId: String, unparsedConfig: UnparsedModConfig) {
     val drops = dropsFromStrList(splitLines(unparsedConfig.drops.split('\n')))
-    val settings =  LuckyBlockSettings(doDropsOnCreativeMode=unparsedConfig.doDropsOnCreativeMode)
+    val settings =  LuckyBlockSettings(doDropsOnRightClick=unparsedConfig.doDropsOnRightClick)
 
     LuckyRegistry.drops[blockId] = drops
     LuckyRegistry.blockSettings[blockId] = settings

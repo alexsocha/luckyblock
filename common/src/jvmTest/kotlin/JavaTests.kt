@@ -22,8 +22,8 @@ class JavaTests {
     @Test
     fun testLuckyRegistry() {
         assertEquals(true, JavaLuckyRegistry.globalSettings.checkForUpdates)
-        assertEquals(false, LuckyRegistry.blockSettings["lucky:lucky_block"]?.doDropsOnCreativeMode)
-        assertEquals(false, LuckyRegistry.blockSettings["lucky:custom_lucky_block"]?.doDropsOnCreativeMode)
+        assertEquals(false, LuckyRegistry.blockSettings["lucky:lucky_block"]?.doDropsOnRightClick)
+        assertEquals(false, LuckyRegistry.blockSettings["lucky:custom_lucky_block"]?.doDropsOnRightClick)
 
         listOf(
             "lucky:lucky_block:giant_lucky_block_inner_good",

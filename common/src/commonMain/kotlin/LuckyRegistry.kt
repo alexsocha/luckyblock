@@ -11,7 +11,7 @@ data class DropTemplateContext(
 )
 
 data class LuckyBlockSettings(
-    val doDropsOnCreativeMode: Boolean = false
+    val doDropsOnRightClick: Boolean = false
 )
 
 object LuckyRegistry {

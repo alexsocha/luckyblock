@@ -24,7 +24,7 @@ fun parseGlobalSettings(lines: List<String>): GlobalSettings {
 
 fun parseLocalSettings(lines: List<String>): LocalSettings {
     val spec = dictSpecOf(
-        "doDropsOnCreativeMode" to ValueSpec(AttrType.BOOLEAN),
+        "doDropsOnRightClick" to ValueSpec(AttrType.BOOLEAN),
     )
 
     val props = try {
@@ -37,7 +37,7 @@ fun parseLocalSettings(lines: List<String>): LocalSettings {
 
 return LocalSettings(
         block = LuckyBlockSettings(
-            doDropsOnCreativeMode=props.getWithDefault("doDropsOnCreativeMode", false)
+            doDropsOnRightClick=props.getWithDefault("doDropsOnRightClick", false)
         )
     )
 }
