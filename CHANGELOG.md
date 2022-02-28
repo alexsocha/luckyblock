@@ -1,5 +1,10 @@
 # Changelog
 
+## v11
+
+- feat: add doDropsOnRightClick
+- fix: update notifications
+
 ## v10
 
 - fix: duplicate stacks when crafting with luck modifiers
@@ -9,7 +14,6 @@
 
 - fix: register addon crafting recipes after registering items
 - fix: correctly resolve structure IDs from multiple addons
-- refactor: separate NBT structures and drop structures
 
 ## v8
 
@@ -74,6 +78,7 @@ group(
     type=entity,posOffset=(0.5,2,0.5),id=zombie,facing=2
 ),pos=#pPos,centerOffset=(0,0,2),rotation=#pDirect
 ```
+- Kotlin rewrite
 
 ## v5
 
