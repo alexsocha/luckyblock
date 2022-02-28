@@ -15,3 +15,4 @@ logs/
 run/
 tools/.cached-pages/
 tools/.debug/
+.env

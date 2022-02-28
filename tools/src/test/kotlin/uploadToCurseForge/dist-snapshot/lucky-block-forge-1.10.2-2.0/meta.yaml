@@ -1,0 +1,6 @@
+version: 1.10.2-2.0
+version_number: 110100200
+min_minecraft_version: 1.10.2
+min_java_version: 8
+datetime: 2017-10-08 00:00:00
+min_forge_version: 12.18.3.2511
