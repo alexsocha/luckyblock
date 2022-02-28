@@ -2,17 +2,13 @@ package mod.lucky.java.loader
 
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.attribute.*
-import mod.lucky.common.drop.BaseDrop
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.processProps
-import mod.lucky.common.drop.readDropStructure
-import mod.lucky.common.drop.DropStructure
 import mod.lucky.common.LOGGER
-import mod.lucky.java.JAVA_GAME_API
 import java.io.File
 import java.util.zip.ZipFile
 
-fun getStructureFilesById(baseDir: File): Map<String, File> {
+fun getStructurePathsById(baseDir: File): Map<String, String> {
     val filePaths: List<String> = try {
         if (baseDir.isDirectory) {
             baseDir.walk().toList().filter { !it.isDirectory }.map { it.relativeTo(baseDir).path }
@@ -23,13 +19,14 @@ fun getStructureFilesById(baseDir: File): Map<String, File> {
         LOGGER.logError("Error searching for structures", e)
         emptyList()
     }
+
     return filePaths
         .map { it.replace(File.separatorChar, '/') }
         .filter { it.startsWith("structures/") || it.contains("/structures/") }
-        .map {
+        .associate {
             val relativePath = it.substring(it.indexOf("structures/") + "structures/".length)
-            relativePath to File(it)
-        }.toMap()
+            relativePath to it
+        }
 }
 
 data class StructuresConfig(
@@ -42,7 +39,7 @@ data class StructuresConfig(
                 "file" to ValueSpec(AttrType.STRING)
             ))
 
-            val structureFilesById = getStructureFilesById(baseDir)
+            val structurePathsById = getStructurePathsById(baseDir)
             val structurePropsById = splitLines(configLines).mapNotNull {
                 val props = try {
                     val rawProps = parseEvalAttr(it,
@@ -61,7 +58,7 @@ data class StructuresConfig(
                     LOGGER.logError("Error in structures.txt: '$it' is missing a 'file' attribute")
                     return@mapNotNull null
                 }
-                if (path !in structureFilesById) {
+                if (path !in structurePathsById) {
                     LOGGER.logError("Error in structures.txt: Structure with path '$path' not found")
                     return@mapNotNull null
                 }

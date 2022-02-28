@@ -19,23 +19,23 @@ data class NbtStructureWithProps(
 )
 
 fun readDropStructures(baseDir: File, structuresConfig: StructuresConfig): Map<String, DropStructure> {
-    val dropStructures = getStructureFilesById(baseDir).mapNotNull { (k, file) ->
+    val dropStructures = getStructurePathsById(baseDir).mapNotNull { (k, path) ->
         try {
             when {
                 k.endsWith(".luckystruct") -> {
-                    val stream = getInputStream(baseDir, file.path)!!
+                    val stream = getInputStream(baseDir, path)!!
                     val dropStructure = readDropStructure(readLines(stream))
                     k to dropStructure
                 }
                 k.endsWith(".schematic") -> {
-                    val stream = getInputStream(baseDir, file.path)!!
+                    val stream = getInputStream(baseDir, path)!!
                     val (props, drops) = readLegacySchematic(stream)
                     k to DropStructure(props, drops)
                 }
                 else -> null
             }
         } catch (e: Exception) {
-            LOGGER.logError("Error reading structure '$k'", e)
+            LOGGER.logError("Error reading structure '$k', path=${path}", e)
             null
         }
     }.toMap()
@@ -47,16 +47,16 @@ fun readDropStructures(baseDir: File, structuresConfig: StructuresConfig): Map<S
 }
 
 fun readNbtStructures(baseDir: File, structuresConfig: StructuresConfig): Map<String, NbtStructureWithProps> {
-    val nbtStructures = getStructureFilesById(baseDir).mapNotNull { (k, file) ->
+    val nbtStructures = getStructurePathsById(baseDir).mapNotNull { (k, path) ->
         try {
             if (k.endsWith(".nbt")) {
-                val stream = getInputStream(baseDir, file.path)!!
+                val stream = getInputStream(baseDir, path)!!
                 val (structure, size) = JAVA_GAME_API.readNbtStructure(stream)
                 val props = dictAttrOf("size" to vec3AttrOf(AttrType.DOUBLE, size.toDouble()))
                 k to NbtStructureWithProps(props, structure)
             } else null
         } catch (e: Exception) {
-            LOGGER.logError("Error reading structure '$k'", e)
+            LOGGER.logError("Error reading structure '$k', path=${path}", e)
             null
         }
     }.toMap()
