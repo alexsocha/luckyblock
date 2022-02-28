@@ -35,6 +35,8 @@ internal class TestUploadToCurseForge {
                     Json.encodeToString(meta)
                 )
             }
+        } else {
+            coEvery { mockCurseForgeClient.uploadDist(any(), any()) } answers {}
         }
 
         uploadToCurseForge(mockCurseForgeClient, curDir.resolve("dist-snapshot"))

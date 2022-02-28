@@ -6,6 +6,7 @@ import kotlinx.cli.*
 import kotlinx.coroutines.runBlocking
 import io.github.g00fy2.versioncompare.Version as ComparableVersion
 import java.io.File
+import io.github.cdimascio.dotenv.dotenv
 
 fun findCompatibleGameVersions(
     gameVersions: List<CurseForgeGameVersion>,
@@ -14,7 +15,6 @@ fun findCompatibleGameVersions(
     fun findWithMin(
         type: CurseForgeGameVersionType,
         minVersionString: String,
-        isCompatibleWithNextMinor: Boolean = true,
     ): List<CurseForgeGameVersion> {
         return gameVersions.filter {
             if (it.gameVersionTypeID == type.id) {
@@ -96,7 +96,10 @@ class UploadToCurseForge: Subcommand("upload-to-curseforge", "Upload mod files t
     val inputDistFolder by option(ArgType.String, description = "Folder containing mod files").default("./dist")
 
     override fun execute() = runBlocking {
-        val apiToken = System.getenv("CURSEFORGE_API_TOKEN") ?: throw Exception("Missing CURSEFORGE_API_TOKEN")
+        val dotenv = dotenv()
+        val apiToken = dotenv["CURSEFORGE_API_TOKEN"] ?: throw Exception("Missing CURSEFORGE_API_TOKEN")
+        println("---------")
+        println(apiToken)
 
         val curseForgeClient = CurseForgeClient(apiToken)
         uploadToCurseForge(curseForgeClient, File(inputDistFolder))

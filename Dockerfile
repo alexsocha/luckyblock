@@ -33,8 +33,8 @@ FROM base as test
 WORKDIR /app
 COPY . .
 
-RUN ./gradlew :common:jvmTest
-RUN ./gradlew :tools:test
+RUN ./gradlew :common:jvmTest --info
+RUN ./gradlew :tools:test --info
 
 #
 # Build
