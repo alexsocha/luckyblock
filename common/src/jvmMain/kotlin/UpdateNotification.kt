@@ -17,13 +17,15 @@ data class ModNotificationState(
     val didCheckForUpdates: Boolean = false,
 ) { companion object }
 
-private fun getModVersionInt(modVersionStr: String): Int {
-    val splitVersion = modVersionStr.split('-')
-    val modVersion = splitVersion[1].toInt()
+fun getModVersionAsInt(modVersion: String): Int {
+    val splitVersion = modVersion.split('-')
     val mcVersion = splitVersion[0].split('.')
-    return mcVersion[0].toInt() * 1000000 + mcVersion[1].toInt() * 10000 +
-        (mcVersion.getOrNull(2)?.toInt() ?: 0) * 100 +
-        modVersion
+    val luckyBlockVersion = splitVersion[1].split('.')
+    return (mcVersion[0].toInt()) * 100000000 +
+        (mcVersion[1].toInt()) * 1000000 +
+        (mcVersion.getOrElse(2) { "0" }.toInt()) * 10000 +
+        luckyBlockVersion[0].toInt() * 100 +
+        luckyBlockVersion[1].toInt()
 }
 
 fun ModNotificationState.Companion.fromCache(): ModNotificationState {
@@ -56,7 +58,7 @@ fun checkForUpdates(state: ModNotificationState): ModNotificationState {
     try {
         val settings = JavaLuckyRegistry.globalSettings
         if (settings.checkForUpdates && !state.didCheckForUpdates) {
-            val curModVersionInt = getModVersionInt(JAVA_GAME_API.getModVersion())
+            val curModVersionInt = getModVersionAsInt(JAVA_GAME_API.getModVersion())
             val url = URL("https://www.luckyblockmod.com/version-log-${JAVA_GAME_API.getLoaderName()}")
             val reader = BufferedReader(InputStreamReader(url.openStream()))
             for (line in generateSequence { reader.readLine() }) {

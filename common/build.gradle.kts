@@ -102,7 +102,7 @@ tasks.register<Zip>("jvmConfigDist") {
     from("src/jvmMain/resources/lucky-config")
 }
 
-fun getModVersionNumber(modVersion: String): Int {
+fun getModVersionAsInt(modVersion: String): Int {
     val splitVersion = modVersion.split('-')
     val mcVersion = splitVersion[0].split('.')
     val luckyBlockVersion = splitVersion[1].split('.')
@@ -171,7 +171,7 @@ fun jvmJarDist(projectName: String, minMCVersion: String, modVersion: String) {
             writeMeta(
                 distDir = "$rootDir/dist/$distName",
                 version = modVersion,
-                versionNumber = getModVersionNumber(modVersion),
+                versionNumber = getModVersionAsInt(modVersion),
                 minMinecraftVersion = minMCVersion,
                 extraInfo = when (projectName) {
                     "forge" -> mapOf("min_forge_version" to forgeMinForgeVersion)
@@ -200,7 +200,7 @@ if (isBedrockEnabledBool) {
             writeMeta(
                 distDir = "$rootDir/dist/$distName",
                 version = bedrockModVersion,
-                versionNumber = getModVersionNumber(bedrockModVersion),
+                versionNumber = getModVersionAsInt(bedrockModVersion),
                 minMinecraftVersion = bedrockModVersion.split('-')[0]
             )
         }
