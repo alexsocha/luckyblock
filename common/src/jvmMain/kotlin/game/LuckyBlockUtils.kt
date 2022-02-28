@@ -33,11 +33,7 @@ fun onLuckyBlockBreak(
     removedByRedstone: Boolean = false,
 ) {
     try {
-        // check for doDropsOnCreativeMode
         val blockId = JAVA_GAME_API.getBlockId(block) ?: return
-        val settings = LuckyRegistry.blockSettings[blockId]!!
-        if (player != null && JAVA_GAME_API.isCreativeMode(player) && !settings.doDropsOnCreativeMode && !removedByRedstone) return
-
         val vecPos = Vec3d(pos.x + 0.5, pos.y.toDouble(), pos.z + 0.5)
 
         // drop just the block when using silk touch

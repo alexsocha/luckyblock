@@ -1,5 +1,6 @@
 package mod.lucky.fabric.game
 
+import mod.lucky.common.LuckyRegistry
 import mod.lucky.fabric.FabricLuckyRegistry
 import mod.lucky.fabric.isClientWorld
 import mod.lucky.fabric.toVec3i
@@ -13,7 +14,10 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket
 import net.minecraft.sound.BlockSoundGroup
+import net.minecraft.util.ActionResult
 import net.minecraft.util.DyeColor
+import net.minecraft.util.Hand
+import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 import net.minecraft.world.BlockView
@@ -70,6 +74,22 @@ class LuckyBlock : BlockWithEntity(Settings.of(Material.WOOD, DyeColor.YELLOW)
     ) {
         super.afterBreak(world, player, pos, state, blockEntity, stack)
         onBreak(this, world, player, pos)
+    }
+
+    override fun onUse(
+        state: BlockState,
+        world: World,
+        pos: BlockPos,
+        player: PlayerEntity,
+        hand: Hand,
+        hitResult: BlockHitResult
+    ): ActionResult {
+        val settings = LuckyRegistry.blockSettings[JAVA_GAME_API.getBlockId(this)]!!
+        if (settings.doDropsOnRightClick) {
+            onBreak(this, world, player, pos)
+            return ActionResult.SUCCESS
+        }
+        return ActionResult.PASS
     }
 
     override fun onPlaced(world: World, pos: BlockPos, state: BlockState, player: LivingEntity?, itemStack: ItemStack) {
