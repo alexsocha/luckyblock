@@ -6,7 +6,7 @@
 
 
 Originally created in 2015, the Lucky Block is a mod for Minecraft which has since gained over 5 million users. The mod adds a new block to the game which produces random outcomes, as well as items such as the lucky sword, bow and potion. Additionally, the mod can be customized with hundreds of community add-ons.
-(Artwork was made by Clayton Chowaniec)
+(Artwork below was made by Clayton Chowaniec)
 
 <br>
 <div align="center">
