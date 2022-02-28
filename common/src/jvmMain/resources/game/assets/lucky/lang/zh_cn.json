@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "幸运方块",
+    "item.lucky.lucky_block.luck": "幸运",
+    "item.lucky.lucky_block.customDrop": "自定义掉落物",
+
+    "item.lucky.lucky_sword": "幸运剑",
+    "item.lucky.lucky_bow": "幸运弓",
+    "item.lucky.lucky_potion": "幸运药水",
+
+    "block.lucky.lucky_block.veryLucky": "非常幸运的方块",
+    "block.lucky.lucky_block.unlucky": "非常倒霉的方块",
+    "item.lucky.lucky_potion.veryLucky": "非常幸运的药水",
+    "item.lucky.lucky_potion.unlucky": "非常倒霉的药水"
+}
