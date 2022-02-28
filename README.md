@@ -103,6 +103,7 @@ mklink /D "C:\Users\%USERNAME%\AppData\Local\Packages\Microsoft.MinecraftUWP_8we
 - `./gradlew :tools:run --args "download-block-ids --help"`
 
 ## Copyright
-Copyright © 2015-2021 Alex Socha. All Rights Reserved.
+Copyright © 2015-2022 Alex Socha. All Rights Reserved.
 
+### contributor agreement
 By submitting a pull request, you agree to transfer all rights and ownership to the copyright holder.
