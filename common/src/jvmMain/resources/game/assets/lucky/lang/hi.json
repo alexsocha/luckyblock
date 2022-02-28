@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "लकी ब्लॉक",
+    "item.lucky.lucky_block.luck": "लक",
+    "item.lucky.lucky_block.customDrop": "इसमें कस्टम ड्रॉप्स हैं",
+
+    "item.lucky.lucky_sword": "लकी स्वॉर्ड",
+    "item.lucky.lucky_bow": "लकी बो",
+    "item.lucky.lucky_potion": "लकी पोशन",
+
+    "block.lucky.lucky_block.veryLucky": "वेरी लकी ब्लॉक",
+    "block.lucky.lucky_block.unlucky": "अनलकी ब्लॉक",
+    "item.lucky.lucky_potion.veryLucky": "वेरी लकी पोशन",
+    "item.lucky.lucky_potion.unlucky": "अनलकी पोशन"
+}

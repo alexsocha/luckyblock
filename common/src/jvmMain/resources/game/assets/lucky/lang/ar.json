@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "Lucky Block" 
+    "item.lucky.lucky_block.luck": "حظ" 
+    "item.lucky.lucky_block.customDrop": "به قطرات مخصصة" 
+
+    "item.lucky.lucky_sword": "Lucky Sword" 
+    "item.lucky.lucky_bow": "Lucky Bow" 
+    "item.lucky.lucky_potion": "Lucky Potion" 
+
+    "block.lucky.lucky_block.veryLucky": "Very Lucky Block" 
+    "block.lucky.lucky_block.unlucky": "Unlucky Block" 
+    "item.lucky.lucky_potion.veryLucky": "جرعة محظوظة جدًا" 
+    "item.lucky.lucky_potion.unlucky": "جرعة سيئة"
+}

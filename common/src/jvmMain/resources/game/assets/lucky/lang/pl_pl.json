@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "Szczęśliwy blok",
+    "item.lucky.lucky_block.luck": "szczęście",
+    "item.lucky.lucky_block.customDrop": "Ma niestandardowe zrzuty",
+
+    "item.lucky.lucky_sword": "Szczęśliwy Miecz",
+    "item.lucky.lucky_bow": "Szczęśliwy łuk",
+    "item.lucky.lucky_potion": "Szczęśliwa Mikstura",
+
+    "block.lucky.lucky_block.veryLucky": "Blok bardzo Szczęśliwy",
+    "block.lucky.lucky_block.unlucky": "Nieszczęsny blok",
+    "item.lucky.lucky_potion.veryLucky": "Bardzo Szczęśliwa Mikstura",
+    "item.lucky.lucky_potion.unlucky": "Nieszczęsna mikstura"
+}

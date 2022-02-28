@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "ラッキーブロック",
+    "item.lucky.lucky_block.luck": "ラック",
+    "item.lucky.lucky_block.customDrop": "カスタムドロップがあります",
+
+    "item.lucky.lucky_sword": "ラッキーソード",
+    "item.lucky.lucky_bow": "ラッキーボウ",
+    "item.lucky.lucky_potion": "ラッキーポーション",
+
+    "block.lucky.lucky_block.veryLucky": "非常にラッキーブロック",
+    "block.lucky.lucky_block.unlucky": "不運なブロック",
+    "item.lucky.lucky_potion.veryLucky": "非常に幸運なポーション",
+    "item.lucky.lucky_potion.unlucky": "不運なポーション"
+}

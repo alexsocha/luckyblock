@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "Bloc norocos",
+    "item.lucky.lucky_block.luck": "noroc",
+    "item.lucky.lucky_block.customDrop": "Are picături personalizate",
+
+    "item.lucky.lucky_sword": "Sabia norocoasa",
+    "item.lucky.lucky_bow": "Arcul norocos",
+    "item.lucky.lucky_potion": "Poțiune norocoasă",
+
+    "block.lucky.lucky_block.veryLucky": "Bloc foarte norocos",
+    "block.lucky.lucky_block.unlucky": "Blocare cu ghinion",
+    "item.lucky.lucky_potion.veryLucky": "Poțiune foarte norocoasă",
+    "item.lucky.lucky_potion.unlucky": "Poțiune cu ghinion"
+}
