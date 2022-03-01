@@ -6,6 +6,7 @@
 - fix: update notifications
 - fix: load structures from custom lucky block .zip files on Windows
 - fix(forge): load custom lucky block resources on Windows
+- feat: add languages zh_cn, ru_ru, pl_pl, fr_fr, it_it, es_es, 
 
 ## v10
 
