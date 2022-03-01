@@ -5,6 +5,7 @@
 - feat: add doDropsOnRightClick
 - fix: update notifications
 - fix: load structures from custom lucky block .zip files on Windows
+- fix(forge): load custom lucky block resources on Windows
 
 ## v10
 

@@ -1,16 +1,21 @@
 package mod.lucky.forge
 
 import mod.lucky.common.GAME_API
-import mod.lucky.common.PLATFORM_API
 import mod.lucky.common.LOGGER
-import mod.lucky.java.JavaPlatformAPI
+import mod.lucky.common.PLATFORM_API
 import mod.lucky.forge.game.*
 import mod.lucky.java.*
-import net.minecraft.client.Minecraft
+import net.minecraft.SharedConstants
+import net.minecraft.network.chat.TextComponent
+import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.resources.*
 import net.minecraft.server.packs.FilePackResources
 import net.minecraft.server.packs.FolderPackResources
-import net.minecraft.server.packs.resources.SimpleReloadableResourceManager
+import net.minecraft.server.packs.PackType
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection
+import net.minecraft.server.packs.repository.Pack
+import net.minecraft.server.packs.repository.PackSource
+import net.minecraft.server.packs.repository.RepositorySource
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
 import net.minecraft.world.item.crafting.RecipeSerializer
@@ -21,6 +26,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.event.AddPackFindersEvent
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.event.world.BiomeLoadingEvent
 import net.minecraftforge.event.world.WorldEvent
@@ -32,6 +38,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 import net.minecraftforge.registries.ForgeRegistries
+import net.minecraftforge.resource.DelegatingResourcePack
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -100,15 +107,6 @@ class ForgeMod {
     private fun setupClient() {
         MinecraftForge.EVENT_BUS.addListener { _: WorldEvent.Load ->
             JavaLuckyRegistry.notificationState = checkForUpdates(JavaLuckyRegistry.notificationState)
-        }
-
-        for (addon in JavaLuckyRegistry.addons) {
-            val file = addon.file
-            val pack = if (file.isDirectory) FolderPackResources(file) else FilePackResources(file)
-            val resourceManager = Minecraft.getInstance().resourceManager
-            if (resourceManager is SimpleReloadableResourceManager) {
-                resourceManager.add(pack)
-            }
         }
 
         registerLuckyBowModels(ForgeLuckyRegistry.luckyBow)
@@ -201,5 +199,37 @@ object ForgeClientSubscriber {
         event.registerEntityRenderer(ForgeLuckyRegistry.luckyProjectile, ::LuckyProjectileRenderer)
         event.registerEntityRenderer(ForgeLuckyRegistry.thrownLuckyPotion, ::ThrownLuckyPotionRenderer)
         event.registerEntityRenderer(ForgeLuckyRegistry.delayedDrop, ::DelayedDropRenderer)
+    }
+
+    @JvmStatic @SubscribeEvent
+    fun addPackFinders(event: AddPackFindersEvent) {
+        val addonPacks = JavaLuckyRegistry.addons.map {
+            val file = it.file
+            if (file.isDirectory) FolderPackResources(file) else FilePackResources(file)
+        }
+        if (addonPacks.isNotEmpty()) {
+            // based on net.minecraftforge.client.loading.ClientModLoader
+            val combinedPack = DelegatingResourcePack(
+                "lucky_block_resources",
+                "Lucky Block Resources",
+                PackMetadataSection(
+                    TextComponent("Resources for ${addonPacks.size} custom Lucky Block(s)"),
+                    PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())
+                ),
+                addonPacks,
+            )
+            val repositorySource = RepositorySource { packConsumer, packConstructor ->
+                val packWithMeta = Pack.create(
+                    "Resources for custom Lucky Blocks",
+                    true, // is included by default
+                    { combinedPack },
+                    packConstructor,
+                    Pack.Position.BOTTOM,
+                    PackSource.DEFAULT
+                )
+                packConsumer.accept(packWithMeta)
+            }
+            event.addRepositorySource(repositorySource)
+        }
     }
 }
