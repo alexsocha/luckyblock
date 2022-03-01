@@ -96,10 +96,11 @@ class UploadToCurseForge: Subcommand("upload-to-curseforge", "Upload mod files t
     val inputDistFolder by option(ArgType.String, description = "Folder containing mod files").default("./dist")
 
     override fun execute() = runBlocking {
-        val dotenv = dotenv()
+        val dotenv = dotenv {
+            ignoreIfMissing = true
+            directory = ".."
+        }
         val apiToken = dotenv["CURSEFORGE_API_TOKEN"] ?: throw Exception("Missing CURSEFORGE_API_TOKEN")
-        println("---------")
-        println(apiToken)
 
         val curseForgeClient = CurseForgeClient(apiToken)
         uploadToCurseForge(curseForgeClient, File(inputDistFolder))
