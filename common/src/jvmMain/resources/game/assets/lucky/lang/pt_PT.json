@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "Bloco da Sorte",
+    "item.lucky.lucky_block.luck": "Sorte",
+    "item.lucky.lucky_block.customDrop": "Tem drops personalizados",
+
+    "item.lucky.lucky_sword": "Espada da Sorte",
+    "item.lucky.lucky_bow": "Arco da Sorte",
+    "item.lucky.lucky_potion": "Poção da Sorte",
+
+    "block.lucky.lucky_block.veryLucky": "Bloco de muita sorte",
+    "block.lucky.lucky_block.unlucky": "Bloco azarado",
+    "item.lucky.lucky_potion.veryLucky": "Poção de muita sorte",
+    "item.lucky.lucky_potion.unlucky": "Poção do Azar"
+}
