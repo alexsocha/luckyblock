@@ -1,0 +1,14 @@
+{
+    "block.lucky.lucky_block": "Heldig blok",
+    "item.lucky.lucky_block.luck": "Held",
+    "item.lucky.lucky_block.customDrop": "Har tilpassede drops",
+
+    "item.lucky.lucky_sword": "Heldigt sværd",
+    "item.lucky.lucky_bow": "Heldig bue",
+    "item.lucky.lucky_potion": "Heldig trylledrik",
+
+    "block.lucky.lucky_block.veryLucky": "Meget heldig blok",
+    "block.lucky.lucky_block.unlucky": "Uheldig blok",
+    "item.lucky.lucky_potion.veryLucky": "Meget heldig potion",
+    "item.lucky.lucky_potion.unlucky": "Uheldig potion"
+}
