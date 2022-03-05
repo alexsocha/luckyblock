@@ -52,7 +52,11 @@ lucky-block-{loader}@{minecraft}-{major}.{minor}
 
 ## Development
 
-Update the version constants in `gradle.properties`.
+Dependencies are listed in `project.yaml`, and lockfiles can be updated with:
+
+```
+./gradlew dependencies --write-locks
+```
 
 To use IntelliJ, ensure that the Gradle plugin is enabled, and import the directory as a Gradle project.
 

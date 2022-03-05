@@ -4,33 +4,18 @@ package mod.lucky.tools.uploadToCurseForge
 
 import kotlinx.cli.*
 import kotlinx.coroutines.runBlocking
-import io.github.g00fy2.versioncompare.Version as ComparableVersion
 import java.io.File
 import io.github.cdimascio.dotenv.dotenv
+import io.github.g00fy2.versioncompare.Version as ComparableVersion
 
 fun findCompatibleGameVersions(
     gameVersions: List<CurseForgeGameVersion>,
     luckyBlockDist: LuckyBlockDist,
 ): List<CurseForgeGameVersion> {
-    fun findWithMin(
-        type: CurseForgeGameVersionType,
-        minVersionString: String,
-    ): List<CurseForgeGameVersion> {
-        return gameVersions.filter {
-            if (it.gameVersionTypeID == type.id) {
-                val version = ComparableVersion(it.name)
-                val minVersion = ComparableVersion(minVersionString)
-                val nextIncompatibleVersion = ComparableVersion(listOf(minVersion.major + 1).joinToString("."))
-                version >= minVersion && version < nextIncompatibleVersion
-            } else false
-        }
-    }
-
     val javaVersions = gameVersions.filter {
         if (it.gameVersionTypeID == CurseForgeGameVersionType.JAVA.id) {
-            val javaVersion = ComparableVersion(it.name.split(" ")[1])
-            val minJavaVersion = ComparableVersion(luckyBlockDist.meta.min_java_version)
-            javaVersion >= minJavaVersion
+            val javaVersion = it.name.split(" ")[1] // e.g. Java 17 -> 17
+            luckyBlockDist.meta.dependencies["java"]!!.contains(javaVersion)
         } else false
     }
 
@@ -38,11 +23,11 @@ fun findCompatibleGameVersions(
         // TODO: Filter relevant Minecraft versions using gameVersionTypeID. Currently we look at
         // everything that has a similar version format, and special-case a few non-Minecraft
         // versions.
-
-        val version = ComparableVersion(it.name.replace("-Snapshot", ""))
-        val minVersion = ComparableVersion(luckyBlockDist.meta.min_minecraft_version)
-        val nextIncompatibleVersion = ComparableVersion(listOf(minVersion.major, minVersion.minor + 1).joinToString("."))
-        version >= minVersion && version < nextIncompatibleVersion && it.gameVersionTypeID != 1 && it.id != 7430 && it.gameVersionTypeID != 615
+        if (it.gameVersionTypeID != 1 && it.id != 7430 && it.gameVersionTypeID != 615) false
+        else {
+            val minecraftVersion = it.name.replace("-Snapshot", "")
+            luckyBlockDist.meta.dependencies["minecraft"]!!.contains(minecraftVersion)
+        }
     }
 
     val loaders = gameVersions.filter {
@@ -53,31 +38,13 @@ fun findCompatibleGameVersions(
     return javaVersions + minecraftVersions + loaders
 
     // TODO: CurseForge currently doesn't allow you to specify Forge/Fabric as a dependency
-    /*
-    when(luckyBlockDist.loader) {
-         LuckyBlockLoader.FORGE -> {
-             val forgeVersions = findWithMin(
-                 CurseForgeGameVersionType.FORGE,
-                 (luckyBlockDist.meta as LuckyBlockForgeMeta).min_forge_version
-             )
-             return javaVersions + minecraftVersions + loaders + forgeVersions
-         }
-         LuckyBlockLoader.FABRIC -> {
-             val fabricLoaderVersions = findWithMin(
-                 CurseForgeGameVersionType.FABRIC_LOADER,
-                 (luckyBlockDist.meta as LuckyBlockFabricMeta).min_fabric_loader_version
-             )
-             return javaVersions + minecraftVersions + loaders + fabricLoaderVersions
-         }
-    }
-    */
 }
 
 fun uploadToCurseForge(
     curseForgeClient: CurseForgeClient,
     inputDistFolder: File
 ) = runBlocking {
-    val luckyBlockDists = readLuckyBlockDists(inputDistFolder).sortedBy { it.meta.version_number }
+    val luckyBlockDists = readLuckyBlockDists(inputDistFolder).sortedBy { ComparableVersion(it.meta.version) }
     val gameVersions = curseForgeClient.getGameVersions()
 
     luckyBlockDists.forEach { luckyBlockDist ->

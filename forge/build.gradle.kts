@@ -1,51 +1,44 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import net.minecraftforge.gradle.common.util.ModConfig
 import net.minecraftforge.gradle.userdev.UserDevExtension
+import mod.lucky.build.*
+
+val rootProjectProps = RootProjectProperties.fromProjectYaml(rootProject.rootDir)
+val projectProps = rootProjectProps.projects[ProjectName.LUCKY_BLOCK_FORGE]!!
 
 buildscript {
     repositories {
-        maven { url = uri("https://maven.minecraftforge.net") }
+        maven("https://maven.minecraftforge.net")
     }
     dependencies {
-        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.+") {
-            isChanging=true
-        }
+        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.+")
     }
 }
 
-val forgeModVersion: String by project
-val forgeLatestForgeVersion: String by project
-val forgeLatestMCVersion: String by project
-val forgeMinMCVersion: String by project
-val forgeMinForgeVersion: String by project
-val forgeMinMajorForgeVersion = forgeMinForgeVersion.split('.').first()
-val forgeMappingsVersion: String by project
-
 plugins {
     kotlin("jvm")
-    java
-    id("com.github.johnrengelman.shadow")
+    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("mod.lucky.build.JavaEditionTasks")
 }
 
 apply {
     plugin("net.minecraftforge.gradle")
 }
 
-group = "mod.lucky.forge"
-base.archivesBaseName = rootProject.name
-version = forgeModVersion
+dependencies {
+    compileOnly(project(":tools"))
+    implementation(kotlin("stdlib-jdk8"))
+    "minecraft"("net.minecraftforge:forge:${projectProps.lockedDependencies["minecraft-forge"]!!}")
+    shadow(project(":common"))
+}
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    shadow(project(":common"))
-    //compileOnly("org.intellij:lang.annotations")
-    "minecraft"("net.minecraftforge:forge:$forgeLatestMCVersion-$forgeLatestForgeVersion")
-}
+group = "mod.lucky.forge"
+base.archivesBaseName = rootProject.name
+version = projectProps.version
 
 tasks.register<Copy>("copyRuntimeClasses") {
     // since Forge mods are loaded as independent modules, we need to copy all runtime dependency
@@ -61,7 +54,7 @@ tasks.register<Copy>("copyRuntimeClasses") {
 }
 
 configure<UserDevExtension> {
-    mappings("official", forgeMappingsVersion)
+    mappings("official", projectProps.devDependencies["forge-mappings"]!!.toGradleRange())
 
     accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
 
@@ -83,12 +76,12 @@ configure<UserDevExtension> {
 
 tasks.processResources {
     from("../common/src/jvmMain/resources/game")
-    inputs.property("forgeModVersion", forgeModVersion)
+    inputs.property("modVersion", projectProps.version)
     filesMatching("META-INF/mods.toml") {
         expand(
-            "forgeModVersion" to forgeModVersion,
-            "forgeMinMCVersion" to forgeMinMCVersion,
-            "forgeMinMajorForgeVersion" to forgeMinMajorForgeVersion
+            "modVersion" to projectProps.version,
+            "minMinecraftVersion" to projectProps.dependencies["minecraft"]!!.minInclusive,
+            "minForgeVersion" to projectProps.dependencies["forge"]!!.minInclusive,
         )
     }
 }
@@ -121,18 +114,25 @@ afterEvaluate {
 
     tasks.getByName("reobfJar").dependsOn(tasks.getByName("copyShadowJar"))
     tasks.assemble {
-        dependsOn(tasks.getByName("jarDist").mustRunAfter(tasks.getByName("reobfJar")))
-        dependsOn(project(":common").tasks.getByName("jvmTemplateAddonDist"))
+        dependsOn(tasks.getByName("exportDist").mustRunAfter(tasks.getByName("reobfJar")))
+    }
+    tasks.clean {
+        dependsOn(tasks.getByName("cleanDist"))
     }
 }
 
-
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+val javaVersion = projectProps.dependencies["java"]!!.maxInclusive!!
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion.toInt()))
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "17"
+compileKotlin.kotlinOptions.jvmTarget = javaVersion
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
-    options.release.set(17)
+    options.release.set(javaVersion.toInt())
+}
+
+dependencyLocking {
+    lockAllConfigurations()
+    lockMode.set(LockMode.LENIENT)
 }

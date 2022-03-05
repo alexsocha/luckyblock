@@ -1,0 +1,42 @@
+# This is a Gradle generated file for dependency locking.
+# Manual edits can break the build and are not advised.
+# This file is expected to be part of source control.
+br.com.gamemods:nbt-manipulator:3.1.0=compileClasspath
+com.charleskorn.kaml:kaml-jvm:0.37.0=compileClasspath
+com.charleskorn.kaml:kaml:0.37.0=compileClasspath
+com.github.kittinunf.fuel:fuel-coroutines:2.3.1=compileClasspath
+com.github.kittinunf.fuel:fuel:2.3.1=compileClasspath
+com.github.kittinunf.result:result:3.1.0=compileClasspath
+io.github.cdimascio:dotenv-java:2.2.0=compileClasspath
+io.github.cdimascio:dotenv-kotlin:6.2.2=compileClasspath
+io.github.g00fy2:versioncompare:1.5.0=compileClasspath
+net.java.dev.jna:jna:5.6.0=kotlinCompilerClasspath
+org.jetbrains.intellij.deps:trove4j:1.0.20200330=kotlinCompilerClasspath
+org.jetbrains.kotlin:kotlin-compiler-embeddable:1.6.20-RC=kotlinCompilerClasspath
+org.jetbrains.kotlin:kotlin-daemon-embeddable:1.6.20-RC=kotlinCompilerClasspath
+org.jetbrains.kotlin:kotlin-gradle-plugin-api:1.6.20-RC=kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-native-utils:1.6.20-RC=kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-project-model:1.6.20-RC=kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-reflect:1.6.20-RC=kotlinCompilerClasspath
+org.jetbrains.kotlin:kotlin-script-runtime:1.6.20-RC=kotlinCompilerClasspath,kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-scripting-common:1.6.20-RC=kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:1.6.20-RC=kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:1.6.20-RC=kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-scripting-jvm:1.6.20-RC=kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-serialization:1.6.20-RC=kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-stdlib-common:1.6.20-RC=compileClasspath,kotlinCompilerClasspath,kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.20-RC=compileClasspath
+org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.20-RC=compileClasspath
+org.jetbrains.kotlin:kotlin-stdlib:1.6.20-RC=compileClasspath,kotlinCompilerClasspath,kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlin:kotlin-util-io:1.6.20-RC=kotlinCompilerPluginClasspathMain
+org.jetbrains.kotlinx:kotlinx-cli-jvm:0.3.2=compileClasspath
+org.jetbrains.kotlinx:kotlinx-cli:0.3.2=compileClasspath
+org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.3.9=compileClasspath
+org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9=compileClasspath
+org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.3.1=compileClasspath
+org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.1=compileClasspath
+org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.3.1=compileClasspath
+org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1=compileClasspath
+org.jetbrains:annotations:13.0=compileClasspath,kotlinCompilerClasspath,kotlinCompilerPluginClasspathMain
+org.jsoup:jsoup:1.14.3=compileClasspath
+empty=

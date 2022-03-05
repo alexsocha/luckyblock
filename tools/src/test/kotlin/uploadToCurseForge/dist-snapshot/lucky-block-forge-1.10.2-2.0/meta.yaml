@@ -1,6 +1,14 @@
-version: 1.10.2-2.0
-version_number: 110100200
-min_minecraft_version: 1.10.2
-min_java_version: 8
+metafileVersion: 2
+version: "1.10.2-2.0"
+dependencies:
+  "java":
+    minInclusive: "17"
+    maxInclusive: "17"
+  "minecraft":
+    minInclusive: "1.10.2"
+    maxInclusive: "1.10.2"
+  "forge":
+    minInclusive: "12.18.0"
+    maxExclusive: "13"
+revision: g246075
 datetime: 2017-10-08 00:00:00
-min_forge_version: 12.18.3.2511

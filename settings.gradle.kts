@@ -1,30 +1,14 @@
 pluginManagement {
     repositories {
-        maven {
-            name = "Forge"
-            url = uri("https://maven.minecraftforge.net/")
-        }
-        maven {
-            name = "Fabric"
-            url = uri("https://maven.fabricmc.net/")
-        }
         mavenCentral()
         gradlePluginPortal()
+        maven("https://maven.fabricmc.net")
     }
 
     plugins {
-        val fabricLoomVersion: String by settings
-        val kotlinVersion: String by settings
-        val grGitVersion: String by settings
-        val shadowJarVersion: String by settings
-
-        kotlin("multiplatform") version kotlinVersion
-        kotlin("jvm") version kotlinVersion
-        kotlin("js") version kotlinVersion
-        kotlin("plugin.serialization") version kotlinVersion
-        id("fabric-loom") version fabricLoomVersion
-        id("org.ajoberstar.grgit") version grGitVersion
-        id("com.github.johnrengelman.shadow") version shadowJarVersion
+        kotlin("multiplatform") version "[1.6.0,2.0.0)"
+        kotlin("jvm") version "[1.6.0,2.0.0)"
+        kotlin("js") version "[1.6.0,2.0.0)"
     }
 }
 
@@ -34,16 +18,9 @@ plugins {
     kotlin("js") apply false
 }
 
-val isFabricEnabled: String by settings
-val isFabricEnabledBool = isFabricEnabled.toBoolean()
-val isForgeEnabled: String by settings
-val isForgeEnabledBool = isForgeEnabled.toBoolean()
-val isBedrockEnabled: String by settings
-val isBedrockEnabledBool = isBedrockEnabled.toBoolean()
-
 rootProject.name = "lucky-block"
 include("common")
 include("tools")
-if (isForgeEnabledBool) include("forge")
-if (isFabricEnabledBool) include("fabric")
-if (isBedrockEnabledBool) include("bedrock")
+include("forge")
+include("fabric")
+include("bedrock")

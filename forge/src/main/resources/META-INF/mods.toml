@@ -1,10 +1,10 @@
 modLoader="javafml"
-loaderVersion="[${forgeMinMajorForgeVersion},)"
+loaderVersion="[${minForgeVersion},)"
 license="All rights reserved"
 
 [[mods]]
 modId="lucky"
-version="${forgeModVersion}"
+version="${modVersion}"
 displayName="Lucky Block"
 authors="Alex Socha"
 description="Adds a block with random outcomes"
@@ -12,13 +12,13 @@ description="Adds a block with random outcomes"
 [[dependencies.lucky]]
     modId="forge"
     mandatory=true
-    versionRange="[${forgeMinMajorForgeVersion},)"
+    versionRange="[${minForgeVersion},)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.lucky]]
     modId="minecraft"
     mandatory=true
-    versionRange="[${forgeMinMCVersion},)"
+    versionRange="[${minMinecraftVersion},)"
     ordering="NONE"
     side="BOTH"
