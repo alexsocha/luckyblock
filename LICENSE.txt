@@ -7,7 +7,12 @@ The mod is under the following conditions:
 1.the above copyright notice must be kept
 
 2.you must redistribute the mod or clam that you made the mod
-a.the mod has to be only kept on the [offical website](https://www.luckyblockmod.com/)
+a.the mod has to be only kept on the offical website(https://www.luckyblockmod.com/) and the website(https://www.curseforge.com/minecraft/mc-mods/lucky-block)
+b.you can Distribute modpacks which include the Lucky Block on any website other than curseforge.com
+c.Use the Lucky Block on your server, public or private.
+d.Create YouTube videos using the Lucky Block.
+e.Create and distribute custom maps and mini-games using the Lucky Block, provided the mod itself is not included in the final download.
+f.Create and distribute Custom Lucky Blocks, provided they require the original Lucky Block as a dependency.
 
 3. Liliabilty
 a.THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
