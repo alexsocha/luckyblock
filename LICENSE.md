@@ -1,0 +1,40 @@
+LuckyBloc Mod LICENSE
+
+(c) copyright alexsocha 2022 
+
+The mod is under the following conditions:
+
+1.the above copyright notice must be kept
+
+2.you must redistribute the mod or clam that you made the mod
+a.the mod has to be only kept on the [offical website](https://www.luckyblockmod.com/)
+
+3. Liliabilty
+a.THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+4.Addons
+a. if you make an addon the addon can be under any LICENSE and you have full rights towards it
+
+5. use of code
+a. you may take a code snippets from the source code but you must not download or use the whole file or the whole mod source code
+b. a code snippet must not be longer than 20 lines 
+c. if you want to use more of the code you must contact alexsocha(alex@alexsocha.com)
+
+6. by Contribution:
+a. by contributing you give alexsocha all of the rights towards your code
