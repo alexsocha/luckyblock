@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v12
 
 - fix(forge/fabric): fix incorrectly configured languages
 - feat(forge/fabric): add new languages pt_pt, da_dk

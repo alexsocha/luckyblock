@@ -6,6 +6,7 @@ import mod.lucky.common.PLATFORM_API
 import mod.lucky.forge.game.*
 import mod.lucky.java.*
 import net.minecraft.SharedConstants
+import net.minecraft.core.Holder
 import net.minecraft.network.chat.TextComponent
 import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.resources.*
@@ -22,7 +23,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.SimpleRecipeSerializer
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.levelgen.GenerationStep
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration
+import net.minecraft.world.level.levelgen.placement.PlacedFeature
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.common.MinecraftForge
@@ -44,12 +47,12 @@ import org.apache.logging.log4j.Logger
 
 object ForgeLuckyRegistry {
     val LOGGER: Logger = LogManager.getLogger()
-    val luckyBlock = LuckyBlock()
     val addonLuckyBlocks = HashMap<String, LuckyBlock>()
-    val luckyBlockItem = LuckyBlockItem(luckyBlock)
-    val luckyBow = LuckyBow()
-    val luckySword = LuckySword()
-    val luckyPotion = LuckyPotion()
+    lateinit var luckyBlock: LuckyBlock
+    lateinit var luckyBlockItem: LuckyBlockItem
+    lateinit var luckyBow: LuckyBow
+    lateinit var luckySword: LuckySword
+    lateinit var luckyPotion: LuckyPotion
     lateinit var modVersion: String
     lateinit var luckyBlockEntity: BlockEntityType<LuckyBlockEntity>
     lateinit var luckyProjectile: EntityType<LuckyProjectile>
@@ -94,8 +97,11 @@ class ForgeMod {
         val blockIds = listOf(JavaLuckyRegistry.blockId) + JavaLuckyRegistry.addons.mapNotNull { it.ids.block }
         blockIds.forEach {
             val feature = LuckyWorldFeature(NoneFeatureConfiguration.CODEC, it)
-            val placedFeature = feature.configured(NoneFeatureConfiguration.INSTANCE).placed()
-            event.generation.getFeatures(GenerationStep.Decoration.SURFACE_STRUCTURES).add { placedFeature }
+            val placedFeature = PlacedFeature(
+                Holder.direct(ConfiguredFeature(feature, NoneFeatureConfiguration())),
+                emptyList()
+            )
+            event.generation.getFeatures(GenerationStep.Decoration.SURFACE_STRUCTURES).add(Holder.direct(placedFeature))
         }
     }
 
@@ -120,6 +126,7 @@ class ForgeMod {
 object ForgeSubscriber {
     @JvmStatic @SubscribeEvent
     fun registerBlocks(event: RegistryEvent.Register<MCBlock>) {
+        ForgeLuckyRegistry.luckyBlock = LuckyBlock()
         event.registry.register(ForgeLuckyRegistry.luckyBlock.setRegistryName(JavaLuckyRegistry.blockId))
         JavaLuckyRegistry.addons.map { addon ->
             if (addon.ids.block != null) {
@@ -130,6 +137,11 @@ object ForgeSubscriber {
 
     @JvmStatic @SubscribeEvent
     fun registerItems(event: RegistryEvent.Register<MCItem>) {
+        ForgeLuckyRegistry.luckyBlockItem = LuckyBlockItem(ForgeLuckyRegistry.luckyBlock)
+        ForgeLuckyRegistry.luckySword = LuckySword()
+        ForgeLuckyRegistry.luckyBow = LuckyBow()
+        ForgeLuckyRegistry.luckyPotion = LuckyPotion()
+
         event.registry.register(ForgeLuckyRegistry.luckyBlockItem.setRegistryName(JavaLuckyRegistry.blockId))
         event.registry.register(ForgeLuckyRegistry.luckySword.setRegistryName(JavaLuckyRegistry.swordId))
         event.registry.register(ForgeLuckyRegistry.luckyBow.setRegistryName(JavaLuckyRegistry.bowId))
