@@ -45,5 +45,8 @@ add your error messages/log files on a site like [https://gist.github.com/](http
 
 
 FML Log:
+<br>
 latest.log:
+<br>
 debug.log:
+<br>
