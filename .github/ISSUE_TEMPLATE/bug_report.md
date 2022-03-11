@@ -29,7 +29,7 @@ A clear and concise description of what you expected to happen.
 If applicable,add screenshots to help explain your problem.
 
 **Video**
-even better than a screenshot, please also add a video for your problem. Use a site like YouTube to upload the video becase a 144p 15fps video is better than a 4k screenshot and a vide let's Alex Socha more easily reporduce the issue  
+even better than a screenshot, please also add a video for your problem. Use a site like YouTube to upload the video becase a 144p 15fps video is better than a 4k screenshot and a video let's Alex Socha more easily reporduce the issue  
 
 **Desktop (please complete the following information):**
  - OS: [e.g. Windows 10]
@@ -41,9 +41,9 @@ even better than a screenshot, please also add a video for your problem. Use a s
 Add any other context about the problem here.
 
 **log files**
-add your error messages/log files on a site like [https://gist.github.com/](https://gist.github.com/)
+add your error messages/log files on a site like [https://gist.github.com/](https://gist.github.com/) these log files can be found at [.minecraft\logs](https://ecocitycraft.com/forum/wiki/minecraft-client-logs/#:~:text=Type%20in%20%25appdata%25%20in%20the,field(as%20shown%20below).&text=Open%20your%20.,a%20folder%20called%20%22logs%22.)
 
 
 FML Log:
-latest:
-debug:
+latest.log:
+debug.log:
