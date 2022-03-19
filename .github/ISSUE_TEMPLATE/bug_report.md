@@ -30,6 +30,7 @@ Steps to reproduce the behavior:
    - [ ] Singleplayer
    - [ ] Multiplayer
    - [ ] Unknown
+   - [ ] Both
 
 
 
