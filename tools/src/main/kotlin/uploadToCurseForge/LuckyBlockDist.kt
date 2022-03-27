@@ -33,6 +33,7 @@ data class VersionRange(
 @Serializable
 data class ProjectDistMeta(
     val metafileVersion: Int = 2,
+    val projectName: String,
     val version: String,
     val dependencies: Map<String, VersionRange>,
     val revision: String,
