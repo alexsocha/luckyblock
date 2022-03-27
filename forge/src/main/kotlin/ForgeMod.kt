@@ -215,26 +215,15 @@ object ForgeClientSubscriber {
 
     @JvmStatic @SubscribeEvent
     fun addPackFinders(event: AddPackFindersEvent) {
-        val addonPacks = JavaLuckyRegistry.addons.map {
-            val file = it.file
-            if (file.isDirectory) FolderPackResources(file) else FilePackResources(file)
-        }
-        if (addonPacks.isNotEmpty()) {
+        JavaLuckyRegistry.addons.forEach { addon ->
+            val pack = if (addon.file.isDirectory) FolderPackResources(addon.file) else FilePackResources(addon.file)
+
             // based on net.minecraftforge.client.loading.ClientModLoader
-            val combinedPack = DelegatingResourcePack(
-                "lucky_block_resources",
-                "Lucky Block Resources",
-                PackMetadataSection(
-                    TextComponent("Resources for ${addonPacks.size} custom Lucky Block(s)"),
-                    PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())
-                ),
-                addonPacks,
-            )
             val repositorySource = RepositorySource { packConsumer, packConstructor ->
                 val packWithMeta = Pack.create(
-                    "Resources for custom Lucky Blocks",
+                    "Resources for ${addon.addonId}",
                     true, // is included by default
-                    { combinedPack },
+                    { pack },
                     packConstructor,
                     Pack.Position.BOTTOM,
                     PackSource.DEFAULT
