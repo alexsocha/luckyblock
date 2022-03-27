@@ -16,7 +16,7 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+If applicable, add screenshots here.
 
 **Log file**
-If applicable, add your log file.
+If applicable, add your log file here.
