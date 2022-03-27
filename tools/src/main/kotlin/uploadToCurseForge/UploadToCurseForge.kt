@@ -19,11 +19,13 @@ fun findCompatibleGameVersions(
         } else false
     }
 
+    // TODO: Filter relevant Minecraft versions using gameVersionTypeID. Currently we look at
+    // everything that has a similar version format, and special-case a few non-Minecraft
+    // versions.
+    val invalidGameVersionIds = listOf(7430)
+    val invalidGameVersionTypeIds = listOf(1, 615)
     val minecraftVersions = gameVersions.filter {
-        // TODO: Filter relevant Minecraft versions using gameVersionTypeID. Currently we look at
-        // everything that has a similar version format, and special-case a few non-Minecraft
-        // versions.
-        if (it.gameVersionTypeID != 1 && it.id != 7430 && it.gameVersionTypeID != 615) false
+        if (it.id in invalidGameVersionIds || it.gameVersionTypeID in invalidGameVersionTypeIds) false
         else {
             val minecraftVersion = it.name.replace("-Snapshot", "")
             luckyBlockDist.meta.dependencies["minecraft"]!!.contains(minecraftVersion)
