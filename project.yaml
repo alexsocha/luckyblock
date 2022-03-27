@@ -1,6 +1,6 @@
 projects:
   lucky-block-forge:
-    version: 1.18.2-13.0
+    version: 1.18.2-13.1
     dependencies:
       java:
         minInclusive: 17
