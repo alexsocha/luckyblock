@@ -2,19 +2,21 @@ package mod.lucky.tools.uploadToCurseForge
 
 import com.github.kittinunf.fuel.core.FileDataPart
 import com.github.kittinunf.fuel.core.InlineDataPart
-import kotlinx.cli.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.coroutines.awaitStringResponseResult
-import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.fuel.httpUpload
-import com.github.kittinunf.fuel.core.Method as HttpMethod
 import com.github.kittinunf.result.Result
-import mod.lucky.common.GameType
 import java.io.File
-import java.lang.Exception
 import java.util.logging.Logger
+
+@Serializable
+data class CurseForgeGameDependency(
+    val id: Int,
+    val name: String,
+    val slug: String,
+)
 
 @Serializable
 data class CurseForgeGameVersion(
@@ -53,7 +55,7 @@ class CurseForgeClient(private val token: String) {
     private val logger = Logger.getLogger(this.javaClass.name)
     private val LUCKY_BLOCK_PROJECT_ID = 576825
 
-    suspend fun httpGet(endpoint: String, httpMethod: HttpMethod): String {
+    suspend fun httpGet(endpoint: String): String {
         val (_, _, result) = "https://minecraft.curseforge.com${endpoint}"
             .httpGet()
             .header(mapOf("X-Api-Token" to token))
@@ -69,26 +71,20 @@ class CurseForgeClient(private val token: String) {
         }
     }
 
-    suspend fun httpUploadFile(jarFile: File, meta: String): String {
-        val (_, _, result) = "https://minecraft.curseforge.com/"
-            .httpGet()
-            .header(mapOf("X-Api-Token" to token))
-            .awaitStringResponseResult()
-
-        when (result) {
-            is Result.Failure -> throw result.getException()
-            is Result.Success -> return result.get()
-        }
+    suspend fun getGameDependencies(): List<CurseForgeGameDependency> {
+        // TODO: Currently this API endpoint is broken
+        logger.info("Fetching game dependencies from CurseForge")
+        return Json.decodeFromString(httpGet("/api/game/dependencies"))
     }
 
     suspend fun getGameVersions(): List<CurseForgeGameVersion> {
-        logger.info("Downloading game versions from CurseForge")
-        val rawResult = httpGet("/api/game/versions", HttpMethod.GET)
-        return Json.decodeFromString(rawResult)
+        logger.info("Fetching game versions from CurseForge")
+        return Json.decodeFromString(httpGet("/api/game/versions"))
     }
 
     suspend fun uploadDist(jarFile: File, metadata: CurseForgeUploadMetadata) {
         logger.info("Uploading file to CurseForge, file=${jarFile}, metadata=${metadata}")
+        return
 
         val (_, response, result) = "https://minecraft.curseforge.com/api/projects/${LUCKY_BLOCK_PROJECT_ID}/upload-file"
             .httpUpload()

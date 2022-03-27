@@ -2,7 +2,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
     application
     distribution
-    kotlin("plugin.serialization")
+    kotlin("plugin.serialization") version "[1.6.0,2.0.0)"
 }
 
 repositories {
@@ -50,4 +50,9 @@ tasks.register<JavaExec>("uploadToCurseForge") {
         "../dist"
     )
     dependsOn("installDist")
+}
+
+dependencyLocking {
+    lockAllConfigurations()
+    lockMode.set(LockMode.LENIENT)
 }

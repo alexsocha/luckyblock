@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "lucky",
-  "version": "${fabricModVersion}",
+  "version": "${modVersion}",
 
   "name": "Lucky Block",
   "description": "Adds a block with random outcomes",
@@ -27,9 +27,9 @@
   },
 
   "depends": {
-    "fabricloader": ">=${fabricMinLoaderVersion}",
+    "fabricloader": ">=${minFabricLoaderVersion}",
     "fabric": "*",
-    "minecraft": "^${fabricMinMCVersion}"
+    "minecraft": ">=${minMinecraftVersion}"
   },
   "suggests": {
     "another-mod": "*"

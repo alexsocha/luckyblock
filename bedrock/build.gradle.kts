@@ -1,16 +1,18 @@
-import com.moowork.gradle.node.task.NodeTask
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.File
 import java.util.UUID
 import org.apache.commons.text.CaseUtils
+import mod.lucky.build.*
 
-plugins {
-    kotlin("js")
-    id("com.moowork.node") version "1.3.1"
-}
+val rootProjectProps = RootProjectProperties.fromProjectYaml(rootProject.rootDir)
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
+}
+
+plugins {
+    kotlin("js")
+
 }
 
 dependencies {
@@ -40,7 +42,6 @@ kotlin {
 }
 
 val addonDistDir = "$rootDir/bedrock/build/processedResources/js/main/addon"
-val bedrockTemplateAddonBlockId: String by project
 
 tasks.named<ProcessResources>("processResources") {
     from("../common/src/jvmMain/resources/game/assets/lucky/textures/blocks") {
@@ -99,6 +100,8 @@ tasks.register<JavaExec>("nbtToMcstructure") {
 }
 
 tasks.register<Copy>("copyTemplateAddon") {
+    val bedrockTemplateAddonBlockId = "custom_lucky_block"
+
     fun getUuid(suffix: String): String {
         val bedrockTemplateAddonUuid = UUID.nameUUIDFromBytes(
             "lucky:${bedrockTemplateAddonBlockId}".toByteArray()
@@ -186,15 +189,29 @@ tasks.register<Zip>("zipPack") {
     dependsOn("processResources")
 }
 
+tasks.register<Zip>("exportDist") {
+    val version = rootProjectProps.projects[ProjectName.LUCKY_BLOCK_BEDROCK]!!.version
+    val distName = "${ProjectName.LUCKY_BLOCK_BEDROCK.fullName}-${version}"
+    val distDir = file("$rootDir/dist/$distName")
+    destinationDirectory.set(file("$rootDir/dist/$distName"))
+    archiveFileName.set("$distName.mcpack")
+
+    doFirst {
+        val distMeta = rootProjectProps.getDistMeta(rootDir, ProjectName.LUCKY_BLOCK_BEDROCK)
+        file(distDir).mkdirs()
+        file("$distDir/meta.yaml").writeText(distMeta.toYaml())
+    }
+    from("$rootDir/bedrock/build/processedResources/js/main/pack")
+}
 
 tasks.named("build").configure {
     tasks.getByName("browserProductionWebpack").dependsOn("generateBedrockDrops")
     tasks.getByName("browserProductionWebpack").inputs.file("./build/processedResources/serverScript.js")
     tasks.getByName("copyServerScript").dependsOn("browserProductionWebpack")
-    tasks.getByName("dist").dependsOn("browserProductionWebpack")
+    tasks.getByName("exportDist").dependsOn("browserProductionWebpack")
     dependsOn("browserProductionWebpack")
     dependsOn("copyServerScript")
-    dependsOn("dist")
+    dependsOn("exportDist")
     dependsOn("copyRuntimePacks")
 }
 
@@ -205,4 +222,9 @@ tasks.register("buildDev").configure {
     dependsOn("browserDevelopmentWebpack")
     dependsOn("copyServerScript")
     dependsOn("copyRuntimePacks")
+}
+
+dependencyLocking {
+    lockAllConfigurations()
+    lockMode.set(LockMode.LENIENT)
 }
