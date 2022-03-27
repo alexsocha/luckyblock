@@ -1,5 +1,6 @@
 package mod.lucky.java.game
 
+import mod.lucky.common.attribute.DictAttr
 import mod.lucky.java.ItemStack
 import mod.lucky.java.JavaLuckyRegistry
 import mod.lucky.java.JAVA_GAME_API
@@ -17,7 +18,7 @@ fun matchesLuckModifierCraftingRecipe(stacks: List<ItemStack>): Boolean {
 fun getLuckModifierCraftingResult(stacks: List<ItemStack>): ItemStack? {
     val luckyStack = stacks.find { it.itemId in JavaLuckyRegistry.allLuckyItemIds } ?: return null
     val luckModifiers = JavaLuckyRegistry.craftingLuckModifiers[luckyStack.itemId] ?: return null
-    val stackData = luckyStack.nbt?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
+    val luckyStackData = luckyStack.nbt?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
 
     val isPotion = luckyStack.itemId in JavaLuckyRegistry.allLuckyItemIdsByType[JavaLuckyRegistry.potionId]!!
     val luckModifier = stacks.sumOf {
@@ -25,8 +26,13 @@ fun getLuckModifierCraftingResult(stacks: List<ItemStack>): ItemStack? {
         else (luckModifiers[it.itemId] ?: 0) * (if (isPotion) 4 else 1)
     }
 
-    val newLuckUnbounded = stackData.luck + luckModifier
+    val newLuckUnbounded = luckyStackData.luck + luckModifier
     val newLuck = if (newLuckUnbounded > 100) 100 else if (newLuckUnbounded < -100) -100 else newLuckUnbounded
-    val newNBT = JAVA_GAME_API.attrToNBT(LuckyItemStackData(luck = newLuck).toAttr())
-    return ItemStack(luckyStack.itemId, 1, newNBT)
+
+    val luckyStackAttr = luckyStack.nbt?.let{ JAVA_GAME_API.nbtToAttr(luckyStack.nbt) as DictAttr } ?: DictAttr()
+    val newLuckyStackAttr = DictAttr(
+        luckyStackAttr.children + LuckyItemStackData(luck = newLuck).toAttr().children
+    )
+
+    return luckyStack.copy(count=1, nbt=JAVA_GAME_API.attrToNBT(newLuckyStackAttr))
 }

@@ -1,5 +1,10 @@
 # Changelog
 
+## v13
+
+- fix(forge/fabric): enchantments are cleared when changing the luck of lucky items
+- fix(forge): load .lang files for multiple custom lucky blocks
+
 ## v12
 
 - fix(forge/fabric): fix incorrectly configured languages
