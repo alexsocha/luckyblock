@@ -18,5 +18,5 @@ A clear and concise description of what the bug is.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Log File**
+**Log file**
 If applicable, add your log file.
