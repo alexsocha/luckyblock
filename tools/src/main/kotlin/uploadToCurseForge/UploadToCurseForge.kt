@@ -35,9 +35,8 @@ fun findCompatibleGameVersions(
         it.name == getCurseForgeLoaderType(luckyBlockDist.loader)
     }
 
-    return javaVersions + minecraftVersions + loaders
-
     // TODO: CurseForge currently doesn't allow you to specify Forge/Fabric as a dependency
+    return javaVersions + minecraftVersions + loaders
 }
 
 fun uploadToCurseForge(

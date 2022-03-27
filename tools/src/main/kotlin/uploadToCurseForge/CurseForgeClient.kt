@@ -84,7 +84,6 @@ class CurseForgeClient(private val token: String) {
 
     suspend fun uploadDist(jarFile: File, metadata: CurseForgeUploadMetadata) {
         logger.info("Uploading file to CurseForge, file=${jarFile}, metadata=${metadata}")
-        return
 
         val (_, response, result) = "https://minecraft.curseforge.com/api/projects/${LUCKY_BLOCK_PROJECT_ID}/upload-file"
             .httpUpload()
