@@ -3,36 +3,38 @@ package mod.lucky.fabric
 import mod.lucky.common.GAME_API
 import mod.lucky.common.LOGGER
 import mod.lucky.common.PLATFORM_API
+import mod.lucky.fabric.game.*
 import mod.lucky.java.*
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents
-import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.client.MinecraftClient
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.SpawnGroup
-import net.minecraft.resource.*
-import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-import mod.lucky.fabric.game.*
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType
+import net.fabricmc.fabric.impl.resource.loader.ResourceManagerHelperImpl
+import net.fabricmc.loader.api.ModContainer
+import net.fabricmc.loader.api.Version
+import net.fabricmc.loader.api.metadata.*
+import net.fabricmc.loader.impl.metadata.ModOriginImpl
+import net.fabricmc.loader.impl.util.FileSystemUtil
+import net.minecraft.block.entity.BlockEntityType
+import net.minecraft.entity.EntityType
+import net.minecraft.entity.SpawnGroup
 import net.minecraft.recipe.SpecialRecipeSerializer
+import net.minecraft.util.Identifier
 import net.minecraft.util.registry.BuiltinRegistries
-
+import net.minecraft.util.registry.Registry
+import net.minecraft.util.registry.RegistryEntry
 import net.minecraft.util.registry.RegistryKey
 import net.minecraft.world.gen.GenerationStep
-
-import net.minecraft.world.gen.feature.DefaultFeatureConfig
-import net.minecraft.world.gen.feature.Feature
-
-import net.minecraft.world.gen.feature.FeatureConfig
+import net.minecraft.world.gen.feature.*
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
+import java.nio.file.Path
+import java.util.*
 
 object FabricLuckyRegistry {
     val LOGGER: Logger = LogManager.getLogger()
@@ -60,8 +62,10 @@ class FabricMod : ModInitializer {
 
     private fun registerWorldGen(blockId: String) {
         val feature = LuckyWorldFeature(DefaultFeatureConfig.CODEC, blockId)
-        val placedFeature = feature.configure(FeatureConfig.DEFAULT).withPlacement()
-            //.decorate(Decorator.COUNT.configure(CountConfig(1)))
+        val placedFeature = PlacedFeature(
+            RegistryEntry.of(ConfiguredFeature(feature, DefaultFeatureConfig())),
+            emptyList()
+        )
         val featureId = "${blockId}_world_gen"
 
         Registry.register<Feature<*>, Feature<*>>(Registry.FEATURE, Identifier(featureId), feature)
@@ -141,21 +145,56 @@ class FabricMod : ModInitializer {
 @OnlyInClient
 class FabricModClient : ClientModInitializer {
     override fun onInitializeClient() {
+        for (addon in JavaLuckyRegistry.addons) {
+            val addonModMetadata = object : ModMetadata {
+                override fun getType(): String = "builtin"
+                override fun getId(): String = "${addon.addonId}_resources"
+                override fun getProvides(): MutableCollection<String> = mutableListOf()
+                override fun getVersion(): Version = Version.parse("1.0.0")
+                override fun getEnvironment(): ModEnvironment = ModEnvironment.CLIENT
+                override fun getDependencies(): MutableCollection<ModDependency> = mutableListOf()
+                override fun getName(): String = "${addon.addonId} resources"
+                override fun getDescription(): String = ""
+                override fun getAuthors(): MutableCollection<Person> = mutableListOf()
+                override fun getContributors(): MutableCollection<Person> = mutableListOf()
+                override fun getContact(): ContactInformation = ContactInformation.EMPTY
+                override fun getLicense(): MutableCollection<String> = mutableListOf()
+                override fun getIconPath(size: Int): Optional<String> = Optional.empty()
+                override fun containsCustomValue(key: String?): Boolean = false
+                override fun getCustomValue(key: String?): CustomValue = throw Exception()
+                override fun getCustomValues(): MutableMap<String, CustomValue> = mutableMapOf()
+                @Deprecated("") override fun containsCustomElement(key: String?): Boolean = false
+            }
+
+            val addonModContainer = object : ModContainer {
+                override fun getMetadata(): ModMetadata = addonModMetadata
+                override fun getOrigin(): ModOrigin = ModOriginImpl(mutableListOf(addon.file.toPath()))
+                override fun getRootPaths(): MutableList<Path> {
+                    if (addon.file.isDirectory) return mutableListOf(addon.file.toPath())
+
+                    val fileSystem = FileSystemUtil.getJarFileSystem(addon.file.toPath(), false).get()
+                    return mutableListOf(fileSystem.rootDirectories.iterator().next())
+                }
+
+                override fun getContainingMod(): Optional<ModContainer> = Optional.empty()
+                override fun getContainedMods(): MutableCollection<ModContainer> = mutableListOf()
+                @Deprecated("") override fun getRootPath(): Path = rootPaths.first()
+                @Deprecated("") override fun getPath(file: String?): Path = findPath(file).get()
+            }
+
+            ResourceManagerHelperImpl.registerBuiltinResourcePack(
+                MCIdentifier("lucky", "${addon.addonId.substring("lucky:".length)}_resources"),
+                "",
+                addonModContainer,
+                ResourcePackActivationType.ALWAYS_ENABLED
+            )
+        }
+
         ClientChunkEvents.CHUNK_LOAD.register(ClientChunkEvents.Load {
                 _, _ -> JavaLuckyRegistry.notificationState = checkForUpdates(
             JavaLuckyRegistry.notificationState)
         })
 
-        ClientLifecycleEvents.CLIENT_STARTED.register(ClientLifecycleEvents.ClientStarted {
-            for (addon in JavaLuckyRegistry.addons) {
-                val file = addon.file
-                val pack = if (file.isDirectory) DirectoryResourcePack(file) else ZipResourcePack(file)
-                val resourceManager = MinecraftClient.getInstance().resourceManager
-                if (resourceManager is ReloadableResourceManagerImpl) {
-                    resourceManager.addPack(pack)
-                }
-            }
-        })
 
         registerLuckyBowModels(FabricLuckyRegistry.luckyBow)
         JavaLuckyRegistry.addons.map { addon ->

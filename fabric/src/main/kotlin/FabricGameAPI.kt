@@ -148,7 +148,7 @@ object FabricGameAPI : GameAPI {
                 && it.path.endsWith(spawnEggSuffix)
         }.map { it.toString() }.toList()
 
-        enchantments = Registry.ENCHANTMENT.entries.map {
+        enchantments = Registry.ENCHANTMENT.entrySet.map {
             Enchantment(
                 it.key.value.toString(),
                 type = toEnchantmentType(it.value.type),

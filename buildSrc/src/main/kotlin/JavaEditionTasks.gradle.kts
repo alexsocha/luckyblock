@@ -10,11 +10,16 @@ val projectName = when(project.name) {
 val projectProps = rootProjectProps.projects[projectName]!!
 
 tasks.register<Copy>("copyRuntimeResources") {
-    into("$rootDir/run")
+    if (projectName == ProjectName.LUCKY_BLOCK_FABRIC) {
+        into("$rootDir/fabric/run")
+    } else {
+        into("$rootDir/run")
+    }
+
     into("config/lucky/${projectProps.version}-${projectName.shortName}") {
         from("$rootDir/common/src/jvmMain/resources/lucky-config")
     }
-    into("addons/lucky/lucky-block-custom") {
+    into("addons/lucky/custom-lucky-block") {
         from("$rootDir/common/src/jvmMain/resources/${ProjectName.CUSTOM_LUCKY_BLOCK_JAVA.fullName}")
     }
 }
