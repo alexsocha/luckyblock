@@ -12,10 +12,10 @@ repositories {
 
 plugins {
     kotlin("jvm")
-    // https://maven.fabricmc.net/net/fabricmc/fabric-loom/
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("mod.lucky.build.JavaEditionTasks")
-    id("fabric-loom") version "[0.11.0,0.12)"
+    // https://maven.fabricmc.net/net/fabricmc/fabric-loom/
+    id("fabric-loom") version "[0.12.0,0.13)"
 }
 
 base.archivesBaseName = rootProject.name
