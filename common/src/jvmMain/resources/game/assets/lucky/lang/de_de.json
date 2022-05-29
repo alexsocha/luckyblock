@@ -1,14 +1,14 @@
 {
     "block.lucky.lucky_block": "Lucky Block",
-    "item.lucky.lucky_block.luck": "geluk",
-    "item.lucky.lucky_block.customDrop": "Heeft aangepaste drops",
+    "item.lucky.lucky_block.luck": "Glück",
+    "item.lucky.lucky_block.customDrop": "Eigene Drops",
 
-    "item.lucky.lucky_sword": "Lucky Sword",
-    "item.lucky.lucky_bow": "Lucky Bow",
-    "item.lucky.lucky_potion": "Lucky Potion",
+    "item.lucky.lucky_sword": "Lucky Schwert",
+    "item.lucky.lucky_bow": "Lucky Bogen",
+    "item.lucky.lucky_potion": "Lucky Trank",
 
-    "block.lucky.lucky_block.veryLucky": "Very Lucky Block",
-    "block.lucky.lucky_block.unlucky": "Ongelukkig blok",
-    "item.lucky.lucky_potion.veryLucky": "Very Lucky Potion",
-    "item.lucky.lucky_potion.unlucky": "Ongelukkig drankje"
+    "block.lucky.lucky_block.veryLucky": "Sehr guter Lucky Block",
+    "block.lucky.lucky_block.unlucky": "Schlechter Lucky Block",
+    "item.lucky.lucky_potion.veryLucky": "Sehr guter Lucky Trank",
+    "item.lucky.lucky_potion.unlucky": "Schlechter Lucky Trank"
 }
