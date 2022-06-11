@@ -116,7 +116,7 @@ class LuckyBlockEntity(
     blockPos: MCBlockPos,
     blockState: BlockState,
     var data: LuckyBlockEntityData = LuckyBlockEntityData()
-) : BlockEntity(ForgeLuckyRegistry.luckyBlockEntity, blockPos, blockState) {
+) : BlockEntity(ForgeLuckyRegistry.luckyBlockEntity.get(), blockPos, blockState) {
 
     override fun load(tag: CompoundTag) {
         super.load(tag)

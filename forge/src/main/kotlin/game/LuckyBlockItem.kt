@@ -12,16 +12,16 @@ class LuckyBlockItem(block: MCBlock) : BlockItem(
     Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)
 ) {
     override fun fillItemCategory(group: CreativeModeTab, stacks: NonNullList<MCItemStack>) {
-        if (allowdedIn(group)) {
+        if (allowedIn(group)) {
             stacks.add(MCItemStack(this, 1))
-            if (this == ForgeLuckyRegistry.luckyBlockItem) {
+            if (this == ForgeLuckyRegistry.luckyBlockItem.get()) {
                 stacks.addAll(createLuckySubItems(this, LuckyItemValues.veryLuckyBlock, LuckyItemValues.veryUnluckyBlock))
             }
         }
     }
 
     @OnlyInClient
-    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCText>, context: TooltipFlag) {
+    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCChatComponent>, context: TooltipFlag) {
         tooltip.addAll(createLuckyTooltip(stack))
     }
 }

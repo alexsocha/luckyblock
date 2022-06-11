@@ -24,6 +24,6 @@ class LuckModifierCraftingRecipe(id: MCIdentifier) : CustomRecipe(id) {
     }
 
     override fun getSerializer(): RecipeSerializer<*> {
-        return ForgeLuckyRegistry.luckModifierCraftingRecipe
+        return ForgeLuckyRegistry.luckModifierCraftingRecipe.get()
     }
 }

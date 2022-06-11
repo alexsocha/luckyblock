@@ -18,7 +18,7 @@ class LuckyBow : BowItem(Properties()
     .tab(CreativeModeTab.TAB_COMBAT)) {
 
     override fun releaseUsing(
-        stack: MCItemStack, world: MCWorld, player: LivingEntity?, timeLeft: Int,
+        stack: MCItemStack, world: MCWorld, player: LivingEntity, timeLeft: Int,
     ) {
         if (player is MCPlayerEntity) {
             val unlimitedArrows = player.abilities.instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0
@@ -70,12 +70,12 @@ class LuckyBow : BowItem(Properties()
     }
 
     @OnlyInClient
-    override fun isFoil(stack: MCItemStack?): Boolean {
+    override fun isFoil(stack: MCItemStack): Boolean {
         return true
     }
 
     @OnlyInClient
-    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCText>, context: TooltipFlag) {
+    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCChatComponent>, context: TooltipFlag) {
         tooltip.addAll(createLuckyTooltip(stack))
     }
 }

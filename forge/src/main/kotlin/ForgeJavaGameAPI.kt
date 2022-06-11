@@ -169,7 +169,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
             GAME_API.logError("Invalid JSON text: $textJsonStr")
             return
         }
-        player?.sendMessage(mcText, UUID.fromString(getEntityUUID(player)))
+        player?.sendSystemMessage(mcText)
     }
 
     override fun getBlockId(block: Block): String? {

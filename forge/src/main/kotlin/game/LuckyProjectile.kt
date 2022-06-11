@@ -22,7 +22,7 @@ import net.minecraftforge.network.NetworkHooks
 private val defaultDisplayItemStack = MCItemStack(Items.STICK)
 
 class LuckyProjectile(
-    type: EntityType<LuckyProjectile> = ForgeLuckyRegistry.luckyProjectile,
+    type: EntityType<LuckyProjectile> = ForgeLuckyRegistry.luckyProjectile.get(),
     world: MCWorld,
     private var data: LuckyProjectileData = LuckyProjectileData(),
 ) : Arrow(type, world) {
