@@ -2,7 +2,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
     application
     distribution
-    kotlin("plugin.serialization") version "[1.6.0,1.7.0)"
+    kotlin("plugin.serialization") version "[1.7.0,1.8)"
 }
 
 repositories {
