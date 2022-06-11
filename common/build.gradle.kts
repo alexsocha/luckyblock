@@ -14,12 +14,6 @@ repositories {
 kotlin {
     jvm {}
 
-    js {
-        browser {
-            useCommonJs()
-        }
-    }
-
     sourceSets {
         val commonMain by getting
 
@@ -34,8 +28,6 @@ kotlin {
                 implementation("io.mockk:mockk:1.+")
             }
         }
-
-        val jsMain by getting
     }
 }
 

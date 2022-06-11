@@ -11,12 +11,10 @@ repositories {
 }
 
 plugins {
-    kotlin("js")
-
+    kotlin("jvm")
 }
 
 dependencies {
-    implementation(kotlin("stdlib-js"))
     implementation(project(":common"))
 }
 
@@ -24,20 +22,6 @@ buildscript {
     dependencies {
         classpath(files("$rootDir/tools/build/classes"))
         classpath("org.apache.commons:commons-text:1.9")
-    }
-}
-
-kotlin {
-    js {
-        browser {
-            dceTask {
-                keep("luckyblock-bedrock.mod.lucky.bedrock.initServer")
-            }
-            webpackTask {
-                outputFileName = "serverScript.js"
-                devtool = "hidden-source-map"
-            }
-        }
     }
 }
 
