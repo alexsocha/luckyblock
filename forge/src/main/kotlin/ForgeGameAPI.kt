@@ -20,6 +20,7 @@ import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.nbt.NbtUtils
 import net.minecraft.sounds.SoundSource
+import net.minecraft.util.RandomSource
 import net.minecraft.world.*
 import net.minecraft.world.effect.MobEffectCategory
 import net.minecraft.world.effect.MobEffectInstance
@@ -40,9 +41,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import net.minecraftforge.registries.ForgeRegistries
 import java.awt.Color
-import java.util.*
-import kotlin.random.Random
-import kotlin.random.asJavaRandom
 
 typealias MCIdentifier = net.minecraft.resources.ResourceLocation
 typealias MCBlock = net.minecraft.world.level.block.Block
@@ -63,10 +61,8 @@ typealias MCItemStack = net.minecraft.world.item.ItemStack
 typealias MCEnchantmentType = net.minecraft.world.item.enchantment.EnchantmentCategory
 typealias MCStatusEffect = net.minecraft.world.effect.MobEffect
 
-typealias MCText = net.minecraft.network.chat.Component
-typealias MCLiteralText = net.minecraft.network.chat.TextComponent
-typealias MCTextFormatting = net.minecraft.ChatFormatting
-typealias MCTranslatableText = net.minecraft.network.chat.TranslatableComponent
+typealias MCChatComponent = net.minecraft.network.chat.Component
+typealias MCChatFormatting = net.minecraft.ChatFormatting
 
 typealias Tag = net.minecraft.nbt.Tag
 typealias ByteTag = net.minecraft.nbt.ByteTag
@@ -117,7 +113,7 @@ private fun createCommandSource(
     showOutput: Boolean,
 ): CommandSourceStack {
     val commandOutput = object : CommandSource {
-        override fun sendMessage(message: MCText?, senderUUID: UUID?) {}
+        override fun sendSystemMessage(message: MCChatComponent) {}
         override fun acceptsSuccess(): Boolean = showOutput
         override fun acceptsFailure(): Boolean = showOutput
         override fun shouldInformAdmins(): Boolean = showOutput
@@ -129,7 +125,7 @@ private fun createCommandSource(
         MCVec2f.ZERO, // (pitch, yaw)
         world,
         2,  // permission level
-        senderName, MCLiteralText(senderName),
+        senderName, MCChatComponent.literal(senderName),
         world.server,
         null, // entity
     )
@@ -341,7 +337,7 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun sendMessage(player: PlayerEntity, message: String) {
-        (player as MCPlayerEntity).displayClientMessage(MCLiteralText(message), false)
+        (player as MCPlayerEntity).displayClientMessage(MCChatComponent.literal(message), false)
     }
 
     override fun setDifficulty(world: World, difficulty: String) {
@@ -447,7 +443,7 @@ object ForgeGameAPI : GameAPI {
                 if (blockIdWithMode == blockId) return newBlockInfo
 
                 val newState = if (blockIdWithMode == null) world.getBlockState(newBlockInfo.pos)
-                    else ForgeRegistries.BLOCKS.getValue(MCIdentifier(blockIdWithMode))?.defaultBlockState()
+                    else ForgeRegistries.BLOCKS.getValue(MCIdentifier(blockIdWithMode))?.defaultBlockState()!!
 
                 return if (newState == newBlockInfo.state) newBlockInfo
                     else StructureTemplate.StructureBlockInfo(newBlockInfo.pos, newState, newBlockInfo.nbt)
@@ -471,7 +467,7 @@ object ForgeGameAPI : GameAPI {
             mcCornerPos,
             mcCornerPos,
             placementSettings,
-            Random.asJavaRandom(),
+            RandomSource.create(),
             if (notify) 3 else 2
         )
     }

@@ -9,7 +9,7 @@ import net.minecraft.world.entity.EntityType
 import net.minecraftforge.network.NetworkHooks
 
 class DelayedDrop(
-    type: EntityType<DelayedDrop> = ForgeLuckyRegistry.delayedDrop,
+    type: EntityType<DelayedDrop> = ForgeLuckyRegistry.delayedDrop.get(),
     world: MCWorld,
     private var data: DelayedDropData = DelayedDropData.createDefault(world),
 ) : MCEntity(type, world) {

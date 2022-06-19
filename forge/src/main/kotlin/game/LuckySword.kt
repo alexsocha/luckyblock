@@ -28,12 +28,12 @@ class LuckySword : SwordItem(Tiers.IRON, 3, 2.4f, Properties().defaultDurability
     }
 
     @OnlyInClient
-    override fun isFoil(stack: MCItemStack?): Boolean {
+    override fun isFoil(stack: MCItemStack): Boolean {
         return true
     }
 
     @OnlyInClient
-    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCText>, context: TooltipFlag) {
+    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCChatComponent>, context: TooltipFlag) {
         tooltip.addAll(createLuckyTooltip(stack))
     }
 }

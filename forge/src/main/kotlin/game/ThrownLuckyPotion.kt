@@ -22,7 +22,7 @@ class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier {
     private var data: ThrownLuckyPotionData
 
     constructor(
-        type: EntityType<ThrownLuckyPotion> = ForgeLuckyRegistry.thrownLuckyPotion,
+        type: EntityType<ThrownLuckyPotion> = ForgeLuckyRegistry.thrownLuckyPotion.get(),
         world: MCWorld,
         data: ThrownLuckyPotionData = ThrownLuckyPotionData(),
     ) : super(type, world) {
@@ -33,7 +33,8 @@ class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier {
         world: MCWorld,
         user: LivingEntity,
         data: ThrownLuckyPotionData,
-    ) : super(ForgeLuckyRegistry.thrownLuckyPotion, user, world) {
+        type: EntityType<ThrownLuckyPotion> = ForgeLuckyRegistry.thrownLuckyPotion.get(),
+    ) : super(type, user, world) {
         this.data = data
     }
 
@@ -66,7 +67,7 @@ class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier {
     }
 
     override fun getDefaultItem(): MCItem {
-        return ForgeLuckyRegistry.luckyPotion
+        return ForgeLuckyRegistry.luckyPotion.get()
     }
 
     override fun getAddEntityPacket(): Packet<*> {

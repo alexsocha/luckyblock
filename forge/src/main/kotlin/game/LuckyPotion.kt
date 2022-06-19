@@ -52,21 +52,21 @@ class LuckyPotion : MCItem(Properties().tab(CreativeModeTab.TAB_COMBAT)) {
     }
 
     @OnlyInClient
-    override fun isFoil(stack: MCItemStack?): Boolean {
+    override fun isFoil(stack: MCItemStack): Boolean {
         return true
     }
 
     override fun fillItemCategory(group: CreativeModeTab, stacks: NonNullList<MCItemStack>) {
-        if (allowdedIn(group)) {
+        if (allowedIn(group)) {
             stacks.add(MCItemStack(this, 1))
-            if (this == ForgeLuckyRegistry.luckyPotion) {
+            if (this == ForgeLuckyRegistry.luckyPotion.get()) {
                 stacks.addAll(createLuckySubItems(this, LuckyItemValues.veryLuckyPotion, LuckyItemValues.veryUnluckyPotion))
             }
         }
     }
 
     @OnlyInClient
-    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCText>, context: TooltipFlag) {
+    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCChatComponent>, context: TooltipFlag) {
         tooltip.addAll(createLuckyTooltip(stack))
     }
 }

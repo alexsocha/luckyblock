@@ -82,6 +82,6 @@ class AddonCraftingRecipe(id: MCIdentifier) : CustomRecipe(id) {
     }
 
     override fun getSerializer(): RecipeSerializer<*> {
-        return ForgeLuckyRegistry.addonCraftingRecipe
+        return ForgeLuckyRegistry.addonCraftingRecipe.get()
     }
 }

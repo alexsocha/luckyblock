@@ -11,7 +11,7 @@ buildscript {
         maven("https://maven.minecraftforge.net")
     }
     dependencies {
-        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.+")
+        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.46")
     }
 }
 
@@ -51,6 +51,8 @@ tasks.register<Copy>("copyRuntimeClasses") {
     }
     into("build/classes/kotlin/main/")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    dependsOn("classes")
 }
 
 configure<UserDevExtension> {
