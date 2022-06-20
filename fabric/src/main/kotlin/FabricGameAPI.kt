@@ -6,12 +6,10 @@ import net.minecraft.command.EntitySelectorReader
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.server.command.CommandOutput
 import net.minecraft.server.command.ServerCommandSource
-import net.minecraft.text.Text
 import net.minecraft.util.math.Box
 import net.minecraft.util.registry.Registry
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.world.ServerWorldAccess
-import net.minecraft.world.WorldAccess
 import mod.lucky.common.*
 import mod.lucky.common.Entity
 import mod.lucky.common.World
@@ -34,11 +32,11 @@ import net.minecraft.particle.ParticleEffect
 import net.minecraft.particle.ParticleType
 import net.minecraft.potion.PotionUtil
 import net.minecraft.sound.SoundCategory
-import net.minecraft.structure.Structure
+import net.minecraft.structure.StructureTemplate
 import net.minecraft.structure.StructurePlacementData
 import net.minecraft.structure.processor.StructureProcessor
 import net.minecraft.structure.processor.StructureProcessorType
-import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 import net.minecraft.util.BlockRotation
 import net.minecraft.util.DyeColor
 import net.minecraft.util.math.Vec2f
@@ -46,9 +44,7 @@ import net.minecraft.world.Difficulty
 import net.minecraft.world.WorldView
 import net.minecraft.world.explosion.Explosion
 import java.awt.Color
-import java.util.*
-import kotlin.random.Random
-import kotlin.random.asJavaRandom
+import net.minecraft.util.math.random.Random
 
 typealias MCBlock = net.minecraft.block.Block
 typealias MCItem = net.minecraft.item.Item
@@ -63,6 +59,7 @@ typealias MCItemStack = net.minecraft.item.ItemStack
 typealias MCIdentifier = net.minecraft.util.Identifier
 typealias MCStatusEffect = net.minecraft.entity.effect.StatusEffect
 typealias MCEnchantmentType = net.minecraft.enchantment.EnchantmentTarget
+typealias MCText = net.minecraft.text.Text
 
 typealias Tag = net.minecraft.nbt.NbtElement
 typealias ByteTag = net.minecraft.nbt.NbtByte
@@ -114,7 +111,7 @@ private fun createCommandSource(
     showOutput: Boolean,
 ): ServerCommandSource {
     val commandOutput = object : CommandOutput {
-        override fun sendSystemMessage(message: Text?, senderUUID: UUID?) {}
+        override fun sendMessage(message: Text?) {}
         override fun shouldReceiveFeedback(): Boolean = showOutput
         override fun shouldTrackOutput(): Boolean = showOutput
         override fun shouldBroadcastConsoleToOps(): Boolean = showOutput
@@ -126,7 +123,7 @@ private fun createCommandSource(
         Vec2f.ZERO, // (pitch, yaw)
         world,
         2,  // permission level
-        senderName, LiteralText(senderName),
+        senderName, MCText.literal(senderName),
         world.server,
         null, // entity
     )
@@ -197,7 +194,7 @@ object FabricGameAPI : GameAPI {
     }
 
     override fun getPlayerName(player: PlayerEntity): String {
-        return (player as MCPlayerEntity).name.asString()
+        return (player as MCPlayerEntity).name.string
     }
 
     override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) {
@@ -244,7 +241,7 @@ object FabricGameAPI : GameAPI {
     }
 
     override fun isAirBlock(world: World, pos: Vec3i): Boolean {
-        return (world as WorldAccess).isAir(toMCBlockPos(pos))
+        return (world as MCIWorld).isAir(toMCBlockPos(pos))
     }
 
     override fun spawnEntity(world: World, id: String, pos: Vec3d, nbt: DictAttr, components: DictAttr?, rotation: Double, randomizeMob: Boolean, player: PlayerEntity?, sourceId: String) {
@@ -300,7 +297,7 @@ object FabricGameAPI : GameAPI {
         )) as CompoundTag
         val mcBlockState = NbtHelper.toBlockState(blockStateNBT).rotate(BlockRotation.values()[rotation])
 
-        (world as WorldAccess).setBlockState(toMCBlockPos(pos), mcBlockState, if (notify) 3 else 2)
+        (world as MCIWorld).setBlockState(toMCBlockPos(pos), mcBlockState, if (notify) 3 else 2)
     }
 
     override fun setBlockEntity(world: World, pos: Vec3i, nbt: DictAttr) {
@@ -340,7 +337,7 @@ object FabricGameAPI : GameAPI {
     }
 
     override fun sendMessage(player: PlayerEntity, message: String) {
-        (player as MCPlayerEntity).sendMessage(LiteralText(message), false)
+        (player as MCPlayerEntity).sendMessage(MCText.literal(message), false)
     }
 
     override fun setDifficulty(world: World, difficulty: String) {
@@ -395,7 +392,7 @@ object FabricGameAPI : GameAPI {
                 0.0 // spread
             )
         } catch (e: Exception) {
-            GAME_API.logError("Invalid partical arguments: $args", e)
+            GAME_API.logError("Invalid particle arguments: $args", e)
             return
         }
     }
@@ -435,10 +432,10 @@ object FabricGameAPI : GameAPI {
                 world: WorldView,
                 oldPos: MCBlockPos,
                 newPos: MCBlockPos,
-                oldBlockInfo: Structure.StructureBlockInfo,
-                newBlockInfo: Structure.StructureBlockInfo,
+                oldBlockInfo: StructureTemplate.StructureBlockInfo,
+                newBlockInfo: StructureTemplate.StructureBlockInfo,
                 settings: StructurePlacementData,
-            ): Structure.StructureBlockInfo {
+            ): StructureTemplate.StructureBlockInfo {
                 val blockId = JAVA_GAME_API.getBlockId(newBlockInfo.state.block) ?: return newBlockInfo
                 val blockIdWithMode = withBlockMode(mode, blockId)
 
@@ -448,7 +445,7 @@ object FabricGameAPI : GameAPI {
                     else Registry.BLOCK.get(MCIdentifier(blockIdWithMode)).defaultState
 
                 return if (newState == newBlockInfo.state) newBlockInfo
-                    else Structure.StructureBlockInfo(newBlockInfo.pos, newState, newBlockInfo.nbt)
+                    else StructureTemplate.StructureBlockInfo(newBlockInfo.pos, newState, newBlockInfo.nbt)
             }
 
             override fun getType(): StructureProcessorType<*> {
@@ -464,12 +461,12 @@ object FabricGameAPI : GameAPI {
             .addProcessor(processor)
 
         val mcCornerPos = toMCBlockPos(pos - centerOffset)
-        (nbtStructure as Structure).place(
+        (nbtStructure as StructureTemplate).place(
             world as ServerWorldAccess,
             mcCornerPos,
             mcCornerPos,
             placementSettings,
-            Random.asJavaRandom(),
+            Random.create(),
             if (notify) 3 else 2
         )
     }

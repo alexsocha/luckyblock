@@ -19,7 +19,7 @@ import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.nbt.NbtIo
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.structure.Structure
+import net.minecraft.structure.StructureTemplate
 import net.minecraft.text.Text
 import net.minecraft.util.registry.Registry
 import java.io.File
@@ -170,7 +170,7 @@ object FabricJavaGameAPI : JavaGameAPI {
             GAME_API.logError("Invalid JSON text: $textJsonStr")
             return
         }
-        player?.sendSystemMessage(mcText, UUID.fromString(getEntityUUID(player)))
+        player?.sendMessage(mcText)
     }
 
     override fun getBlockId(block: Block): String? {
@@ -216,7 +216,7 @@ object FabricJavaGameAPI : JavaGameAPI {
     }
 
     override fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> {
-        val structure = Structure()
+        val structure = StructureTemplate()
         structure.readNbt(NbtIo.readCompressed(stream))
         return Pair(structure, toVec3i(structure.size))
     }
