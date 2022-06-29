@@ -24,7 +24,7 @@ Originally created in 2015, the Lucky Block is a mod for Minecraft which has sin
 - [Download Lucky Block](https://www.luckyblockmod.com/)
 - [Minecraft Forum](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/1292247-lucky-block-mod-drops-items-spawns-mobs-structures)
 - [Planet Minecraft](https://www.planetminecraft.com/mod/lucky-block/)
-- [Curseforge](https://www.curseforge.com/minecraft/mc-mods/lucky-block)
+- [Minecraft Curseforge Page](https://www.curseforge.com/minecraft/mc-mods/lucky-block)
 
 ## Install
 1. Download and install [Forge](https://files.minecraftforge.net) or [Fabric](https://fabricmc.net), then run Minecraft at least once.
