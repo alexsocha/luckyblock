@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.AddPackFindersEvent
-import net.minecraftforge.event.world.WorldEvent
+import net.minecraftforge.event.level.LevelEvent
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
@@ -34,8 +34,8 @@ object ForgeLuckyRegistry {
 
     val blockRegistry = DeferredRegister.create(ForgeRegistries.BLOCKS, modId)
     val itemRegistry = DeferredRegister.create(ForgeRegistries.ITEMS, modId)
-    val blockEntityRegistry = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, modId)
-    val entityRegistry = DeferredRegister.create(ForgeRegistries.ENTITIES, modId)
+    val blockEntityRegistry = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, modId)
+    val entityRegistry = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, modId)
     val recipeRegistry = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, modId)
     val biomeModifierSerializerRegistry = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, modId)
     val biomeModifierRegistry = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIERS, modId)
@@ -123,7 +123,7 @@ fun registerAddons() {
 
 @OnlyInClient
 private fun setupClient() {
-    MinecraftForge.EVENT_BUS.addListener { _: WorldEvent.Load ->
+    MinecraftForge.EVENT_BUS.addListener { _: LevelEvent.Load ->
         JavaLuckyRegistry.notificationState = checkForUpdates(JavaLuckyRegistry.notificationState)
     }
 

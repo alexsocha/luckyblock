@@ -185,7 +185,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
     }
 
     override fun getEntityTypeId(entity: Entity): String {
-        val key = ForgeRegistries.ENTITIES.getKey((entity as MCEntity).type)
+        val key = ForgeRegistries.ENTITY_TYPES.getKey((entity as MCEntity).type)
         return key?.toString() ?: ""
     }
 
