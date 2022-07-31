@@ -19,26 +19,27 @@ projects:
       minecraft-forge: 1.19.1-42.0.1
 
   lucky-block-fabric:
-    version: 1.19-13.0
+    version: 1.19.1-13.0
     dependencies:
       java:
         minInclusive: 17
         maxInclusive: 17
       minecraft:
-        minInclusive: 1.19
-        maxInclusive: 1.19
+        minInclusive: 1.19.1
+        maxInclusive: 1.19.1
+      # latest: https://fabricmc.net/develop/
       fabric-loader:
         minInclusive: 0.13.0
         maxExclusive: 1.0
       # https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/
       fabric-api:
-        minInclusive: 0.56.1+1.19
-        maxInclusive: 0.56.1+1.19
+        minInclusive: 0.58.5+1.19.1
+        maxInclusive: 0.58.5+1.19.1
     devDependencies:
       # https://maven.fabricmc.net/net/fabricmc/yarn/
       fabric-mappings:
-        minInclusive: 1.19+build.4
-        maxExclusive: 1.19.1
+        minInclusive: 1.19.1+build.5
+        maxExclusive: 1.19.2
 
   lucky-block-bedrock:
     version: 1.18.1-11.0
