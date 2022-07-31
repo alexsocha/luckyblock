@@ -84,6 +84,8 @@ tasks.processResources {
             "modVersion" to projectProps.version,
             "minMinecraftVersion" to projectProps.dependencies["minecraft"]!!.minInclusive,
             "minForgeVersion" to projectProps.dependencies["forge"]!!.minInclusive,
+            // FML version == Forge major version
+            "minFMLVersion" to projectProps.dependencies["forge"]!!.minInclusive!!.split('.')[0],
         )
     }
 }

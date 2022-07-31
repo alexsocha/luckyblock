@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[${minForgeVersion},)"
+loaderVersion="[${minFMLVersion},)"
 license="All rights reserved"
 
 [[mods]]
