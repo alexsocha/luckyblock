@@ -330,7 +330,9 @@ object FabricGameAPI : GameAPI {
     override fun runCommand(world: World, pos: Vec3d, command: String, senderName: String, showOutput: Boolean) {
         try {
             val commandSource = createCommandSource(toServerWorld(world), pos, senderName, showOutput)
-            commandSource.server.commandManager.execute(commandSource, command)
+            val commandWithoutPrefix = command.substring(1) // remove the slash (/)
+            val parsedCommand = commandSource.server.commandManager.dispatcher.parse(commandWithoutPrefix, commandSource)
+            commandSource.server.commandManager.execute(parsedCommand, commandWithoutPrefix)
         } catch (e: Exception) {
             GAME_API.logError("Invalid command: $command", e)
         }
