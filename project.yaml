@@ -1,22 +1,22 @@
 projects:
   lucky-block-forge:
-    version: 1.19-13.2
+    version: 1.19.1-13.0
     dependencies:
       java:
         minInclusive: 17
         maxInclusive: 17
       minecraft:
-        minInclusive: 1.19
-        maxInclusive: 1.19
+        minInclusive: 1.19.1
+        maxInclusive: 1.19.1
       forge:
-        minInclusive: 41.0.100
-        maxExclusive: 42
+        minInclusive: 42.0.1
+        maxExclusive: 43
     devDependencies:
       forge-mappings:
-        minInclusive: 1.19
-        maxInclusive: 1.19
+        minInclusive: 1.19.1
+        maxInclusive: 1.19.1
     lockedDependencies:
-      minecraft-forge: 1.19-41.0.100
+      minecraft-forge: 1.19.1-42.0.1
 
   lucky-block-fabric:
     version: 1.19-13.0
