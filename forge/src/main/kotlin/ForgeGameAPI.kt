@@ -1,5 +1,6 @@
 package mod.lucky.forge
 
+import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import mod.lucky.common.*
@@ -330,7 +331,9 @@ object ForgeGameAPI : GameAPI {
     override fun runCommand(world: World, pos: Vec3d, command: String, senderName: String, showOutput: Boolean) {
         try {
             val commandSource = createCommandSource(toServerWorld(world), pos, senderName, showOutput)
-            commandSource.server.commands.performCommand(commandSource, command)
+            val commandWithoutPrefix = command.substring(1) // remove the slash (/)
+            val parsedCommand = commandSource.server.commands.dispatcher.parse(commandWithoutPrefix, commandSource)
+            commandSource.server.commands.performCommand(parsedCommand, commandWithoutPrefix)
         } catch (e: Exception) {
             GAME_API.logError("Invalid command: $command", e)
         }
