@@ -49,7 +49,7 @@ projects:
         maxInclusive: 1.17
 
   custom-lucky-block-java:
-    version: 1.19-1.0
+    version: 1.19-2.0
     dependencies:
       lucky-block:
         minInclusive: 1.0
