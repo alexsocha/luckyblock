@@ -1,0 +1,7 @@
+{
+    "format_version": "1.19.30",
+    "lucky:lucky_block": {
+        "textures": "lucky_block",
+        "sound": "wood"
+    }
+}    

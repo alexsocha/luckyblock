@@ -1,0 +1,24 @@
+{
+    "format_version": "1.16.0",
+    "minecraft:block": {
+        "description": {
+            "identifier": "lucky:lucky_block",
+            "properties": {
+                "minecraft:direction": {
+                }
+            }
+        },
+        "components": {
+            "minecraft:on_interact": {
+                "event": "test_event"
+            }
+        },
+        "events": {
+            "test_event": {
+                "set_block_property": {
+                    "minecraft:direction": 1
+                }
+            }
+        }
+    }
+}
