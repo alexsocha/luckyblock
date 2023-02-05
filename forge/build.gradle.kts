@@ -11,7 +11,7 @@ buildscript {
         maven("https://maven.minecraftforge.net")
     }
     dependencies {
-        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.46")
+        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.65")
     }
 }
 

@@ -1,6 +1,7 @@
 package mod.lucky.forge.game
 
 import com.mojang.serialization.Codec
+import mod.lucky.common.LOGGER
 import mod.lucky.forge.ForgeLuckyRegistry
 import mod.lucky.java.JavaLuckyRegistry
 import net.minecraft.core.Holder

@@ -5,6 +5,7 @@ import mod.lucky.common.Random
 import mod.lucky.common.attribute.*
 import mod.lucky.java.*
 import net.minecraft.client.Minecraft
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.LongArrayTag
 import net.minecraft.nbt.NbtIo
 import net.minecraft.network.chat.Component
@@ -193,7 +194,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
         val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultBlockState())
 
         // world is needed to prevent a NullPointerException
-        chestEntity.level = toServerWorld(world)
+        chestEntity.setLevel(toServerWorld(world))
         chestEntity.setLootTable(MCIdentifier(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
         chestEntity.unpackLootTable(null)
 
@@ -217,7 +218,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
 
     override fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> {
         val structure = StructureTemplate()
-        structure.load(NbtIo.readCompressed(stream))
+        structure.load(BuiltInRegistries.BLOCK.asLookup(), NbtIo.readCompressed(stream))
         return Pair(structure, toVec3i(structure.size))
     }
 }

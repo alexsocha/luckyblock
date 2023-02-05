@@ -6,8 +6,8 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("multiplatform") version "[1.7.0,1.8)"
-        kotlin("jvm") version "[1.7.0,1.8)"
+        kotlin("multiplatform") version "1.7.22"
+        kotlin("jvm") version "1.7.22"
     }
 }
 

@@ -14,8 +14,7 @@ import net.minecraft.world.item.enchantment.Enchantments
 
 class LuckyBow : BowItem(Properties()
     .stacksTo(1)
-    .defaultDurability(1000)
-    .tab(CreativeModeTab.TAB_COMBAT)) {
+    .defaultDurability(1000)) {
 
     override fun releaseUsing(
         stack: MCItemStack, world: MCWorld, player: LivingEntity, timeLeft: Int,
@@ -92,11 +91,11 @@ fun registerLuckyBowModels(item: LuckyBow) {
     ItemProperties.register(
         item,
         MCIdentifier("pull")
-    ) { _, _, entity, _ ->
+    ) { stack, _, entity, _ ->
         if (entity == null) {
             0.0f
         } else {
-            if (entity.useItem.item is LuckyBow) entity.useItemRemainingTicks / 20.0f else 0.0f
+            if (entity.useItem != stack) 0.0f else (stack.useDuration - entity.useItemRemainingTicks).toFloat() / 20.0f;
         }
     }
 }

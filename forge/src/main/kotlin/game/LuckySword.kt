@@ -9,7 +9,7 @@ import net.minecraft.world.item.SwordItem
 import net.minecraft.world.item.Tiers
 import net.minecraft.world.item.TooltipFlag
 
-class LuckySword : SwordItem(Tiers.IRON, 3, 2.4f, Properties().defaultDurability(3124).tab(CreativeModeTab.TAB_COMBAT)) {
+class LuckySword : SwordItem(Tiers.IRON, 3, 2.4f, Properties().defaultDurability(3124)) {
     override fun hurtEnemy(stack: MCItemStack, target: LivingEntity, attacker: LivingEntity): Boolean {
         if (!isClientWorld(attacker.level)) {
             doSwordDrop(
