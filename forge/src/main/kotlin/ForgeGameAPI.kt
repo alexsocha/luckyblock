@@ -19,7 +19,9 @@ import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.selector.EntitySelectorParser
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleType
+import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.NbtUtils
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
 import net.minecraft.world.*
@@ -33,7 +35,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.projectile.Arrow
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.alchemy.PotionUtils
-import net.minecraft.world.level.Explosion
+import net.minecraft.world.level.Level.ExplosionInteraction
 import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.Rotation
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings
@@ -297,7 +299,10 @@ object ForgeGameAPI : GameAPI {
             "Name" to stringAttrOf(id),
             "Properties" to state,
         )) as CompoundTag
-        val mcBlockState = NbtUtils.readBlockState(blockStateNBT).rotate(world as MCIWorld, toMCBlockPos(pos), Rotation.values()[rotation])
+
+        val mcBlockState = NbtUtils
+            .readBlockState((world as MCIWorld).holderLookup(Registries.BLOCK), blockStateNBT)
+            .rotate(world, toMCBlockPos(pos), Rotation.values()[rotation])
 
         world.setBlock(toMCBlockPos(pos), mcBlockState, if (notify) 3 else 2)
     }
@@ -420,7 +425,7 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun createExplosion(world: World, pos: Vec3d, damage: Double, fire: Boolean) {
-        toServerWorld(world).explode(null, pos.x, pos.y, pos.z, damage.toFloat(), fire, Explosion.BlockInteraction.DESTROY)
+        toServerWorld(world).explode(null, pos.x, pos.y, pos.z, damage.toFloat(), fire, ExplosionInteraction.BLOCK)
     }
 
     override fun createStructure(world: World, structureId: String, pos: Vec3i, centerOffset: Vec3i, rotation: Int, mode: String, notify: Boolean) {

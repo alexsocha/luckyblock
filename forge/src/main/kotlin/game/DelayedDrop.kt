@@ -5,6 +5,7 @@ import mod.lucky.java.game.*
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.world.entity.EntityType
 import net.minecraftforge.network.NetworkHooks
 
@@ -29,7 +30,7 @@ class DelayedDrop(
         data.writeToTag(tag)
     }
 
-    override fun getAddEntityPacket(): Packet<*> {
+    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> {
         return NetworkHooks.getEntitySpawningPacket(this)
     }
 }

@@ -1,6 +1,6 @@
 {
     "parent": "block/cube_all",
     "textures": {
-        "all": "lucky:blocks/lucky_block"
+        "all": "lucky:block/lucky_block"
     }
 }

@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "lucky:items/custom_lucky_potion"
+        "layer0": "lucky:item/custom_lucky_potion"
     }
 }

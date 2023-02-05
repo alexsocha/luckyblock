@@ -16,7 +16,7 @@ import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.TooltipFlag
 
-class LuckyPotion : MCItem(Properties().tab(CreativeModeTab.TAB_COMBAT)) {
+class LuckyPotion : MCItem(Properties()) {
 
     override fun use(world: MCWorld, user: MCPlayerEntity, hand: InteractionHand): InteractionResultHolder<MCItemStack> {
         val stack = user.getItemInHand(hand)
@@ -54,15 +54,6 @@ class LuckyPotion : MCItem(Properties().tab(CreativeModeTab.TAB_COMBAT)) {
     @OnlyInClient
     override fun isFoil(stack: MCItemStack): Boolean {
         return true
-    }
-
-    override fun fillItemCategory(group: CreativeModeTab, stacks: NonNullList<MCItemStack>) {
-        if (allowedIn(group)) {
-            stacks.add(MCItemStack(this, 1))
-            if (this == ForgeLuckyRegistry.luckyPotion.get()) {
-                stacks.addAll(createLuckySubItems(this, LuckyItemValues.veryLuckyPotion, LuckyItemValues.veryUnluckyPotion))
-            }
-        }
     }
 
     @OnlyInClient

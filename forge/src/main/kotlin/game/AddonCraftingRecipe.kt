@@ -7,9 +7,11 @@ import mod.lucky.java.loader.ShapedCraftingRecipe
 import mod.lucky.java.loader.ShapelessCraftingRecipe
 import net.minecraft.core.NonNullList
 import net.minecraft.world.inventory.CraftingContainer
+import net.minecraft.world.item.crafting.CraftingBookCategory
 import net.minecraft.world.item.crafting.CustomRecipe
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.level.Level
 import net.minecraftforge.registries.ForgeRegistries
 
 typealias MCCraftingRecipe = net.minecraft.world.item.crafting.CraftingRecipe
@@ -35,6 +37,7 @@ fun registerAddonCraftingRecipes() {
                 is ShapelessCraftingRecipe -> MCShapelessCraftingRecipe(
                     MCIdentifier(blockId),
                     "lucky",
+                    CraftingBookCategory.MISC,
                     toMCItemStack(recipe.resultStack),
                     NonNullList.of(Ingredient.EMPTY, *recipe.ingredientIds.mapNotNull { getIngredient(it) }.toTypedArray()),
                 )
@@ -42,6 +45,7 @@ fun registerAddonCraftingRecipes() {
                 is ShapedCraftingRecipe -> MCShapedCraftingRecipe(
                     MCIdentifier(blockId),
                     "lucky",
+                    CraftingBookCategory.MISC,
                     recipe.width,
                     recipe.height,
                     NonNullList.of(Ingredient.EMPTY, *recipe.ingredientIds.map {
@@ -58,7 +62,7 @@ fun registerAddonCraftingRecipes() {
     AddonCraftingRecipe.craftingRecipes = recipes
 }
 
-class AddonCraftingRecipe(id: MCIdentifier) : CustomRecipe(id) {
+class AddonCraftingRecipe(id: MCIdentifier, category: CraftingBookCategory) : CustomRecipe(id, category) {
     companion object {
         lateinit var craftingRecipes: List<MCCraftingRecipe>
     }

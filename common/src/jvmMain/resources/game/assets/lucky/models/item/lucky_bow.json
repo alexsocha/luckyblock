@@ -1,7 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "lucky:items/lucky_bow_standby"
+        "layer0": "lucky:item/lucky_bow_standby"
     },
     "display": {
         "thirdperson_righthand": {

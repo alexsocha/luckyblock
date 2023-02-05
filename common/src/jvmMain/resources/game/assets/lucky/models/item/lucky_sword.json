@@ -1,6 +1,6 @@
 {
     "parent": "item/handheld",
     "textures": {
-        "layer0": "lucky:items/lucky_sword"
+        "layer0": "lucky:item/lucky_sword"
     }
 }

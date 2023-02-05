@@ -1,27 +1,37 @@
 package mod.lucky.forge
 
+import com.mojang.datafixers.types.Type
 import com.mojang.serialization.Codec
 import mod.lucky.common.GAME_API
 import mod.lucky.common.LOGGER
+import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.PLATFORM_API
 import mod.lucky.forge.game.*
 import mod.lucky.java.*
+import mod.lucky.java.game.LuckyItemValues
 import net.minecraft.server.packs.FilePackResources
-import net.minecraft.server.packs.FolderPackResources
+import net.minecraft.server.packs.PackType
+import net.minecraft.server.packs.PathPackResources
 import net.minecraft.server.packs.repository.Pack
 import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.server.packs.repository.RepositorySource
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer
+import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.item.CreativeModeTabs
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.AddPackFindersEvent
+import net.minecraftforge.event.CreativeModeTabEvent
 import net.minecraftforge.event.level.LevelEvent
+import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.event.config.ModConfigEvent
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -38,7 +48,6 @@ object ForgeLuckyRegistry {
     val entityRegistry = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, modId)
     val recipeRegistry = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, modId)
     val biomeModifierSerializerRegistry = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, modId)
-    val biomeModifierRegistry = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIERS, modId)
 
     val LOGGER: Logger = LogManager.getLogger()
     val addonLuckyBlocks = HashMap<String, LuckyBlock>()
@@ -56,7 +65,7 @@ object ForgeLuckyRegistry {
             .mapNotNull { it.ids.block }
             .map { getOrCreateAddonBlock(it) }
 
-        @Suppress BlockEntityType.Builder.of(::LuckyBlockEntity, *validBlocks.toTypedArray()).build(null)
+        BlockEntityType.Builder.of(::LuckyBlockEntity, *validBlocks.toTypedArray()).build(null)
     }
 
     val luckyProjectile = entityRegistry.register(MCIdentifier(JavaLuckyRegistry.projectileId).path) {
@@ -84,18 +93,15 @@ object ForgeLuckyRegistry {
     }
 
     val luckModifierCraftingRecipe = recipeRegistry.register("crafting_luck") {
-        SimpleRecipeSerializer(::LuckModifierCraftingRecipe)
+        SimpleCraftingRecipeSerializer(::LuckModifierCraftingRecipe)
     }
     val addonCraftingRecipe = recipeRegistry.register("crafting_addons") {
         registerAddonCraftingRecipes()
-        SimpleRecipeSerializer(::AddonCraftingRecipe)
+        SimpleCraftingRecipeSerializer(::AddonCraftingRecipe)
     }
 
     val luckyBiomeModifierSerializer = biomeModifierSerializerRegistry.register("lucky_biome_modifier") {
         Codec.unit(LuckyBiomeModifier.INSTANCE)
-    }
-    val luckyBiomeModifier = biomeModifierRegistry.register("lucky_biome_modifier") {
-        LuckyBiomeModifier.INSTANCE
     }
 }
 
@@ -121,6 +127,30 @@ fun registerAddons() {
     }
 }
 
+fun setupCreativeTabs(event: CreativeModeTabEvent.BuildContents) {
+    if (event.tab == CreativeModeTabs.BUILDING_BLOCKS) {
+        event.accept(ForgeLuckyRegistry.luckyBlockItem)
+        createLuckySubItems(ForgeLuckyRegistry.luckyBlockItem.get(), LuckyItemValues.veryLuckyBlock, LuckyItemValues.veryUnluckyBlock).forEach { event.accept(it) }
+    }
+    if (event.tab == CreativeModeTabs.COMBAT) {
+        event.accept(ForgeLuckyRegistry.luckySword)
+        event.accept(ForgeLuckyRegistry.luckyBow)
+        event.accept(ForgeLuckyRegistry.luckyPotion)
+        createLuckySubItems(ForgeLuckyRegistry.luckyPotion.get(), LuckyItemValues.veryLuckyPotion, LuckyItemValues.veryUnluckyPotion).forEach { event.accept(it) }
+    }
+
+    for (addon in JavaLuckyRegistry.addons) {
+        if (event.tab == CreativeModeTabs.BUILDING_BLOCKS) {
+            if (addon.ids.block != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.block!!))!! }
+        }
+        if (event.tab == CreativeModeTabs.COMBAT) {
+            if (addon.ids.sword != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.sword!!))!! }
+            if (addon.ids.bow != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.bow!!))!! }
+            if (addon.ids.potion != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.potion!!))!! }
+        }
+    }
+}
+
 @OnlyInClient
 private fun setupClient() {
     MinecraftForge.EVENT_BUS.addListener { _: LevelEvent.Load ->
@@ -143,15 +173,19 @@ private fun registerEntityRenderers(event: EntityRenderersEvent.RegisterRenderer
 @OnlyInClient
 private fun addPackFinders(event: AddPackFindersEvent) {
     JavaLuckyRegistry.addons.forEach { addon ->
-        val pack = if (addon.file.isDirectory) FolderPackResources(addon.file) else FilePackResources(addon.file)
+        val packName = "Resources for ${addon.addonId}"
+        val isBuiltIn = true;
+        val pack = if (addon.file.isDirectory) PathPackResources(addon.addonId, addon.file.toPath(), isBuiltIn)
+            else FilePackResources(packName, addon.file, isBuiltIn)
 
         // based on net.minecraftforge.client.loading.ClientModLoader
-        val repositorySource = RepositorySource { packConsumer, packConstructor ->
-            val packWithMeta = Pack.create(
-                "Resources for ${addon.addonId}",
-                true, // is included by default
+        val repositorySource = RepositorySource { packConsumer ->
+            val packWithMeta = Pack.readMetaAndCreate(
+                packName,
+                MCChatComponent.literal(packName),
+                isBuiltIn,
                 { pack },
-                packConstructor,
+                PackType.CLIENT_RESOURCES,
                 Pack.Position.BOTTOM,
                 PackSource.DEFAULT
             )
@@ -173,7 +207,6 @@ class ForgeMod {
 
         ForgeGameAPI.init()
         JavaLuckyRegistry.init()
-
         registerAddons()
 
         val eventBus = FMLJavaModLoadingContext.get().modEventBus
@@ -183,9 +216,9 @@ class ForgeMod {
         ForgeLuckyRegistry.entityRegistry.register(eventBus)
         ForgeLuckyRegistry.recipeRegistry.register(eventBus)
         ForgeLuckyRegistry.biomeModifierSerializerRegistry.register(eventBus)
-        ForgeLuckyRegistry.biomeModifierRegistry.register(eventBus)
 
         eventBus.addListener { _: FMLClientSetupEvent -> setupClient() }
+        eventBus.addListener(::setupCreativeTabs)
         eventBus.addListener(::registerEntityRenderers)
         eventBus.addListener(::addPackFinders)
     }
