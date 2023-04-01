@@ -21,6 +21,9 @@
     "main": [
       "mod.lucky.fabric.FabricMod"
     ],
+    "fabric-datagen": [
+      "mod.lucky.fabric.FabricModDataGen"
+    ],
     "client": [
       "mod.lucky.fabric.FabricModClient"
     ]

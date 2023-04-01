@@ -1,32 +1,31 @@
 package mod.lucky.fabric.game
 
 import mod.lucky.common.LuckyRegistry
-import mod.lucky.fabric.FabricLuckyRegistry
 import mod.lucky.fabric.isClientWorld
 import mod.lucky.fabric.toVec3i
 import mod.lucky.fabric.*
-import mod.lucky.java.*
+import mod.lucky.java.JAVA_GAME_API
 import mod.lucky.java.game.*
-import net.minecraft.block.*
-import net.minecraft.block.entity.BlockEntity
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.ItemStack
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket
-import net.minecraft.sound.BlockSoundGroup
-import net.minecraft.util.ActionResult
-import net.minecraft.util.DyeColor
-import net.minecraft.util.Hand
-import net.minecraft.util.hit.BlockHitResult
-import net.minecraft.util.math.BlockPos
-import net.minecraft.world.World
-import net.minecraft.world.BlockView
-import net.minecraft.world.WorldView
+import net.minecraft.core.BlockPos
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.DyeColor
+import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.BaseEntityBlock
+import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.SoundType
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.material.Material
+import net.minecraft.world.phys.BlockHitResult
 
 private fun onBreak(
-    block: Block,
-    world: World,
-    player: PlayerEntity?,
+    block: MCBlock,
+    world: MCWorld,
+    player: MCPlayerEntity?,
     pos: BlockPos,
     removedByRedstone: Boolean = false,
 ) {
@@ -46,71 +45,71 @@ private fun onBreak(
     )
 }
 
-class LuckyBlock : BlockWithEntity(Settings.of(Material.WOOD, DyeColor.YELLOW)
-    .sounds(BlockSoundGroup.STONE)
+class LuckyBlock : BaseEntityBlock(Properties.of(Material.WOOD, DyeColor.YELLOW)
+    .sound(SoundType.STONE)
     .strength(0.2f, 6000000.0f)) {
 
-    override fun neighborUpdate(
+    override fun neighborChanged(
         state: BlockState,
-        world: World,
-        pos: BlockPos,
-        neighborBlock: Block,
-        neighborPos: BlockPos,
+        world: MCWorld,
+        pos: MCBlockPos,
+        neighborBlock: MCBlock,
+        neighborPos: MCBlockPos,
         notify: Boolean
     ) {
-        super.neighborUpdate(state, world, pos, neighborBlock, neighborPos, notify)
-        if (world.isReceivingRedstonePower(pos)) {
+        super.neighborChanged(state, world, pos, neighborBlock, neighborPos, notify)
+        if (world.hasNeighborSignal(pos)) {
             onBreak(this, world, null, pos, removedByRedstone = true)
         }
     }
 
-    override fun afterBreak(
-        world: World,
-        player: PlayerEntity,
-        pos: BlockPos,
+    override fun playerDestroy(
+        world: MCWorld,
+        player: MCPlayerEntity,
+        pos: MCBlockPos,
         state: BlockState,
         blockEntity: BlockEntity?,
-        stack: ItemStack
+        stack: MCItemStack
     ) {
-        super.afterBreak(world, player, pos, state, blockEntity, stack)
+        super.playerDestroy(world, player, pos, state, blockEntity, stack)
         onBreak(this, world, player, pos)
     }
 
-    override fun onUse(
-        state: BlockState,
-        world: World,
+    override fun use(
+        blockState: BlockState,
+        world: Level,
         pos: BlockPos,
-        player: PlayerEntity,
-        hand: Hand,
+        player: Player,
+        hand: InteractionHand,
         hitResult: BlockHitResult
-    ): ActionResult {
+    ): InteractionResult {
         val settings = LuckyRegistry.blockSettings[JAVA_GAME_API.getBlockId(this)]!!
         if (settings.doDropsOnRightClick) {
             onBreak(this, world, player, pos)
-            return ActionResult.SUCCESS
+            return InteractionResult.SUCCESS
         }
-        return ActionResult.PASS
+        return InteractionResult.PASS
     }
 
-    override fun onPlaced(world: World, pos: BlockPos, state: BlockState, player: LivingEntity?, itemStack: ItemStack) {
-        super.onPlaced(world, pos, state, player, itemStack)
+    override fun setPlacedBy(world: MCWorld, pos: BlockPos, state: BlockState, player: LivingEntity?, itemStack: MCItemStack) {
+        super.setPlacedBy(world, pos, state, player, itemStack)
 
         val blockEntity = world.getBlockEntity(pos) as LuckyBlockEntity
-        itemStack.nbt?.let {
+        itemStack.tag?.let {
             blockEntity.data = LuckyBlockEntityData.readFromTag(it)
-            blockEntity.markDirty()
+            blockEntity.setChanged()
         }
 
-        if (world.isReceivingRedstonePower(pos))
+        if (world.hasNeighborSignal(pos))
             onBreak(this, world, null, pos, removedByRedstone = true)
     }
 
-    override fun createBlockEntity(pos: BlockPos, state: BlockState): BlockEntity {
+    override fun newBlockEntity(pos: MCBlockPos, state: BlockState): BlockEntity {
         return LuckyBlockEntity(pos, state)
     }
 
-    override fun getRenderType(state: BlockState): BlockRenderType {
-        return BlockRenderType.MODEL
+    override fun getRenderShape(blockState: BlockState): RenderShape {
+        return RenderShape.MODEL
     }
 }
 
@@ -121,18 +120,18 @@ class LuckyBlockEntity(
     var data: LuckyBlockEntityData = LuckyBlockEntityData()
 ) : BlockEntity(FabricLuckyRegistry.luckyBlockEntity, blockPos, blockState) {
 
-    override fun readNbt(tag: CompoundTag) {
-        super.readNbt(tag)
+    override fun load(tag: CompoundTag) {
+        super.load(tag)
         data = LuckyBlockEntityData.readFromTag(tag)
     }
 
-    override fun writeNbt(tag: CompoundTag) {
-        super.writeNbt(tag)
+    override fun saveAdditional(tag: CompoundTag) {
+        super.saveAdditional(tag)
         data.writeToTag(tag)
     }
 
-    override fun toUpdatePacket(): BlockEntityUpdateS2CPacket {
-        return BlockEntityUpdateS2CPacket.create(this) { blockEntity ->
+    override fun getUpdatePacket(): ClientboundBlockEntityDataPacket {
+        return ClientboundBlockEntityDataPacket.create(this) { blockEntity ->
             JAVA_GAME_API.attrToNBT((blockEntity as LuckyBlockEntity).data.toAttr()) as CompoundTag
         }
     }

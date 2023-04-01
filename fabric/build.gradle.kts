@@ -15,7 +15,23 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.0"
     id("mod.lucky.build.JavaEditionTasks")
     // https://maven.fabricmc.net/net/fabricmc/fabric-loom/
-    id("fabric-loom") version "[0.12.0,0.13)"
+    id("fabric-loom") version "[1.1,1.2)"
+}
+
+loom {
+    runs {
+        register("datagenClient") {
+            client()
+            name("Data Generation")
+            vmArg("-Dfabric-api.datagen")
+            vmArg("-Dfabric-api.datagen.output-dir=${file("src/main/generated")}")
+            vmArg("-Dfabric-api.datagen.strict-validation")
+            vmArg("-Dfabric-api.datagen.modid=lucky")
+
+            ideConfigGenerated(true)
+            runDir("build/datagen")
+        }
+    }
 }
 
 base.archivesBaseName = rootProject.name
@@ -25,7 +41,7 @@ dependencies {
     implementation(project(":common"))
     implementation(kotlin("stdlib-jdk8"))
     minecraft("com.mojang:minecraft:${projectProps.dependencies["minecraft"]!!.toGradleRange()}")
-    mappings("net.fabricmc:yarn:${projectProps.devDependencies["fabric-mappings"]!!.toGradleRange()}:v2")
+    mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:${projectProps.dependencies["fabric-loader"]!!.toGradleRange()}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${projectProps.dependencies["fabric-api"]!!.toGradleRange()}")
     shadow(project(":common"))
@@ -33,6 +49,7 @@ dependencies {
 
 tasks.processResources {
     from("../common/src/jvmMain/resources/game")
+    from("src/main/generated")
     inputs.property("modVersion", projectProps.version)
     filesMatching("fabric.mod.json") {
         expand(
@@ -43,7 +60,7 @@ tasks.processResources {
     }
 }
 
-tasks.getByName("prepareRemapJar").dependsOn(tasks.getByName("shadowJar"))
+tasks.getByName("remapSourcesJar").dependsOn(tasks.getByName("shadowJar"))
 tasks.assemble { dependsOn(tasks.getByName("exportDist").mustRunAfter(tasks.remapJar)) }
 tasks.getByName("runClient").dependsOn(tasks.getByName("copyRuntimeResources"))
 tasks.getByName("runServer").dependsOn(tasks.getByName("copyRuntimeResources"))

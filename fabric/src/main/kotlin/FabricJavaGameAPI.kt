@@ -1,5 +1,6 @@
 package mod.lucky.fabric
 
+import com.mojang.authlib.minecraft.client.MinecraftClient
 import mod.lucky.common.*
 import mod.lucky.common.Random
 import mod.lucky.common.attribute.*
@@ -9,19 +10,21 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.impl.FabricLoaderImpl
-import net.minecraft.block.Blocks
-import net.minecraft.block.entity.ChestBlockEntity
-import net.minecraft.client.MinecraftClient
-import net.minecraft.datafixer.fix.ItemIdFix
-import net.minecraft.datafixer.fix.ItemInstanceTheFlatteningFix
-import net.minecraft.enchantment.EnchantmentHelper
-import net.minecraft.enchantment.Enchantments
-import net.minecraft.entity.projectile.ArrowEntity
+import net.minecraft.client.Minecraft
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.registries.Registries
+import net.minecraft.nbt.LongArrayTag
 import net.minecraft.nbt.NbtIo
-import net.minecraft.server.world.ServerWorld
-import net.minecraft.structure.StructureTemplate
-import net.minecraft.text.Text
-import net.minecraft.util.registry.Registry
+import net.minecraft.network.chat.Component
+import net.minecraft.util.datafix.fixes.ItemIdFix
+import net.minecraft.util.datafix.fixes.ItemStackTheFlatteningFix
+import net.minecraft.world.entity.projectile.Arrow
+import net.minecraft.world.item.Items
+import net.minecraft.world.item.enchantment.EnchantmentHelper
+import net.minecraft.world.item.enchantment.Enchantments
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.entity.ChestBlockEntity
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -32,16 +35,16 @@ annotation class OnlyInClient
 @Environment(EnvType.SERVER)
 annotation class OnlyInServer
 
-fun isClientWorld(world: MCIWorld): Boolean = world.isClient
+fun isClientWorld(world: MCIWorld): Boolean = world.isClientSide
 
 fun toMCItemStack(stack: ItemStack): MCItemStack {
-    val mcStack = MCItemStack(Registry.ITEM.get(MCIdentifier(stack.itemId)), stack.count)
-    if (stack.nbt != null) mcStack.nbt = stack.nbt as CompoundTag
+    val mcStack = MCItemStack(BuiltInRegistries.ITEM.getOptional(MCIdentifier(stack.itemId)).orElse(null) ?: Items.AIR, stack.count)
+    if (stack.nbt != null) mcStack.tag = stack.nbt as CompoundTag
     return mcStack
 }
 
 fun toItemStack(stack: MCItemStack): ItemStack {
-    return ItemStack(JAVA_GAME_API.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.nbt)
+    return ItemStack(JAVA_GAME_API.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.tag)
 }
 
 object FabricJavaGameAPI : JavaGameAPI {
@@ -59,22 +62,24 @@ object FabricJavaGameAPI : JavaGameAPI {
     }
 
     override fun getGameDir(): File {
-        return FabricLoader.getInstance().gameDir.toFile()
+        val gameDir = FabricLoader.getInstance().gameDir.toFile()
+        if (gameDir.name == "datagen") return gameDir.resolve(File("../../run"))
+        return gameDir
     }
 
     override fun attrToNBT(attr: Attr): Tag {
         return when (attr) {
             is ValueAttr -> when (attr.type) {
-                AttrType.STRING -> StringTag.of(attr.value as String)
-                AttrType.BYTE -> ByteTag.of(attr.value as Byte)
-                AttrType.BOOLEAN -> ByteTag.of(if (attr.value == true) 1 else 0)
-                AttrType.SHORT -> ShortTag.of(attr.value as Short)
-                AttrType.INT -> IntTag.of(attr.value as Int)
-                AttrType.LONG -> LongTag.of(attr.value as Long)
-                AttrType.FLOAT -> FloatTag.of(attr.value as Float)
-                AttrType.DOUBLE -> DoubleTag.of(attr.value as Double)
-                AttrType.BYTE_ARRAY -> ByteArrayTag(attr.value as ByteArray)
+                AttrType.STRING -> StringTag.valueOf(attr.value as String)
+                AttrType.BYTE -> ByteTag.valueOf(attr.value as Byte)
+                AttrType.BOOLEAN -> ByteTag.valueOf(attr.value == true)
+                AttrType.SHORT -> ShortTag.valueOf(attr.value as Short)
+                AttrType.INT -> IntTag.valueOf(attr.value as Int)
+                AttrType.LONG -> LongTag.valueOf(attr.value as Long)
+                AttrType.FLOAT -> FloatTag.valueOf(attr.value as Float)
+                AttrType.DOUBLE -> DoubleTag.valueOf(attr.value as Double)
                 AttrType.INT_ARRAY -> IntArrayTag(attr.value as IntArray)
+                AttrType.BYTE_ARRAY -> ByteArrayTag(attr.value as ByteArray)
                 AttrType.LONG_ARRAY -> LongArrayTag(attr.value as LongArray)
                 AttrType.LIST, AttrType.DICT -> throw Exception()
             }
@@ -94,25 +99,27 @@ object FabricJavaGameAPI : JavaGameAPI {
 
     override fun nbtToAttr(tag: NBTTag): Attr {
         return when (tag) {
-            is StringTag -> stringAttrOf(tag.asString())
+            is StringTag -> stringAttrOf(tag.asString)
             // note that booleans are stored as bytes
-            is ByteTag -> ValueAttr(AttrType.BYTE, tag.byteValue())
-            is ShortTag -> ValueAttr(AttrType.SHORT, tag.shortValue())
-            is IntTag -> ValueAttr(AttrType.INT, tag.intValue())
-            is LongTag -> ValueAttr(AttrType.LONG, tag.longValue())
-            is FloatTag -> ValueAttr(AttrType.FLOAT, tag.floatValue())
-            is DoubleTag -> ValueAttr(AttrType.DOUBLE, tag.doubleValue())
-            is ByteArrayTag -> ValueAttr(AttrType.BYTE_ARRAY, tag.byteArray)
-            is IntArrayTag -> ValueAttr(AttrType.INT_ARRAY, tag.intArray)
+            is ByteTag -> ValueAttr(AttrType.BYTE, tag.asByte)
+            is ShortTag -> ValueAttr(AttrType.SHORT, tag.asShort)
+            is IntTag -> ValueAttr(AttrType.INT, tag.asInt)
+            is LongTag -> ValueAttr(AttrType.LONG, tag.asLong)
+            is FloatTag -> ValueAttr(AttrType.FLOAT, tag.asFloat)
+            is DoubleTag -> ValueAttr(AttrType.DOUBLE, tag.asDouble)
+            is ByteArrayTag -> ValueAttr(AttrType.BYTE_ARRAY, tag.asByteArray)
+            is IntArrayTag -> ValueAttr(AttrType.INT_ARRAY, tag.asIntArray)
+            is LongArrayTag -> ValueAttr(AttrType.INT_ARRAY, tag.asLongArray)
             is ListTag -> ListAttr(tag.map { nbtToAttr(it) })
             is CompoundTag -> {
-                dictAttrOf(*tag.keys.map {
+                dictAttrOf(*tag.allKeys.map {
                     it to tag.get(it)?.let { v -> nbtToAttr(v) }
                 }.toTypedArray())
             }
             else -> throw Exception()
         }
     }
+
 
     override fun readNBTKey(tag: NBTTag, k: String): NBTTag? {
         return (tag as CompoundTag).get(k)
@@ -135,8 +142,8 @@ object FabricJavaGameAPI : JavaGameAPI {
         yawOffsetDeg: Double,
         pitchOffsetDeg: Double,
     ): Pair<Vec3d, Vec3d> {
-        val arrowEntity = ArrowEntity(world as ServerWorld, player as MCPlayerEntity)
-        arrowEntity.setVelocity(
+        val arrowEntity = Arrow(world as MCServerWorld, player as MCPlayerEntity)
+        arrowEntity.shootFromRotation(
             player,
             (GAME_API.getPlayerHeadPitchDeg(player) + yawOffsetDeg).toFloat(),
             (GAME_API.getPlayerHeadYawDeg(player) + pitchOffsetDeg).toFloat(),
@@ -146,12 +153,12 @@ object FabricJavaGameAPI : JavaGameAPI {
         )
         return Pair(
             GAME_API.getEntityPos(arrowEntity),
-            Vec3d(arrowEntity.velocity.x, arrowEntity.velocity.y, arrowEntity.velocity.z)
+            Vec3d(arrowEntity.deltaMovement.x, arrowEntity.deltaMovement.y, arrowEntity.deltaMovement.z)
         )
     }
 
     override fun getEntityVelocity(entity: Entity): Vec3d {
-        return toVec3d((entity as MCEntity).velocity)
+        return toVec3d((entity as MCEntity).deltaMovement)
     }
 
     override fun getEntityUUID(entity: Entity): String {
@@ -159,45 +166,46 @@ object FabricJavaGameAPI : JavaGameAPI {
     }
 
     override fun findEntityByUUID(world: World, uuid: String): Entity? {
-        return (world as ServerWorld).getEntity(UUID.fromString(uuid))
+        return (world as MCServerWorld).getEntity(UUID.fromString(uuid))
     }
 
     @OnlyInClient
     override fun showClientMessage(textJsonStr: String) {
-        val player = MinecraftClient.getInstance().player
-        val mcText = Text.Serializer.fromJson(textJsonStr)
-        if (mcText == null) {
+        val player = Minecraft.getInstance().player
+        val mcText = Component.Serializer.fromJson(textJsonStr)
+        if (mcText === null) {
             GAME_API.logError("Invalid JSON text: $textJsonStr")
             return
         }
-        player?.sendMessage(mcText)
+        player?.sendSystemMessage(mcText)
     }
 
     override fun getBlockId(block: Block): String? {
-        return Registry.BLOCK.getKey(block as MCBlock).orElse(null)?.value?.toString()
+        return BuiltInRegistries.BLOCK.getResourceKey(block as MCBlock).orElse(null)?.location()?.toString()
     }
 
     override fun getItemId(item: Item): String? {
-        return Registry.ITEM.getKey(item as MCItem).orElse(null)?.value?.toString()
+        return BuiltInRegistries.ITEM.getResourceKey(item as MCItem).orElse(null)?.location()?.toString()
     }
 
     override fun isValidItemId(id: String): Boolean {
-        return Registry.ITEM.getOrEmpty(MCIdentifier(id)).isPresent
+        return BuiltInRegistries.ITEM.getOptional(MCIdentifier(id)).isPresent
     }
 
     override fun getEntityTypeId(entity: Entity): String {
-        val key = Registry.ENTITY_TYPE.getKey((entity as MCEntity).type).orElse(null)
-        return key?.value?.toString() ?: ""
+        val key = BuiltInRegistries.ENTITY_TYPE.getResourceKey((entity as MCEntity).type).orElse(null)?.location()
+        return key?.toString() ?: ""
     }
 
     override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String, random: Random): ListAttr {
-        val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultState)
-        // world is needed to prevent a NullPointerException
-        chestEntity.world = toServerWorld(world)
-        chestEntity.setLootTable(MCIdentifier(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
-        chestEntity.checkLootInteraction(null)
+        val chestEntity = ChestBlockEntity(toMCBlockPos(pos), Blocks.CHEST.defaultBlockState())
 
-        val tag = chestEntity.createNbtWithIdentifyingData()
+        // world is needed to prevent a NullPointerException
+        chestEntity.setLevel(toServerWorld(world))
+        chestEntity.setLootTable(MCIdentifier(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
+        chestEntity.unpackLootTable(null)
+
+        val tag = chestEntity.saveWithFullMetadata()
         return JAVA_GAME_API.nbtToAttr(JAVA_GAME_API.readNBTKey(tag, "Items")!!) as ListAttr
     }
 
@@ -206,18 +214,18 @@ object FabricJavaGameAPI : JavaGameAPI {
     }
 
     override fun hasSilkTouch(player: PlayerEntity): Boolean {
-        return EnchantmentHelper.getEquipmentLevel(Enchantments.SILK_TOUCH, player as MCPlayerEntity) > 0
+        return EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player as MCPlayerEntity) > 0
     }
 
     override fun convertLegacyItemId(id: Int, data: Int): String? {
-        val legacyName: String = ItemIdFix.fromId(id)
+        val legacyName: String = ItemIdFix.getItem(id)
         if (legacyName == "minecraft:air" && id > 0) return null
-        return ItemInstanceTheFlatteningFix.getItem(legacyName, data) ?: legacyName
+        return ItemStackTheFlatteningFix.updateItem(legacyName, data) ?: legacyName
     }
 
     override fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> {
         val structure = StructureTemplate()
-        structure.readNbt(NbtIo.readCompressed(stream))
+        structure.load(BuiltInRegistries.BLOCK.asLookup(), NbtIo.readCompressed(stream))
         return Pair(structure, toVec3i(structure.size))
     }
 }

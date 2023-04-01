@@ -1,10 +1,10 @@
 package mod.lucky.fabric.game
 
 import mod.lucky.common.Random
-import net.minecraft.util.math.random.Random as MCRandom
+import net.minecraft.util.RandomSource
 
 class MinecraftRandom(
-private val minecraftRandom: MCRandom,
+    private val minecraftRandom: RandomSource,
 ) : Random {
     override fun randInt(range: IntRange): Int = minecraftRandom.nextInt(range.last - range.first) + range.first
     override fun nextDouble(): Double = minecraftRandom.nextDouble()

@@ -6,58 +6,60 @@ import mod.lucky.java.game.ThrownLuckyPotionData
 import mod.lucky.java.game.onImpact
 import mod.lucky.java.game.readFromTag
 import mod.lucky.java.game.writeToTag
-import net.minecraft.client.render.entity.EntityRendererFactory
-import net.minecraft.client.render.entity.FlyingItemEntityRenderer
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.projectile.thrown.ThrownItemEntity
-import net.minecraft.item.Item
-import net.minecraft.network.Packet
-import net.minecraft.util.hit.EntityHitResult
-import net.minecraft.util.hit.HitResult
-import net.minecraft.world.World
+import net.minecraft.client.renderer.entity.EntityRendererProvider
+import net.minecraft.client.renderer.entity.ThrownItemRenderer
 
-class ThrownLuckyPotion : ThrownItemEntity {
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.projectile.ItemSupplier
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile
+import net.minecraft.world.phys.EntityHitResult
+import net.minecraft.world.phys.HitResult
+
+class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier {
     private var data: ThrownLuckyPotionData
 
     constructor(
         type: EntityType<ThrownLuckyPotion> = FabricLuckyRegistry.thrownLuckyPotion,
-        world: World,
+        world: MCWorld,
         data: ThrownLuckyPotionData = ThrownLuckyPotionData(),
     ) : super(type, world) {
         this.data = data
     }
 
     constructor(
-        world: World,
+        world: MCWorld,
         user: LivingEntity,
-        data: ThrownLuckyPotionData
-    ) : super(FabricLuckyRegistry.thrownLuckyPotion, user, world) {
+        data: ThrownLuckyPotionData,
+        type: EntityType<ThrownLuckyPotion> = FabricLuckyRegistry.thrownLuckyPotion,
+    ) : super(type, user, world) {
         this.data = data
     }
 
-    override fun onCollision(hitResult: HitResult) {
-        super.onCollision(hitResult)
+    override fun onHit(hitResult: HitResult) {
+        super.onHit(hitResult)
         if (hitResult.type != HitResult.Type.MISS) {
-            if (!isClientWorld(world)) {
-                val hitEntity: Entity? = (hitResult as? EntityHitResult)?.entity
-                data.onImpact(world, this, owner, hitEntity)
+            if (!isClientWorld(level)) {
+                val hitEntity: MCEntity? = (hitResult as? EntityHitResult)?.entity
+                data.onImpact(level, this, owner, hitEntity)
             }
             remove(RemovalReason.DISCARDED)
         }
     }
 
-    override fun readCustomDataFromNbt(tag: CompoundTag) {
+    override fun readAdditionalSaveData(tag: CompoundTag) {
         (JAVA_GAME_API.readNBTKey(tag, "itemLuckyPotion") as? CompoundTag?)?.let {
             JAVA_GAME_API.writeNBTKey(tag, "Item", it)
         }
-        super.readCustomDataFromNbt(tag)
+        super.readAdditionalSaveData(tag)
         data = ThrownLuckyPotionData.readFromTag(tag)
     }
 
-    override fun writeCustomDataToNbt(tag: CompoundTag) {
-        super.writeCustomDataToNbt(tag)
+    override fun addAdditionalSaveData(tag: CompoundTag) {
+        super.addAdditionalSaveData(tag)
         data.writeToTag(tag)
     }
 
@@ -65,15 +67,15 @@ class ThrownLuckyPotion : ThrownItemEntity {
         return 0.05f
     }
 
-    override fun getDefaultItem(): Item {
+    override fun getDefaultItem(): MCItem {
         return FabricLuckyRegistry.luckyPotion
     }
 
-    override fun createSpawnPacket(): Packet<*> {
-        return SpawnPacket.fromEntity(this).toPacket()
+    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> {
+        return ClientboundAddEntityPacket(this)
     }
 }
 
 @OnlyInClient
-class ThrownLuckyPotionRenderer(ctx: EntityRendererFactory.Context) :
-    FlyingItemEntityRenderer<ThrownLuckyPotion>(ctx)
+class ThrownLuckyPotionRenderer(ctx: EntityRendererProvider.Context) :
+    ThrownItemRenderer<ThrownLuckyPotion>(ctx)

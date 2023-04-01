@@ -5,32 +5,43 @@ import mod.lucky.common.LOGGER
 import mod.lucky.common.PLATFORM_API
 import mod.lucky.fabric.game.*
 import mod.lucky.java.*
+import mod.lucky.java.game.LuckyItemValues
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
+import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider.BlockTagProvider
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType
+import net.fabricmc.fabric.impl.biome.modification.BuiltInRegistryKeys
 import net.fabricmc.fabric.impl.resource.loader.ResourceManagerHelperImpl
 import net.fabricmc.loader.api.ModContainer
 import net.fabricmc.loader.api.Version
 import net.fabricmc.loader.api.metadata.*
 import net.fabricmc.loader.impl.metadata.ModOriginImpl
 import net.fabricmc.loader.impl.util.FileSystemUtil
-import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.SpawnGroup
-import net.minecraft.recipe.SpecialRecipeSerializer
-import net.minecraft.util.Identifier
-import net.minecraft.util.registry.BuiltinRegistries
-import net.minecraft.util.registry.Registry
-import net.minecraft.util.registry.RegistryEntry
-import net.minecraft.util.registry.RegistryKey
-import net.minecraft.world.gen.GenerationStep
-import net.minecraft.world.gen.feature.*
+import net.minecraft.core.Holder
+import net.minecraft.core.Registry
+import net.minecraft.core.registries.Registries
+import net.minecraft.core.RegistrySetBuilder
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.ResourceKey
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.MobCategory
+import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.item.CreativeModeTabs
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.levelgen.GenerationStep
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration
+import net.minecraft.world.level.levelgen.placement.PlacedFeature
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.nio.file.Path
@@ -43,13 +54,14 @@ object FabricLuckyRegistry {
     val luckyBow = LuckyBow()
     val luckySword = LuckySword()
     val luckyPotion = LuckyPotion()
-    val spawnPacketId = Identifier("lucky:spawn_packet")
+    val spawnPacketId = MCIdentifier("lucky:spawn_packet")
+    val luckyWorldFeatureId = "lucky:lucky_world_gen"
     lateinit var luckyBlockEntity: BlockEntityType<LuckyBlockEntity>
     lateinit var luckyProjectile: EntityType<LuckyProjectile>
     lateinit var thrownLuckyPotion: EntityType<ThrownLuckyPotion>
     lateinit var delayedDrop: EntityType<DelayedDrop>
-    lateinit var luckModifierCraftingRecipe: SpecialRecipeSerializer<LuckModifierCraftingRecipe>
-    lateinit var addonCraftingRecipe: SpecialRecipeSerializer<AddonCraftingRecipe>
+    lateinit var luckModifierCraftingRecipe: SimpleCraftingRecipeSerializer<LuckModifierCraftingRecipe>
+    lateinit var addonCraftingRecipe: SimpleCraftingRecipeSerializer<AddonCraftingRecipe>
 }
 
 class FabricMod : ModInitializer {
@@ -60,18 +72,41 @@ class FabricMod : ModInitializer {
         JAVA_GAME_API = FabricJavaGameAPI
     }
 
-    private fun registerWorldGen(blockId: String) {
-        val feature = LuckyWorldFeature(DefaultFeatureConfig.CODEC, blockId)
-        val placedFeature = PlacedFeature(
-            RegistryEntry.of(ConfiguredFeature(feature, DefaultFeatureConfig())),
-            emptyList()
-        )
-        val featureId = "${blockId}_world_gen"
+    private fun registerWorldGen() {
+        val featureId = MCIdentifier(FabricLuckyRegistry.luckyWorldFeatureId)
+        val feature = LuckyWorldFeature(NoneFeatureConfiguration.CODEC)
 
-        Registry.register<Feature<*>, Feature<*>>(Registry.FEATURE, Identifier(featureId), feature)
-        val placedId = RegistryKey.of(Registry.PLACED_FEATURE_KEY, MCIdentifier(featureId))
-        Registry.register(BuiltinRegistries.PLACED_FEATURE, placedId.value, placedFeature)
-        BiomeModifications.addFeature(BiomeSelectors.all(), GenerationStep.Feature.SURFACE_STRUCTURES, placedId)
+        Registry.register(BuiltInRegistries.FEATURE, featureId, feature)
+
+        BiomeModifications.addFeature(
+            BiomeSelectors.all(),
+            GenerationStep.Decoration.SURFACE_STRUCTURES,
+            ResourceKey.create(Registries.PLACED_FEATURE, MCIdentifier(FabricLuckyRegistry.luckyWorldFeatureId))
+        );
+    }
+
+    fun setupCreativeTabs() {
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register { group ->
+            group.accept(FabricLuckyRegistry.luckyBlockItem)
+            createLuckySubItems(FabricLuckyRegistry.luckyBlockItem, LuckyItemValues.veryLuckyBlock, LuckyItemValues.veryUnluckyBlock).forEach { group.accept(it) }
+        }
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register { group ->
+            group.accept(FabricLuckyRegistry.luckySword)
+            group.accept(FabricLuckyRegistry.luckyBow)
+            group.accept(FabricLuckyRegistry.luckyPotion)
+            createLuckySubItems(FabricLuckyRegistry.luckyPotion, LuckyItemValues.veryLuckyPotion, LuckyItemValues.veryUnluckyPotion).forEach { group.accept(it) }
+        }
+
+        for (addon in JavaLuckyRegistry.addons) {
+            ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register { group ->
+                if (addon.ids.block != null) group.accept(BuiltInRegistries.ITEM.get(MCIdentifier(addon.ids.block!!)))
+            }
+            ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register { group ->
+                if (addon.ids.sword != null) group.accept(BuiltInRegistries.ITEM.get(MCIdentifier(addon.ids.sword!!)))
+                if (addon.ids.bow != null) group.accept(BuiltInRegistries.ITEM.get(MCIdentifier(addon.ids.bow!!)))
+                if (addon.ids.potion != null) group.accept(BuiltInRegistries.ITEM.get(MCIdentifier(addon.ids.potion!!)))
+            }
+        }
     }
 
     override fun onInitialize() {
@@ -79,23 +114,23 @@ class FabricMod : ModInitializer {
         JavaLuckyRegistry.init()
 
         FabricLuckyRegistry.luckyBlockEntity = Registry.register(
-            Registry.BLOCK_ENTITY_TYPE,
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
             JavaLuckyRegistry.blockId,
-            BlockEntityType.Builder.create(::LuckyBlockEntity, FabricLuckyRegistry.luckyBlock).build(null)
+            BlockEntityType.Builder.of(::LuckyBlockEntity, FabricLuckyRegistry.luckyBlock).build(null)
         )
         FabricLuckyRegistry.luckyProjectile = Registry.register(
-            Registry.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             JavaLuckyRegistry.projectileId,
-            FabricEntityTypeBuilder.create(SpawnGroup.MISC, ::LuckyProjectile)
+            FabricEntityTypeBuilder.create(MobCategory.MISC, ::LuckyProjectile)
                 .trackRangeChunks(100)
                 .trackedUpdateRate(20)
                 .forceTrackedVelocityUpdates(true)
                 .build()
         )
         FabricLuckyRegistry.thrownLuckyPotion = Registry.register(
-            Registry.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             JavaLuckyRegistry.potionId,
-            FabricEntityTypeBuilder.create(SpawnGroup.MISC, ::ThrownLuckyPotion)
+            FabricEntityTypeBuilder.create(MobCategory.MISC, ::ThrownLuckyPotion)
                 .trackRangeChunks(100)
                 .trackedUpdateRate(20)
                 .forceTrackedVelocityUpdates(true)
@@ -103,42 +138,43 @@ class FabricMod : ModInitializer {
         )
 
         FabricLuckyRegistry.delayedDrop = Registry.register(
-            Registry.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             JavaLuckyRegistry.delayedDropId,
-            FabricEntityTypeBuilder.create(SpawnGroup.MISC, ::DelayedDrop).build()
+            FabricEntityTypeBuilder.create(MobCategory.MISC, ::DelayedDrop).build()
         )
 
         FabricLuckyRegistry.luckModifierCraftingRecipe = Registry.register(
-            Registry.RECIPE_SERIALIZER,
+            BuiltInRegistries.RECIPE_SERIALIZER,
             MCIdentifier("lucky:crafting_luck"),
-            SpecialRecipeSerializer(::LuckModifierCraftingRecipe),
+            SimpleCraftingRecipeSerializer(::LuckModifierCraftingRecipe),
         )
         FabricLuckyRegistry.addonCraftingRecipe = Registry.register(
-            Registry.RECIPE_SERIALIZER,
+            BuiltInRegistries.RECIPE_SERIALIZER,
             MCIdentifier("lucky:crafting_addons"),
-            SpecialRecipeSerializer(::AddonCraftingRecipe),
+            SimpleCraftingRecipeSerializer(::AddonCraftingRecipe),
         )
 
-        Registry.register(Registry.BLOCK, Identifier(JavaLuckyRegistry.blockId), FabricLuckyRegistry.luckyBlock)
-        Registry.register(Registry.ITEM, Identifier(JavaLuckyRegistry.blockId), FabricLuckyRegistry.luckyBlockItem)
-        Registry.register(Registry.ITEM, Identifier(JavaLuckyRegistry.bowId), FabricLuckyRegistry.luckyBow)
-        Registry.register(Registry.ITEM, Identifier(JavaLuckyRegistry.swordId), FabricLuckyRegistry.luckySword)
-        Registry.register(Registry.ITEM, Identifier(JavaLuckyRegistry.potionId), FabricLuckyRegistry.luckyPotion)
-        registerWorldGen(JavaLuckyRegistry.blockId)
+        Registry.register(BuiltInRegistries.BLOCK, MCIdentifier(JavaLuckyRegistry.blockId), FabricLuckyRegistry.luckyBlock)
+        Registry.register(BuiltInRegistries.ITEM, MCIdentifier(JavaLuckyRegistry.blockId), FabricLuckyRegistry.luckyBlockItem)
+        Registry.register(BuiltInRegistries.ITEM, MCIdentifier(JavaLuckyRegistry.bowId), FabricLuckyRegistry.luckyBow)
+        Registry.register(BuiltInRegistries.ITEM, MCIdentifier(JavaLuckyRegistry.swordId), FabricLuckyRegistry.luckySword)
+        Registry.register(BuiltInRegistries.ITEM, MCIdentifier(JavaLuckyRegistry.potionId), FabricLuckyRegistry.luckyPotion)
 
         JavaLuckyRegistry.addons.map { addon ->
             if (addon.ids.block != null) {
                 val block = LuckyBlock()
-                Registry.register(Registry.BLOCK, Identifier(addon.ids.block!!), block)
-                Registry.register(Registry.ITEM, Identifier(addon.ids.block!!), LuckyBlockItem(block))
-                registerWorldGen(addon.ids.block!!)
+                Registry.register(BuiltInRegistries.BLOCK, MCIdentifier(addon.ids.block!!), block)
+                Registry.register(BuiltInRegistries.ITEM, MCIdentifier(addon.ids.block!!), LuckyBlockItem(block))
+                //registerWorldGen(addon.ids.block!!)
             }
-            if (addon.ids.bow != null) Registry.register(Registry.ITEM, Identifier(addon.ids.bow!!), LuckyBow())
-            if (addon.ids.sword != null) Registry.register(Registry.ITEM, Identifier(addon.ids.sword!!), LuckySword())
-            if (addon.ids.potion != null) Registry.register(Registry.ITEM, Identifier(addon.ids.potion!!), LuckyPotion())
+            if (addon.ids.bow != null) Registry.register(BuiltInRegistries.ITEM, MCIdentifier(addon.ids.bow!!), LuckyBow())
+            if (addon.ids.sword != null) Registry.register(BuiltInRegistries.ITEM, MCIdentifier(addon.ids.sword!!), LuckySword())
+            if (addon.ids.potion != null) Registry.register(BuiltInRegistries.ITEM, MCIdentifier(addon.ids.potion!!), LuckyPotion())
         }
 
+        registerWorldGen()
         registerAddonCraftingRecipes()
+        setupCreativeTabs()
     }
 }
 
@@ -195,11 +231,10 @@ class FabricModClient : ClientModInitializer {
             JavaLuckyRegistry.notificationState)
         })
 
-
         registerLuckyBowModels(FabricLuckyRegistry.luckyBow)
         JavaLuckyRegistry.addons.map { addon ->
             addon.ids.bow?.let {
-                registerLuckyBowModels(Registry.ITEM.get(Identifier(it)) as LuckyBow)
+                registerLuckyBowModels(BuiltInRegistries.ITEM.get(MCIdentifier(it)) as LuckyBow)
             }
         }
 
@@ -213,9 +248,9 @@ class FabricModClient : ClientModInitializer {
             DelayedDropRenderer(ctx)
         }
 
-        ClientPlayNetworking.registerGlobalReceiver(FabricLuckyRegistry.spawnPacketId) { client, _, buf, _ ->
-        val spawnPacket = SpawnPacket.decode(buf)
-            val world = client.world
+        ClientPlayNetworking.registerGlobalReceiver(FabricLuckyRegistry.spawnPacketId) { client, _1, buf, _2 ->
+            val spawnPacket = SpawnPacket.decode(buf)
+            val world = client.level
             if (spawnPacket != null && world != null) {
                 client.execute { spawnPacket.execute(world) }
             }

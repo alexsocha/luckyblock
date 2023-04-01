@@ -1,68 +1,58 @@
 package mod.lucky.fabric.game
 
 import mod.lucky.common.DEFAULT_RANDOM
-import mod.lucky.fabric.MCItemStack
-import mod.lucky.fabric.OnlyInClient
-import mod.lucky.fabric.isClientWorld
+import mod.lucky.fabric.*
 import mod.lucky.java.*
 import mod.lucky.java.game.doBowDrop
-import net.fabricmc.fabric.api.`object`.builder.v1.client.model.FabricModelPredicateProviderRegistry
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings
-import net.minecraft.client.item.TooltipContext
-import net.minecraft.enchantment.EnchantmentHelper
-import net.minecraft.enchantment.Enchantments
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.*
-import net.minecraft.sound.SoundCategory
-import net.minecraft.sound.SoundEvents
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
-import net.minecraft.util.UseAction
-import net.minecraft.world.World
+import net.minecraft.client.renderer.item.ItemProperties
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.*
+import net.minecraft.world.item.enchantment.EnchantmentHelper
+import net.minecraft.world.item.enchantment.Enchantments
 
-class LuckyBow : BowItem(FabricItemSettings()
-    .maxCount(1)
-    .maxDamage(1000)
-    .group(ItemGroup.COMBAT)) {
+class LuckyBow : BowItem(Properties()
+    .stacksTo(1)
+    .defaultDurability(1000)) {
 
-    override fun onStoppedUsing(
-        stack: MCItemStack, world: World, player: LivingEntity?, timeLeft: Int,
+    override fun releaseUsing(
+        stack: MCItemStack, world: MCWorld, player: LivingEntity, timeLeft: Int,
     ) {
-        if (player is PlayerEntity) {
-            val unlimitedArrows = player.abilities.creativeMode || EnchantmentHelper.getLevel(Enchantments.INFINITY, stack) > 0
-            var arrowStack = player.getArrowType(stack)
+        if (player is MCPlayerEntity) {
+            val unlimitedArrows = player.abilities.instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0
+            var arrowStack = player.getProjectile(stack)
             if (!arrowStack.isEmpty || unlimitedArrows) {
                 if (arrowStack.isEmpty) {
                     arrowStack = MCItemStack(Items.ARROW)
                 }
-                val i: Int = getMaxUseTime(stack) - timeLeft
-                val power = getPullProgress(i)
+                val i: Int = getUseDuration(stack) - timeLeft
+                val power = getPowerForTime(i)
                 if (power >= 0.1f) {
                     if (!isClientWorld(world)) {
                         doBowDrop(
                             world = world,
                             player = player,
                             power = power.toDouble(),
-                            stackNBT = stack.nbt,
+                            stackNBT = stack.tag,
                             sourceId = JAVA_GAME_API.getItemId(this),
                         )
                     }
 
                     world.playSound(null,
-                        player.pos.x,
-                        player.pos.y,
-                        player.pos.z,
-                        SoundEvents.ENTITY_ARROW_SHOOT,
-                        SoundCategory.PLAYERS,
+                        player.x,
+                        player.y,
+                        player.z,
+                        SoundEvents.ARROW_SHOOT,
+                        SoundSource.PLAYERS,
                         1.0f,
                         1.0f / (DEFAULT_RANDOM.nextDouble().toFloat() * 0.4f + 1.2f) + power * 0.5f
                     )
 
-                    if (!unlimitedArrows && !player.abilities.creativeMode) {
-                        arrowStack.decrement(1)
+                    if (!unlimitedArrows && !player.abilities.instabuild) {
+                        arrowStack.shrink(1)
                         if (arrowStack.isEmpty) {
-                            player.inventory.removeOne(arrowStack)
+                            player.inventory.removeItem(arrowStack)
                         }
                     }
                 }
@@ -70,42 +60,42 @@ class LuckyBow : BowItem(FabricItemSettings()
         }
     }
 
-    override fun getEnchantability(): Int {
+    override fun getEnchantmentValue(): Int {
         return 0
     }
 
-    override fun getUseAction(stack: MCItemStack): UseAction {
-        return UseAction.BOW
+    override fun getUseAnimation(stack: MCItemStack): UseAnim {
+        return UseAnim.BOW
     }
 
     @OnlyInClient
-    override fun hasGlint(stack: MCItemStack?): Boolean {
+    override fun isFoil(stack: MCItemStack): Boolean {
         return true
     }
 
     @OnlyInClient
-    override fun appendTooltip(stack: MCItemStack, world: World?, tooltip: MutableList<Text>, context: TooltipContext) {
+    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCChatComponent>, context: TooltipFlag) {
         tooltip.addAll(createLuckyTooltip(stack))
     }
 }
 
 @OnlyInClient
 fun registerLuckyBowModels(item: LuckyBow) {
-    FabricModelPredicateProviderRegistry.register(
+    ItemProperties.register(
         item,
-        Identifier("pulling")
+        MCIdentifier("pulling")
     ) { stack, _, entity, _ ->
-        if (entity != null && entity.isUsingItem && entity.activeItem === stack) 1.0f else 0.0f
+        if (entity !== null && entity.isUsingItem && entity.useItem === stack) 1.0f else 0.0f
     }
 
-    FabricModelPredicateProviderRegistry.register(
+    ItemProperties.register(
         item,
-        Identifier("pull")
-    ) { _, _, entity, _ ->
-        if (entity == null) {
+        MCIdentifier("pull")
+    ) { stack, _, entity, _ ->
+        if (entity === null) {
             0.0f
         } else {
-            if (entity.activeItem.item is LuckyBow) entity.itemUseTime / 20.0f else 0.0f
+            if (entity.useItem != stack) 0.0f else (stack.useDuration - entity.useItemRemainingTicks).toFloat() / 20.0f;
         }
     }
 }

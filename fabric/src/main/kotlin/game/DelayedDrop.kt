@@ -2,45 +2,42 @@ package mod.lucky.fabric.game
 
 import mod.lucky.fabric.*
 import mod.lucky.java.game.*
-import net.minecraft.client.render.entity.EntityRenderDispatcher
-import net.minecraft.client.render.entity.EntityRenderer
-import net.minecraft.client.render.entity.EntityRendererFactory
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityType
-import net.minecraft.network.Packet
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket
-import net.minecraft.util.Identifier
-import net.minecraft.world.World
+import net.minecraft.client.renderer.entity.EntityRenderer
+import net.minecraft.client.renderer.entity.EntityRendererProvider
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
 
 class DelayedDrop(
     type: EntityType<DelayedDrop> = FabricLuckyRegistry.delayedDrop,
-    world: World,
+    world: MCWorld,
     private var data: DelayedDropData = DelayedDropData.createDefault(world),
 ) : Entity(type, world) {
-
-    override fun initDataTracker() {}
+    override fun defineSynchedData() {}
 
     override fun tick() {
         super.tick()
-        data.tick(world)
-        if (data.ticksRemaining <= 0) this.remove(RemovalReason.DISCARDED)
+        data.tick(level)
+        if (data.ticksRemaining <= 0) remove(RemovalReason.DISCARDED)
     }
 
-    override fun readCustomDataFromNbt(tag: CompoundTag) {
-        data = DelayedDropData.readFromTag(tag, world)
+    override fun readAdditionalSaveData(tag: CompoundTag) {
+        data = DelayedDropData.readFromTag(tag, level)
     }
-    override fun writeCustomDataToNbt(tag: CompoundTag) {
+    override fun addAdditionalSaveData(tag: CompoundTag) {
         data.writeToTag(tag)
     }
-    override fun createSpawnPacket(): Packet<*> {
-        return EntitySpawnS2CPacket(this)
+
+    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> {
+        return ClientboundAddEntityPacket(this)
     }
 }
 
 @OnlyInClient
-class DelayedDropRenderer(ctx: EntityRendererFactory.Context) : EntityRenderer<DelayedDrop>(
-    ctx) {
-    override fun getTexture(entity: DelayedDrop?): Identifier? {
+class DelayedDropRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<DelayedDrop>(ctx) {
+    override fun getTextureLocation(entity: DelayedDrop): MCIdentifier? {
         return null
     }
 }

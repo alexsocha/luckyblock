@@ -7,36 +7,30 @@ import mod.lucky.java.game.LuckyItemStackData
 import mod.lucky.java.game.LuckyItemValues
 import mod.lucky.java.game.ThrownLuckyPotionData
 import mod.lucky.java.game.readFromTag
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings
-import net.minecraft.client.item.TooltipContext
-import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.ItemGroup
-import net.minecraft.item.ItemStack
-import net.minecraft.sound.SoundCategory
-import net.minecraft.sound.SoundEvents
-import net.minecraft.stat.Stats
-import net.minecraft.text.Text
-import net.minecraft.util.Hand
-import net.minecraft.util.TypedActionResult
-import net.minecraft.util.collection.DefaultedList
-import net.minecraft.world.World
+import net.minecraft.core.NonNullList
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
+import net.minecraft.stats.Stats
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.item.TooltipFlag
 
-class LuckyPotion : MCItem(FabricItemSettings().group(ItemGroup.COMBAT)) {
+class LuckyPotion : MCItem(Properties()) {
 
-    override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack>? {
-        val stack = user.getStackInHand(hand)
+    override fun use(world: MCWorld, user: MCPlayerEntity, hand: InteractionHand): InteractionResultHolder<MCItemStack> {
+        val stack = user.getItemInHand(hand)
 
         world.playSound(
-            null as PlayerEntity?,
+            null as MCPlayerEntity?,
             user.x, user.y, user.z,
-            SoundEvents.ENTITY_SPLASH_POTION_THROW,
-            SoundCategory.PLAYERS,
+            SoundEvents.SPLASH_POTION_THROW,
+            SoundSource.PLAYERS,
             0.5f,
             0.4f / (DEFAULT_RANDOM.nextDouble().toFloat() * 0.4f + 0.8f)
         )
-
         if (!isClientWorld(world)) {
-            val stackData = stack.nbt?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
+            val stackData = stack.tag?.let { LuckyItemStackData.readFromTag(it) } ?: LuckyItemStackData()
             val potionEntity = ThrownLuckyPotion(
                 world = world,
                 user = user,
@@ -46,33 +40,24 @@ class LuckyPotion : MCItem(FabricItemSettings().group(ItemGroup.COMBAT)) {
                     sourceId = JAVA_GAME_API.getItemId(stack.item) ?: JavaLuckyRegistry.potionId,
                 )
             )
-            potionEntity.setItem(stack)
-            potionEntity.setVelocity(user, user.pitch, user.yaw, -20.0f, 0.5f, 1.0f)
-            world.spawnEntity(potionEntity)
+            potionEntity.item = stack
+            potionEntity.shootFromRotation(user, user.xRot, user.yRot, -20.0f, 0.5f, 1.0f)
+            world.addFreshEntity(potionEntity)
         }
 
-        user.incrementStat(Stats.USED.getOrCreateStat(this))
-        if (!user.abilities.creativeMode) stack.decrement(1)
+        user.awardStat(Stats.ITEM_USED.get(this))
+        if (!user.abilities.instabuild) stack.shrink(1)
 
-        return TypedActionResult.success(stack, isClientWorld(world))
+        return InteractionResultHolder.sidedSuccess(stack, isClientWorld(world))
     }
 
     @OnlyInClient
-    override fun hasGlint(stack: MCItemStack?): Boolean {
+    override fun isFoil(stack: MCItemStack): Boolean {
         return true
     }
 
-    override fun appendStacks(group: ItemGroup, stacks: DefaultedList<MCItemStack>) {
-        if (isIn(group)) {
-            stacks.add(MCItemStack(this, 1))
-            if (this == FabricLuckyRegistry.luckyPotion) {
-                stacks.addAll(createLuckySubItems(this, LuckyItemValues.veryLuckyPotion, LuckyItemValues.veryUnluckyPotion))
-            }
-        }
-    }
-
     @OnlyInClient
-    override fun appendTooltip(stack: MCItemStack, world: World?, tooltip: MutableList<Text>, context: TooltipContext) {
+    override fun appendHoverText(stack: MCItemStack, world: MCWorld?, tooltip: MutableList<MCChatComponent>, context: TooltipFlag) {
         tooltip.addAll(createLuckyTooltip(stack))
     }
 }
