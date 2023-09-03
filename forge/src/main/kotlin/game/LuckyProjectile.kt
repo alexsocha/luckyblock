@@ -45,22 +45,22 @@ class LuckyProjectile(
 
         if (this.itemEntity == null) {
             this.itemEntity = ItemEntity(
-                this.level,
+                this.level(),
                 x, y, z,
                 entityData.get(ITEM_STACK)
             )
         }
         itemEntity?.tick()
 
-        if (!isClientWorld(level)) data.tick(level, this, owner, tickCount)
+        if (!isClientWorld(level())) data.tick(level(), this, owner, tickCount)
     }
 
     override fun onHit(hitResult: HitResult) {
         super.onHit(hitResult)
         if (hitResult.type != HitResult.Type.MISS){
-            if (!isClientWorld(level)) {
+            if (!isClientWorld(level())) {
                 val hitEntity: MCEntity? = (hitResult as? EntityHitResult)?.entity
-                data.onImpact(level, this, owner, hitEntity)
+                data.onImpact(level(), this, owner, hitEntity)
             }
             remove(RemovalReason.DISCARDED)
         }

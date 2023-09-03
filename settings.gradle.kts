@@ -20,5 +20,5 @@ rootProject.name = "lucky-block"
 include("common")
 include("tools")
 include("forge")
-include("fabric")
+//include("fabric")
 //include("bedrock")

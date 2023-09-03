@@ -18,8 +18,8 @@ private fun canGenerateAt(world: WorldGenLevel, pos: MCBlockPos): Boolean {
     val curState = world.getBlockState(pos)
     val soilState = world.getBlockState(pos.below())
     return (
-        curState.material.isReplaceable
-        && !curState.material.isLiquid
+        curState.canBeReplaced()
+        && !curState.liquid()
         && soilState.canOcclude()
         && soilState.block != Blocks.BEDROCK
     )

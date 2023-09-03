@@ -3,6 +3,7 @@ package mod.lucky.forge.game
 import mod.lucky.forge.*
 import mod.lucky.java.game.getLuckModifierCraftingResult
 import mod.lucky.java.game.matchesLuckModifierCraftingRecipe
+import net.minecraft.core.RegistryAccess
 import net.minecraft.world.inventory.CraftingContainer
 import net.minecraft.world.item.crafting.CraftingBookCategory
 import net.minecraft.world.item.crafting.CustomRecipe
@@ -14,7 +15,7 @@ class LuckModifierCraftingRecipe(id: MCIdentifier, category: CraftingBookCategor
         return matchesLuckModifierCraftingRecipe(stacks)
     }
 
-    override fun assemble(inv: CraftingContainer): MCItemStack {
+    override fun assemble(inv: CraftingContainer, access: RegistryAccess): MCItemStack {
         val stacks = (0 until inv.width * inv.height).map { toItemStack(inv.getItem(it)) }
         val result = getLuckModifierCraftingResult(stacks)
         return result?.let { toMCItemStack(it) } ?: MCItemStack.EMPTY

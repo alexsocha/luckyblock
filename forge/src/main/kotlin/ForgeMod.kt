@@ -1,10 +1,8 @@
 package mod.lucky.forge
 
-import com.mojang.datafixers.types.Type
 import com.mojang.serialization.Codec
 import mod.lucky.common.GAME_API
 import mod.lucky.common.LOGGER
-import mod.lucky.common.LuckyRegistry
 import mod.lucky.common.PLATFORM_API
 import mod.lucky.forge.game.*
 import mod.lucky.java.*
@@ -17,21 +15,17 @@ import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.server.packs.repository.RepositorySource
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
-import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.CreativeModeTabs
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.AddPackFindersEvent
-import net.minecraftforge.event.CreativeModeTabEvent
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent
 import net.minecraftforge.event.level.LevelEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.event.config.ModConfigEvent
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -127,12 +121,12 @@ fun registerAddons() {
     }
 }
 
-fun setupCreativeTabs(event: CreativeModeTabEvent.BuildContents) {
-    if (event.tab == CreativeModeTabs.BUILDING_BLOCKS) {
+fun setupCreativeTabs(event: BuildCreativeModeTabContentsEvent) {
+    if (event.tabKey.equals(CreativeModeTabs.BUILDING_BLOCKS)) {
         event.accept(ForgeLuckyRegistry.luckyBlockItem)
         createLuckySubItems(ForgeLuckyRegistry.luckyBlockItem.get(), LuckyItemValues.veryLuckyBlock, LuckyItemValues.veryUnluckyBlock).forEach { event.accept(it) }
     }
-    if (event.tab == CreativeModeTabs.COMBAT) {
+    if (event.tabKey.equals(CreativeModeTabs.COMBAT)) {
         event.accept(ForgeLuckyRegistry.luckySword)
         event.accept(ForgeLuckyRegistry.luckyBow)
         event.accept(ForgeLuckyRegistry.luckyPotion)
@@ -140,10 +134,10 @@ fun setupCreativeTabs(event: CreativeModeTabEvent.BuildContents) {
     }
 
     for (addon in JavaLuckyRegistry.addons) {
-        if (event.tab == CreativeModeTabs.BUILDING_BLOCKS) {
+        if (event.tabKey.equals(CreativeModeTabs.BUILDING_BLOCKS)) {
             if (addon.ids.block != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.block!!))!! }
         }
-        if (event.tab == CreativeModeTabs.COMBAT) {
+        if (event.tabKey.equals(CreativeModeTabs.COMBAT)) {
             if (addon.ids.sword != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.sword!!))!! }
             if (addon.ids.bow != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.bow!!))!! }
             if (addon.ids.potion != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.potion!!))!! }
