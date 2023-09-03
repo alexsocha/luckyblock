@@ -17,11 +17,11 @@ private fun canGenerateAt(world: WorldGenLevel, pos: MCBlockPos): Boolean {
     val curState = world.getBlockState(pos)
     val soilState = world.getBlockState(pos.below())
     return (
-            curState.material.isReplaceable
-                    && !curState.material.isLiquid
-                    && soilState.canOcclude()
-                    && soilState.block != Blocks.BEDROCK
-            )
+        curState.canBeReplaced()
+        && !curState.liquid()
+        && soilState.canOcclude()
+        && soilState.block != Blocks.BEDROCK
+    )
 }
 
 class LuckyWorldFeature(

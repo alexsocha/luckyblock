@@ -6,6 +6,7 @@ import mod.lucky.java.*
 import mod.lucky.java.loader.ShapedCraftingRecipe
 import mod.lucky.java.loader.ShapelessCraftingRecipe
 import net.minecraft.core.NonNullList
+import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.inventory.CraftingContainer
 import net.minecraft.world.item.crafting.CraftingBookCategory
@@ -71,9 +72,9 @@ class AddonCraftingRecipe(id: MCIdentifier, category: CraftingBookCategory) : Cu
         return craftingRecipes.find { it.matches(inv, world) } != null
     }
 
-    override fun assemble(inv: CraftingContainer): MCItemStack {
+    override fun assemble(inv: CraftingContainer, access: RegistryAccess): MCItemStack {
         val matchingRecipe = craftingRecipes.find { it.matches(inv, null) }
-        if (matchingRecipe != null) return matchingRecipe.assemble(inv)
+        if (matchingRecipe != null) return matchingRecipe.assemble(inv, access)
         return MCItemStack.EMPTY
     }
 

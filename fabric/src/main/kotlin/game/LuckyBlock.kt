@@ -12,14 +12,13 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.DyeColor
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.material.Material
+import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 
 private fun onBreak(
@@ -45,7 +44,8 @@ private fun onBreak(
     )
 }
 
-class LuckyBlock : BaseEntityBlock(Properties.of(Material.WOOD, DyeColor.YELLOW)
+class LuckyBlock : BaseEntityBlock(Properties.of()
+    .mapColor(MapColor.COLOR_YELLOW)
     .sound(SoundType.STONE)
     .strength(0.2f, 6000000.0f)) {
 
