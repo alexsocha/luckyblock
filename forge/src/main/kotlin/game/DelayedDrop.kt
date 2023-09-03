@@ -19,12 +19,12 @@ class DelayedDrop(
 
     override fun tick() {
         super.tick()
-        data.tick(level)
+        data.tick(level())
         if (data.ticksRemaining <= 0) remove(RemovalReason.DISCARDED)
     }
 
     override fun readAdditionalSaveData(tag: CompoundTag) {
-        data = DelayedDropData.readFromTag(tag, level)
+        data = DelayedDropData.readFromTag(tag, level())
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
         data.writeToTag(tag)

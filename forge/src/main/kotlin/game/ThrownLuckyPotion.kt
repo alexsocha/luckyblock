@@ -42,9 +42,9 @@ class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier {
     override fun onHit(hitResult: HitResult) {
         super.onHit(hitResult)
         if (hitResult.type != HitResult.Type.MISS) {
-            if (!isClientWorld(level)) {
+            if (!isClientWorld(level())) {
                 val hitEntity: MCEntity? = (hitResult as? EntityHitResult)?.entity
-                data.onImpact(level, this, owner, hitEntity)
+                data.onImpact(level(), this, owner, hitEntity)
             }
             remove(RemovalReason.DISCARDED)
         }
