@@ -27,17 +27,6 @@ jobs:
                     core.setOutput("isRelease", isRelease.toString());
                     core.setOutput("releaseFolderName", releaseFolderName);
 
-            - name: Deploy to luckyblockmod.com
-              if: ${{ steps.variables.outputs.isRelease == 'true' }}
-              uses: appleboy/scp-action@master
-              with:
-                  host: luckyblockmod.com
-                  username: root
-                  key: ${{ secrets.LUCKYBLOCKMOD_COM_KEY }}
-                  source: dist/${{ steps.variables.outputs.releaseFolderName }}
-                  target: "/root/luckyblock-dist"
-                  strip_components: 1
-
             - name: Deploy to CurseForge
               if: ${{ steps.variables.outputs.isRelease == 'true' }}
               run: >
