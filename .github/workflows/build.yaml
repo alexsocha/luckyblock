@@ -37,3 +37,11 @@ jobs:
                   source: dist/${{ steps.variables.outputs.releaseFolderName }}
                   target: "/root/luckyblock-dist"
                   strip_components: 1
+
+            - name: Deploy to CurseForge
+              if: ${{ steps.variables.outputs.isRelease == 'true' }}
+              run: >
+                  docker run
+                  --env CURSEFORGE_API_TOKEN=${{ secrets.CURSEFORGE_API_TOKEN }}
+                  luckyblock
+                  ./gradlew :tools:uploadToCurseForge
