@@ -7,6 +7,7 @@ import mod.lucky.java.game.*
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.syncher.EntityDataAccessor
@@ -18,7 +19,8 @@ import net.minecraft.world.entity.projectile.Arrow
 import net.minecraft.world.item.Items
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
-import net.minecraftforge.network.NetworkHooks
+import net.minecraftforge.common.ForgeHooks
+import net.minecraftforge.entity.IEntityAdditionalSpawnData
 
 private val defaultDisplayItemStack = MCItemStack(Items.STICK)
 
@@ -26,7 +28,7 @@ class LuckyProjectile(
     type: EntityType<LuckyProjectile> = ForgeLuckyRegistry.luckyProjectile.get(),
     world: MCWorld,
     private var data: LuckyProjectileData = LuckyProjectileData(),
-) : Arrow(type, world) {
+) : Arrow(type, world), IEntityAdditionalSpawnData {
     var itemEntity: ItemEntity? = null
 
     companion object {
@@ -84,8 +86,11 @@ class LuckyProjectile(
     }
 
     override fun getAddEntityPacket(): Packet<ClientGamePacketListener> {
-        return NetworkHooks.getEntitySpawningPacket(this)
+        return ForgeHooks.getEntitySpawnPacket(this)
     }
+
+    override fun writeSpawnData(buffer: FriendlyByteBuf?) {}
+    override fun readSpawnData(additionalData: FriendlyByteBuf?) {}
 }
 
 @OnlyInClient

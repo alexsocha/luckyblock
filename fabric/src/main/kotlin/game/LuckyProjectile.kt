@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
@@ -85,7 +86,7 @@ class LuckyProjectile(
     }
 
     override fun getAddEntityPacket(): Packet<ClientGamePacketListener> {
-        return SpawnPacket.fromEntity(this).toPacket()
+        return ClientboundAddEntityPacket(this)
     }
 }
 

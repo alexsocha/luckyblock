@@ -59,12 +59,12 @@ private fun randEffectInstance(random: Random, effect: StatusEffect): DictAttr {
     val maxDurationTicks = if (effect.isInstant) 0 else 9600
     val minDurationTicks = maxDurationTicks / 3
     return dictAttrOf(
-        "Id" to ValueAttr(AttrType.BYTE, effect.intId.toByte()),
-        "Amplifier" to ValueAttr(AttrType.BYTE, random.randInt(0..3).toByte()),
-        "Duration" to intAttrOf(random.randInt(minDurationTicks..maxDurationTicks)),
-        "Ambient" to booleanAttrOf(false),
-        "ShowParticles" to booleanAttrOf(true),
-        "ShowIcon" to booleanAttrOf(true),
+        "id" to ValueAttr(AttrType.STRING, effect.id),
+        "amplifier" to ValueAttr(AttrType.BYTE, random.randInt(0..3).toByte()),
+        "duration" to intAttrOf(random.randInt(minDurationTicks..maxDurationTicks)),
+        "ambient" to booleanAttrOf(false),
+        "show_particles" to booleanAttrOf(true),
+        "show_icon" to booleanAttrOf(true),
     )
 }
 

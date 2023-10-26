@@ -7,14 +7,13 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.world.entity.EntityType
-import net.minecraftforge.network.NetworkHooks
+import net.minecraftforge.common.ForgeHooks
 
 class DelayedDrop(
     type: EntityType<DelayedDrop> = ForgeLuckyRegistry.delayedDrop.get(),
     world: MCWorld,
     private var data: DelayedDropData = DelayedDropData.createDefault(world),
 ) : MCEntity(type, world) {
-
     override fun defineSynchedData() {}
 
     override fun tick() {
@@ -28,10 +27,6 @@ class DelayedDrop(
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
         data.writeToTag(tag)
-    }
-
-    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> {
-        return NetworkHooks.getEntitySpawningPacket(this)
     }
 }
 

@@ -189,7 +189,7 @@ group(type=difficulty,ID=hard;type=entity,ID=zombie,NBTTag=(
 / ghostly horseman skeleton
 group(type=difficulty,ID=hard;type=entity,ID=bat,NBTTag=(
     Silent=true,
-    ActiveEffects=[(Id=14,Duration=100000,Amplifier=1,ShowParticles=false)],
+    active_effects=[(id=invisibility,duration=100000,amplifier=1,show_particles=false)],
     Passengers=[(id=skeleton_horse,Tame=true,Type=4,
         Passengers=[(id=skeleton,
             HandItems=[(id=bow,Count=1,tag=(Enchantments=#luckyBowEnchantments))],
@@ -229,8 +229,8 @@ type=entity,ID=villager,NBTTag=(
         (buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_sword,Count=1,tag=(Enchantments=#luckySwordEnchantments,display=(Name=#jsonStr(text="Hero's Sword",color=blue,bold=true)))),maxUses=1),
         (buy=(id=diamond,Count=#rand(20,25)),sell=(id=bow,Count=1,tag=(Enchantments=#luckyBowEnchantments,display=(Name=#jsonStr(text="Hero's Bow",color=blue,bold=true)))),maxUses=1),
         (buy=(id=diamond,Count=#rand(10,15)),sell=(id=fishing_rod,Count=1,tag=(Enchantments=#luckyFishingRodEnchantments,display=(Name=#jsonStr(text="Hero's Fishing Rod",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=potion,Count=1,tag=(Potion="fire_resistance",CustomPotionEffects=#luckyPotionEffects,display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(7,12)),sell=(id=splash_potion,Count=1,tag=(Potion="harming",CustomPotionEffects=#unluckyPotionEffects,display=(Name=#jsonStr(text="Evil Potion",color=blue,bold=true)))),maxUses=1)
+        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=potion,Count=1,tag=(Potion="fire_resistance",custom_potion_effects=#luckyPotionEffects,display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true)))),maxUses=1),
+        (buy=(id=diamond,Count=#rand(7,12)),sell=(id=splash_potion,Count=1,tag=(Potion="harming",custom_potion_effects=#unluckyPotionEffects,display=(Name=#jsonStr(text="Evil Potion",color=blue,bold=true)))),maxUses=1)
     ]),
     CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
 )@luck=1
@@ -437,14 +437,14 @@ group:#rand(1,2):(
 / hero's potion
 ID=potion,NBTTag=(
     Potion="fire_resistance",
-    CustomPotionEffects=#luckyPotionEffects,
+    custom_potion_effects=#luckyPotionEffects,
     display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true))
 )@luck=2
 
 / evil potion
 ID=splash_potion,NBTTag=(
     Potion="harming",
-    CustomPotionEffects=#unluckyPotionEffects,
+    custom_potion_effects=#unluckyPotionEffects,
     display=(Name=#jsonStr(text="Evil Potion",color=dard_red,bold=true))
 )@luck=1
 

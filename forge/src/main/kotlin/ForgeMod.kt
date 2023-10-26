@@ -8,8 +8,10 @@ import mod.lucky.forge.game.*
 import mod.lucky.java.*
 import mod.lucky.java.game.LuckyItemValues
 import net.minecraft.server.packs.FilePackResources
+import net.minecraft.server.packs.FilePackResources.FileResourcesSupplier
 import net.minecraft.server.packs.PackType
 import net.minecraft.server.packs.PathPackResources
+import net.minecraft.server.packs.PathPackResources.PathResourcesSupplier
 import net.minecraft.server.packs.repository.Pack
 import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.server.packs.repository.RepositorySource
@@ -164,9 +166,9 @@ private fun registerEntityRenderers(event: EntityRenderersEvent.RegisterRenderer
 private fun addPackFinders(event: AddPackFindersEvent) {
     JavaLuckyRegistry.addons.forEach { addon ->
         val packName = "Resources for ${addon.addonId}"
-        val isBuiltIn = true;
-        val pack = if (addon.file.isDirectory) PathPackResources(addon.addonId, addon.file.toPath(), isBuiltIn)
-            else FilePackResources(packName, addon.file, isBuiltIn)
+        val isBuiltIn = true
+        val packSupplier = if (addon.file.isDirectory) PathResourcesSupplier(addon.file.toPath(), isBuiltIn)
+            else FileResourcesSupplier(addon.file, isBuiltIn)
 
         // based on net.minecraftforge.client.loading.ClientModLoader
         val repositorySource = RepositorySource { packConsumer ->
@@ -174,7 +176,7 @@ private fun addPackFinders(event: AddPackFindersEvent) {
                 packName,
                 MCChatComponent.literal(packName),
                 isBuiltIn,
-                { pack },
+                packSupplier,
                 PackType.CLIENT_RESOURCES,
                 Pack.Position.BOTTOM,
                 PackSource.DEFAULT

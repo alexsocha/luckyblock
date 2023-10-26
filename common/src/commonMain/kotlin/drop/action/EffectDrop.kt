@@ -57,14 +57,7 @@ fun doEffectDrop(drop: SingleDrop, context: DropContext) {
     val effectId: String = when (val dropId = drop.get<String>("id")) {
         "special_fire" -> dropId
         "special_knockback" -> dropId
-        else -> {
-            try {
-                val intId = dropId.toInt()
-                GAME_API.convertStatusEffectId(intId) ?: dropId
-            } catch (e: NumberFormatException) {
-                dropId
-            }
-        }
+        else -> dropId
     }
 
     if (target != null || targetEntity != null) {

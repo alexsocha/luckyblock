@@ -155,7 +155,6 @@ object ForgeGameAPI : GameAPI {
             val mcStatusEffect = ForgeRegistries.MOB_EFFECTS.getValue(mcId)!!
             StatusEffect(
                 id = mcId.toString(),
-                intId = MCStatusEffect.getId(mcStatusEffect),
                 isNegative = mcStatusEffect.category == MobEffectCategory.HARMFUL,
                 isInstant = mcStatusEffect.isInstantenous,
             )
@@ -209,12 +208,6 @@ object ForgeGameAPI : GameAPI {
         }
         val duration = if (statusEffect.isInstantenous) 1 else (durationSeconds * 20.0).toInt()
         if (targetEntity is LivingEntity) targetEntity.addEffect(MobEffectInstance(statusEffect, duration, amplifier))
-    }
-
-    // compatibility only
-    override fun convertStatusEffectId(effectId: Int): String? {
-        val effect = MCStatusEffect.byId(effectId)
-        return effect?.let { ForgeRegistries.MOB_EFFECTS.getKey(effect).toString() }
     }
 
     override fun getLivingEntitiesInBox(world: World, boxMin: Vec3d, boxMax: Vec3d): List<Entity> {
