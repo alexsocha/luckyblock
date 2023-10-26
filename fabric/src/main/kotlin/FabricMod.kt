@@ -226,11 +226,6 @@ class FabricModClient : ClientModInitializer {
             )
         }
 
-        ClientChunkEvents.CHUNK_LOAD.register(ClientChunkEvents.Load {
-                _, _ -> JavaLuckyRegistry.notificationState = checkForUpdates(
-            JavaLuckyRegistry.notificationState)
-        })
-
         registerLuckyBowModels(FabricLuckyRegistry.luckyBow)
         JavaLuckyRegistry.addons.map { addon ->
             addon.ids.bow?.let {

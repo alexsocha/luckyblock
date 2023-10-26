@@ -147,10 +147,6 @@ fun setupCreativeTabs(event: BuildCreativeModeTabContentsEvent) {
 
 @OnlyInClient
 private fun setupClient() {
-    MinecraftForge.EVENT_BUS.addListener { _: LevelEvent.Load ->
-        JavaLuckyRegistry.notificationState = checkForUpdates(JavaLuckyRegistry.notificationState)
-    }
-
     registerLuckyBowModels(ForgeLuckyRegistry.luckyBow.get())
     JavaLuckyRegistry.addons.map { addon ->
         if (addon.ids.bow != null) registerLuckyBowModels(ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.bow!!)) as LuckyBow)
