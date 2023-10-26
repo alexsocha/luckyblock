@@ -22,7 +22,6 @@ data class Addon(
 )
 
 object JavaLuckyRegistry {
-    lateinit var notificationState: ModNotificationState
     lateinit var globalSettings: GlobalSettings
     lateinit var allAddonResources: List<AddonResources>
     var addons = ArrayList<Addon>()
@@ -105,7 +104,5 @@ object JavaLuckyRegistry {
         LuckyRegistry.sourceToAddonId.putAll(itemIds.associateWith { blockId } + addons.flatMap { addon ->
             addon.ids.getItemIds().map { it to addon.addonId }
         }.toMap())
-
-        notificationState = ModNotificationState.fromCache()
     }
 }

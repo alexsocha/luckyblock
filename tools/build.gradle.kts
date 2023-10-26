@@ -41,6 +41,17 @@ application {
     mainClass.set("mod.lucky.tools.MainKt")
 }
 
+tasks.register<JavaExec>("uploadToCurseForge") {
+    classpath = fileTree("$rootDir/tools/build/install/tools/lib")
+    mainClass.set("mod.lucky.tools.MainKt")
+    args = listOf(
+        "upload-to-curseforge",
+        "--inputDistFolder",
+        "../dist"
+    )
+    dependsOn("installDist")
+}
+
 dependencyLocking {
     lockAllConfigurations()
     lockMode.set(LockMode.LENIENT)
