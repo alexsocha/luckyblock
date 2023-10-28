@@ -8,6 +8,7 @@ import mod.lucky.java.game.readFromTag
 import mod.lucky.java.game.writeToTag
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
+import net.minecraft.network.FriendlyByteBuf
 
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
@@ -17,9 +18,10 @@ import net.minecraft.world.entity.projectile.ItemSupplier
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
-import net.minecraftforge.network.NetworkHooks
+import net.minecraftforge.common.ForgeHooks
+import net.minecraftforge.entity.IEntityAdditionalSpawnData
 
-class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier {
+class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier, IEntityAdditionalSpawnData {
     private var data: ThrownLuckyPotionData
 
     constructor(
@@ -72,8 +74,11 @@ class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier {
     }
 
     override fun getAddEntityPacket(): Packet<ClientGamePacketListener> {
-        return NetworkHooks.getEntitySpawningPacket(this)
+        return ForgeHooks.getEntitySpawnPacket(this)
     }
+
+    override fun writeSpawnData(buffer: FriendlyByteBuf?) {}
+    override fun readSpawnData(additionalData: FriendlyByteBuf?) {}
 }
 
 @OnlyInClient

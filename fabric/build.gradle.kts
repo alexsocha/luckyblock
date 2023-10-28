@@ -12,7 +12,7 @@ repositories {
 
 plugins {
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("mod.lucky.build.JavaEditionTasks")
     // https://maven.fabricmc.net/net/fabricmc/fabric-loom/
     id("fabric-loom") version "[1.1,1.2)"

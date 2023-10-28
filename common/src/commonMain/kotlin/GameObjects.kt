@@ -16,7 +16,6 @@ data class Enchantment(
 
 data class StatusEffect(
     val id: String,
-    val intId: Int,
     val isNegative: Boolean,
     val isInstant: Boolean,
 )

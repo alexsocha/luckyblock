@@ -9,7 +9,7 @@ import net.minecraft.world.item.crafting.CraftingBookCategory
 import net.minecraft.world.item.crafting.CustomRecipe
 import net.minecraft.world.item.crafting.RecipeSerializer
 
-class LuckModifierCraftingRecipe(id: MCIdentifier, category: CraftingBookCategory) : CustomRecipe(id, category) {
+class LuckModifierCraftingRecipe(category: CraftingBookCategory) : CustomRecipe(category) {
     override fun matches(inv: CraftingContainer, world: MCWorld): Boolean {
         val stacks = (0 until inv.width * inv.height).map { toItemStack(inv.getItem(it)) }
         return matchesLuckModifierCraftingRecipe(stacks)

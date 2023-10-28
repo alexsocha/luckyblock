@@ -8,6 +8,7 @@ import mod.lucky.java.game.LuckyItemValues
 import mod.lucky.java.game.ThrownLuckyPotionData
 import mod.lucky.java.game.readFromTag
 import net.minecraft.core.NonNullList
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.stats.Stats

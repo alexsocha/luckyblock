@@ -35,7 +35,6 @@ object BedrockToolsGameAPI : GameAPI {
     override fun getEntityPos(entity: Entity): Vec3d = throw NoGameContextException()
     override fun getPlayerName(player: PlayerEntity): String = throw NoGameContextException()
     override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) = throw NoGameContextException()
-    override fun convertStatusEffectId(effectId: Int): String? = throw NoGameContextException()
     override fun getLivingEntitiesInBox(world: World, boxMin: Vec3d, boxMax: Vec3d): List<Entity> = throw NoGameContextException()
     override fun setEntityOnFire(entity: Entity, durationSeconds: Int) = throw NoGameContextException()
     override fun setEntityMotion(entity: Entity, motion: Vec3d) = throw NoGameContextException()

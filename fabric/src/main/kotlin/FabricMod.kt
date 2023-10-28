@@ -54,7 +54,6 @@ object FabricLuckyRegistry {
     val luckyBow = LuckyBow()
     val luckySword = LuckySword()
     val luckyPotion = LuckyPotion()
-    val spawnPacketId = MCIdentifier("lucky:spawn_packet")
     val luckyWorldFeatureId = "lucky:lucky_world_gen"
     lateinit var luckyBlockEntity: BlockEntityType<LuckyBlockEntity>
     lateinit var luckyProjectile: EntityType<LuckyProjectile>
@@ -241,14 +240,6 @@ class FabricModClient : ClientModInitializer {
         }
         EntityRendererRegistry.register(FabricLuckyRegistry.delayedDrop) { ctx ->
             DelayedDropRenderer(ctx)
-        }
-
-        ClientPlayNetworking.registerGlobalReceiver(FabricLuckyRegistry.spawnPacketId) { client, _1, buf, _2 ->
-            val spawnPacket = SpawnPacket.decode(buf)
-            val world = client.level
-            if (spawnPacket != null && world != null) {
-                client.execute { spawnPacket.execute(world) }
-            }
         }
     }
 }

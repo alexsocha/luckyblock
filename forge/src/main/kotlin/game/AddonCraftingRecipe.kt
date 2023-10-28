@@ -37,7 +37,6 @@ fun registerAddonCraftingRecipes() {
         else addonResources.blockCraftingRecipes.mapNotNull { recipe ->
             when (recipe) {
                 is ShapelessCraftingRecipe -> MCShapelessCraftingRecipe(
-                    MCIdentifier(blockId),
                     "lucky",
                     CraftingBookCategory.MISC,
                     toMCItemStack(recipe.resultStack),
@@ -45,7 +44,6 @@ fun registerAddonCraftingRecipes() {
                 )
 
                 is ShapedCraftingRecipe -> MCShapedCraftingRecipe(
-                    MCIdentifier(blockId),
                     "lucky",
                     CraftingBookCategory.MISC,
                     recipe.width,
@@ -64,7 +62,7 @@ fun registerAddonCraftingRecipes() {
     AddonCraftingRecipe.craftingRecipes = recipes
 }
 
-class AddonCraftingRecipe(id: MCIdentifier, category: CraftingBookCategory) : CustomRecipe(id, category) {
+class AddonCraftingRecipe(category: CraftingBookCategory) : CustomRecipe(category) {
     companion object {
         lateinit var craftingRecipes: List<MCCraftingRecipe>
     }

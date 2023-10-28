@@ -18,7 +18,6 @@ interface GameAPI : Logger {
     fun getEntityPos(entity: Entity): Vec3d
     fun getPlayerName(player: PlayerEntity): String
     fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int)
-    fun convertStatusEffectId(effectId: Int): String? // compatibility
     fun getLivingEntitiesInBox(world: World, boxMin: Vec3d, boxMax: Vec3d): List<Entity>
     fun setEntityOnFire(entity: Entity, durationSeconds: Int)
     fun setEntityMotion(entity: Entity, motion: Vec3d)
