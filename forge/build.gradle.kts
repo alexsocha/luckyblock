@@ -11,13 +11,13 @@ buildscript {
         maven("https://maven.minecraftforge.net")
     }
     dependencies {
-        classpath("net.minecraftforge.gradle:ForgeGradle:5.1.65")
+        classpath("net.minecraftforge.gradle:ForgeGradle:6.0.14")
     }
 }
 
 plugins {
     kotlin("jvm")
-    id("com.github.johnrengelman.shadow") version "7.1.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("mod.lucky.build.JavaEditionTasks")
 }
 
@@ -113,10 +113,12 @@ tasks.register<Copy>("copyShadowJar") {
 }
 
 afterEvaluate {
-    tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeResources"))
+    tasks.getByName("jar").dependsOn(tasks.getByName("copyRuntimeClasses"))
     tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeClasses"))
+    tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeResources"))
 
     tasks.getByName("reobfJar").dependsOn(tasks.getByName("copyShadowJar"))
+
     tasks.assemble {
         dependsOn(tasks.getByName("exportDist").mustRunAfter(tasks.getByName("reobfJar")))
     }
