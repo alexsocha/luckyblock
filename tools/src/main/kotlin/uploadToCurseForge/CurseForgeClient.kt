@@ -24,6 +24,7 @@ data class CurseForgeGameVersion(
     val gameVersionTypeID: Int,
     val name: String,
     val slug: String,
+    val apiVersion: String?,
 )
 
 enum class CurseForgeGameVersionType(val id: Int) {
