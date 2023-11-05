@@ -51,20 +51,19 @@ data class LuckyBlockDist(
     val jarFile: File,
 )
 
-fun readLuckyBlockDists(distFolder: File): List<LuckyBlockDist> {
-    return distFolder.listFiles()!!.mapNotNull { distVersionFolder ->
-        val loader = when {
-            distVersionFolder.isDirectory && distVersionFolder.name.startsWith("lucky-block-forge") ->
-                LuckyBlockLoader.FORGE
-            distVersionFolder.isDirectory && distVersionFolder.name.startsWith("lucky-block-fabric") ->
-                LuckyBlockLoader.FABRIC
-            else -> null
-        }
-        if (loader != null) {
-            val metaText = distVersionFolder.resolve("meta.yaml").readText()
-            val meta = Yaml.default.decodeFromString<ProjectDistMeta>(metaText)
-            val jarFile = distVersionFolder.resolve("${distVersionFolder.name}.jar")
-            LuckyBlockDist(loader=loader, meta=meta, jarFile=jarFile)
-        } else null
+fun readLuckyBlockDist(distFolder: File): LuckyBlockDist {
+    val distFolderName = distFolder.relativeTo(distFolder.parentFile).name
+    val loader = when {
+        distFolder.isDirectory && distFolderName.startsWith("lucky-block-forge") ->
+            LuckyBlockLoader.FORGE
+        distFolder.isDirectory && distFolderName.startsWith("lucky-block-fabric") ->
+            LuckyBlockLoader.FABRIC
+        else -> throw Exception("Invalid folder name $distFolderName")
     }
+
+    val metaText = distFolder.resolve("meta.yaml").readText()
+    val meta = Yaml.default.decodeFromString<ProjectDistMeta>(metaText)
+    val jarFile = distFolder.resolve("${distFolder.name}.jar")
+
+    return LuckyBlockDist(loader=loader, meta=meta, jarFile=jarFile)
 }

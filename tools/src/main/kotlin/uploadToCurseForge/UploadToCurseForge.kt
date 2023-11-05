@@ -6,7 +6,6 @@ import kotlinx.cli.*
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import io.github.cdimascio.dotenv.dotenv
-import io.github.g00fy2.versioncompare.Version as ComparableVersion
 
 fun findCompatibleGameVersions(
     gameVersions: List<CurseForgeGameVersion>,
@@ -45,23 +44,21 @@ fun uploadToCurseForge(
     curseForgeClient: CurseForgeClient,
     inputDistFolder: File
 ) = runBlocking {
-    val luckyBlockDists = readLuckyBlockDists(inputDistFolder).sortedBy { ComparableVersion(it.meta.version) }
+    val luckyBlockDist = readLuckyBlockDist(inputDistFolder)
     val gameVersions = curseForgeClient.getGameVersions()
 
-    luckyBlockDists.forEach { luckyBlockDist ->
-        val compatibleGameVersions = findCompatibleGameVersions(gameVersions, luckyBlockDist)
-        val uploadMeta = CurseForgeUploadMetadata(
-            changelog = "",
-            displayName = luckyBlockDist.jarFile.nameWithoutExtension,
-            gameVersions = compatibleGameVersions.map { it.id },
-            releaseType = "release",
-        )
-        curseForgeClient.uploadDist(luckyBlockDist.jarFile, uploadMeta)
-    }
+    val compatibleGameVersions = findCompatibleGameVersions(gameVersions, luckyBlockDist)
+    val uploadMeta = CurseForgeUploadMetadata(
+        changelog = "",
+        displayName = luckyBlockDist.jarFile.nameWithoutExtension,
+        gameVersions = compatibleGameVersions.map { it.id },
+        releaseType = "release",
+    )
+    curseForgeClient.uploadDist(luckyBlockDist.jarFile, uploadMeta)
 }
 
 class UploadToCurseForge: Subcommand("upload-to-curseforge", "Upload mod files to CurseForge") {
-    val inputDistFolder by option(ArgType.String, description = "Folder containing mod files").default("./dist")
+    private val inputDistFolder by argument(ArgType.String, description = "Folder containing mod distrubution file")
 
     override fun execute() = runBlocking {
         val dotenv = dotenv {
