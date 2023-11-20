@@ -1,0 +1,313 @@
+outcomes:
+    common:
+        - name: type
+          type: '`text`'
+          default: '`item`'
+          description: The type of the outcome. All other properties, except for base properties, will depend on the type.
+          example: type=message,ID="Hello"
+
+        - name: pos, posX, posY, posZ
+          type: '`(integer, integer, integer)` \| `integer`'
+          default: The position at which the outcome was initiated
+          description: Sets the position at which the outcome will occur. Use `pos` to set all coordinates at once, or `pos{X,Y,Z}` to set each separately.
+          examples:
+              - type=entity,ID=Zombie,posY=255
+              - type=entity,ID=Zombie,pos=(40,64,-90)
+
+        - name: posOffset, posOffsetX, posOffsetY, posOffsetZ
+          type: '`(integer, integer, integer)` \| `integer`'
+          default: '`0`'
+          description: Offsets the position of the outcome. Use `posOffset` to set all coordinates at once, or `posOffset{X,Y,Z}` to set each separately. Note that in many cases you can use e.g. `posY=#bPosY+10` to acheive the same result.
+          examples:
+              - type=entity,ID=Sheep,posOffsetY=10
+              - type=entity,ID=Sheep,amount=20,posOffset=#circleOffset(5)
+
+        - name: amount
+          type: '`integer`'
+          default: '`1`'
+          description: Specifies the number of times the outcome will be repeated. All properties will remain the same for each instance of the outcome, unless the properties are randomized (see `reinitialize`).
+          example: type=item,ID=diamond,amount=10
+
+        - name: reinitialize
+          type: '`true`\|`false`'
+          default: '`true`'
+          description: Used when the amount property is greater than one. This will specify whether each instance of the outcome should have its properties re-randomized. If set to `false`, random properties will only be chosen for the first instance of the outcome, and subsequent outcomes will use those properties.
+          example: type=item,ID=dye,damage=#rand(0,15),amount=10,reinitialize=false
+
+        - name: delay
+          type: '`float`'
+          default: '`0`'
+          description: Delays the occurrence of the outcome. The delay is specified in seconds, and the outcome will take place once the time has passed.
+          example: type=item,ID=gold_block,delay=5
+
+        - name: postDelayInit
+          type: '`true`\|`false`'
+          default: '`true`'
+          description: Whether a delayed outcome will be initialized after the delay (`true`), or immediately (`false). This will affect when [hash variables](property-values#hash-variables) are evaluated.
+          example: type=entity,ID=Zombie,pos=#pPos,delay=5,postDelayInit=false
+
+    item:
+        - name: ID
+          type: '[Item ID](https://minecraft.gamepedia.com/Java_Edition_data_value#Items)'
+          default: '`text`'
+          description: The ID of the item.
+          example: type=item,ID=diamond_sword
+
+        - name: NBTTag
+          type: '[NBT Tag](property-values#nbt-tags)'
+          default: '`()`'
+          description: Used to specify the NBT Tag of an item. This property stores additional data about the item, a full list of item NBT Tags can be found here.
+          example: type=item,ID=potion,NBTTag=(Potion="fire_resistance")
+
+    block:
+        - name: ID
+          type: '[Block ID](https://minecraft.gamepedia.com/Java_Edition_data_value#Blocks)'
+          description: The ID of the block.
+          example: type=block,ID=pumpkin
+
+        - name: state
+          type: '[NBT Tag](property-values#nbt-tags)'
+          default: '`()`'
+          description: The [block state](https://minecraft.gamepedia.com/Block_states).
+          example: type=block,ID=cauldron,state=(level=3)
+
+        - name: tileEntity
+          type: '[NBT Tag](property-values#nbt-tags)'
+          default: '`()`'
+          description: Sets the [block entity](https://minecraft.gamepedia.com/Block_entity).
+          example: type=block,ID=sign,tileEntity=(Text2="{\"text\":\"Hello\",\"color\":\"blue\"}")
+
+        - name: blockUpdate
+          type: '`true`\|`false`'
+          default: '`true`'
+          description: Whether the block should be updated once placed. If enabled, water will flow, blocks that cannot stay (e.g. torches in air) will be dropped, and other updates will take place.
+          example: type=block,ID=water,blockUpdate=false
+
+    entity:
+        - name: ID
+          type: '[Entity ID](https://minecraft.gamepedia.com/Java_Edition_data_value#Entities)'
+          default: '`text`'
+          description: The ID of the entity.
+          example: type=entity,ID=Zombie
+
+        - name: NBTTag
+          type: '[NBT Tag](property-values#nbt-tags)'
+          default: '`()`'
+          description: Sets additional entity properties
+          example: type=item,ID=Pig,NBTTag=(CustomName="Sam")
+
+    structure_definition:
+        - name: ID
+          type: '`text`'
+          description: The ID that the structure can be referenced by.
+          example: ID=house,file=my_house.schematic
+
+        - name: file
+          type: '`text`'
+          description: Specifies the relative path to the structure file.
+          example: ID=ship,file=my_structs/ship.schematic
+
+        - name: centerX, centerY, centerZ
+          type: '`integer`'
+          default: '`width/2`,`0`,`length/2`'
+          description: Used to specify the center point of the structure, relative to the structure's coordinate system. This point will appear at exactly the world position where the structure is generated, and rotations will occur around `centerX` and `centerZ`. Note that these values can be negative, and do not strictly have to be within structure's coordinate box.
+          example: ID=ship,file=...,centerX=4,centerY=1,centerZ=2
+
+        - name: blockMode
+          type: '`replace`\|`overlay`\|`air`'
+          default: '`replace`'
+          description: Use to specify how the blocks in this structure should act with the blocks already in the world. Refer to the table below.
+          example: ID=ship,file=ship_inner.luckystruct,blockMode=overlay
+
+        - name: blockUpdate
+          type: '`true`\|`false`'
+          default: '`true`'
+          description: Whether the blocks in the structure should be updated once placed.
+          example: ID=water_sculpture,file=water.luckystruct,blockUpdate=false
+
+        - name: overlayStruct
+          type: 'Structure ID'
+          default: None
+          description: The ID of a different structure that will be overlaid onto this one. The other structure must have been previously configured in the file. While not a requirement, the other structure should usually have `blockMode=overlay`. This is commonly used for `.schematic` structures which require a `.luckystruct` overlay to configure the finer details, such as entities and block entities.
+          example: ID=ship_inner,file=ship_inner.luckystruct
+              ID=ship,file=ship.shematic,overlayStruct=ship_inner
+
+    structure:
+        - name: ID
+          type: '[Structure ID](config_files#structures)'
+          description: The ID of a structure defined in `structures.txt`.
+          example: type=structure,ID=ship
+
+        - name: rotation
+          type: '`integer`'
+          default: '`0`'
+          description: The number of times the structure should be rotated by 90 degrees, clockwise. The rotation will occur around the structure's centerX and centerZ.
+          example: type=structure,ID=ship,rotation=3
+
+    command:
+        - name: command
+          type: '[Command](https://minecraft.gamepedia.com/Commands)'
+          description: The full command text.
+          example: type=command,ID="/say Hello"
+
+        - name: commandSender
+          type: The name of a player, or a selector
+          default: '`@a`'
+          description: The sender of the command.
+          example: type=command,commandSender=PlayerInDistress,ID="/tell @a Here is a message from PlayerInDistress"
+
+        - name: displayOutput
+          type: '`true`\|`false`'
+          default: '`false`'
+          description: Whether the output of the command should be displayed in the chat.
+
+    difficulty:
+        - name: ID
+          type: '`peaceful`\|`easy`\|`normal`\|`hard`'
+          description: The world [difficulty level](https://minecraft.gamepedia.com/Difficulty).
+          example: type=difficulty,ID=hard
+
+    time:
+        - name: ID
+          type: '`0..24000`\|`day`\|`night`'
+          description: The world [time](https://minecraft.gamepedia.com/Daylight_cycle).
+          example: type=time,ID=night
+
+    effect:
+        - name: ID
+          type: '[Status effect ID](https://minecraft.gamepedia.com/Status_effect)'
+          description: The ID of the status effect
+          example: type=effect,ID=slowness
+
+        - name: duration
+          type: '`integer`'
+          default: '`30`'
+          description: The number of seconds the effect will last for.
+
+        - name: amplifier
+          type: '`0..255`'
+          default: '`0`'
+          description: The effect amplifier, which is one less than the number displayed (e.g. Strength III has an amplifier of 2).
+          example: type=effect,ID=strength,amplifier=2
+
+        - name: target
+          type: '`none`\|`player`\|`hitEntity`'
+          default: '`none`'
+          description: Whether the effect should be given to the player who initiated it, or to the entity that was hit (only applies to the Lucky Sword and [Lucky Projectile](custom-data-tags#lucky-projectile)).
+          example: type=effect,ID=blindness,target=hitEntity
+
+        - name: range
+          type: '`integer`'
+          default: '`4`'
+          description: If `target=none`, the effect will be applied all entities within this range.
+          example: type=effect,ID=instant_damage,range=10
+
+        - name: excludePlayer
+          type: '`true`\|`false`'
+          default: '`false`'
+          description: If `target=none`, this determines whether the player who initiated the effect should be excluded.
+          example: type=effect,ID=poison,exludePlayer=true
+
+    special_effect:
+        - id: special_fire
+          extra_args:
+              - name: duration
+                type: '`integer`'
+          description: Sets an entity on fire for the given number of seconds.
+          example: type=effect,ID=special_fire,duration=5
+
+        - id: special_knockback
+          extra_args:
+              - name: power
+                type: '`float`'
+              - name: directionYaw
+                type: '`0..360`'
+              - name: directionPitch
+                type: '`-90..90`'
+          description: Pushes the entity away in a given direction (yaw 0 = south, pitch 90 = down) with a given power. By default, the angles are calculated away from the source of the effect.
+          example: type=effect,ID=special_knockback,ragne=4,power=2.5
+
+    explosion:
+        - name: radius
+          type: '`integer`'
+          default: '`4`'
+          description: The size of the explosion. For reference, a creeper explosion has radius 3, TNT has 4, and a charged creeper has 6
+          example: type=explosion,radius=7
+
+        - name: fire
+          type: '`true`\|`false`'
+          default: '`false`'
+          description: Whether the explosion will set blocks on fire, in the same way as a charged creeper.
+          example: type=explosion,fire=true
+
+    fill:
+        - name: ID
+          type: '[Block ID](https://minecraft.gamepedia.com/Java_Edition_data_value#Blocks)'
+          description: The ID of the block.
+          example: type=fill,ID=lava,size=(3,3,3)
+
+        - name: state
+          type: '[NBT Tag](property-values#nbt-tags)'
+          default: '`()`'
+          description: The [block state](https://minecraft.gamepedia.com/Block_states).
+          example: type=fill,ID=cake,state=(bites=4),size=(3,1,3)
+
+        - name: size, width, height, length
+          type: '`(integer, integer, integer)` \| `integer`'
+          default: '`(1,1,1)`'
+          description: The size of the fill area. Use `size` to set all dimensions at once, or `length`/`width`/`height` to set each separately. When facing north, the initial outcome position will appear in the bottom, north-most, west-most corner of the fill area.
+          example: type=fill,ID=air,size=(5,3,5)
+
+        - name: pos2, pos2X, pos2Y, pos2Z
+          type: '`(integer, integer, integer)` \| `integer`'
+          description: 'An alternative way of setting the fill area, so that each dimension is defined by two points: the inital outcome position and the one given here. Use `pos2` to set all coordinates at once, or `pos2{X,Y,Z}` to set each separately.'
+          example: type=fill,ID=air,posOffset=(-1,0,-1),pos2=(#pPosX+1,#pPosY-10,#pPosZ+1)
+
+    message:
+        - name: ID
+          type: '`text`'
+          description: The message text.
+          example: 'type=message,ID="Hello, #pName"'
+
+    particle:
+        - name: ID
+          type: '[Particle ID](https://minecraft.gamepedia.com/Particles)'
+          description: The ID of the particle.
+          example: type=particle,ID=heart
+
+        - name: size, width, height, length
+          type: '`(float, float, float)` \| `float`'
+          default: '`(0,0,0)`'
+          description: The size of the box in which the particle can spawn.
+          example: type=particle,ID=note,particleAmount=20,height=3
+
+        - name: particleAmount
+          type: '`integer`'
+          description: The number of particles that will be created. Note that this is more efficient than `amount`.
+          example: type=particle,ID=smoke,posX=#pPos,size=(0.5,1,0.5),particleAmount=200
+
+    special_particle:
+        - id: splashpotion
+          extra_args:
+              - name: potion
+                type: '[Status effect ID](https://minecraft.gamepedia.com/Status_effect)'
+          description: The breaking animation of a splash potion (with sound).
+          example: type=particle,ID=splashpotion,potion=night_vision
+
+    sound:
+        - name: ID
+          type: '[Sound ID](https://minecraft.gamepedia.com/Sounds.json#Sound_events)'
+          description: The sound resource ID.
+          example: type=sound,ID=mob.pig.say
+
+        - name: volume
+          type: '`float`'
+          default: '`1.0`'
+          description: The volume at which the sound will be played.
+          example: type=sound,ID=block.bell.use,volume=3.0
+
+        - name: pitch
+          type: '`1.0..2.0`'
+          default: '`1.0`'
+          description: The pitch at which the sound will be played.
+          example: type=sound,ID=block.note_block.harp,pitch=1.5

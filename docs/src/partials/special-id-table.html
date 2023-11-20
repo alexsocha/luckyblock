@@ -1,0 +1,43 @@
+<table>
+    <thead>
+        <th>ID</th>
+        <th>Extra Properies</th>
+        <th>Description/Examples</th>
+    </thead>
+    <tbody>
+        {{#each ids}}
+        <tr>
+            <td><code>{{{this.id}}}</code></td>
+            <td>
+                <!-- prettier-ignore -->
+                <ul>
+                    {{#each this.extra_args}}
+<li class="no-p-margin">
+
+{{{this.name}}}: {{{this.type}}}
+
+</li>
+                    {{/each}}
+                </ul>
+            </td>
+            <!-- prettier-ignore -->
+            <td>
+<div class="no-p-margin">
+
+{{{this.description}}}
+
+</div>
+                {{#if this.example}}
+                <br />
+                <div style="word-break: break-all;">
+                    <code>{{{this.example}}}</code>
+                </div>
+                {{/if}}
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+<!-- prettier-ignore -->
+
+<!-- -->

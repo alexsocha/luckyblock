@@ -7,8 +7,17 @@ jobs:
         steps:
             - uses: actions/checkout@v2
 
-            - name: Build with Docker
+            - name: Build docs
+              run: cd docs && ./build.sh
+
+            - name: Build mod
               run: ./build.sh
+
+            - name: Deploy docs
+              if: github.ref == 'refs/heads/master'
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                folder: docs/dist
 
             - name: Set deployment variables
               id: variables
