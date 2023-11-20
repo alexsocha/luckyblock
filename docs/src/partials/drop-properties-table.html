@@ -1,0 +1,53 @@
+<table>
+    <thead>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description/Examples</th>
+    </thead>
+    <tbody>
+        {{#each properties}}
+        <!-- prettier-ignore -->
+        <tr>
+            <td>{{{this.name}}}
+                {{#if this.minVersion}}<em>&ge; v{{this.minVersion}}</em>{{/if}}
+                {{#if this.maxVersion}}<em>&le; v{{this.maxVersion}}</em>{{/if}}
+            </td>
+<td class="no-p-margin">
+
+{{{this.type}}}
+
+</td>
+<td class="no-p-margin">
+
+{{{this.default}}}
+
+</td>
+<td>
+<div class="no-p-margin">
+
+{{{this.description}}}
+
+</div>
+                {{#if this.examples}}
+                <div style="word-break: break-all;">
+                    {{#each this.examples}}
+                    <br />
+                    <code>{{{this}}}</code>
+                    {{/each}}
+                </div>
+                {{else if this.example}}
+                <br />
+                <div style="word-break: break-all;">
+                    <code>{{{this.example}}}</code>
+                </div>
+                {{/if}}
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+<br />
+<!-- prettier-ignore -->
+
+<!-- -->

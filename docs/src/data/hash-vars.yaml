@@ -1,0 +1,166 @@
+hash_vars:
+    standard:
+        - name: '#bPos, #bPosX, #bPosY, #bPosZ'
+          return_type: '`(integer,integer,integer)` \| `integer`'
+          description: The position at which the outcome occured, rounded to the nearest block. `#bPos` returns an `(x,y,z)` tuple, while `bPos{X,Y,Z}` returns each component separately.
+          example: type=entity,ID=Zombie,posX=#bPosX+5
+
+        - name: '#pPos, #pPosX, #pPosY, #pPosZ'
+          return_type: '`(float,float,float)` \| `float`'
+          description: The position of the player who initiated the outcome, rounded to the nearest block. `#pPos` returns an `(x,y,z)` tuple, while `pPos{X,Y,Z}` returns each component separately.
+          example: type=block,ID=anvil,posY=#posY+10
+
+        - name: '#ePos, #ePosX, #ePosY, #ePosZ'
+          return_type: '`(float,float,float)` \| `float`'
+          description: The position of the entity hit (e.g. by the Lucky Sword or Lucky Projectile), rounded to the Nearest block. `#pPos` returns an `(x,y,z)` tuple, while `ePos{X,Y,Z}` returns each component separately.
+          example: type=explosion,delay=5,pos=#ePos
+
+        - name: '#{b,p,e}ExactPos, #{b,p,e}ExactPos{X,Y,Z}'
+          return_type: '`(float,float,float)` \| `float`'
+          description: Same as the previous position variables, but without rounding.
+          example: type=entity,ID=Zombie,pos=#pExactPos
+
+        - name: '#bowPos'
+          return_type: '`(float,float,float)`'
+          description: Returns the position which should be given to an entity shot from the Lucky Bow.
+          example: type=entity,ID=Arrow,pos=#bowPos,NBTTag=(Motion=#bowMotion)
+
+        - name: '#circeOffset'
+          args: 'min: `float`[, max: `float`]'
+          return_type: '`(float,0,float)`'
+          description: Returns circular position offset. The points will always be evenly spaced, depending on the `amount` property, and will randomly lie within a (min, max) radius.
+          example: type=entity,ID=Pig,amount=20,posOffset=#circleOffset(2,3)
+
+        - name: '#pName'
+          return_type: '`text`'
+          description: The name of the player who initiated the outcome.
+          example: 'type=message,ID="Hello there, #pName"'
+
+        - name: '#UUID'
+          return_type: '`UUID`'
+          description: The UUID of the player who initiated the outcome.
+          example: type=entity,ID=EntityHorse,NBTTag=(OwnerUUID=#pUUID)
+
+        - name: '#pPitch'
+          return_type: '`-90..90`'
+          description: The pitch of the player who initiated the outcome. Pitch 90 = down, pitch -90 = up.
+          example: type=entity,ID=arrow,NBTTag=(Motion=#motionFromDirection(#pYaw,#pPitch+#rand(-10,10),1.0)),amount=10
+
+        - name: '#pYaw'
+          return_type: '`0..360`'
+          description: The yaw of the player who initiated the outcome. Yaw 0 = south, yaw 180 = north.
+          example: id=head,NBTTag=(Rotation=[#pYaw+180f,0f])
+
+        - name: '#pDirect'
+          return_type: '`0` \| `1` \| `2` \| `3`'
+          description: The direction the player is facing, rounded to the nearest X/Z axis. 0 = north, 1 = east, 2 = south, 3 = west.
+          example: type=structure,ID=ship,rotation=#pDirect
+
+        - name: '#rand'
+          args: 'min: `integer`, max: `integer`'
+          return_type: '`integer`'
+          description: Selects a random integer in the given range, inclusive.
+          example: type=block,ID=anvil,posOffsetY=#rand(5,10)
+
+        - name: '#rand'
+          args: 'min: `float`, max: `float`'
+          return_type: '`float`'
+          description: Selects a random float in the given range, inclusive.
+          example: type=entity,ID=bat,posOffsetY=#rand(0.0,5.0),amount=30
+
+        - name: '#randPosNeg'
+          args: 'min: `integer`, max: `integer`'
+          return_type: '`integer`'
+          description: Selects a random integer in the given range, inclusive, with a 50% chance of being negative.
+          example: type=block,ID=lava,posOffsetY=-1,posOffsetX=#randPosNeg(1,3),posOffsetZ=#randPosNeg(1,3),amount=10
+
+        - name: '#randPosNeg'
+          args: 'min: `float`, max: `float`'
+          return_type: '`float`'
+          description: Selects a random float in the given range, inclusive, with a 50% chance of being negative.
+          example: type=entity,ID=egg,NBTTag=(Motion=#motionFromDirection(#pYaw,#randPosNeg(10,20),1.0)),amount=20
+
+        - name: '#randList'
+          args: 'value1, value2, ...'
+          return_type: 'One of the values in the list'
+          description: Selects a random value from the given list.
+          example: type=item,ID=#randList(gold_ingot,diamond)
+
+        - name: '#time'
+          return_type: '`0..24000`'
+          description: The current [world time](https://minecraft.gamepedia.com/Daylight_cycle).
+          example: type=time,ID=#time+1000
+
+        - name: '#randColor'
+          return_type: '[Dye ID](https://minecraft.gamepedia.com/Dye#ID)'
+          description: Selects a random color.
+          example: type=block,ID=#randColor_terracotta
+
+        - name: '#randPotion'
+          return_type: '[Status effect ID](https://minecraft.gamepedia.com/Status_effect)'
+          description: Selects a random status effect.
+          example: type=item,ID=potion,NBTTag=(Potion=#randPotion)
+
+        - name: '#randSpawnEgg'
+          return_type: '[Spawn egg ID](https://minecraft.gamepedia.com/Spawn_Egg#ID)'
+          description: Selects a random spawn egg.
+          example: type=item,ID=#randSpawnEgg
+
+    nbt:
+        - name: '#luckySwordEnchantments, #luckyAxeEnchantments, #luckyToolEnchantments, #luckyBowEnchantments, #luckyFishingRodEnchantments, #luckyCrossbowEnchantments, #luckyTridentEnchantments'
+          return_type: '`[(id=enchantment_id, lvl=integer), ...]`'
+          description: Selects random enchantments for each item catagory.
+          example: type=item,ID=diamond_axe,NBTTag=(ench=#luckyAxeEnchantments)
+
+        - name: '#luckyHelmetEnchantments, #luckyChestplateEnchantments, #luckyLeggingsEnchantments, #luckyBootsEnchantments'
+          return_type: '`[(id=enchantment_id, lvl=integer), ...]`'
+          description: Selects random enchantments for each armor catagory.
+          example: type=item,ID=iron_boots,NBTTag=(ench=#luckyBootsEnchantments)
+
+        - name: '#chestLootTable'
+          args: 'name: [loot table name](https://minecraft.gamepedia.com/Loot_table#List_of_loot_tables)'
+          return_type: '[Loot table tag](https://minecraft.gamepedia.com/Loot_table#Tags)'
+          example: type=block,ID=chest,tileEntity=(Items=#chestLootTable("chests/spawn_bonus_chest"))
+
+        - name: '#randEnchantment'
+          return_type: '`(id=enchantment_id, lvl=integer)`'
+          description: Selects a single random enchantment. Most commonly used for enchanted books.
+          example: type=item,ID=enchanted_book,NBTTag=(StoredEnchantments=#randomEnchantment)
+
+        - name: '#randFireworksRocket'
+          return_type: '[Fireworks item tag](https://minecraft.gamepedia.com/Firework_Rocket#Item_data)'
+          description: Creates a random fireworks rocket.
+          examples:
+              - type=item,ID=fireworks,NBTTag=#randFireworksRocket
+              - type=entity,ID=FireworksRocketEntity,NBTTag=(LifeTime=20,FireworksItem=#randFireworksRocket)
+
+        - name: '#randLaunchMotion'
+          args: '[power: `float`, pitch: `0..90`]'
+          return_type: '`[double,double,double]`'
+          description: Returns an `[x,y,z]` motion tag which can be given to an entity, launching it upwards with the given power. The yaw angle is randomly chosen, while pitch is specified as an angle between the y axis (pitch 0 = up). The default inputs are `(0.9,15)`.
+          example: type=entity,ID=tnt,amount=10,NBTTag=(Fuse=50,Motion=#randLaunchMotion(1.5,12)
+
+        - name: '#motionFromDirection'
+          args: 'yaw: `0..360`, pitch: `-90..90`, power: `float`'
+          return_type: '`[double,double,double]`'
+          description: Converts a direction and power into an `[x,y,z]` motion tag which can be given to an entity. Yaw 0 = south, yaw 180 = north, pitch -90 = down, pitch 90 = up.
+          example: type=entity,ID=egg,posY=#pExactPosY+0.4,NBTTag=(Motion=#motionFromDirection(#pYaw,#pPitch,0.5))
+
+        - name: '#bowMotion'
+          args: '[power: `float`, angleOffset: `0..90`]'
+          return_type: '`[double,double,double]`'
+          description: Returns an `[x,y,z]` motion tag which should be given to an entity shot from the Lucky Bow. The power is a multiplier of the default bow power, and the offset is chosen randomly in both the pitch and yaw direction. The default inputs are `(1.0,0.0)`
+          example: type=entity,ID=tnt,pos=#bowPos,NBTTag=(Motion=#bowMotion(2.5))
+
+    structure:
+        - name: '{#sPos, #sPosX, #sPosY, #sPosZ}'
+          args: 'x, y, z'
+          return_type: 'An integer or float `(x,y,z)` tuple'
+          description: Converts the given structure coordinates to the corresponding world coordinates of the generated structure. The input is an `(x,y,z)` tuple, in relative structure coordinates. `#sPos` will output the corresponding `(x,y,z)` tuple in world coordinates, while `#sPos{X,Y,Z}` will output each component separately. The output will use `float` values if one of the input coordinates is a `float`, and otherwise `integer` values.
+          example: 1,0,1,lucky:lucky_block,0,tileEntity=(Drops=["type=entity,ID=Zombie,pos=#sPos(2.5,0,2.5))"])
+
+        - name: '#drop'
+          args: 'property name'
+          return_type: '`any`'
+          description: Gets the value of a property that the structure was generated with. This is often used to create further structures with the same properties.
+          example: 1,0,1,lucky:lucky_block,0,tileEntity=(Drops=["type=structure,ID=inner,pos=#drop(pos),rotation=#drop(rotation))"])

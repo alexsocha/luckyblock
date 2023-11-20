@@ -16,3 +16,4 @@ run/
 tools/.cached-pages/
 tools/.debug/
 .env
+node_modules/

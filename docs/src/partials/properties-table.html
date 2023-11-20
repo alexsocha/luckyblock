@@ -1,0 +1,40 @@
+<table>
+    <thead>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description</th>
+    </thead>
+    <tbody>
+        {{#each properties}}
+        <!-- prettier-ignore -->
+        <tr>
+            <td>{{{this.name}}}
+                {{#if this.minVersion}}<em>&ge; v{{this.minVersion}}</em>{{/if}}
+                {{#if this.maxVersion}}<em>&le; v{{this.maxVersion}}</em>{{/if}}
+            </td>
+<td class="no-p-margin">
+
+{{{this.type}}}
+
+</td>
+<td class="no-p-margin">
+
+{{{this.default}}}
+
+</td>
+<td>
+<div class="no-p-margin">
+
+{{{this.description}}}
+
+</div>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+<br />
+<!-- prettier-ignore -->
+
+<!-- -->

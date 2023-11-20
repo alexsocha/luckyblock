@@ -1,0 +1,24 @@
+{
+    "name": "luckyblock-website-docs",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "build": "npx ts-node build.ts"
+    },
+    "dependencies": {
+        "glob": "7.1.6",
+        "js-yaml": "3.14.0",
+        "marked": "1.1.0",
+        "mkdirp": "1.0.4",
+        "handlebars": "4.7.6",
+        "ramda": "0.27.0"
+    },
+    "devDependencies": {
+        "@types/glob": "7.1.2",
+        "@types/js-yaml": "3.12.5",
+        "@types/mkdirp": "1.0.1",
+        "@types/ramda": "0.27.7",
+        "ts-node": "8.10.2",
+        "typescript": "3.9.6"
+    }
+}
