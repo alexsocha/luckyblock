@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import net.minecraftforge.gradle.userdev.UserDevExtension
 import mod.lucky.build.*
 
 val rootProjectProps = RootProjectProperties.fromProjectYaml(rootProject.rootDir)
@@ -8,10 +7,7 @@ val projectProps = rootProjectProps.projects[ProjectName.LUCKY_BLOCK_FORGE]!!
 
 buildscript {
     repositories {
-        maven("https://maven.minecraftforge.net")
-    }
-    dependencies {
-        classpath("net.minecraftforge.gradle:ForgeGradle:6.0.29")
+        maven("https://maven.neoforged.net/releases")
     }
 }
 
@@ -19,34 +15,21 @@ plugins {
     kotlin("jvm")
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("mod.lucky.build.JavaEditionTasks")
-}
-
-apply {
-    plugin("net.minecraftforge.gradle")
+    id("net.neoforged.moddev") version "1.0.21"
 }
 
 dependencies {
     compileOnly(project(":tools"))
     implementation(kotlin("stdlib-jdk8"))
-    "minecraft"("net.minecraftforge:forge:${projectProps.lockedDependencies["minecraft-forge"]!!}")
     shadow(project(":common"))
 }
 
 repositories {
-    // Fix issue with lwjgl-freetype not being found on macOS / ForgeGradle issue
-    // Could not resolve all files for configuration ':_compileJava_1'.
-    // Could not find lwjgl-freetype-3.3.3-natives-macos-patch.jar (org.lwjgl:lwjgl-freetype:3.3.3).
-    maven {
-        url = uri("https://libraries.minecraft.net")
-        content {
-            includeModule("org.lwjgl", "lwjgl-freetype")
-        }
-    }
-    mavenCentral()
+    mavenLocal()
 }
 
 group = "mod.lucky.forge"
-base.archivesBaseName = rootProject.name
+base.archivesName = rootProject.name
 version = projectProps.version
 
 tasks.register<Copy>("copyRuntimeClasses") {
@@ -64,26 +47,52 @@ tasks.register<Copy>("copyRuntimeClasses") {
     dependsOn("classes")
 }
 
-configure<UserDevExtension> {
-    mappings("official", projectProps.devDependencies["forge-mappings"]!!.toGradleRange())
+neoForge {
+    // Specify the version of NeoForge to use.
+    version = "21.1.73"
 
-    accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
+    parchment {
+        mappingsVersion = "2024.07.28"
+        minecraftVersion = "1.21"
+    }
 
+    // Default run configurations.
     runs {
         create("client") {
-            workingDirectory(project.file("../run"))
-            property("forge.logging.markers", "SCAN,REGISTRIES,REGISTRYDUMP")
-            property("forge.logging.console.level", "info")
+            client()
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            systemProperty("neoforge.enabledGameTestNamespaces", "lucky")
         }
 
         create("server") {
-            workingDirectory(project.file("../run"))
-            property("forge.logging.markers", "SCAN,REGISTRIES,REGISTRYDUMP")
-            property("forge.logging.console.level", "info")
+            server()
+            programArgument("--nogui")
+            systemProperty("neoforge.enabledGameTestNamespaces", "lucky")
+        }
+
+        // Applies to all the run configs above
+        configureEach {
+            // Recommended logging data for a userdev environment
+            // The markers can be added/remove as needed separated by commas.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            systemProperty("forge.logging.markers", "REGISTRIES")
+
+            // Recommended logging level for the console
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        // Define mod <-> source bindings
+        create("lucky") {
+            sourceSet(sourceSets["main"])
         }
     }
 }
 
+// sourceSets.main.resources.srcDir("src/generated/resources")
 
 tasks.processResources {
     from("../common/src/jvmMain/resources/game")
@@ -123,16 +132,16 @@ tasks.register<Copy>("copyShadowJar") {
 
 afterEvaluate {
     tasks.getByName("jar").dependsOn(tasks.getByName("copyRuntimeClasses"))
-    tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeClasses"))
-    tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeResources"))
+    //tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeClasses"))
+    //tasks.getByName("prepareRuns").dependsOn(tasks.getByName("copyRuntimeResources"))
 
-    tasks.getByName("reobfJar").dependsOn(tasks.getByName("copyShadowJar"))
+    //tasks.getByName("reobfJar").dependsOn(tasks.getByName("copyShadowJar"))
 
     tasks.assemble {
-        dependsOn(tasks.getByName("exportDist").mustRunAfter(tasks.getByName("reobfJar")))
+        //dependsOn(tasks.getByName("exportDist").mustRunAfter(tasks.getByName("reobfJar")))
     }
     tasks.clean {
-        dependsOn(tasks.getByName("cleanDist"))
+        //dependsOn(tasks.getByName("cleanDist"))
     }
 }
 

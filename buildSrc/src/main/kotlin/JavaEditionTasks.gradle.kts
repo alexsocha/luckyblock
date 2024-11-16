@@ -3,9 +3,9 @@ package mod.lucky.build
 val rootProjectProps = RootProjectProperties.fromProjectYaml(rootProject.rootDir)
 
 val projectName = when(project.name) {
-    "forge" -> ProjectName.LUCKY_BLOCK_FORGE
+    "neoforge" -> ProjectName.LUCKY_BLOCK_FORGE
     "fabric" -> ProjectName.LUCKY_BLOCK_FABRIC
-    else -> throw Exception("Project name should be 'forge' or 'fabric'")
+    else -> throw Exception("Project name should be 'neoforge' or 'fabric'")
 }
 val projectProps = rootProjectProps.projects[projectName]!!
 

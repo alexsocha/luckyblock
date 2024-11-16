@@ -18,7 +18,6 @@ data class ItemStack(
 interface JavaGameAPI {
     fun getLoaderName(): String
     fun getModVersion(): String
-    fun getMinecraftVersion(): String
     fun getGameDir(): File
     fun attrToNBT(attr: Attr): NBTTag
     fun nbtToAttr(tag: NBTTag): Attr
@@ -30,7 +29,6 @@ interface JavaGameAPI {
     fun getEntityVelocity(entity: Entity): Vec3d
     fun getEntityUUID(entity: Entity): String
     fun findEntityByUUID(world: World, uuid: String): Entity?
-    fun showClientMessage(textJsonStr: String)
     fun getBlockId(block: Block): String?
     fun getItemId(item: Item): String?
     fun isValidItemId(id: String): Boolean

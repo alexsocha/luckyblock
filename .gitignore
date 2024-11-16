@@ -8,6 +8,7 @@ out/
 # gradle
 build/
 .gradle/
+.kotlin/
 
 # other
 dist/

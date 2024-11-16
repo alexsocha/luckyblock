@@ -8,7 +8,7 @@ import kotlinx.cli.*
 fun main(args: Array<String>) {
     val parser = ArgParser("luckytools", strictSubcommandOptionsOrder = true)
 
-    parser.subcommands(GenerateBedrockDrops(), NbtToMcstructure(), DownloadBlockIds(), UploadToCurseForge())
+    parser.subcommands(UploadToCurseForge())
 
     parser.parse(args)
 }
