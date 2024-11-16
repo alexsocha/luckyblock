@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    kotlin("plugin.serialization") version "1.4.0"
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
 repositories {
@@ -9,6 +9,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.ajoberstar.grgit:grgit-core:4.1.0")
+    implementation("org.ajoberstar.grgit:grgit-core:4.1.1")
     implementation("com.charleskorn.kaml:kaml:0.37.0")
 }

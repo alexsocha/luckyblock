@@ -6,8 +6,8 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("multiplatform") version "1.8.10"
-        kotlin("jvm") version "1.8.10"
+        kotlin("multiplatform") version "1.9.20"
+        kotlin("jvm") version "1.9.20"
     }
 }
 
@@ -20,5 +20,5 @@ rootProject.name = "lucky-block"
 include("common")
 include("tools")
 include("forge")
-include("fabric")
+//include("fabric")
 //include("bedrock")

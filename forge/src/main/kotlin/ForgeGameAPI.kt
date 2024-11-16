@@ -61,7 +61,7 @@ typealias MCBlockPos = net.minecraft.core.BlockPos
 typealias MCBox = net.minecraft.world.phys.AABB
 typealias MCItemStack = net.minecraft.world.item.ItemStack
 
-typealias MCEnchantmentType = net.minecraft.world.item.enchantment.EnchantmentCategory
+typealias MCEnchantmentType = net.minecraft.world.item.enchantment.Enchantments
 typealias MCStatusEffect = net.minecraft.world.effect.MobEffect
 
 typealias MCChatComponent = net.minecraft.network.chat.Component

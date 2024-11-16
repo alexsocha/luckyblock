@@ -11,7 +11,7 @@ buildscript {
         maven("https://maven.minecraftforge.net")
     }
     dependencies {
-        classpath("net.minecraftforge.gradle:ForgeGradle:6.0.14")
+        classpath("net.minecraftforge.gradle:ForgeGradle:6.0.29")
     }
 }
 
@@ -33,6 +33,15 @@ dependencies {
 }
 
 repositories {
+    // Fix issue with lwjgl-freetype not being found on macOS / ForgeGradle issue
+    // Could not resolve all files for configuration ':_compileJava_1'.
+    // Could not find lwjgl-freetype-3.3.3-natives-macos-patch.jar (org.lwjgl:lwjgl-freetype:3.3.3).
+    maven {
+        url = uri("https://libraries.minecraft.net")
+        content {
+            includeModule("org.lwjgl", "lwjgl-freetype")
+        }
+    }
     mavenCentral()
 }
 
