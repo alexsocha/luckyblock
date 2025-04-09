@@ -90,7 +90,7 @@ fun toServerWorld(world: World): MCServerWorld {
     return (world as MCServerWorld).level
 }
 
-private fun toEnchantmentType(mcType: MCEnchantmentType): EnchantmentType {
+private fun toEnchantmentType(mcType: MCEnchantmentType): EnchantmentType? {
     return when (mcType) {
         MCEnchantmentType.ARMOR -> EnchantmentType.ARMOR
         MCEnchantmentType.ARMOR_FEET -> EnchantmentType.ARMOR_FEET
@@ -106,6 +106,7 @@ private fun toEnchantmentType(mcType: MCEnchantmentType): EnchantmentType {
         MCEnchantmentType.WEARABLE -> EnchantmentType.WEARABLE
         MCEnchantmentType.CROSSBOW -> EnchantmentType.CROSSBOW
         MCEnchantmentType.VANISHABLE -> EnchantmentType.VANISHABLE
+        else -> null
     }
 }
 
@@ -160,13 +161,18 @@ object ForgeGameAPI : GameAPI {
             )
         }
 
-        enchantments = ForgeRegistries.ENCHANTMENTS.entries.map {
-            Enchantment(
-                it.key.location().toString(),
-                type = toEnchantmentType(it.value.category),
-                maxLevel = it.value.maxLevel,
-                isCurse = it.value.isCurse,
-            )
+        enchantments = ForgeRegistries.ENCHANTMENTS.entries.mapNotNull {
+            val enchantmentType = toEnchantmentType(it.value.category)
+            if (enchantmentType == null) {
+                null
+            } else {
+                Enchantment(
+                    it.key.location().toString(),
+                    type = enchantmentType,
+                    maxLevel = it.value.maxLevel,
+                    isCurse = it.value.isCurse,
+                )
+            }
         }
     }
 
