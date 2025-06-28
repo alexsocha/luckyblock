@@ -1,8 +1,7 @@
 package mod.lucky.forge.game
 
-import com.mojang.serialization.Codec
-import mod.lucky.common.LOGGER
-import mod.lucky.forge.ForgeLuckyRegistry
+import com.mojang.serialization.MapCodec
+import mod.lucky.neoforge.ForgeLuckyRegistry
 import mod.lucky.java.JavaLuckyRegistry
 import net.minecraft.core.Holder
 import net.minecraft.world.level.biome.Biome
@@ -10,8 +9,8 @@ import net.minecraft.world.level.levelgen.GenerationStep
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration
 import net.minecraft.world.level.levelgen.placement.PlacedFeature
-import net.minecraftforge.common.world.BiomeModifier
-import net.minecraftforge.common.world.ModifiableBiomeInfo
+import net.neoforged.neoforge.common.world.BiomeModifier
+import net.neoforged.neoforge.common.world.ModifiableBiomeInfo
 
 class LuckyBiomeModifier : BiomeModifier {
     companion object {
@@ -36,7 +35,7 @@ class LuckyBiomeModifier : BiomeModifier {
         }
     }
 
-    override fun codec(): Codec<out BiomeModifier> {
+    override fun codec(): MapCodec<out BiomeModifier> {
         return ForgeLuckyRegistry.luckyBiomeModifierSerializer.get()
     }
 }

@@ -1,4 +1,4 @@
-package mod.lucky.forge
+package mod.lucky.neoforge
 
 import com.mojang.serialization.Codec
 import mod.lucky.common.GAME_API

@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import mod.lucky.build.*
 
 val rootProjectProps = RootProjectProperties.fromProjectYaml(rootProject.rootDir)
-val projectProps = rootProjectProps.projects[ProjectName.LUCKY_BLOCK_FORGE]!!
+val projectProps = rootProjectProps.projects[ProjectName.LUCKY_BLOCK_NEOFORGE]!!
 
 buildscript {
     repositories {
@@ -31,7 +31,7 @@ repositories {
     }
 }
 
-group = "mod.lucky.forge"
+group = "mod.lucky.neoforge"
 base.archivesName = rootProject.name
 version = projectProps.version
 
@@ -51,7 +51,7 @@ neoForge {
 
         create("server") {
             server()
-            programArgument("--nogui")
+            //programArgument("--nogui")
             systemProperty("neoforge.enabledGameTestNamespaces", "lucky")
         }
 
@@ -64,23 +64,23 @@ neoForge {
     mods {
         create("lucky") {
             sourceSet(sourceSets["main"])
+            sourceSet(project(":common").sourceSets.main.get())
         }
     }
 }
 
-// sourceSets.main.resources.srcDir("src/generated/resources")
-
 tasks.named<ProcessResources>("processResources").configure {
-    from("../common/src/jvmMain/resources/game")
+    from("../common/src/main/resources/game")
     inputs.property("modVersion", projectProps.version)
     filesMatching("META-INF/neoforge.mods.toml") {
         expand(
             "modVersion" to projectProps.version,
             "minMinecraftVersion" to projectProps.dependencies["minecraft"]!!.minInclusive,
             "minNeoforgeVersion" to projectProps.dependencies["neoforge"]!!.minInclusive,
-            "minLoaderVersion" to projectProps.dependencies["loader"]!!.minInclusive,
+            "minLoaderVersion" to projectProps.dependencies["kotlinforforge"]!!.minInclusive,
         )
     }
+    dependsOn(tasks.getByName("copyRuntimeResources"))
 }
 
 tasks.jar {

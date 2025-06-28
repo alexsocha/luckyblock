@@ -2,6 +2,7 @@ package mod.lucky.java
 
 import mod.lucky.common.*
 import mod.lucky.common.attribute.Attr
+import mod.lucky.common.attribute.DictAttr
 import mod.lucky.common.attribute.ListAttr
 import java.io.File
 import java.io.InputStream

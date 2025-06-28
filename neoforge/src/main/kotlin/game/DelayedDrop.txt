@@ -4,8 +4,10 @@ import mod.lucky.forge.*
 import mod.lucky.java.game.*
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
+import net.minecraft.client.renderer.entity.MagmaCubeRenderer
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.world.entity.EntityType
 import net.minecraftforge.common.ForgeHooks
 
@@ -14,7 +16,7 @@ class DelayedDrop(
     world: MCWorld,
     private var data: DelayedDropData = DelayedDropData.createDefault(world),
 ) : MCEntity(type, world) {
-    override fun defineSynchedData() {}
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) {}
 
     override fun tick() {
         super.tick()
@@ -32,7 +34,7 @@ class DelayedDrop(
 
 @OnlyInClient
 class DelayedDropRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<DelayedDrop>(ctx) {
-    override fun getTextureLocation(entity: DelayedDrop): MCIdentifier? {
-        return null
+    override fun getTextureLocation(entity: DelayedDrop): MCIdentifier {
+        return MCIdentifier.parse("")
     }
 }

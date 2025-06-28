@@ -1,31 +1,35 @@
-package mod.lucky.forge
+package mod.lucky.neoforge
 
 import mod.lucky.common.*
 import mod.lucky.common.Random
 import mod.lucky.common.attribute.*
 import mod.lucky.java.*
-import net.minecraft.client.Minecraft
+import net.minecraft.core.Holder
+import net.minecraft.core.HolderLookup
 import net.minecraft.core.RegistryAccess
+import net.minecraft.core.component.DataComponentMap
+import net.minecraft.core.component.PatchedDataComponentMap
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.LongArrayTag
 import net.minecraft.nbt.NbtAccounter
 import net.minecraft.nbt.NbtIo
-import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceKey
+import net.minecraft.util.ProblemReporter.ScopedCollector
 import net.minecraft.util.datafix.fixes.ItemIdFix
 import net.minecraft.util.datafix.fixes.ItemStackTheFlatteningFix
 import net.minecraft.world.entity.projectile.Arrow
-import net.minecraft.world.item.Items
 import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.item.enchantment.Enchantments
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.ChestBlockEntity
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
+import net.minecraft.world.level.storage.TagValueInput
+import net.minecraft.world.level.storage.TagValueOutput
+import net.minecraft.world.level.storage.ValueInput
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
 import net.neoforged.fml.loading.FMLLoader
-import net.neoforged.neoforge.common.NeoForgeConfig
-import net.neoforged.neoforge.common.NeoForgeMod
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -38,18 +42,45 @@ annotation class OnlyInServer
 
 fun isClientWorld(world: MCIWorld): Boolean = world.isClientSide
 
-fun toMCItemStack(stack: ItemStack, access: RegistryAccess): MCItemStack {
-    return if (stack.nbt != null) MCItemStack.parseOptional(access, stack.nbt as CompoundTag)
-    else MCItemStack(BuiltInRegistries.ITEM.get(MCIdentifier.parse(stack.itemId)), stack.count)
+fun nbtToComponents(tag: CompoundTag, access: HolderLookup.Provider): DataComponentMap {
+    ScopedCollector(ForgeLuckyRegistry.LOGGER).use {
+        val rootTag = CompoundTag()
+        rootTag.put("components", tag)
+        val input = TagValueInput.create(it, access, rootTag)
+        return input.read("components", DataComponentMap.CODEC)
+            .orElse(DataComponentMap.EMPTY) as DataComponentMap
+    }
 }
 
-fun toItemStack(stack: MCItemStack, access: RegistryAccess): ItemStack {
-    return ItemStack(JAVA_GAME_API.getItemId(stack.item) ?: "minecraft:air", stack.count, stack.saveOptional(access))
+fun componentsToNbt(components: DataComponentMap, access: HolderLookup.Provider): CompoundTag {
+    ScopedCollector(ForgeLuckyRegistry.LOGGER ).use { reporter ->
+        val output = TagValueOutput.createWithContext(reporter, access)
+        output.store("components", DataComponentMap.CODEC, components)
+        return output.buildResult().get("components") as CompoundTag
+    }
+}
+
+fun toMCItemStack(stack: ItemStack, access: HolderLookup.Provider): MCItemStack {
+    val item = BuiltInRegistries.ITEM.get(MCIdentifier.parse(stack.itemId)).get()
+    val mcStack = MCItemStack(item, stack.count)
+    if (stack.nbt != null) {
+        val components = nbtToComponents(stack.nbt as CompoundTag, access)
+        mcStack.applyComponents(components)
+    }
+    return mcStack
+}
+
+fun toItemStack(stack: MCItemStack, access: HolderLookup.Provider, skipComponents: Boolean = false): ItemStack {
+    return ItemStack(
+        JAVA_GAME_API.getItemId(stack.item) ?: "minecraft:air",
+        stack.count,
+        if (skipComponents) null else componentsToNbt(stack.components, access)
+    )
 }
 
 object ForgeJavaGameAPI : JavaGameAPI {
     override fun getLoaderName(): String {
-        return "forge"
+        return "neoforge"
     }
 
     override fun getModVersion(): String {
@@ -92,20 +123,20 @@ object ForgeJavaGameAPI : JavaGameAPI {
 
     override fun nbtToAttr(tag: NBTTag): Attr {
         return when (tag) {
-            is StringTag -> stringAttrOf(tag.asString)
+            is StringTag -> stringAttrOf(tag.asString().get())
             // note that booleans are stored as bytes
-            is ByteTag -> ValueAttr(AttrType.BYTE, tag.asByte)
-            is ShortTag -> ValueAttr(AttrType.SHORT, tag.asShort)
-            is IntTag -> ValueAttr(AttrType.INT, tag.asInt)
-            is LongTag -> ValueAttr(AttrType.LONG, tag.asLong)
-            is FloatTag -> ValueAttr(AttrType.FLOAT, tag.asFloat)
-            is DoubleTag -> ValueAttr(AttrType.DOUBLE, tag.asDouble)
+            is ByteTag -> ValueAttr(AttrType.BYTE, tag.asByte().get())
+            is ShortTag -> ValueAttr(AttrType.SHORT, tag.asShort().get())
+            is IntTag -> ValueAttr(AttrType.INT, tag.asInt().get())
+            is LongTag -> ValueAttr(AttrType.LONG, tag.asLong().get())
+            is FloatTag -> ValueAttr(AttrType.FLOAT, tag.asFloat().get())
+            is DoubleTag -> ValueAttr(AttrType.DOUBLE, tag.asDouble().get())
             is ByteArrayTag -> ValueAttr(AttrType.BYTE_ARRAY, tag.asByteArray)
             is IntArrayTag -> ValueAttr(AttrType.INT_ARRAY, tag.asIntArray)
             is LongArrayTag -> ValueAttr(AttrType.INT_ARRAY, tag.asLongArray)
             is ListTag -> ListAttr(tag.map { nbtToAttr(it) })
             is CompoundTag -> {
-                dictAttrOf(*tag.allKeys.map {
+                dictAttrOf(*tag.keySet().map {
                     it to tag.get(it)?.let { v -> nbtToAttr(v) }
                 }.toTypedArray())
             }
@@ -161,20 +192,20 @@ object ForgeJavaGameAPI : JavaGameAPI {
     }
 
     override fun getBlockId(block: Block): String? {
-        return ForgeRegistries.BLOCKS.getKey(block as MCBlock)?.toString()
+        return BuiltInRegistries.BLOCK.getKeyOrNull(block as MCBlock)?.toString()
     }
 
     override fun getItemId(item: Item): String? {
-        return ForgeRegistries.ITEMS.getKey(item as MCItem)?.toString()
+        return BuiltInRegistries.ITEM.getKeyOrNull(item as MCItem)?.toString()
     }
 
     override fun isValidItemId(id: String): Boolean {
-        return ForgeRegistries.ITEMS.containsKey(MCIdentifier.parse(id))
+        return BuiltInRegistries.ITEM.containsKey(MCIdentifier.parse(id))
     }
 
     override fun getEntityTypeId(entity: Entity): String {
-        val key = ForgeRegistries.ENTITY_TYPES.getKey((entity as MCEntity).type)
-        return key?.toString() ?: ""
+        val key = BuiltInRegistries.ENTITY_TYPE.getKeyOrNull((entity as MCEntity).type)
+        return key?.toString() ?: "<invalid entity ${key}>"
     }
 
     override fun generateChestLoot(world: World, pos: Vec3i, lootTableId: String, random: Random): ListAttr {
@@ -182,10 +213,13 @@ object ForgeJavaGameAPI : JavaGameAPI {
 
         // world is needed to prevent a NullPointerException
         chestEntity.setLevel(toServerWorld(world))
-        chestEntity.setLootTable(MCIdentifier.parse(lootTableId), random.randInt(0..Int.MAX_VALUE).toLong())
+        chestEntity.setLootTable(
+            ResourceKey.create(Registries.LOOT_TABLE, MCIdentifier.parse(lootTableId)),
+            random.randInt(0..Int.MAX_VALUE).toLong()
+        )
         chestEntity.unpackLootTable(null)
 
-        val tag = chestEntity.saveWithFullMetadata()
+        val tag = chestEntity.saveWithFullMetadata((world as MCWorld).registryAccess())
         return JAVA_GAME_API.nbtToAttr(JAVA_GAME_API.readNBTKey(tag, "Items")!!) as ListAttr
     }
 
@@ -208,7 +242,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
 
     override fun readNbtStructure(stream: InputStream): Pair<MinecraftNbtStructure, Vec3i> {
         val structure = StructureTemplate()
-        structure.load(BuiltInRegistries.BLOCK.asLookup(), NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap()))
+        structure.load(BuiltInRegistries.BLOCK, NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap()))
         return Pair(structure, toVec3i(structure.size))
     }
 }

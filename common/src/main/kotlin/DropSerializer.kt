@@ -6,22 +6,6 @@ import mod.lucky.common.attribute.*
 import mod.lucky.java.game.readNBTKeys
 import mod.lucky.java.game.writeNBTKeys
 
-/*
-fun SingleDrop.Companion.fromAttrV1(dict: DictAttr): SingleDrop {
-    val propsDictV1 = dict["properties"] as DictAttr
-    val type = (propsDictV1["type"]!! as DictAttr).getValue<String>("value")
-    val propString = propsDictV1.children.map { (k, v) ->
-        k + "=" + ((v as DictAttr).getOptionalValue<String>("rawValue") ?: v.getValue("value"))
-    }.joinToString(",")
-
-    return SingleDrop(
-        type = type,
-        propString = propString,
-        props = parseAttr(propString, LuckyRegistry.dropSpecs[type], LuckyRegistry.parserContext) as DictAttr,
-    )
-}
- */
-
 fun SingleDrop.toAttr(): DictAttr {
     return dictAttrOf(
         "type" to stringAttrOf(type),
@@ -85,21 +69,21 @@ data class DropContainer(
     val luck: Int? = null,
 ) {
     companion object {
-        val attrKeys = listOf("Drops", "Luck")
+        val attrKeys = listOf("lucky:drops", "lucky:luck")
     }
 }
 
 fun DropContainer.toAttr(): DictAttr {
     return dictAttrOf(
-        "Luck" to luck?.let { intAttrOf(it) },
-        "Drops" to customDrops?.let { ListAttr(it.map { v ->  v.toAttr() }) }
+        "lucky:luck" to luck?.let { intAttrOf(it) },
+        "lucky:drops" to customDrops?.let { ListAttr(it.map { v ->  v.toAttr() }) }
     )
 }
 
 fun DropContainer.Companion.fromAttr(attr: DictAttr): DropContainer {
     return DropContainer(
-        (attr["Drops"] as? ListAttr)?.let { dropsFromAttrList(it) },
-        attr.getOptionalValue<Int>("Luck"),
+        (attr["lucky:drops"] as? ListAttr)?.let { dropsFromAttrList(it) },
+        attr.getOptionalValue<Int>("lucky:luck"),
     )
 }
 

@@ -6,10 +6,10 @@ import mod.lucky.common.attribute.evalAttr
 
 import kotlin.math.pow
 
-const val DEBUG = false
+const val DEBUG = true
 private var debugDropFilters = listOf<String>()
 private var debugDropIndexRange = 0..1000
-private var debugDropIndex = debugDropIndexRange.first
+private var debugDropIndex = 0//40
 
 class DropError(msg: String) : Exception("Error performing Lucky Block function: $msg")
 

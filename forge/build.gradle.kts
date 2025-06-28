@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import mod.lucky.build.*
 
 val rootProjectProps = RootProjectProperties.fromProjectYaml(rootProject.rootDir)
-val projectProps = rootProjectProps.projects[ProjectName.LUCKY_BLOCK_FORGE]!!
+val projectProps = rootProjectProps.projects[ProjectName.LUCKY_BLOCK_NEOFORGE]!!
 
 buildscript {
     repositories {

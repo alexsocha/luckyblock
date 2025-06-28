@@ -5,22 +5,26 @@ import mod.lucky.forge.*
 import mod.lucky.java.*
 import mod.lucky.java.loader.ShapedCraftingRecipe
 import mod.lucky.java.loader.ShapelessCraftingRecipe
+import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
 import net.minecraft.core.RegistryAccess
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.inventory.CraftingContainer
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.CraftingBookCategory
+import net.minecraft.world.item.crafting.CraftingInput
 import net.minecraft.world.item.crafting.CustomRecipe
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.Level
+import kotlin.jvm.optionals.getOrNull
 
 typealias MCCraftingRecipe = net.minecraft.world.item.crafting.CraftingRecipe
 typealias MCShapelessCraftingRecipe = net.minecraft.world.item.crafting.ShapelessRecipe
 typealias MCShapedCraftingRecipe = net.minecraft.world.item.crafting.ShapedRecipe
 
 fun getIngredient(id: String): Ingredient? {
-    val item = ForgeRegistries.ITEMS.getValue(MCIdentifier(id))
+    val item = BuiltInRegistries.ITEM.getOptional(MCIdentifier.parse(id)).getOrNull()
     if (item == null) {
         GAME_API.logError("Invalid item in recipe: $id")
         return null
@@ -66,12 +70,12 @@ class AddonCraftingRecipe(category: CraftingBookCategory) : CustomRecipe(categor
         lateinit var craftingRecipes: List<MCCraftingRecipe>
     }
 
-    override fun matches(inv: CraftingContainer, world: MCWorld): Boolean {
+    override fun matches(inv: CraftingInput, world: MCWorld): Boolean {
         return craftingRecipes.find { it.matches(inv, world) } != null
     }
 
-    override fun assemble(inv: CraftingContainer, access: RegistryAccess): MCItemStack {
-        val matchingRecipe = craftingRecipes.find { it.matches(inv, null) }
+    override fun assemble(inv: CraftingInput, access: HolderLookup.Provider): MCItemStack {
+        val matchingRecipe = craftingRecipes.find { it.matches(inv, (access as MCWorld)) }
         if (matchingRecipe != null) return matchingRecipe.assemble(inv, access)
         return MCItemStack.EMPTY
     }

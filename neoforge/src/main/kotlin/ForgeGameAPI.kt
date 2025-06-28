@@ -1,49 +1,37 @@
-package mod.lucky.forge
+package mod.lucky.neoforge
 
 import com.mojang.brigadier.StringReader
-import com.mojang.brigadier.exceptions.CommandSyntaxException
-import com.mojang.serialization.Lifecycle
 import mod.lucky.common.*
+import mod.lucky.common.Entity
 import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.action.withBlockMode
-import mod.lucky.forge.game.DelayedDrop
+//import mod.lucky.forge.game.DelayedDrop
 import mod.lucky.java.*
-import mod.lucky.java.game.DelayedDropData
 import mod.lucky.java.game.spawnEggSuffix
 import mod.lucky.java.game.usefulStatusEffectIds
 import mod.lucky.java.game.uselessPostionNames
 import net.minecraft.commands.CommandSource
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.arguments.ParticleArgument
 import net.minecraft.commands.arguments.selector.EntitySelectorParser
-import net.minecraft.core.Holder
-import net.minecraft.core.HolderGetter
 import net.minecraft.core.Registry
-import net.minecraft.core.particles.ParticleOptions
-import net.minecraft.core.particles.ParticleType
+import net.minecraft.core.component.DataComponentMap
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
-import net.minecraft.data.tags.VanillaEnchantmentTagsProvider
-import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.nbt.NbtUtils
-import net.minecraft.resources.ResourceKey
+import net.minecraft.sounds.SoundSource
+import net.minecraft.util.ProblemReporter.ScopedCollector
 import net.minecraft.util.RandomSource
 import net.minecraft.world.*
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffectCategory
-import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.Mob
-import net.minecraft.world.entity.MobSpawnType
+import net.minecraft.world.entity.*
 import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.projectile.Arrow
 import net.minecraft.world.item.DyeColor
-import net.minecraft.world.item.component.DyedItemColor
-import net.minecraft.world.item.enchantment.Enchantment.EnchantmentDefinition
-import net.minecraft.world.item.enchantment.EnchantmentHelper
-import net.minecraft.world.item.enchantment.Enchantments
-import net.minecraft.world.item.enchantment.providers.VanillaEnchantmentProviders
+import net.minecraft.world.item.alchemy.PotionContents
 import net.minecraft.world.level.Level.ExplosionInteraction
 import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.Rotation
@@ -51,6 +39,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
+import net.minecraft.world.level.storage.TagValueInput
 import java.awt.Color
 import kotlin.jvm.optionals.getOrNull
 
@@ -143,7 +132,7 @@ object ForgeGameAPI : GameAPI {
 
         usefulStatusEffects = usefulStatusEffectIds.map {
             val mcId = MCIdentifier.parse(it)
-            val mcStatusEffect = BuiltInRegistries.MOB_EFFECT.get(mcId)!!
+            val mcStatusEffect = BuiltInRegistries.MOB_EFFECT.getOptional(mcId).get()
             StatusEffect(
                 id = mcId.toString(),
                 isNegative = mcStatusEffect.category == MobEffectCategory.HARMFUL,
@@ -157,10 +146,10 @@ object ForgeGameAPI : GameAPI {
             enchantments = (registry as Registry<MCEnchantment>).entrySet().stream().map {
                 Enchantment(
                     it.key.location().toString(),
-                    //type = toEnchantmentType(it.value.category),
+                    //type = toEnchantmentType(it.value.category), TODO
                     type = EnchantmentType.BOW,
                     maxLevel = it.value.maxLevel,
-                    //isCurse = it.value.isCurse,
+                    //isCurse = it.value.isCurse, TODO
                     isCurse = false,
                 )
             }.toList()
@@ -197,7 +186,7 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) {
-        val statusEffectHolder = BuiltInRegistries.MOB_EFFECT.getHolder(MCIdentifier.parse(effectId)).getOrNull()
+        val statusEffectHolder = BuiltInRegistries.MOB_EFFECT.get(MCIdentifier.parse(effectId)).getOrNull()
         if (statusEffectHolder === null) {
             GAME_API.logError("Unknown status effect: $effectId")
             return
@@ -245,14 +234,14 @@ object ForgeGameAPI : GameAPI {
         val mcEntityNBT = JAVA_GAME_API.attrToNBT(nbt.with(mapOf("id" to stringAttrOf(id)))) as CompoundTag
 
         val serverWorld = toServerWorld(world)
-        val entity = EntityType.loadEntityRecursive(mcEntityNBT, serverWorld) { entity ->
+        val entity = EntityType.loadEntityRecursive(mcEntityNBT, serverWorld, EntitySpawnReason.EVENT) { entity ->
             val entityRotation = positiveMod(rotation + 2.0, 4.0) // entities face south by default
             val rotationDeg = (entityRotation * 90.0)
             val yaw = positiveMod(entity.yRot + entityRotation, 360.0)
             val velocity = if (entityRotation == 0.0) entity.deltaMovement
             else toMCVec3d(rotateVec3d(toVec3d(entity.deltaMovement), degToRad(rotationDeg)))
 
-            entity.absMoveTo(pos.x, pos.y, pos.z, yaw.toFloat(), entity.xRot)
+            entity.absSnapTo(pos.x, pos.y, pos.z, yaw.toFloat(), entity.xRot)
             entity.yHeadRot = yaw.toFloat()
             entity.deltaMovement = velocity
             if (serverWorld.addFreshEntity(entity)) entity else null
@@ -265,10 +254,9 @@ object ForgeGameAPI : GameAPI {
             entity.finalizeSpawn(
                 serverWorld,
                 serverWorld.getCurrentDifficultyAt(toMCBlockPos(pos.floor())),
-                MobSpawnType.EVENT,
+                EntitySpawnReason.EVENT,
                 null
             )
-            entity.readAdditionalSaveData(mcEntityNBT)
         }
     }
 
@@ -278,10 +266,13 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double) {
+        return
+        /* TODO
         val world = toServerWorld(context.world)
         val delayedDrop = DelayedDrop(world = world, data = DelayedDropData(drop, context, (seconds * 20).toInt()))
         delayedDrop.setPos(context.pos.x, context.pos.y, context.pos.z)
         world.addFreshEntity(delayedDrop)
+         */
     }
 
     override fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean) {
@@ -306,7 +297,11 @@ object ForgeGameAPI : GameAPI {
                 "y" to intAttrOf(pos.y),
                 "z" to intAttrOf(pos.z),
             ))
-            blockEntity.loadWithComponents(JAVA_GAME_API.attrToNBT(fullNBT) as CompoundTag, world.registryAccess())
+            val tag = JAVA_GAME_API.attrToNBT(fullNBT) as CompoundTag
+            ScopedCollector(ForgeLuckyRegistry.LOGGER).use {
+                val input = TagValueInput.create(it, world.registryAccess(), tag)
+                blockEntity.loadWithComponents(input)
+            }
             blockEntity.setChanged()
         }
     }
@@ -318,9 +313,14 @@ object ForgeGameAPI : GameAPI {
             return
         }
 
-        val item = BuiltInRegistries.ITEM.get(itemKey)
-        val itemStack = MCItemStack(item, 1)
-        if (nbt != null) itemStack.tag = JAVA_GAME_API.attrToNBT(nbt) as CompoundTag
+        val item = BuiltInRegistries.ITEM.getOptional(itemKey).get()
+        var itemStack = MCItemStack(item, 1)
+        if (nbt != null) {
+            val tag = JAVA_GAME_API.attrToNBT(nbt)
+            val components = nbtToComponents(tag as CompoundTag, (world as MCWorld).registryAccess())
+            itemStack.applyComponents(components)
+        }
+
         MCBlock.popResource(toServerWorld(world), toMCBlockPos(pos.floor()), itemStack)
     }
 
@@ -354,7 +354,7 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun playSound(world: World, pos: Vec3d, id: String, volume: Double, pitch: Double) {
-        val soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(MCIdentifier(id))
+        val soundEvent = BuiltInRegistries.SOUND_EVENT.getOptional(MCIdentifier.parse(id)).getOrNull()
         if (soundEvent == null) {
             GAME_API.logError("Invalid sound event: $id")
             return
@@ -369,20 +369,11 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun spawnParticle(world: World, pos: Vec3d, id: String, args: List<String>, boxSize: Vec3d, amount: Int) {
-        @Suppress("UNCHECKED_CAST")
-        val particleType = ForgeRegistries.PARTICLE_TYPES.getValue(MCIdentifier(id)) as ParticleType<ParticleOptions>?
-        if (particleType == null) {
-            GAME_API.logError("Invalid partical: $id")
-            return
-        }
-
         try {
-            val particleData = try {
-                particleType.deserializer.fromCommand(particleType, StringReader(" " + args.joinToString(" ")))
-            } catch (e: CommandSyntaxException) {
-                GAME_API.logError("Error processing partice '$id' with arguments '$args'", e)
-                return
-            }
+            val particleData = ParticleArgument.readParticle(
+                StringReader(id + " " + args.joinToString(" ")),
+                (world as MCWorld).registryAccess()
+            )
             toServerWorld(world).sendParticles(
                 particleData,
                 pos.x, pos.y, pos.z,
@@ -391,7 +382,7 @@ object ForgeGameAPI : GameAPI {
                 0.0 // spread
             )
         } catch (e: Exception) {
-            GAME_API.logError("Invalid partical arguments: $args", e)
+            GAME_API.logError("Error processing particle '$id' with arguments '$args'", e)
             return
         }
     }
@@ -402,13 +393,13 @@ object ForgeGameAPI : GameAPI {
 
     override fun playSplashPotionEvent(world: World, pos: Vec3d, potionName: String?, potionColor: Int?) {
         if (potionName != null) {
-            val potion = ForgeRegistries.POTIONS.getValue(MCIdentifier(potionName))
+            val potion = BuiltInRegistries.POTION.getOptional(MCIdentifier.parse(potionName)).getOrNull()
             if (potion == null) {
                 GAME_API.logError("Invalid splash potion name: $potionName")
                 return
             }
 
-            val color = PotionUtils.getColor(potion.effects)
+            val color = PotionContents.getColorOptional(potion.effects).asInt
             playParticleEvent(world, pos, if (potion.hasInstantEffects()) 2007 else 2002, color)
         } else if (potionColor != null) {
             playParticleEvent(world, pos, 2002, potionColor)
@@ -442,9 +433,9 @@ object ForgeGameAPI : GameAPI {
                 if (blockIdWithMode == blockId) return newBlockInfo
 
                 val newState = if (blockIdWithMode == null) world.getBlockState(newBlockInfo.pos)
-                    else ForgeRegistries.BLOCKS.getValue(MCIdentifier(blockIdWithMode))?.defaultBlockState()!!
+                    else BuiltInRegistries.BLOCK.getOptional(MCIdentifier.parse(blockIdWithMode)).getOrNull()?.defaultBlockState()!!
 
-                return if (newState == newBlockInfo.state) newBlockInfo
+                return if (newState.equals(newBlockInfo.state)) newBlockInfo
                     else StructureTemplate.StructureBlockInfo(newBlockInfo.pos, newState, newBlockInfo.nbt)
             }
 

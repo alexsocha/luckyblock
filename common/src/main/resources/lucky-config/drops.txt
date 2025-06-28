@@ -56,7 +56,7 @@ ID=saddle,amount=2@luck=0
 ID=cake@luck=0
 ID=rotten_flesh@luck=-1
 ID=nether_star@luck=2
-ID=poppy,NBTTag=(display=(Name=#jsonStr(text="Romantic Rose",color=dark_red)))@luck=-1
+ID=poppy,NBTTag=(custom_name=(text="Romantic Rose",color=dark_red,italic=false))@luck=-1
 ID=rabbit_stew,amount=#rand(5,7)@luck=1
 
 / ========== GROUPS ==========
@@ -83,7 +83,7 @@ group:1:(group(ID=carrot,amount=#rand(8,16);ID=golden_carrot,amount=#rand(4,8));
 group(ID=ender_pearl,amount=10;ID=ender_eye,amount=5)@luck=2
 
 / potions
-ID=#randList(potion,splash_potion),NBTTag=(Potion=#randPotion),amount=#rand(4,8)@luck=1
+ID=#randList(potion,splash_potion),NBTTag=(potion_contents=(potion=#randPotion)),amount=#rand(4,8)@luck=1
 
 / spawn eggs
 ID=#randSpawnEgg,amount=#rand(4,8)@luck=1

@@ -1,5 +1,6 @@
 {
     "block.lucky.lucky_block": "Lucky Block",
+    "item.lucky.lucky_block": "Lucky Block",
     "item.lucky.lucky_block.luck": "Luck",
     "item.lucky.lucky_block.customDrop": "Has custom drops",
 
