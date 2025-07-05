@@ -51,7 +51,7 @@ neoForge {
 
         create("server") {
             server()
-            //programArgument("--nogui")
+            // programArgument("--nogui") // use this to disable the server gui
             systemProperty("neoforge.enabledGameTestNamespaces", "lucky")
         }
 

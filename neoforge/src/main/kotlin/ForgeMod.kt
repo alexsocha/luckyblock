@@ -97,13 +97,6 @@ object ForgeLuckyRegistry {
         { _ -> CustomRecipe.Serializer(::LuckModifierCraftingRecipe) }
     )
 
-    /*
-    val addonCraftingRecipe = recipeRegistry.register("crafting_addons") {
-        registerAddonCraftingRecipes()
-        SimpleCraftingRecipeSerializer(AddonCraftingRecipe)
-    }
-     */
-
     val luckComponent = dataComponentTypeRegistry.register(
         "luck",
         { id ->
@@ -200,13 +193,6 @@ class ForgeMod(modEventBus: IEventBus, modContainer: ModContainer) {
     companion object {
         @EventBusSubscriber(modid = "lucky", bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
         object ClientModEvents {
-            @SubscribeEvent
-            fun onClientSetup(event: FMLClientSetupEvent?) {
-                // Some client setup code
-                ForgeLuckyRegistry.LOGGER.info("HELLO FROM CLIENT SETUP")
-                //LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().user.name)
-            }
-
             @SubscribeEvent
             private fun onAddPackFinders(event: AddPackFindersEvent) {
                 JavaLuckyRegistry.addons.forEach { addon ->

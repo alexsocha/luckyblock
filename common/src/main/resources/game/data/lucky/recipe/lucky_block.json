@@ -6,14 +6,11 @@
         "###"
     ],
     "key": {
-        "#": {
-            "item": "minecraft:gold_ingot"
-        },
-        "D": {
-            "item": "minecraft:dropper"
-        }
+        "#": "minecraft:gold_ingot",
+        "D": "minecraft:dropper"
     },
     "result": {
-        "item": "lucky:lucky_block"
+        "id": "lucky:lucky_block",
+        "count": 1
     }
 }
