@@ -1,5 +1,6 @@
 {
     "block.lucky.lucky_block": "Szczęśliwy blok",
+    "item.lucky.lucky_block": "Szczęśliwy blok",
     "item.lucky.lucky_block.luck": "szczęście",
     "item.lucky.lucky_block.customDrop": "Ma niestandardowe zrzuty",
 

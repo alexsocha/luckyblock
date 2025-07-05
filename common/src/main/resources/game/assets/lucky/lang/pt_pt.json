@@ -1,5 +1,6 @@
 {
     "block.lucky.lucky_block": "Bloco da Sorte",
+    "item.lucky.lucky_block": "Bloco da Sorte",
     "item.lucky.lucky_block.luck": "Sorte",
     "item.lucky.lucky_block.customDrop": "Tem drops personalizados",
 

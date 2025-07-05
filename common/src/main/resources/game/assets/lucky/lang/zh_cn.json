@@ -1,5 +1,6 @@
 {
     "block.lucky.lucky_block": "幸运方块",
+    "item.lucky.lucky_block": "幸运方块",
     "item.lucky.lucky_block.luck": "幸运",
     "item.lucky.lucky_block.customDrop": "自定义掉落物",
 

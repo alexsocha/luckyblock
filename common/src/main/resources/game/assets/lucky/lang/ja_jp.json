@@ -1,5 +1,6 @@
 {
     "block.lucky.lucky_block": "ラッキーブロック",
+    "item.lucky.lucky_block": "ラッキーブロック",
     "item.lucky.lucky_block.luck": "ラック",
     "item.lucky.lucky_block.customDrop": "カスタムドロップがあります",
 

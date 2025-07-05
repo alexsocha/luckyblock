@@ -1,5 +1,6 @@
 {
     "block.lucky.lucky_block": "Bloque de la suerte",
+    "item.lucky.lucky_block": "Bloque de la suerte",
     "item.lucky.lucky_block.luck": "suerte",
     "item.lucky.lucky_block.customDrop": "Tiene caídas personalizadas",
 

@@ -1,5 +1,6 @@
 {
     "block.lucky.lucky_block": "Heldig blok",
+    "item.lucky.lucky_block": "Heldig blok",
     "item.lucky.lucky_block.luck": "Held",
     "item.lucky.lucky_block.customDrop": "Har tilpassede drops",
 

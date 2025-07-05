@@ -1,5 +1,6 @@
 {
     "block.lucky.lucky_block": "Счастливый блок",
+    "item.lucky.lucky_block": "Счастливый блок",
     "item.lucky.lucky_block.luck": "удача",
     "item.lucky.lucky_block.customDrop": "Имеет пользовательские капли",
 

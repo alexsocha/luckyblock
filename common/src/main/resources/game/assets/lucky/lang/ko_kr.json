@@ -1,5 +1,6 @@
 {
     "block.lucky.lucky_block": "럭키 블록",
+    "item.lucky.lucky_block": "럭키 블록",
     "item.lucky.lucky_block.luck": "행운",
     "item.lucky.lucky_block.customDrop": "맞춤형 드롭이 있음",
 
