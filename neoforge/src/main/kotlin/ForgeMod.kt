@@ -21,6 +21,14 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.resources.ResourceKey
+import net.minecraft.server.packs.FilePackResources.FileResourcesSupplier
+import net.minecraft.server.packs.PackLocationInfo
+import net.minecraft.server.packs.PackSelectionConfig
+import net.minecraft.server.packs.PackType
+import net.minecraft.server.packs.PathPackResources.PathResourcesSupplier
+import net.minecraft.server.packs.repository.Pack
+import net.minecraft.server.packs.repository.PackSource
+import net.minecraft.server.packs.repository.RepositorySource
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.item.CreativeModeTabs
 import net.minecraft.world.item.crafting.CustomRecipe
@@ -33,10 +41,15 @@ import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.common.Mod
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
+import net.neoforged.neoforge.event.AddPackFindersEvent
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent
+import net.neoforged.neoforge.registries.DeferredBlock
+import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import net.neoforged.neoforge.registries.NeoForgeRegistries
 import net.neoforged.neoforge.registries.RegisterEvent
+import java.util.*
+import kotlin.collections.HashMap
 
 
 object ForgeLuckyRegistry {
@@ -44,6 +57,8 @@ object ForgeLuckyRegistry {
 
     const val modId = "lucky"
     lateinit var modVersion: String
+    val addonBlocks = HashMap<String, DeferredBlock<LuckyBlock>>()
+    val addonItems = HashMap<String, DeferredItem<*>>()
 
     val blockRegistry = DeferredRegister.createBlocks(modId)
     val itemRegistry = DeferredRegister.createItems(modId)
@@ -64,12 +79,9 @@ object ForgeLuckyRegistry {
     val luckyBlockEntity = blockEntityTypeRegistry.register(
         MCIdentifier.parse(JavaLuckyRegistry.blockId).path,
         { _ ->
-            /* TODO
             val validBlocks = listOf(luckyBlock.get()) + JavaLuckyRegistry.addons
                 .mapNotNull { it.ids.block }
-                .map { getOrCreateAddonBlock(it) }
-             */
-            val validBlocks = listOf(luckyBlock.get())
+                .map { addonBlocks[it]!!.get() }
             BuiltInRegistries.DATA_COMPONENT_TYPE
             BlockEntityType(::LuckyBlockEntity, validBlocks.toSet())
         }
@@ -112,6 +124,30 @@ object ForgeLuckyRegistry {
     )
 }
 
+fun registerAddons() {
+    JavaLuckyRegistry.addons.map { addon ->
+        if (addon.ids.block != null) {
+            val blockId = addon.ids.block!!;
+            ForgeLuckyRegistry.addonBlocks[blockId] =
+                ForgeLuckyRegistry.blockRegistry.register(MCIdentifier.parse(blockId).path) {
+                    id -> LuckyBlock(id)
+                }
+
+            ForgeLuckyRegistry.addonItems[blockId] =
+                ForgeLuckyRegistry.itemRegistry.register(MCIdentifier.parse(blockId).path) {
+                    id -> LuckyBlockItem(ForgeLuckyRegistry.addonBlocks[blockId]!!.get(), id)
+                }
+        }
+        /*
+        if (addon.ids.sword != null) ForgeLuckyRegistry.itemRegistry.register(MCIdentifier(addon.ids.sword!!).path) { LuckySword() }
+        if (addon.ids.bow != null) ForgeLuckyRegistry.itemRegistry.register(MCIdentifier(addon.ids.bow!!).path) { LuckyBow() }
+        if (addon.ids.potion != null) ForgeLuckyRegistry.itemRegistry.register(MCIdentifier(addon.ids.potion!!).path) { LuckyPotion() }
+         */
+    }
+}
+
+@OnlyInClient
+
 class CommonModEvents {
     @SubscribeEvent
     fun registerEvent(event: RegisterEvent) {
@@ -133,6 +169,29 @@ class CommonModEvents {
                 event.parameters.holders
             ).forEach { event.accept(it) }
         }
+        /*
+        if (event.tabKey.equals(CreativeModeTabs.COMBAT)) {
+            event.accept(ForgeLuckyRegistry.luckySword)
+            event.accept(ForgeLuckyRegistry.luckyBow)
+            event.accept(ForgeLuckyRegistry.luckyPotion)
+            createLuckySubItems(ForgeLuckyRegistry.luckyPotion.get(), LuckyItemValues.veryLuckyPotion, LuckyItemValues.veryUnluckyPotion).forEach { event.accept(it) }
+        }
+         */
+
+        for (addon in JavaLuckyRegistry.addons) {
+            if (event.tabKey == CreativeModeTabs.BUILDING_BLOCKS) {
+                if (addon.ids.block != null) event.accept {
+                    ForgeLuckyRegistry.addonItems[addon.ids.block]!!.get()
+                }
+            }
+            /*
+            if (event.tabKey.equals(CreativeModeTabs.COMBAT)) {
+                if (addon.ids.sword != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.sword!!))!! }
+                if (addon.ids.bow != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.bow!!))!! }
+                if (addon.ids.potion != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.potion!!))!! }
+            }
+             */
+        }
     }
 }
 
@@ -147,6 +206,36 @@ class ForgeMod(modEventBus: IEventBus, modContainer: ModContainer) {
                 ForgeLuckyRegistry.LOGGER.info("HELLO FROM CLIENT SETUP")
                 //LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().user.name)
             }
+
+            @SubscribeEvent
+            private fun onAddPackFinders(event: AddPackFindersEvent) {
+                JavaLuckyRegistry.addons.forEach { addon ->
+                    val packName = "Resources for ${addon.addonId}"
+                    val packSupplier = if (addon.file.isDirectory) PathResourcesSupplier(addon.file.toPath())
+                    else FileResourcesSupplier(addon.file)
+
+                    // based on net.minecraftforge.client.loading.ClientModLoader
+                    val repositorySource = RepositorySource { packConsumer ->
+                        val packWithMeta = Pack.readMetaAndCreate(
+                            PackLocationInfo(
+                                packName,
+                                MCChatComponent.literal(packName),
+                                PackSource.DEFAULT,
+                                Optional.empty()
+                            ),
+                            packSupplier,
+                            PackType.CLIENT_RESOURCES,
+                            PackSelectionConfig(
+                                true,
+                                Pack.Position.BOTTOM,
+                                true,
+                            )
+                        )
+                        packConsumer.accept(packWithMeta)
+                    }
+                    event.addRepositorySource(repositorySource)
+                }
+            }
         }
     }
 
@@ -160,7 +249,7 @@ class ForgeMod(modEventBus: IEventBus, modContainer: ModContainer) {
 
         ForgeGameAPI.init()
         JavaLuckyRegistry.init()
-        //registerAddons() TODO
+        registerAddons()
 
         ForgeLuckyRegistry.blockRegistry.register(modEventBus)
         ForgeLuckyRegistry.blockTypeRegistry.register(modEventBus)
