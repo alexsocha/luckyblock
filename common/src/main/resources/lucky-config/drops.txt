@@ -226,35 +226,35 @@ group(type=entity,ID=rabbit,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag
 type=entity,ID=villager,NBTTag=(
     VillagerData=(level=3,profession=weaponsmith,type=jungle),
     Offers=(Recipes=[
-        (buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_sword,count=1,components=(enchantments=#luckySwordEnchantmentsDict,custom_name=(text="Hero's Sword",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(20,25)),sell=(id=bow,count=1,components=(enchantments=#luckyBowEnchantmentsDict,custom_name=(text="Hero's Bow",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=fishing_rod,count=1,components=(enchantments=#luckyFishingRodEnchantmentsDict,custom_name=(text="Hero's Fishing Rod",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=potion,count=1,tag=(Potion="fire_resistance",custom_potion_effects=#luckyPotionEffects,custom_name=(text="Hero's Potion",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(7,12)),sell=(id=splash_potion,count=1,tag=(Potion="harming",custom_potion_effects=#unluckyPotionEffects,custom_name=(text="Evil Potion",color=blue,bold=true,italic=false))),maxUses=1)
+        (buy=(id=diamond,count=#rand(20,25)),sell=(id=diamond_sword,count=1,components=(enchantments=#luckySwordEnchantmentsDict,custom_name=(text="Hero's Sword",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(20,25)),sell=(id=bow,count=1,components=(enchantments=#luckyBowEnchantmentsDict,custom_name=(text="Hero's Bow",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(10,15)),sell=(id=fishing_rod,count=1,components=(enchantments=#luckyFishingRodEnchantmentsDict,custom_name=(text="Hero's Fishing Rod",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(10,15)),sell=(id=potion,count=1,components=(potion_contents=(potion="fire_resistance",custom_effects=#luckyPotionEffects),custom_name=(text="Hero's Potion",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(7,12)),sell=(id=splash_potion,count=1,components=(potion_contents=(potion="harming",custom_effects=#unluckyPotionEffects),custom_name=(text="Evil Potion",color=blue,bold=true,italic=false))),maxUses=1)
     ]),
-    CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
+    CustomName=(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
 )@luck=1
 
 type=entity,ID=villager,NBTTag=(
     VillagerData=(level=3,profession=armorer,type=jungle),
     Offers=(Recipes=[
-        (buy=(id=diamond,Count=#rand(12,17)),sell=(id=diamond_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments,display=(Name=#jsonStr(text="Hero's Helmet",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments,display=(Name=#jsonStr(text="Hero's Chestplate",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments,display=(Name=#jsonStr(text="Hero's Leggings",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(12,17)),sell=(id=diamond_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments,display=(Name=#jsonStr(text="Hero's Boots",color=blue,bold=true)))),maxUses=1)
+        (buy=(id=diamond,count=#rand(12,17)),sell=(id=diamond_helmet,count=1,components=(enchantments=#luckyHelmetEnchantmentsDict,display=(text="Hero's Helmet",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(20,25)),sell=(id=diamond_chestplate,count=1,components=(enchantments=#luckyChestplateEnchantmentsDict,display=(text="Hero's Chestplate",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(15,20)),sell=(id=diamond_leggings,count=1,components=(enchantments=#luckyLeggingsEnchantmentsDict,display=(text="Hero's Leggings",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(12,17)),sell=(id=diamond_boots,count=1,components=(enchantments=#luckyBootsEnchantmentsDict,display=(text="Hero's Boots",color=blue,bold=true,italic=false))),maxUses=1)
     ]),
-    CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
+    CustomName=(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
 )@luck=1
 
 type=entity,ID=villager,NBTTag=(
     VillagerData=(level=3,profession=toolsmith,type=jungle),
     Offers=(Recipes=[
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=diamond_shovel,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Shovel",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_pickaxe,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Pickaxe",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(15,20)),sell=(id=diamond_axe,Count=1,tag=(Enchantments=#luckyAxeEnchantments,display=(Name=#jsonStr(text="Hero's Axe",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=diamond_hoe,Count=1,tag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Hoe",color=blue,bold=true)))),maxUses=1)
+        (buy=(id=diamond,count=#rand(10,15)),sell=(id=diamond_shovel,count=1,components=(enchantments=#luckyToolEnchantmentsDict,display=(text="Hero's Shovel",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(15,20)),sell=(id=diamond_pickaxe,count=1,components=(enchantments=#luckyToolEnchantmentsDict,display=(text="Hero's Pickaxe",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(15,20)),sell=(id=diamond_axe,count=1,components=(enchantments=#luckyAxeEnchantmentsDict,display=(text="Hero's Axe",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(10,15)),sell=(id=diamond_hoe,count=1,components=(enchantments=#luckyToolEnchantmentsDict,display=(text="Hero's Hoe",color=blue,bold=true,italic=false))),maxUses=1)
     ]),
-    CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
+    CustomName=(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
 )@luck=1
 
 / falling blocks (iron, gold, diamond, emerald)
