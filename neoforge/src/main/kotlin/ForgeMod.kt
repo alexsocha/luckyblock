@@ -142,17 +142,6 @@ fun registerAddons() {
 @OnlyInClient
 
 class CommonModEvents {
-    @SubscribeEvent
-    fun registerEvent(event: RegisterEvent) {
-        ForgeLuckyRegistry.LOGGER.info("HELLO from registry")
-        (GAME_API as ForgeGameAPI).initRegistry(event.registry)
-    }
-
-    @SubscribeEvent
-    fun onServerStarting(event: FMLCommonSetupEvent) {
-        ForgeLuckyRegistry.LOGGER.info("HELLO from server starting")
-    }
-
     @SubscribeEvent // on the mod event bus
     fun buildContents(event: BuildCreativeModeTabContentsEvent) {
         if (event.tabKey == CreativeModeTabs.BUILDING_BLOCKS) {

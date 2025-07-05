@@ -136,7 +136,7 @@ group:1:(ID=clock,NBTTag=(display=(Name=#jsonStr(text="You're wasting your time"
 ID=#randList(dandelion,poppy,blue_orchid,allium,azure_bluet,pink_tulip,oxeye_daisy),amount=64@luck=0
 
 / enchantment books
-ID=enchanted_book,NBTTag=(StoredEnchantments=#randEnchantment),amount=#rand(7,10)@luck=1
+ID=enchanted_book,NBTTag=(stored_enchantments=#randEnchantmentDict),amount=#rand(7,10)@luck=1
 
 / prismarine
 group(ID=prismarine,amount=#rand(4,8);ID=prismarine,damage=1,amount=#rand(4,8);ID=prismarine,damage=2,amount=#rand(4,8);ID=sea_lantern,amount=#rand(4,8);ID=prismarine_shard,amount=#rand(15,30);ID=prismarine_crystals,amount=#rand(10,20);type=particle,ID=splashpotion,potion="invisibility")@luck=1
@@ -226,11 +226,11 @@ group(type=entity,ID=rabbit,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag
 type=entity,ID=villager,NBTTag=(
     VillagerData=(level=3,profession=weaponsmith,type=jungle),
     Offers=(Recipes=[
-        (buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_sword,Count=1,tag=(Enchantments=#luckySwordEnchantments,display=(Name=#jsonStr(text="Hero's Sword",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(20,25)),sell=(id=bow,Count=1,tag=(Enchantments=#luckyBowEnchantments,display=(Name=#jsonStr(text="Hero's Bow",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=fishing_rod,Count=1,tag=(Enchantments=#luckyFishingRodEnchantments,display=(Name=#jsonStr(text="Hero's Fishing Rod",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=potion,Count=1,tag=(Potion="fire_resistance",custom_potion_effects=#luckyPotionEffects,display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true)))),maxUses=1),
-        (buy=(id=diamond,Count=#rand(7,12)),sell=(id=splash_potion,Count=1,tag=(Potion="harming",custom_potion_effects=#unluckyPotionEffects,display=(Name=#jsonStr(text="Evil Potion",color=blue,bold=true)))),maxUses=1)
+        (buy=(id=diamond,Count=#rand(20,25)),sell=(id=diamond_sword,count=1,components=(enchantments=#luckySwordEnchantmentsDict,custom_name=(text="Hero's Sword",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,Count=#rand(20,25)),sell=(id=bow,count=1,components=(enchantments=#luckyBowEnchantmentsDict,custom_name=(text="Hero's Bow",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=fishing_rod,count=1,components=(enchantments=#luckyFishingRodEnchantmentsDict,custom_name=(text="Hero's Fishing Rod",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,Count=#rand(10,15)),sell=(id=potion,count=1,tag=(Potion="fire_resistance",custom_potion_effects=#luckyPotionEffects,custom_name=(text="Hero's Potion",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,Count=#rand(7,12)),sell=(id=splash_potion,count=1,tag=(Potion="harming",custom_potion_effects=#unluckyPotionEffects,custom_name=(text="Evil Potion",color=blue,bold=true,italic=false))),maxUses=1)
     ]),
     CustomName=#jsonStr(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
 )@luck=1

@@ -26,33 +26,40 @@ fun <T : Number> registerVec3TemplateVar(
     }
 }
 
+val rangeSpec = TemplateVarSpec(
+    listOf(
+        Pair("minAmount", ValueSpec(AttrType.INT)),
+        Pair("maxAmount", ValueSpec(AttrType.INT))
+    ),
+    argRange = 0..2
+)
+fun parseRange(templateVar: TemplateVar, defaultRange: IntRange): IntRange {
+    val min = templateVar.args.getOptionalValue(0) ?: defaultRange.first
+    val max = templateVar.args.getOptionalValue(1) ?: templateVar.args.getOptionalValue(0) ?: defaultRange.last
+    return min..max
+}
+
 fun registerMultiListTemplateVar(
     templateName: String,
-    getValues: (context: DropTemplateContext) -> List<Attr>,
+    getItems: (context: DropTemplateContext) -> List<Attr>,
     defaultAmount: IntRange = 4..6,
 ) {
-    val spec = TemplateVarSpec(
-        listOf(
-            Pair("minAmount", ValueSpec(AttrType.INT)),
-            Pair("maxAmount", ValueSpec(AttrType.INT))
-        ),
-        argRange = 0..2
-    )
-    LuckyRegistry.registerTemplateVar(templateName, spec) { templateVar, context ->
-        val minAmount = templateVar.args.getOptionalValue(0) ?: defaultAmount.first
-        val maxAmount = templateVar.args.getOptionalValue(1) ?: templateVar.args.getOptionalValue(0) ?: defaultAmount.last
-        ListAttr(chooseMultiRandomFrom(context.random, getValues(context), minAmount..maxAmount))
+    registerTemplateVar(templateName, rangeSpec) { templateVar, context ->
+        val range = parseRange(templateVar, defaultAmount)
+        ListAttr(chooseMultiRandomFrom(context.random, getItems(context), range))
     }
 }
 
-private fun randEnchInstance(gameType: GameType, random: Random, enchantment: Enchantment): DictAttr {
-    return dictAttrOf(
-        "id" to when(gameType) {
-            GameType.JAVA -> stringAttrOf(enchantment.id)
-            GameType.BEDROCK -> ValueAttr(AttrType.SHORT, enchantment.intId.toShort())
-        },
-        "lvl" to ValueAttr(AttrType.SHORT, random.randInt(1..enchantment.maxLevel).toShort()),
-    )
+fun registerMultiDictTemplateVar(
+    templateName: String,
+    getDict: (context: DropTemplateContext) -> Map<String, ValueAttr>,
+    defaultAmount: IntRange = 4..6,
+) {
+    registerTemplateVar(templateName, rangeSpec) { templateVar, context ->
+        val range = parseRange(templateVar, defaultAmount)
+        val entries = chooseMultiRandomFrom(context.random, getDict(context).entries.toList(), range)
+        DictAttr(entries.associate { it.key to it.value })
+    }
 }
 
 private fun randEffectInstance(random: Random, effect: StatusEffect): DictAttr {
@@ -71,19 +78,35 @@ private fun randEffectInstance(random: Random, effect: StatusEffect): DictAttr {
 fun registerEnchantments(
     templateName: String,
     types: List<EnchantmentType>,
-    gameType: GameType,
     includeCurses: Boolean = false,
     defaultAmount: IntRange = 4..6,
 ) {
+    fun getRandomEnchantments(context: DropTemplateContext): List<Pair<Enchantment, Int>> {
+        val enchantments = GAME_API.getEnchantments().filter {
+            if (it.type !in types) false
+            else if (!includeCurses && it.isCurse) false
+            else true
+        }
+        return enchantments.map {
+            val level = context.random.randInt(1..it.maxLevel)
+            it to level
+        }
+    }
+
     registerMultiListTemplateVar(
         templateName,
-        getValues = { context ->
-            val enchantments = GAME_API.getEnchantments().filter {
-                if (it.type !in types) false 
-                else if (!includeCurses && it.isCurse) false
-                else true
-            }
-            enchantments.map { randEnchInstance(gameType, context.random, it) }
+        getItems = { context -> getRandomEnchantments(context).map { (k, v) ->
+            dictAttrOf(
+                "id" to stringAttrOf(k.id),
+                "lvl" to ValueAttr(AttrType.SHORT, v.toShort()),
+            )
+        }},
+        defaultAmount = defaultAmount,
+    )
+    registerMultiDictTemplateVar(
+        templateName + "Dict",
+        getDict = { context -> getRandomEnchantments(context).associate { (k, v) ->
+            k.id to intAttrOf(v) }
         },
         defaultAmount = defaultAmount,
     )
@@ -92,7 +115,7 @@ fun registerEnchantments(
 fun registerStatusEffects(templateName: String, statusEffects: List<StatusEffect>, defaultAmount: IntRange) {
     registerMultiListTemplateVar(
         templateName,
-        getValues = { context ->
+        getItems = { context ->
             statusEffects.map { randEffectInstance(context.random, it) }
         },
         defaultAmount = defaultAmount,
@@ -298,72 +321,60 @@ fun registerCommonTemplateVars(gameType: GameType) {
     registerEnchantments(
         "luckySwordEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEAPON),
-        gameType,
     )
     registerEnchantments(
         "luckyAxeEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.DIGGER, EnchantmentType.WEAPON),
-        gameType,
     )
     registerEnchantments(
         "luckyToolEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.DIGGER),
-        gameType,
         defaultAmount = 2..3,
     )
 
     registerEnchantments(
         "luckyBowEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.BOW),
-        gameType,
     )
     registerEnchantments(
         "luckyFishingRodEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.FISHING_ROD),
-        gameType,
         defaultAmount = 2..3,
     )
     registerEnchantments(
         "luckyCrossbowEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.CROSSBOW),
-        gameType,
         defaultAmount = 2..4,
     )
     registerEnchantments(
         "luckyTridentEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.TRIDENT),
-        gameType,
         defaultAmount = 3..5,
     )
 
     registerEnchantments(
         "luckyHelmetEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_HEAD),
-        gameType,
     )
 
     registerEnchantments(
         "luckyChestplateEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_CHEST),
-        gameType,
     )
 
     registerEnchantments(
         "luckyLeggingsEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_LEGS),
-        gameType,
     )
 
     registerEnchantments(
         "luckyBootsEnchantments",
         listOf(EnchantmentType.BREAKABLE, EnchantmentType.WEARABLE, EnchantmentType.ARMOR, EnchantmentType.ARMOR_FEET),
-        gameType,
     )
 
     registerEnchantments(
         "randEnchantment",
         EnchantmentType.values().toList(),
-        gameType,
         defaultAmount = 1..1
     )
 

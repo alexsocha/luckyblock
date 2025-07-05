@@ -9,6 +9,7 @@ import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.action.withBlockMode
 //import mod.lucky.forge.game.DelayedDrop
 import mod.lucky.java.*
+import mod.lucky.java.game.ENCHANTMENTS
 import mod.lucky.java.game.spawnEggSuffix
 import mod.lucky.java.game.usefulStatusEffectIds
 import mod.lucky.java.game.uselessPostionNames
@@ -117,7 +118,7 @@ private fun createCommandSource(
 object ForgeGameAPI : GameAPI {
     private var usefulPotionIds: List<String> = emptyList()
     private var spawnEggIds: List<String> = emptyList()
-    private var enchantments: List<Enchantment> = emptyList()
+    private var enchantments: List<Enchantment> = ENCHANTMENTS
     private var usefulStatusEffects: List<StatusEffect> = emptyList()
 
     fun init() {
@@ -138,21 +139,6 @@ object ForgeGameAPI : GameAPI {
                 isNegative = mcStatusEffect.category == MobEffectCategory.HARMFUL,
                 isInstant = mcStatusEffect.isInstantenous,
             )
-        }
-    }
-
-    fun initRegistry(registry: Registry<*>) {
-        if (registry.key() == Registries.ENCHANTMENT.registryKey()) {
-            enchantments = (registry as Registry<MCEnchantment>).entrySet().stream().map {
-                Enchantment(
-                    it.key.location().toString(),
-                    //type = toEnchantmentType(it.value.category), TODO
-                    type = EnchantmentType.BOW,
-                    maxLevel = it.value.maxLevel,
-                    //isCurse = it.value.isCurse, TODO
-                    isCurse = false,
-                )
-            }.toList()
         }
     }
 
