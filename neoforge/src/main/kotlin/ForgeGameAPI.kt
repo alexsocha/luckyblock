@@ -301,10 +301,11 @@ object ForgeGameAPI : GameAPI {
 
         val item = BuiltInRegistries.ITEM.getOptional(itemKey).get()
         var itemStack = MCItemStack(item, 1)
-        if (nbt != null) {
-            val tag = JAVA_GAME_API.attrToNBT(nbt)
-            val components = nbtToComponents(tag as CompoundTag, (world as MCWorld).registryAccess())
-            itemStack.applyComponents(components)
+        val componentsAttr = nbt ?: components;
+        if (componentsAttr != null) {
+            val tag = JAVA_GAME_API.attrToNBT(componentsAttr) as CompoundTag
+            val parsedComponents = nbtToComponents(tag, (world as MCWorld).registryAccess())
+            itemStack.applyComponents(parsedComponents)
         }
 
         MCBlock.popResource(toServerWorld(world), toMCBlockPos(pos.floor()), itemStack)

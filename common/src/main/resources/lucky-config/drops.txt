@@ -56,7 +56,7 @@ ID=saddle,amount=2@luck=0
 ID=cake@luck=0
 ID=rotten_flesh@luck=-1
 ID=nether_star@luck=2
-ID=poppy,NBTTag=(custom_name=(text="Romantic Rose",color=dark_red,italic=false))@luck=-1
+ID=poppy,components=(custom_name=(text="Romantic Rose",color=dark_red,italic=false))@luck=-1
 ID=rabbit_stew,amount=#rand(5,7)@luck=1
 
 / ========== GROUPS ==========
@@ -83,7 +83,7 @@ group:1:(group(ID=carrot,amount=#rand(8,16);ID=golden_carrot,amount=#rand(4,8));
 group(ID=ender_pearl,amount=10;ID=ender_eye,amount=5)@luck=2
 
 / potions
-ID=#randList(potion,splash_potion),NBTTag=(potion_contents=(potion=#randPotion)),amount=#rand(4,8)@luck=1
+ID=#randList(potion,splash_potion),components=(potion_contents=(potion=#randPotion)),amount=#rand(4,8)@luck=1
 
 / spawn eggs
 ID=#randSpawnEgg,amount=#rand(4,8)@luck=1
@@ -130,13 +130,17 @@ group(
 group(ID=fishing_rod;ID=#randList(cod,pufferfish,salmon,tropical_fish),amount=#rand(10,20))@luck=1
 
 / random jokes
-group:1:(ID=clock,NBTTag=(display=(Name=#jsonStr(text="You're wasting your time")));ID=tropical_fish,NBTTag=(display=(Name=#jsonStr(text="I'm funny")));ID=pufferfish,NBTTag=(display=(Name=#jsonStr(text="Oooooh!"))))@luck=-1
+group:1:(
+    ID=clock,components=(custom_name=(text="You're wasting your time",italic=false));
+    ID=tropical_fish,components=(custom_name=(text="I'm funny",italic=false));
+    ID=pufferfish,components=(custom_name=(text="Oooooh!",italic=true))
+)@luck=-1
 
 / flowers
 ID=#randList(dandelion,poppy,blue_orchid,allium,azure_bluet,pink_tulip,oxeye_daisy),amount=64@luck=0
 
 / enchantment books
-ID=enchanted_book,NBTTag=(stored_enchantments=#randEnchantment),amount=#rand(7,10)@luck=1
+ID=enchanted_book,components=(stored_enchantments=#randEnchantment),amount=#rand(7,10)@luck=1
 
 / prismarine
 group(ID=prismarine,amount=#rand(4,8);ID=prismarine,damage=1,amount=#rand(4,8);ID=prismarine,damage=2,amount=#rand(4,8);ID=sea_lantern,amount=#rand(4,8);ID=prismarine_shard,amount=#rand(15,30);ID=prismarine_crystals,amount=#rand(10,20);type=particle,ID=splashpotion,potion="invisibility")@luck=1
@@ -425,55 +429,56 @@ type=structure,ID=giant_lucky_block_bad,rotation=#pDirect@luck=-2
 / ========== ENCHANTED + LUCKY ITEMS ==========
 
 / hero's sword
-ID=diamond_sword,NBTTag=(Enchantments=#luckySwordEnchantments,display=(Name=#jsonStr(text="Hero's Sword",color=blue,bold=true)))@luck=2
+ID=diamond_sword,components=(enchantments=#luckySwordEnchantments,custom_name=(text="Hero's Sword",color=blue,bold=true,italic=false))@luck=2
 
 / hero's bow
-ID=bow,NBTTag=(Enchantments=#luckyBowEnchantments,display=(Name=#jsonStr(text="Hero's Bow",color=blue,bold=true)))@luck=2
+ID=bow,components=(enchantments=#luckyBowEnchantments,custom_name=(text="Hero's Bow",color=blue,bold=true,italic=false))@luck=2
 
 / hero's crossbow, trident
-group:1:(ID=crossbow,NBTTag=(Enchantments=#luckyCrossbowEnchantments,display=(Name=#jsonStr(text="Hero's Crossbow",color=blue,bold=true)));ID=trident,NBTTag=(Enchantments=#luckyTridentEnchantments,display=(Name=#jsonStr(text="Hero's Trident",color=blue,bold=true))))@luck=2
+group:1:(
+    ID=crossbow,components=(enchantments=#luckyCrossbowEnchantments,custom_name=(text="Hero's Crossbow",color=blue,bold=true,italic=false));
+    ID=trident,components=(enchantments=#luckyTridentEnchantments,custom_name=(text="Hero's Trident",color=blue,bold=true,italic=false))
+)@luck=2
 
 / hero's tools
 group:#rand(1,2):(
-    ID=diamond_shovel,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Shovel",color=blue,bold=true)));
-    ID=diamond_pickaxe,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Pickaxe",color=blue,bold=true)));
-    ID=diamond_axe,NBTTag=(Enchantments=#luckyAxeEnchantments,display=(Name=#jsonStr(text="Hero's Axe",color=blue,bold=true)));
-    ID=diamond_hoe,NBTTag=(Enchantments=#luckyToolEnchantments,display=(Name=#jsonStr(text="Hero's Hoe",color=blue,bold=true)));
-    ID=fishing_rod,NBTTag=(Enchantments=#luckyFishingRodEnchantments,display=(Name=#jsonStr(text="Hero's Fishing Rod",color=blue,bold=true)))
+    ID=diamond_shovel,components=(enchantments=#luckyToolEnchantments,custom_name=(text="Hero's Shovel",color=blue,bold=true,italic=false));
+    ID=diamond_pickaxe,components=(enchantments=#luckyToolEnchantments,custom_name=(text="Hero's Pickaxe",color=blue,bold=true,italic=false));
+    ID=diamond_axe,components=(enchantments=#luckyAxeEnchantments,custom_name=(text="Hero's Axe",color=blue,bold=true,italic=false));
+    ID=diamond_hoe,components=(enchantments=#luckyToolEnchantments,custom_name=(text="Hero's Hoe",color=blue,bold=true,italic=false));
+    ID=fishing_rod,components=(enchantments=#luckyFishingRodEnchantments,custom_name=(text="Hero's Fishing Rod",color=blue,bold=true,italic=false))
 )@luck=2
 
 / hero's armor
 group:#rand(1,2):(
-    ID=diamond_helmet,NBTTag=(Enchantments=#luckyHelmetEnchantments,display=(Name=#jsonStr(text="Hero's Helmet",color=blue,bold=true)));
-    ID=diamond_chestplate,NBTTag=(Enchantments=#luckyChestplateEnchantments,display=(Name=#jsonStr(text="Hero's Chestplate",color=blue,bold=true)));
-    ID=diamond_leggings,NBTTag=(Enchantments=#luckyLeggingsEnchantments,display=(Name=#jsonStr(text="Hero's Leggings",color=blue,bold=true)));
-    ID=diamond_boots,NBTTag=(Enchantments=#luckyBootsEnchantments,display=(Name=#jsonStr(text="Hero's Boots",color=blue,bold=true)))
+    ID=diamond_helmet,components=(enchantments=#luckyHelmetEnchantments,custom_name=(text="Hero's Helmet",color=blue,bold=true,italic=false));
+    ID=diamond_chestplate,components=(enchantments=#luckyChestplateEnchantments,custom_name=(text="Hero's Chestplate",color=blue,bold=true,italic=false));
+    ID=diamond_leggings,components=(enchantments=#luckyLeggingsEnchantments,custom_name=(text="Hero's Leggings",color=blue,bold=true,italic=false));
+    ID=diamond_boots,components=(enchantments=#luckyBootsEnchantments,custom_name=(text="Hero's Boots",color=blue,bold=true,italic=false))
 )@luck=2
 
 / hero's potion
-ID=potion,NBTTag=(
-    Potion="fire_resistance",
-    custom_potion_effects=#luckyPotionEffects,
-    display=(Name=#jsonStr(text="Hero's Potion",color=blue,bold=true))
+ID=potion,components=(
+    potion_contents=(potion="fire_resistance",custom_effects=#luckyPotionEffects),
+    custom_name=(text="Hero's Potion",color=blue,bold=true,italic=false)
 )@luck=2
 
 / evil potion
-ID=splash_potion,NBTTag=(
-    Potion="harming",
-    custom_potion_effects=#unluckyPotionEffects,
-    display=(Name=#jsonStr(text="Evil Potion",color=dard_red,bold=true))
+ID=splash_potion,components=(
+    potion_contents=(potion="harming",custom_effects=#unluckyPotionEffects),
+    custom_name=(text="Evil Potion",color=dard_red,bold=true,italic=false)
 )@luck=1
 
 / lucky items
 type=item,ID=lucky:lucky_sword@chance=1.5@luck=2
 type=item,ID=lucky:lucky_bow@chance=1.5@luck=2
-type=item,ID=lucky:lucky_potion,NBTTag=(Luck=#randList(100,-100)),amount=#rand(10,15)@chance=1.5@luck=2
+type=item,ID=lucky:lucky_potion,components=(lucky:luck=#randList(100,-100)),amount=#rand(10,15)@chance=1.5@luck=2
 
 group(
     type=item,ID=lucky:lucky_sword;
     type=item,ID=lucky:lucky_bow;
-    type=item,ID=lucky:lucky_potion,NBTTag=(Luck=#randList(100,-100)),amount=#rand(10,15);
-    type=entity,ID=firework_rocket,NBTTag=(
+    type=item,ID=lucky:lucky_potion,components=(lucky:luck=#randList(100,-100)),amount=#rand(10,15);
+    type=entity,ID=firework_rocket,components=(
         LifeTime=20,FireworksItem=(id=firework_rocket,Count=1,tag=#randFireworksRocket)
     ),amount=20,posOffset=#circleOffset(0,2)
 )@luck=2
