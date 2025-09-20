@@ -1,11 +1,10 @@
-package mod.lucky.forge.game
+package mod.lucky.neoforge.game
 
 import com.mojang.serialization.Codec
 import mod.lucky.common.Vec3i
 import mod.lucky.common.GAME_API
 import mod.lucky.neoforge.MCBlockPos
 import mod.lucky.java.JavaLuckyRegistry
-import mod.lucky.java.JavaRandom
 import mod.lucky.java.game.generateLuckyFeature
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.Blocks
