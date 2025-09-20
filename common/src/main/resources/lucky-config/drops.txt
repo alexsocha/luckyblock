@@ -136,7 +136,7 @@ group:1:(ID=clock,NBTTag=(display=(Name=#jsonStr(text="You're wasting your time"
 ID=#randList(dandelion,poppy,blue_orchid,allium,azure_bluet,pink_tulip,oxeye_daisy),amount=64@luck=0
 
 / enchantment books
-ID=enchanted_book,NBTTag=(stored_enchantments=#randEnchantmentDict),amount=#rand(7,10)@luck=1
+ID=enchanted_book,NBTTag=(stored_enchantments=#randEnchantment),amount=#rand(7,10)@luck=1
 
 / prismarine
 group(ID=prismarine,amount=#rand(4,8);ID=prismarine,damage=1,amount=#rand(4,8);ID=prismarine,damage=2,amount=#rand(4,8);ID=sea_lantern,amount=#rand(4,8);ID=prismarine_shard,amount=#rand(15,30);ID=prismarine_crystals,amount=#rand(10,20);type=particle,ID=splashpotion,potion="invisibility")@luck=1
@@ -145,19 +145,19 @@ group(ID=prismarine,amount=#rand(4,8);ID=prismarine,damage=1,amount=#rand(4,8);I
 
 / lucky mobs
 group:1:(
-    type=entity,ID=pig,NBTTag=(CustomName=#jsonStr(text="Lucky Pig",color=yellow,bold=true),CustomNameVisible=true);
-    type=entity,ID=cow,NBTTag=(CustomName=#jsonStr(text="Lucky Cow",color=yellow,bold=true),CustomNameVisible=true);
-    type=entity,ID=chicken,NBTTag=(CustomName=#jsonStr(text="Lucky Chicken",color=yellow,bold=true),CustomNameVisible=true);
-    type=entity,ID=sheep,NBTTag=(CustomName=#jsonStr(text="Lucky Sheep",color=yellow,bold=true),CustomNameVisible=true);
-    type=entity,ID=rabbit,NBTTag=(CustomName=#jsonStr(text="Lucky Rabbit",color=yellow,bold=true),CustomNameVisible=true);
-    type=entity,ID=squid,NBTTag=(CustomName=#jsonStr(text="Unlucky Squid",color=yellow,bold=true),CustomNameVisible=true)
+    type=entity,ID=pig,NBTTag=(CustomName=(text="Lucky Pig",color=yellow,bold=true),CustomNameVisible=true);
+    type=entity,ID=cow,NBTTag=(CustomName=(text="Lucky Cow",color=yellow,bold=true),CustomNameVisible=true);
+    type=entity,ID=chicken,NBTTag=(CustomName=(text="Lucky Chicken",color=yellow,bold=true),CustomNameVisible=true);
+    type=entity,ID=sheep,NBTTag=(CustomName=(text="Lucky Sheep",color=yellow,bold=true),CustomNameVisible=true);
+    type=entity,ID=rabbit,NBTTag=(CustomName=(text="Lucky Rabbit",color=yellow,bold=true),CustomNameVisible=true);
+    type=entity,ID=squid,NBTTag=(CustomName=(text="Unlucky Squid",color=yellow,bold=true),CustomNameVisible=true)
 )@luck=0
 
 / colored sheep
-type=entity,ID=sheep,NBTTag=(CustomName=#jsonStr(text="$cM$6r. $eR$aa$2i$bn$3b$5o$dw"),CustomNameVisible=true,Color=#rand(0,15)),posOffset=#circleOffset(4),amount=16@luck=1
+type=entity,ID=sheep,NBTTag=(CustomName=(text="$cM$6r. $eR$aa$2i$bn$3b$5o$dw"),CustomNameVisible=true,Color=#rand(0,15)),posOffset=#circleOffset(4),amount=16@luck=1
 
 / eggs + diamonds
-group(type=entity,ID=egg,NBTTag=(Motion=#randLaunchMotion(0.6,15)),amount=40;type=entity,ID=item,NBTTag=(Item=(id=diamond,Count=1),Motion=#randLaunchMotion(0.7,18)),amount=20)@luck=2
+group(type=entity,ID=egg,NBTTag=(Motion=#randLaunchMotion(0.6,15)),amount=40;type=entity,ID=item,NBTTag=(Item=(id=diamond,count=1),Motion=#randLaunchMotion(0.7,18)),amount=20)@luck=2
 
 / thrown exp bottles
 type=entity,ID=experience_bottle,NBTTag=(Motion=#randLaunchMotion),amount=#rand(16,32)@luck=2
@@ -180,10 +180,15 @@ group(type=difficulty,ID=hard;type=entity,ID=rabbit,NBTTag=(RabbitType=99))@luck
 
 / bob the zombie
 group(type=difficulty,ID=hard;type=entity,ID=zombie,NBTTag=(
-    HandItems=[(id=diamond_sword,Count=1,tag=(Enchantments=#luckySwordEnchantments))],
-    ArmorItems=[(id=diamond_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments)),(id=diamond_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments)),(id=diamond_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments)),(id=diamond_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments))],
-    HandDropChances=[0.5f,0f],ArmorDropChances=[0.3f,0.3f,0.3f,0.3f],
-    CustomName=#jsonStr(text="Bob",color=blue,bold=true),CustomNameVisible=true)
+    equipment=(
+        mainhand=(id=diamond_sword,count=1,components=(enchantments=#luckySwordEnchantments)),
+        feet=(id=diamond_boots,count=1,components=(enchantments=#luckyBootsEnchantments)),
+        legs=(id=diamond_leggings,count=1,components=(enchantments=#luckyLeggingsEnchantments)),
+        chest=(id=diamond_chestplate,count=1,components=(enchantments=#luckyChestplateEnchantments)),
+        head=(id=diamond_helmet,count=1,components=(enchantments=#luckyHelmetEnchantments))
+    ),
+    drop_chances=(mainhand=0.5f,feet=0.3f,legs=0.3f,chest=0.3f,head=0.3f),
+    CustomName=(text="Bob",color=blue,bold=true),CustomNameVisible=true)
 )@luck=-2
 
 / ghostly horseman skeleton
@@ -192,10 +197,15 @@ group(type=difficulty,ID=hard;type=entity,ID=bat,NBTTag=(
     active_effects=[(id=invisibility,duration=100000,amplifier=1,show_particles=false)],
     Passengers=[(id=skeleton_horse,Tame=true,Type=4,
         Passengers=[(id=skeleton,
-            HandItems=[(id=bow,Count=1,tag=(Enchantments=#luckyBowEnchantments))],
-            ArmorItems=[(id=chainmail_boots,Count=1,tag=(Enchantments=#luckyBootsEnchantments)),(id=chainmail_leggings,Count=1,tag=(Enchantments=#luckyLeggingsEnchantments)),(id=chainmail_chestplate,Count=1,tag=(Enchantments=#luckyChestplateEnchantments)),(id=chainmail_helmet,Count=1,tag=(Enchantments=#luckyHelmetEnchantments))],
-            HandDropChances=[0.5f,0f],ArmorDropChances=[0.3f,0.3f,0.3f,0.3f],
-            CustomName=#jsonStr(text="Ghostly Horseman",color=gray,bold=true),CustomNameVisible=true)
+            equipment=(
+                mainhand=(id=bow,count=1,components=(enchantments=#luckyBowEnchantments)),
+                feet=(id=chainmail_boots,count=1,components=(enchantments=#luckyBootsEnchantments)),
+                legs=(id=chainmail_leggings,count=1,components=(enchantments=#luckyLeggingsEnchantments)),
+                chest=(id=chainmail_chestplate,count=1,components=(enchantments=#luckyChestplateEnchantments)),
+                head=(id=chainmail_helmet,count=1,components=(enchantments=#luckyHelmetEnchantments))
+            ),
+            drop_chances=(mainhand=0.5f,feet=0.3f,legs=0.3f,chest=0.3f,head=0.3f),
+            CustomName=(text="Ghostly Horseman",color=gray,bold=true),CustomNameVisible=true)
         ])
     ])
 )@luck=-2
@@ -207,7 +217,7 @@ type=entity,ID=pig,NBTTag=(Passengers=[(id=pig,Passengers=[(id=pig,Passengers=[(
 type=entity,ID=#randList(horse,skeleton_horse,zombie_horse),amount=12,posOffset=#circleOffset(4),NBTTag=(Tame=true,Owner=#pUUIDArray)@luck=1
 
 / llamas
-type=entity,ID=llama,amount=8,posOffset=#circleOffset(4),NBTTag=(CustomName=#jsonStr(text=#randList(Llaura,Llauretta,Llavender,Llinda,Llisa,Llouise,Llucy,Llydia),color=dark_purple,bold=true),Variant=#rand(0,3),CustomNameVisible=true)@luck=0
+type=entity,ID=llama,amount=8,posOffset=#circleOffset(4),NBTTag=(CustomName=(text=#randList(Llaura,Llauretta,Llavender,Llinda,Llisa,Llouise,Llucy,Llydia),color=dark_purple,bold=true),Variant=#rand(0,3),CustomNameVisible=true)@luck=0
 
 / witch with bats
 group(type=difficulty,ID=hard;type=entity,ID=witch;type=entity,ID=bat,posY=#bPosY+#rand(0,2),posOffset=#circleOffset(0,1),amount=64)@luck=-1
@@ -226,9 +236,9 @@ group(type=entity,ID=rabbit,amount=#rand(5,10),posOffset=#circleOffset(3),NBTTag
 type=entity,ID=villager,NBTTag=(
     VillagerData=(level=3,profession=weaponsmith,type=jungle),
     Offers=(Recipes=[
-        (buy=(id=diamond,count=#rand(20,25)),sell=(id=diamond_sword,count=1,components=(enchantments=#luckySwordEnchantmentsDict,custom_name=(text="Hero's Sword",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,count=#rand(20,25)),sell=(id=bow,count=1,components=(enchantments=#luckyBowEnchantmentsDict,custom_name=(text="Hero's Bow",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,count=#rand(10,15)),sell=(id=fishing_rod,count=1,components=(enchantments=#luckyFishingRodEnchantmentsDict,custom_name=(text="Hero's Fishing Rod",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(20,25)),sell=(id=diamond_sword,count=1,components=(enchantments=#luckySwordEnchantments,custom_name=(text="Hero's Sword",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(20,25)),sell=(id=bow,count=1,components=(enchantments=#luckyBowEnchantments,custom_name=(text="Hero's Bow",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(10,15)),sell=(id=fishing_rod,count=1,components=(enchantments=#luckyFishingRodEnchantments,custom_name=(text="Hero's Fishing Rod",color=blue,bold=true,italic=false))),maxUses=1),
         (buy=(id=diamond,count=#rand(10,15)),sell=(id=potion,count=1,components=(potion_contents=(potion="fire_resistance",custom_effects=#luckyPotionEffects),custom_name=(text="Hero's Potion",color=blue,bold=true,italic=false))),maxUses=1),
         (buy=(id=diamond,count=#rand(7,12)),sell=(id=splash_potion,count=1,components=(potion_contents=(potion="harming",custom_effects=#unluckyPotionEffects),custom_name=(text="Evil Potion",color=blue,bold=true,italic=false))),maxUses=1)
     ]),
@@ -238,10 +248,10 @@ type=entity,ID=villager,NBTTag=(
 type=entity,ID=villager,NBTTag=(
     VillagerData=(level=3,profession=armorer,type=jungle),
     Offers=(Recipes=[
-        (buy=(id=diamond,count=#rand(12,17)),sell=(id=diamond_helmet,count=1,components=(enchantments=#luckyHelmetEnchantmentsDict,display=(text="Hero's Helmet",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,count=#rand(20,25)),sell=(id=diamond_chestplate,count=1,components=(enchantments=#luckyChestplateEnchantmentsDict,display=(text="Hero's Chestplate",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,count=#rand(15,20)),sell=(id=diamond_leggings,count=1,components=(enchantments=#luckyLeggingsEnchantmentsDict,display=(text="Hero's Leggings",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,count=#rand(12,17)),sell=(id=diamond_boots,count=1,components=(enchantments=#luckyBootsEnchantmentsDict,display=(text="Hero's Boots",color=blue,bold=true,italic=false))),maxUses=1)
+        (buy=(id=diamond,count=#rand(12,17)),sell=(id=diamond_helmet,count=1,components=(enchantments=#luckyHelmetEnchantments,display=(text="Hero's Helmet",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(20,25)),sell=(id=diamond_chestplate,count=1,components=(enchantments=#luckyChestplateEnchantments,display=(text="Hero's Chestplate",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(15,20)),sell=(id=diamond_leggings,count=1,components=(enchantments=#luckyLeggingsEnchantments,display=(text="Hero's Leggings",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(12,17)),sell=(id=diamond_boots,count=1,components=(enchantments=#luckyBootsEnchantments,display=(text="Hero's Boots",color=blue,bold=true,italic=false))),maxUses=1)
     ]),
     CustomName=(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
 )@luck=1
@@ -249,10 +259,10 @@ type=entity,ID=villager,NBTTag=(
 type=entity,ID=villager,NBTTag=(
     VillagerData=(level=3,profession=toolsmith,type=jungle),
     Offers=(Recipes=[
-        (buy=(id=diamond,count=#rand(10,15)),sell=(id=diamond_shovel,count=1,components=(enchantments=#luckyToolEnchantmentsDict,display=(text="Hero's Shovel",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,count=#rand(15,20)),sell=(id=diamond_pickaxe,count=1,components=(enchantments=#luckyToolEnchantmentsDict,display=(text="Hero's Pickaxe",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,count=#rand(15,20)),sell=(id=diamond_axe,count=1,components=(enchantments=#luckyAxeEnchantmentsDict,display=(text="Hero's Axe",color=blue,bold=true,italic=false))),maxUses=1),
-        (buy=(id=diamond,count=#rand(10,15)),sell=(id=diamond_hoe,count=1,components=(enchantments=#luckyToolEnchantmentsDict,display=(text="Hero's Hoe",color=blue,bold=true,italic=false))),maxUses=1)
+        (buy=(id=diamond,count=#rand(10,15)),sell=(id=diamond_shovel,count=1,components=(enchantments=#luckyToolEnchantments,display=(text="Hero's Shovel",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(15,20)),sell=(id=diamond_pickaxe,count=1,components=(enchantments=#luckyToolEnchantments,display=(text="Hero's Pickaxe",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(15,20)),sell=(id=diamond_axe,count=1,components=(enchantments=#luckyAxeEnchantments,display=(text="Hero's Axe",color=blue,bold=true,italic=false))),maxUses=1),
+        (buy=(id=diamond,count=#rand(10,15)),sell=(id=diamond_hoe,count=1,components=(enchantments=#luckyToolEnchantments,display=(text="Hero's Hoe",color=blue,bold=true,italic=false))),maxUses=1)
     ]),
     CustomName=(text="Hero Villager",color=blue,bold=true),CustomNameVisible=true
 )@luck=1
@@ -292,7 +302,13 @@ group(type=fill,ID=air,size=(1,51,1);
 )@luck=2
 
 / baby player
-type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,HandItems=[(id=stone_pickaxe,Count=1)],ArmorItems=[(id=leather_boots,Count=1,tag=(display=(color=#randColor))),(id=leather_leggings,Count=1,tag=(display=(color=#randColor))),(id=leather_chestplate,Count=1,tag=(display=(color=#randColor))),(id=player_head,Count=1,tag=(SkullOwner=#pName))],Rotation=[#pYaw+180f,0f],CustomName=#jsonStr(text="Baby #pName"),CustomNameVisible=true)@luck=0
+type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,equipment=(
+    mainhand=(id=stone_pickaxe,count=1),
+    feet=(id=leather_boots,count=1,tag=(display=(color=#randColor))),
+    legs=(id=leather_leggings,count=1,tag=(display=(color=#randColor))),
+    chest=(id=leather_chestplate,count=1,tag=(display=(color=#randColor))),
+    head=(id=player_head,count=1,tag=(SkullOwner=#pName))
+),Rotation=[#pYaw+180f,0f],CustomName=(text="Baby #pName"),CustomNameVisible=true)@luck=0
 
 / ==== Monster Apocalyple ====
 

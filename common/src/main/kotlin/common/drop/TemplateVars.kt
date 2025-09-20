@@ -93,18 +93,8 @@ fun registerEnchantments(
         }
     }
 
-    registerMultiListTemplateVar(
-        templateName,
-        getItems = { context -> getRandomEnchantments(context).map { (k, v) ->
-            dictAttrOf(
-                "id" to stringAttrOf(k.id),
-                "lvl" to ValueAttr(AttrType.SHORT, v.toShort()),
-            )
-        }},
-        defaultAmount = defaultAmount,
-    )
     registerMultiDictTemplateVar(
-        templateName + "Dict",
+        templateName,
         getDict = { context -> getRandomEnchantments(context).associate { (k, v) ->
             k.id to intAttrOf(v) }
         },
