@@ -85,6 +85,11 @@ tasks.named<ProcessResources>("processResources").configure {
 
 tasks.jar {
     archiveBaseName.set(rootProject.name)
+    from(project(":common").sourceSets.main.get().output)
+}
+
+tasks.assemble {
+    dependsOn(tasks.getByName("exportDist").mustRunAfter(tasks.getByName("jar")))
 }
 
 val javaVersion = projectProps.dependencies["java"]!!.maxInclusive!!
