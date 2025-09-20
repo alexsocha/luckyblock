@@ -6,16 +6,15 @@ import com.mojang.serialization.MapCodec
 import mod.lucky.common.GAME_API
 import mod.lucky.common.LOGGER
 import mod.lucky.common.PLATFORM_API
-import mod.lucky.forge.game.LuckModifierCraftingRecipe
-import mod.lucky.forge.game.LuckyBiomeModifier
-import mod.lucky.forge.game.LuckyBlock
-import mod.lucky.forge.game.LuckyBlockEntity
 import mod.lucky.java.JAVA_GAME_API
 import mod.lucky.java.JavaLuckyRegistry
 import mod.lucky.java.JavaPlatformAPI
 import mod.lucky.java.game.LuckyItemValues
-import mod.lucky.neoforge.game.LuckyBlockItem
-import mod.lucky.neoforge.game.createLuckySubItems
+import mod.lucky.neoforge.ForgeLuckyRegistry.itemRegistry
+import mod.lucky.neoforge.ForgeLuckyRegistry.luckyBlock
+import mod.lucky.neoforge.game.*
+import net.minecraft.client.data.models.ItemModelGenerators
+import net.minecraft.client.renderer.block.model.ItemModelGenerator
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -87,6 +86,11 @@ object ForgeLuckyRegistry {
         }
     )
 
+    val luckyBow = itemRegistry.register(
+        MCIdentifier.parse(JavaLuckyRegistry.bowId).path,
+        { id -> LuckyBow(id) }
+    )
+
     val luckyBiomeModifierSerializer = biomeModifierRegistry.register(
         "lucky_biome_modifier",
         { _ -> MapCodec.unit(LuckyBiomeModifier.INSTANCE) }
@@ -131,15 +135,16 @@ fun registerAddons() {
                     id -> LuckyBlockItem(ForgeLuckyRegistry.addonBlocks[blockId]!!.get(), id)
                 }
         }
+        addon.ids.bow?.let {
+            ForgeLuckyRegistry.addonItems[it] =
+                ForgeLuckyRegistry.itemRegistry.register(MCIdentifier.parse(it).path, { id -> LuckyBow(id) })
+        }
         /*
         if (addon.ids.sword != null) ForgeLuckyRegistry.itemRegistry.register(MCIdentifier(addon.ids.sword!!).path) { LuckySword() }
-        if (addon.ids.bow != null) ForgeLuckyRegistry.itemRegistry.register(MCIdentifier(addon.ids.bow!!).path) { LuckyBow() }
         if (addon.ids.potion != null) ForgeLuckyRegistry.itemRegistry.register(MCIdentifier(addon.ids.potion!!).path) { LuckyPotion() }
          */
     }
 }
-
-@OnlyInClient
 
 class CommonModEvents {
     @SubscribeEvent // on the mod event bus
@@ -151,14 +156,12 @@ class CommonModEvents {
                 event.parameters.holders
             ).forEach { event.accept(it) }
         }
-        /*
         if (event.tabKey.equals(CreativeModeTabs.COMBAT)) {
-            event.accept(ForgeLuckyRegistry.luckySword)
+            //event.accept(ForgeLuckyRegistry.luckySword)
             event.accept(ForgeLuckyRegistry.luckyBow)
-            event.accept(ForgeLuckyRegistry.luckyPotion)
-            createLuckySubItems(ForgeLuckyRegistry.luckyPotion.get(), LuckyItemValues.veryLuckyPotion, LuckyItemValues.veryUnluckyPotion).forEach { event.accept(it) }
+            //event.accept(ForgeLuckyRegistry.luckyPotion)
+            //createLuckySubItems(ForgeLuckyRegistry.luckyPotion.get(), LuckyItemValues.veryLuckyPotion, LuckyItemValues.veryUnluckyPotion).forEach { event.accept(it) }
         }
-         */
 
         for (addon in JavaLuckyRegistry.addons) {
             if (event.tabKey == CreativeModeTabs.BUILDING_BLOCKS) {
@@ -166,13 +169,11 @@ class CommonModEvents {
                     ForgeLuckyRegistry.addonItems[addon.ids.block]!!.get()
                 }
             }
-            /*
             if (event.tabKey.equals(CreativeModeTabs.COMBAT)) {
-                if (addon.ids.sword != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.sword!!))!! }
-                if (addon.ids.bow != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.bow!!))!! }
-                if (addon.ids.potion != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.potion!!))!! }
+                //if (addon.ids.sword != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.sword!!))!! }
+                if (addon.ids.bow != null) event.accept { ForgeLuckyRegistry.addonItems[addon.ids.bow]!!.get() }
+                //if (addon.ids.potion != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.potion!!))!! }
             }
-             */
         }
     }
 }
@@ -182,6 +183,16 @@ class ForgeMod(modEventBus: IEventBus, modContainer: ModContainer) {
     companion object {
         @EventBusSubscriber(modid = "lucky", bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
         object ClientModEvents {
+            @OnlyInClient
+            private fun setupClient(event: FMLClientSetupEvent) {
+                //println('------- setup bow')
+                /*
+                JavaLuckyRegistry.addons.map { addon ->
+                    if (addon.ids.bow != null) registerLuckyBowModels(ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.bow!!)) as LuckyBow)
+                }
+                 */
+            }
+
             @SubscribeEvent
             private fun onAddPackFinders(event: AddPackFindersEvent) {
                 JavaLuckyRegistry.addons.forEach { addon ->

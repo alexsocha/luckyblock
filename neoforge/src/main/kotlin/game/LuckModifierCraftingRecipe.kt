@@ -1,4 +1,4 @@
-package mod.lucky.forge.game
+package mod.lucky.neoforge.game
 
 import mod.lucky.neoforge.*
 import mod.lucky.java.game.getLuckModifierCraftingResult

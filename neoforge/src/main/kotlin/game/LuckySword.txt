@@ -1,6 +1,6 @@
-package mod.lucky.forge.game
+package mod.lucky.neoforge.game
 
-import mod.lucky.forge.*
+import mod.lucky.neoforge.*
 import mod.lucky.java.game.doSwordDrop
 import mod.lucky.java.JAVA_GAME_API
 import net.minecraft.world.entity.LivingEntity

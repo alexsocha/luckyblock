@@ -1,4 +1,4 @@
-package mod.lucky.forge.game
+package mod.lucky.neoforge.game
 
 import mod.lucky.common.Random
 import net.minecraft.util.RandomSource

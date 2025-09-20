@@ -1,8 +1,6 @@
-package mod.lucky.forge.game
+package mod.lucky.neoforge.game
 
 import com.mojang.serialization.MapCodec
-import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap
-import it.unimi.dsi.fastutil.objects.Reference2ObjectMap
 
 import mod.lucky.common.LuckyRegistry
 import mod.lucky.java.JAVA_GAME_API
@@ -12,12 +10,8 @@ import mod.lucky.java.game.onLuckyBlockBreak
 import mod.lucky.java.game.readFromTag
 import mod.lucky.neoforge.*
 import net.minecraft.core.BlockPos
-import net.minecraft.core.component.DataComponentMap
-import net.minecraft.core.component.DataComponentPatch
-import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
-import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
@@ -30,10 +24,7 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.level.redstone.Orientation
-import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.phys.BlockHitResult
-import java.util.*
-import kotlin.math.min
 
 private fun onBreak(
     block: MCBlock,

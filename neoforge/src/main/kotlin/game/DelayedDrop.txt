@@ -1,6 +1,6 @@
-package mod.lucky.forge.game
+package mod.lucky.neoforge.game
 
-import mod.lucky.forge.*
+import mod.lucky.neoforge.*
 import mod.lucky.java.game.*
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider

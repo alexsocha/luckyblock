@@ -7,7 +7,7 @@ import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.action.withBlockMode
-//import mod.lucky.forge.game.DelayedDrop
+//import mod.lucky.neoforge.game.DelayedDrop
 import mod.lucky.java.*
 import mod.lucky.java.game.ENCHANTMENTS
 import mod.lucky.java.game.spawnEggSuffix
