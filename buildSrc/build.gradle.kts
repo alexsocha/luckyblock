@@ -9,6 +9,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.ajoberstar.grgit:grgit-core:4.1.0")
+    implementation("org.ajoberstar.grgit:grgit-core:4.1.1")
     implementation("com.charleskorn.kaml:kaml:0.37.0")
 }

@@ -19,7 +19,7 @@ projects:
       minecraft-forge: 1.19.3-44.1.5
 
   lucky-block-fabric:
-    version: 1.19.3-13.0
+    version: 1.19.3-13.1
     dependencies:
       java:
         minInclusive: 17
