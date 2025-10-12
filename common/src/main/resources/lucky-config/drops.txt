@@ -1,5 +1,4 @@
 / TODO
-/ fix lucky bow arrows having incorrect rotation when shot
 / fix fireworks
 / test all structures
 / fix delayed drop

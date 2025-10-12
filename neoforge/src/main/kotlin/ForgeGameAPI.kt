@@ -1,5 +1,6 @@
 package mod.lucky.neoforge
 
+//import mod.lucky.neoforge.game.DelayedDrop
 import com.mojang.brigadier.StringReader
 import mod.lucky.common.*
 import mod.lucky.common.Entity
@@ -7,7 +8,6 @@ import mod.lucky.common.attribute.*
 import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.action.withBlockMode
-//import mod.lucky.neoforge.game.DelayedDrop
 import mod.lucky.java.*
 import mod.lucky.java.game.ENCHANTMENTS
 import mod.lucky.java.game.spawnEggSuffix
@@ -17,20 +17,20 @@ import net.minecraft.commands.CommandSource
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.ParticleArgument
 import net.minecraft.commands.arguments.selector.EntitySelectorParser
-import net.minecraft.core.Registry
-import net.minecraft.core.component.DataComponentMap
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.NbtUtils
 import net.minecraft.sounds.SoundSource
+import net.minecraft.util.Mth
 import net.minecraft.util.ProblemReporter.ScopedCollector
 import net.minecraft.util.RandomSource
 import net.minecraft.world.*
-import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffectCategory
+import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.projectile.Arrow
+import net.minecraft.world.item.BowItem
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.alchemy.PotionContents
 import net.minecraft.world.level.Level.ExplosionInteraction
@@ -218,6 +218,7 @@ object ForgeGameAPI : GameAPI {
             nbt.with(mapOf("sourceId" to stringAttrOf(sourceId))) else nbt
 
         val mcEntityNBT = JAVA_GAME_API.attrToNBT(nbt.with(mapOf("id" to stringAttrOf(id)))) as CompoundTag
+        val sourceItem = BuiltInRegistries.ITEM.getOptional(MCIdentifier.parse(sourceId))
 
         val serverWorld = toServerWorld(world)
         val entity = EntityType.loadEntityRecursive(mcEntityNBT, serverWorld, EntitySpawnReason.EVENT) { entity ->
@@ -230,6 +231,15 @@ object ForgeGameAPI : GameAPI {
             entity.absSnapTo(pos.x, pos.y, pos.z, yaw.toFloat(), entity.xRot)
             entity.yHeadRot = yaw.toFloat()
             entity.deltaMovement = velocity
+
+            if (sourceItem.isPresent && sourceItem.get() is BowItem) {
+                val d0 = velocity.horizontalDistance()
+                entity.yRot = ((Mth.atan2(velocity.x, velocity.z) * 180.0 / Math.PI.toFloat().toDouble()).toFloat())
+                entity.xRot = ((Mth.atan2(velocity.y, d0) * 180.0 / Math.PI.toFloat().toDouble()).toFloat())
+                entity.yRotO = entity.yRot
+                entity.xRotO = entity.xRot
+            }
+
             if (serverWorld.addFreshEntity(entity)) entity else null
         } ?: return
 
