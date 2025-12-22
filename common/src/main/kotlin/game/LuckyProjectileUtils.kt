@@ -40,7 +40,7 @@ fun LuckyProjectileData.tick(world: World, entity: Entity, shooter: Entity?, tic
                 )
                 runRandomDrop(trailDrops, luck = 0, context = context, showOutput = false)
             }
-        } else if ((ticksExisted - 2) % trailFreqPerTick.toInt() == 0) {
+        } else if (trailFreqPerTick > 0 && (ticksExisted - 2) % trailFreqPerTick.toInt() == 0) {
             val context = DropContext(
                 world = world,
                 player = shooter,
@@ -56,7 +56,7 @@ fun LuckyProjectileData.tick(world: World, entity: Entity, shooter: Entity?, tic
 
 fun LuckyProjectileData.onImpact(world: World, entity: Entity, user: Entity?, hitEntity: Entity?) {
     try {
-        if (impactDrops == null) return
+        if (impactDrops.isNullOrEmpty()) return
         val context = DropContext(
             world = world,
             player = user,

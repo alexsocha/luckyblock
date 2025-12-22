@@ -2,7 +2,6 @@
 / fix fireworks
 / test all structures
 / fix delayed drop
-/ fix lucky projectile
 / fix lucky potion & lucky sword
 / test all lucky bow/sword/potion drops
 / test all drops one more time

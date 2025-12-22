@@ -1,7 +1,6 @@
 package mod.lucky.neoforge
 
 import com.mojang.logging.LogUtils
-import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import mod.lucky.common.GAME_API
 import mod.lucky.common.LOGGER
@@ -9,12 +8,8 @@ import mod.lucky.common.PLATFORM_API
 import mod.lucky.java.JAVA_GAME_API
 import mod.lucky.java.JavaLuckyRegistry
 import mod.lucky.java.JavaPlatformAPI
-import mod.lucky.java.game.LuckyItemValues
-import mod.lucky.neoforge.ForgeLuckyRegistry.itemRegistry
-import mod.lucky.neoforge.ForgeLuckyRegistry.luckyBlock
+import mod.lucky.neoforge.ForgeLuckyRegistry.luckyProjectile
 import mod.lucky.neoforge.game.*
-import net.minecraft.client.data.models.ItemModelGenerators
-import net.minecraft.client.renderer.block.model.ItemModelGenerator
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -29,6 +24,8 @@ import net.minecraft.server.packs.repository.Pack
 import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.server.packs.repository.RepositorySource
 import net.minecraft.util.ExtraCodecs
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.MobCategory
 import net.minecraft.world.item.CreativeModeTabs
 import net.minecraft.world.item.crafting.CustomRecipe
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -38,15 +35,13 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.ModContainer
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.common.Mod
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
+import net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers
 import net.neoforged.neoforge.event.AddPackFindersEvent
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent
 import net.neoforged.neoforge.registries.DeferredBlock
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import net.neoforged.neoforge.registries.NeoForgeRegistries
-import net.neoforged.neoforge.registries.RegisterEvent
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -63,6 +58,7 @@ object ForgeLuckyRegistry {
     val itemRegistry = DeferredRegister.createItems(modId)
     val blockTypeRegistry = DeferredRegister.create(BuiltInRegistries.BLOCK_TYPE, modId)
     val blockEntityTypeRegistry = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, modId)
+    val entityTypeRegistry = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, modId)
     val biomeModifierRegistry = DeferredRegister.create(NeoForgeRegistries.BIOME_MODIFIER_SERIALIZERS, modId)
     val recipeRegistry = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, modId)
     val dataComponentTypeRegistry = DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, modId)
@@ -85,6 +81,14 @@ object ForgeLuckyRegistry {
             BlockEntityType(::LuckyBlockEntity, validBlocks.toSet())
         }
     )
+
+    val luckyProjectile = entityTypeRegistry.register(MCIdentifier.parse(JavaLuckyRegistry.projectileId).path) { id ->
+        EntityType.Builder.of(::LuckyProjectile, MobCategory.MISC)
+            .setTrackingRange(100)
+            .setUpdateInterval(20)
+            .setShouldReceiveVelocityUpdates(true)
+            .build(ResourceKey.create(Registries.ENTITY_TYPE, id))
+    }
 
     val luckyBow = itemRegistry.register(
         MCIdentifier.parse(JavaLuckyRegistry.bowId).path,
@@ -183,14 +187,9 @@ class ForgeMod(modEventBus: IEventBus, modContainer: ModContainer) {
     companion object {
         @EventBusSubscriber(modid = "lucky", bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
         object ClientModEvents {
-            @OnlyInClient
-            private fun setupClient(event: FMLClientSetupEvent) {
-                //println('------- setup bow')
-                /*
-                JavaLuckyRegistry.addons.map { addon ->
-                    if (addon.ids.bow != null) registerLuckyBowModels(ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.bow!!)) as LuckyBow)
-                }
-                 */
+            @SubscribeEvent
+            private fun registerEntityRenderers(event: RegisterRenderers) {
+                event.registerEntityRenderer(luckyProjectile.get(), ::LuckyProjectileRenderer)
             }
 
             @SubscribeEvent
@@ -241,6 +240,7 @@ class ForgeMod(modEventBus: IEventBus, modContainer: ModContainer) {
         ForgeLuckyRegistry.blockTypeRegistry.register(modEventBus)
         ForgeLuckyRegistry.blockEntityTypeRegistry.register(modEventBus)
         ForgeLuckyRegistry.itemRegistry.register(modEventBus)
+        ForgeLuckyRegistry.entityTypeRegistry.register(modEventBus)
         ForgeLuckyRegistry.biomeModifierRegistry.register(modEventBus)
         ForgeLuckyRegistry.recipeRegistry.register(modEventBus)
         ForgeLuckyRegistry.dataComponentTypeRegistry.register(modEventBus)
