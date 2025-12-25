@@ -14,6 +14,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.LongArrayTag
 import net.minecraft.nbt.NbtAccounter
 import net.minecraft.nbt.NbtIo
+import net.minecraft.nbt.NbtOps
 import net.minecraft.resources.ResourceKey
 import net.minecraft.util.ProblemReporter.ScopedCollector
 import net.minecraft.util.datafix.fixes.ItemIdFix
@@ -43,20 +44,25 @@ annotation class OnlyInServer
 fun isClientWorld(world: MCIWorld): Boolean = world.isClientSide
 
 fun nbtToComponents(tag: CompoundTag, access: HolderLookup.Provider): DataComponentMap {
-    ScopedCollector(ForgeLuckyRegistry.LOGGER).use {
-        val rootTag = CompoundTag()
-        rootTag.put("components", tag)
-        val input = TagValueInput.create(it, access, rootTag)
-        return input.read("components", DataComponentMap.CODEC)
-            .orElse(DataComponentMap.EMPTY) as DataComponentMap
+    try {
+        return DataComponentMap.CODEC
+            .parse(NbtOps.INSTANCE, tag)
+            .getOrThrow()
+    } catch (e: Exception) {
+        GAME_API.logError("Failed to parse NBT: ${e}")
+        return DataComponentMap.EMPTY
     }
 }
 
 fun componentsToNbt(components: DataComponentMap, access: HolderLookup.Provider): CompoundTag {
-    ScopedCollector(ForgeLuckyRegistry.LOGGER ).use { reporter ->
-        val output = TagValueOutput.createWithContext(reporter, access)
-        output.store("components", DataComponentMap.CODEC, components)
-        return output.buildResult().get("components") as CompoundTag
+    try {
+        return (DataComponentMap.CODEC
+            .encodeStart(NbtOps.INSTANCE, components)
+            .result() as Optional<CompoundTag>)
+            .orElseThrow()
+    } catch (e: Exception) {
+        GAME_API.logError("Failed to parse components: ${e}")
+        return CompoundTag()
     }
 }
 

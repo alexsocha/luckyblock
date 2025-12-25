@@ -1,6 +1,7 @@
 package mod.lucky.neoforge
 
 import com.mojang.logging.LogUtils
+import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import mod.lucky.common.GAME_API
 import mod.lucky.common.LOGGER
@@ -118,7 +119,7 @@ object ForgeLuckyRegistry {
         "drops",
         { id ->
             DataComponentType.Builder<List<String>>()
-                .persistent(ExtraCodecs.ESCAPED_STRING.listOf())
+                .persistent(Codec.STRING.listOf())
                 .networkSynchronized(ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list()))
                 .build()
         }
