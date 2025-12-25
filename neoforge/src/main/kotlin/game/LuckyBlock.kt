@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.level.redstone.Orientation
+import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.phys.BlockHitResult
 
 private fun onBreak(

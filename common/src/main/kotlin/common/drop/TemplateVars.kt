@@ -271,8 +271,8 @@ fun registerCommonTemplateVars(gameType: GameType) {
     }
 
     LuckyRegistry.registerTemplateVar("randFireworksRocket") { _, context ->
-        val fireworkType = ValueAttr(AttrType.BYTE, context.random.randInt(0..4).toByte())
-        val fireworkFlicker = booleanAttrOf(context.random.randInt(0..1) == 1)
+        val fireworkShape = ValueAttr(AttrType.STRING, chooseRandomFrom(context.random, listOf("small_ball", "large_ball", "star", "creeper", "burst")))
+        val fireworkTwinkle = booleanAttrOf(context.random.randInt(0..1) == 1)
         val fireworkTrail = booleanAttrOf(context.random.randInt(0..1) == 1)
 
         val colorAmount = context.random.randInt(1..4)
@@ -285,27 +285,19 @@ fun registerCommonTemplateVars(gameType: GameType) {
             }.toByteArray())
         }
 
-        val explosion = when(gameType) {
-            GameType.JAVA -> dictAttrOf(
-                "Type" to fireworkType,
-                "Flicker" to fireworkFlicker,
-                "Trail" to fireworkTrail,
-                "Colors" to fireworkColors,
-            )
-            GameType.BEDROCK -> dictAttrOf(
-                "FireworkType" to fireworkType,
-                "FireworkFlicker" to fireworkFlicker,
-                "FireworkTrail" to fireworkTrail,
-                "FireworkColor" to fireworkColors,
-            )
-        }
-
-        val firework = dictAttrOf(
-            "Explosions" to listAttrOf(explosion),
-            "Flight" to ValueAttr(AttrType.BYTE, context.random.randInt(1..2).toByte())
+        val explosion = dictAttrOf(
+            "shape" to fireworkShape,
+            "has_twinkle" to fireworkTwinkle,
+            "has_trail" to fireworkTrail,
+            "colors" to fireworkColors,
         )
 
-        dictAttrOf("Fireworks" to firework)
+        val firework = dictAttrOf(
+            "explosions" to listAttrOf(explosion),
+            "flight_duration" to ValueAttr(AttrType.BYTE, context.random.randInt(1..2).toByte())
+        )
+
+        dictAttrOf("minecraft:fireworks" to firework)
     }
 
     registerEnchantments(
