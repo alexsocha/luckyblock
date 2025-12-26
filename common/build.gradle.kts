@@ -3,44 +3,32 @@ import mod.lucky.build.*
 val rootProjectProps = RootProjectProperties.fromProjectYaml(rootProject.rootDir)
 
 plugins {
-    // waiting on https://github.com/gradle/gradle/issues/9830 to use project.yaml for versions
-    kotlin("multiplatform")
+    kotlin("jvm")
 }
 
 repositories {
     mavenCentral()
 }
 
-kotlin {
-    jvm {}
-
-    sourceSets {
-        val commonMain by getting
-
-        val jvmMain by getting
-        val jvmTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-                // todo: separate common and JVM tests when mockk adds multiplatform support
-                // implementation("io.mockk:mockk-common:1.+")
-                implementation(kotlin("test-junit"))
-                implementation("io.mockk:mockk:1.+")
-            }
-        }
-    }
+dependencies {
+    testImplementation(kotlin("test-common"))
+    testImplementation(kotlin("test-annotations-common"))
+    // todo: separate common and JVM tests when mockk adds multiplatform support
+    // implementation("io.mockk:mockk-common:1.+")
+    testImplementation(kotlin("test-junit"))
+    testImplementation("io.mockk:mockk:1.+")
 }
 
-tasks.register<Copy>("jvmTestCopyRuntimeResources") {
+tasks.register<Copy>("testCopyRuntimeResources") {
     into("./build/test-run")
     into("config/lucky/0.0.0-0-test") {
-        from("./src/jvmMain/resources/lucky-config")
+        from("./src/main/resources/lucky-config")
     }
     into("addons/lucky/${ProjectName.CUSTOM_LUCKY_BLOCK_JAVA.fullName}") {
-        from("./src/jvmMain/resources/${ProjectName.CUSTOM_LUCKY_BLOCK_JAVA.fullName}")
+        from("./src/main/resources/${ProjectName.CUSTOM_LUCKY_BLOCK_JAVA.fullName}")
     }
 }
-tasks.getByName("jvmTest").dependsOn(tasks.getByName("jvmTestCopyRuntimeResources"))
+tasks.getByName("test").dependsOn(tasks.getByName("testCopyRuntimeResources"))
 
 tasks.register<Zip>("buildCustomLuckyBlockJava") {
     val version = rootProjectProps.projects[ProjectName.CUSTOM_LUCKY_BLOCK_JAVA]!!.version
@@ -54,11 +42,11 @@ tasks.register<Zip>("buildCustomLuckyBlockJava") {
         file(distDir).mkdirs()
         file("$distDir/meta.yaml").writeText(distMeta.toYaml())
     }
-    from("src/jvmMain/resources/${ProjectName.CUSTOM_LUCKY_BLOCK_JAVA.fullName}")
+    from("src/main/resources/${ProjectName.CUSTOM_LUCKY_BLOCK_JAVA.fullName}")
     from("$rootDir/dist/$distName/meta.yaml")
 }
 
-tasks.getByName<ProcessResources>("jvmProcessResources") {
+tasks.getByName<ProcessResources>("processResources") {
     exclude("*")
     dependsOn(tasks.getByName("buildCustomLuckyBlockJava"))
 }

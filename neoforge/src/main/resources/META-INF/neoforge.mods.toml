@@ -1,0 +1,24 @@
+modLoader="kotlinforforge"
+loaderVersion="[${minLoaderVersion},)"
+license="All rights reserved"
+
+[[mods]]
+modId="lucky"
+version="${modVersion}"
+displayName="Lucky Block"
+authors="Alex Socha"
+description="Adds a block with random outcomes"
+
+[[dependencies.lucky]]
+    modId="neoforge"
+    mandatory=true
+    versionRange="[${minNeoforgeVersion},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.lucky]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[${minMinecraftVersion},)"
+    ordering="NONE"
+    side="BOTH"

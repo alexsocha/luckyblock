@@ -69,7 +69,7 @@ fun getModVersionAsInt(modVersion: String): Int {
 
 @Serializable
 enum class ProjectName(val fullName: String, val shortName: String? = null) {
-    @SerialName("lucky-block-forge") LUCKY_BLOCK_FORGE("lucky-block-forge", "forge"),
+    @SerialName("lucky-block-neoforge") LUCKY_BLOCK_NEOFORGE("lucky-block-neoforge", "neoforge"),
     @SerialName("lucky-block-fabric") LUCKY_BLOCK_FABRIC("lucky-block-fabric", "fabric"),
     @SerialName("lucky-block-bedrock") LUCKY_BLOCK_BEDROCK("lucky-block-bedrock", "bedrock"),
     @SerialName("custom-lucky-block-java") CUSTOM_LUCKY_BLOCK_JAVA("custom-lucky-block-java"),

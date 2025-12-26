@@ -88,7 +88,7 @@ To use IntelliJ, ensure that the Gradle plugin is enabled, and import the direct
     - `online-mode=false`
 - Start the `runServer` again
 - Optionally, run `/op <player>`
-- Start a Mincecraft client, and add a server with the address `:25565`
+- Start a Mincecraft client, and add a server with the address `0.0.0.0:25565`
 
 ### Bedrock
 

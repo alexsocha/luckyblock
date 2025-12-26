@@ -1,0 +1,7 @@
+>properties
+length=1
+height=1
+width=5
+
+>blocks
+0,0,0,oak_sign,(),(front_text=(messages=[(text="",italic=false),(text="Look up.",italic=false),(text="",italic=false),(text="",italic=false)]))

@@ -31,16 +31,29 @@ enum class CurseForgeGameVersionType(val id: Int) {
     MINECRAFT(1),
     JAVA(2),
     FORGE(3),
+    NEOFORGE(10150),
     FABRIC_LOADER(73247),
     LOADER_TYPE(68441), // Forge, Fabric, Rift
 }
 
 fun getCurseForgeLoaderType(loader: LuckyBlockLoader): String {
     return when(loader) {
-        LuckyBlockLoader.FORGE -> "Forge"
+        LuckyBlockLoader.NEOFORGE -> "NeoForge"
         LuckyBlockLoader.FABRIC -> "Fabric"
     }
 }
+
+@Serializable
+data class CurseForgeProject(
+    val slug: String,
+    val projectID: Int,
+    val type: String
+)
+
+@Serializable
+data class CurseForgeRelations(
+    val projects: List<CurseForgeProject>
+)
 
 @Serializable
 data class CurseForgeUploadMetadata(
@@ -50,6 +63,13 @@ data class CurseForgeUploadMetadata(
     val parentFileID: Int? = null, // Optional: The parent file of this file.
     val gameVersions: List<Int>, // A list of supported game versions, see the Game Versions API for details. Not supported if parentFileID is provided.
     val releaseType: String, // One of "alpha", "beta", "release".
+    val relations: CurseForgeRelations? = null
+)
+
+val KOTLIN_FOR_FORGE = CurseForgeProject(
+    slug = "kotlin-for-forge",
+    projectID = 351264,
+    type = "requiredDependency"
 )
 
 class CurseForgeClient(private val token: String) {

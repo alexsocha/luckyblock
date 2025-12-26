@@ -2,23 +2,21 @@ pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-        maven("https://maven.fabricmc.net")
+        maven("https://maven.neoforged.net/releases")
     }
 
     plugins {
-        kotlin("multiplatform") version "1.8.10"
-        kotlin("jvm") version "1.8.10"
+        kotlin("jvm") version "2.0.21"
     }
 }
 
 plugins {
-    kotlin("multiplatform") apply false
     kotlin("jvm") apply false
 }
 
 rootProject.name = "lucky-block"
 include("common")
 include("tools")
-include("forge")
-include("fabric")
+include("neoforge")
+//include("fabric")
 //include("bedrock")

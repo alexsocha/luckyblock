@@ -1,8 +1,0 @@
->properties
-length=1
-height=2
-width=1
-
->blocks
-0,0,0,bedrock
-0,1,0,oak_sign,(),(front_text=(messages=[#jsonStr(text=""),#jsonStr(text="Well, there's"),#jsonStr(text="your problem."),#jsonStr(text="")]))

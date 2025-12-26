@@ -1,0 +1,16 @@
+{
+    "type": "crafting_shaped",
+    "pattern": [
+        "###",
+        "#D#",
+        "###"
+    ],
+    "key": {
+        "#": "minecraft:gold_ingot",
+        "D": "minecraft:dropper"
+    },
+    "result": {
+        "id": "lucky:lucky_block",
+        "count": 1
+    }
+}

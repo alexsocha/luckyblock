@@ -31,6 +31,7 @@ fun findCompatibleGameVersions(
         }
     }
 
+    println(gameVersions.filter { it.name.lowercase().contains("kotlinforforge") })
     val loaders = gameVersions.filter {
         it.gameVersionTypeID == CurseForgeGameVersionType.LOADER_TYPE.id &&
         it.name == getCurseForgeLoaderType(luckyBlockDist.loader)
@@ -38,6 +39,11 @@ fun findCompatibleGameVersions(
 
     // TODO: CurseForge currently doesn't allow you to specify Forge/Fabric as a dependency
     return javaVersions + minecraftVersions + loaders
+}
+
+fun findRelatedProjects(gameVersions: List<CurseForgeGameVersion>): List<CurseForgeProject> {
+    val needsKotlin = gameVersions.any { it.id == CurseForgeGameVersionType.NEOFORGE.id }
+    return if (needsKotlin) listOf(KOTLIN_FOR_FORGE) else emptyList()
 }
 
 fun uploadToCurseForge(
@@ -48,11 +54,14 @@ fun uploadToCurseForge(
     val gameVersions = curseForgeClient.getGameVersions()
 
     val compatibleGameVersions = findCompatibleGameVersions(gameVersions, luckyBlockDist)
+    val relatedProjects = findRelatedProjects(compatibleGameVersions)
+
     val uploadMeta = CurseForgeUploadMetadata(
         changelog = "",
         displayName = luckyBlockDist.jarFile.nameWithoutExtension,
         gameVersions = compatibleGameVersions.map { it.id },
         releaseType = "release",
+        relations = if (relatedProjects.isNotEmpty()) CurseForgeRelations(relatedProjects) else null
     )
     curseForgeClient.uploadDist(luckyBlockDist.jarFile, uploadMeta)
 }

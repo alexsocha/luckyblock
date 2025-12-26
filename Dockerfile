@@ -1,7 +1,7 @@
 #
 # Base
 #
-FROM openjdk:17-jdk-slim as base
+FROM eclipse-temurin:21-jdk-jammy AS base
 
 RUN apt-get update && apt-get install -y git
 
@@ -17,7 +17,7 @@ COPY ./settings.gradle.kts ./gradle.properties ./project.yaml ./
 COPY ./buildSrc ./buildSrc
 COPY ./common/build.gradle.kts ./common/build.gradle.kts
 COPY ./tools/build.gradle.kts ./tools/build.gradle.kts
-COPY ./forge/build.gradle.kts ./forge/build.gradle.kts
+COPY ./neoforge/build.gradle.kts ./neoforge/build.gradle.kts
 COPY ./fabric/build.gradle.kts ./fabric/build.gradle.kts
 COPY ./bedrock/build.gradle.kts ./bedrock/build.gradle.kts
 
@@ -26,7 +26,7 @@ RUN ./gradlew dependencies --info
 #
 # Test
 #
-FROM base as test
+FROM base AS test
 
 WORKDIR /app
 COPY . .
@@ -37,10 +37,10 @@ RUN ./gradlew :tools:test --info
 #
 # Build
 #
-FROM base as build
+FROM base AS build
 
 WORKDIR /app
 COPY . .
-RUN ./gradlew :forge:build
-RUN ./gradlew :fabric:build
+RUN ./gradlew :neoforge:build
+#RUN ./gradlew :fabric:build
 #RUN ./gradlew :bedrock:build
