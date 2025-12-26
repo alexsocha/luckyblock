@@ -1,6 +1,6 @@
 {
     "parent": "lucky:item/lucky_bow",
     "textures": {
-        "layer0": "lucky:item/custom_lucky_bow_standby"
+        "layer0": "lucky:item/custom_lucky_bow"
     }
 }
