@@ -1,6 +1,6 @@
 projects:
   lucky-block-neoforge:
-    version: 1.21.6-13.0
+    version: 1.21.11-13.0
     dependencies:
       java:
         minInclusive: 21
@@ -15,10 +15,12 @@ projects:
         minInclusive: 21.1.6
         maxExclusive: 22.0.0
     lockedDependencies:
-      neoforge: 21.6.4-beta
+      neoforge: 21.11.13-beta
       kotlinforforge: 5.6.0
-      parchment-minecraft: 1.21.5
-      parchment-mappings: 2025.06.15
+      # e.g. https://github.com/NeoForgeMDKs/MDK-1.21.11-ModDevGradle/blob/main/gradle.properties
+      parchment-minecraft: 1.21.11
+      parchment-mappings: 2025.12.20
+      moddevgradle: 2.0.134
 
   lucky-block-fabric:
     version: 1.20.2-13.0

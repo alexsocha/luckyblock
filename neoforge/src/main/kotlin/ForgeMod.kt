@@ -219,7 +219,7 @@ class CommonModEvents {
 @Mod("lucky")
 class ForgeMod(modEventBus: IEventBus, modContainer: ModContainer) {
     companion object {
-        @EventBusSubscriber(modid = "lucky", bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
+        @EventBusSubscriber(modid = "lucky", value = [Dist.CLIENT])
         object ClientModEvents {
             @SubscribeEvent
             private fun registerEntityRenderers(event: RegisterRenderers) {

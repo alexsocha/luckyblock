@@ -11,17 +11,20 @@ import mod.lucky.java.game.tick
 import mod.lucky.java.game.writeToTag
 import mod.lucky.neoforge.*
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.SubmitNodeCollector
+import net.minecraft.client.renderer.entity.CamelRenderer
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.client.renderer.entity.state.ItemEntityRenderState
+import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.core.component.DataComponentMap
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.projectile.Arrow
+import net.minecraft.world.entity.projectile.arrow.Arrow
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
@@ -123,16 +126,16 @@ class LuckyProjectileRenderer(ctx: EntityRendererProvider.Context) : EntityRende
     ctx) {
     private var itemModelResolver = ctx.itemModelResolver;
 
-    override fun render(
+    override fun submit(
         renderState: LuckyProjectileRenderState,
         poseStack: PoseStack,
-        bufferSource: MultiBufferSource,
-        packedLight: Int
+        nodeCollector: SubmitNodeCollector,
+        cameraRenderState: CameraRenderState
     ) {
         renderState.itemEntity?.let {
             try {
-                entityRenderDispatcher.getRenderer(it).render(
-                    it, poseStack, bufferSource, packedLight
+                entityRenderDispatcher.getRenderer(it).submit(
+                    it, poseStack, nodeCollector, cameraRenderState
                 )
             } catch (e: Exception) {
                 GAME_API.logError("Failed to render LuckyProjectile: ${e}")

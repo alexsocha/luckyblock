@@ -9,10 +9,12 @@ import mod.lucky.java.fromAttr
 import mod.lucky.neoforge.*
 import mod.lucky.java.game.*
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.client.renderer.entity.state.ItemEntityRenderState
+import net.minecraft.client.renderer.state.CameraRenderState
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.damagesource.DamageSource
@@ -80,11 +82,11 @@ open class DelayedDropRenderState : EntityRenderState() {}
 @OnlyInClient
 class DelayedDropRenderer(ctx: EntityRendererProvider.Context) : EntityRenderer<DelayedDrop, DelayedDropRenderState>(
     ctx) {
-    override fun render(
+    override fun submit(
         renderState: DelayedDropRenderState,
         poseStack: PoseStack,
-        bufferSource: MultiBufferSource,
-        packedLight: Int
+        nodeCollector: SubmitNodeCollector,
+        cameraRenderState: CameraRenderState
     ) {}
 
     override fun createRenderState(): DelayedDropRenderState {

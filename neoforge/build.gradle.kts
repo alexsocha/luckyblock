@@ -13,8 +13,7 @@ buildscript {
 plugins {
     kotlin("jvm")
     id("mod.lucky.build.JavaEditionTasks")
-    id("net.neoforged.moddev") version "1.0.21"
-    //id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+    id("net.neoforged.moddev") version "2.0.134"
 }
 
 dependencies {

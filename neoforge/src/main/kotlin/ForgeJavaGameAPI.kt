@@ -16,7 +16,7 @@ import net.minecraft.resources.RegistryOps
 import net.minecraft.resources.ResourceKey
 import net.minecraft.util.datafix.fixes.ItemIdFix
 import net.minecraft.util.datafix.fixes.ItemStackTheFlatteningFix
-import net.minecraft.world.entity.projectile.Arrow
+import net.minecraft.world.entity.projectile.arrow.Arrow
 import net.minecraft.world.item.enchantment.EnchantmentHelper
 import net.minecraft.world.item.enchantment.Enchantments
 import net.minecraft.world.level.block.Blocks
@@ -90,7 +90,7 @@ object ForgeJavaGameAPI : JavaGameAPI {
     }
 
     override fun getGameDir(): File {
-        return FMLLoader.getGamePath().toFile()
+        return FMLLoader.getCurrent().gameDir.toFile()
     }
 
     override fun attrToNBT(attr: Attr): Tag {

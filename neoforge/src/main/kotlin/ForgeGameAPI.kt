@@ -19,6 +19,7 @@ import net.minecraft.commands.arguments.selector.EntitySelectorParser
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.NbtUtils
+import net.minecraft.server.permissions.PermissionSet
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.Mth
 import net.minecraft.util.ProblemReporter.ScopedCollector
@@ -28,7 +29,7 @@ import net.minecraft.world.effect.MobEffectCategory
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.item.FallingBlockEntity
-import net.minecraft.world.entity.projectile.Arrow
+import net.minecraft.world.entity.projectile.arrow.Arrow
 import net.minecraft.world.item.BowItem
 import net.minecraft.world.item.DyeColor
 import net.minecraft.world.item.alchemy.PotionContents
@@ -43,7 +44,7 @@ import net.minecraft.world.level.storage.TagValueInput
 import java.awt.Color
 import kotlin.jvm.optionals.getOrNull
 
-typealias MCIdentifier = net.minecraft.resources.ResourceLocation
+typealias MCIdentifier = net.minecraft.resources.Identifier
 typealias MCEnchantment = net.minecraft.world.item.enchantment.Enchantment
 typealias MCBlock = net.minecraft.world.level.block.Block
 typealias MCItem = net.minecraft.world.item.Item
@@ -107,7 +108,7 @@ private fun createCommandSource(
         toMCVec3d(pos),
         MCVec2f.ZERO, // (pitch, yaw)
         world,
-        2,  // permission level
+        PermissionSet.ALL_PERMISSIONS,
         senderName, MCChatComponent.literal(senderName),
         world.server,
         null, // entity
@@ -193,7 +194,8 @@ object ForgeGameAPI : GameAPI {
     override fun setEntityMotion(entity: Entity, motion: Vec3d) {
         (entity as MCEntity).deltaMovement = toMCVec3d(motion)
         entity.hurtMarked = true
-        entity.hasImpulse = true
+        // todo: check if ok to remove
+        //entity.hasImpulse = true
     }
 
     override fun getWorldTime(world: World): Long {
