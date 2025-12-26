@@ -1,5 +1,4 @@
 / TODO
-/ test all structures
 / fix lucky sword
 / test all lucky sword drops
 / test all drops one more time
@@ -321,7 +320,7 @@ type=entity,ID=armor_stand,NBTTag=(Small=true,NoBasePlate=true,ShowArms=true,equ
     head=(id=player_head,count=1,tag=(SkullOwner=#pName))
 ),Rotation=[#pYaw+180f,0f],CustomName=(text="Baby #pName"),CustomNameVisible=true)@luck=0
 
-/ ==== Monster Apocalyple ====
+/ ==== Monster Apocalypse ====
 
 group(
     / sword, difficulty, time, potion effects
@@ -388,7 +387,7 @@ group:1:(type=structure,ID=lucky_choice_left,rotation=#pDirect;type=structure,ID
 / wishing wells
 group(
     type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";
-    type=command,ID=/give #pName gold_nugget{display:{Name:"{\"text\":\"Coin\",\"color\":\"gold\"}"}};
+    type=command,ID=/give #pName gold_nugget[minecraft:item_name={"text":"Coin","italic":false,"color":"gold"}];
     type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(components=(lucky:drops=["group(
         type=message,ID=\"$bYour wish came true!\";
         type=block,ID=air,posY='#'bPosY+3;
@@ -403,7 +402,7 @@ group(
 
 group(
     type=structure,ID=wishing_well;type=message,ID="A wishing well? Maybe you should throw in a coin...";
-    type=command,ID=/give #pName gold_nugget{display:{Name:"{\"text\":\"Coin\",\"color\":\"gold\"}"}};
+    type=command,ID=/give #pName gold_nugget[minecraft:item_name={"text":"Coin","italic":false,"color":"gold"}];
     type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(components=(lucky:drops=["group(
         type=message,ID=\"$eYour wish came true! (If you like potatoes)\";
         type=block,ID=air,posY='#'bPosY+3;
@@ -417,8 +416,8 @@ group(
 group(
     type=structure,ID=wishing_well;
     type=message,ID="A wishing well? Maybe you should throw in a coin...";
-    type=command,ID=/give #pName gold_nugget{display:{Name:"{\"text\":\"Coin\",\"color\":\"gold\"}"}};
-    type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(components=(drops=["group(
+    type=command,ID=/give #pName gold_nugget[minecraft:item_name={"text":"Coin","italic":false,"color":"gold"}];
+    type=block,ID=lucky:lucky_block,posY=#bPosY-3,NBTTag=(components=(lucky:drops=["group(
         type=message,ID=\"$4Your death wish came true!\";
         type=block,ID=air,posY='#'bPosY+3;
         type=block,ID=beacon,posY='#'bPosY+2;

@@ -33,7 +33,7 @@ object LuckyRegistry {
 
     val parserContext = ParserContext(
         templateVarSpecs = templateVarSpecs,
-        escapeTemplatesInKeys = listOf("Drops", "drops", "impact").associateWith { true },
+        escapeTemplatesInKeys = listOf("lucky:drops", "impact").associateWith { true },
         escapeTemplatesInType = AttrType.LIST,
     )
     val simpleEvalContext = EvalContext(templateVarFns, null)

@@ -5,5 +5,5 @@ width=1
 
 >blocks
 0,0,0,lucky:lucky_block,(),(Luck=-100)
-1,0,0,oak_sign,(),(front_text=(messages=[#jsonStr(text=""),#jsonStr(text="One is lucky."),#jsonStr(text="One is not."),#jsonStr(text="")]))
+1,0,0,oak_sign,(),(front_text=(messages=[(text="",italic=false),(text="One is lucky.",italic=false),(text="One is not.",italic=false),(text="",italic=false)]))
 2,0,0,lucky:lucky_block,(),(Luck=100)

@@ -7,7 +7,7 @@ width=8
 
 / === lucky block ===
 
-4,3,6,lucky:lucky_block,(),(Drops=["group( \
+4,3,6,lucky:lucky_block,(),(components=(lucky:drops=["group( \
 
 / break stages
 group( \
@@ -22,7 +22,7 @@ ID=giant_block_break_stage_5,delay=4 \
 type=fill,ID=air,pos=[#]sPos(0,0,0),pos2=[#]sPos(7,7,7),delay=5; \
 
 / tnt
-type=entity,ID=tnt,pos=[#]sPos(4,4,4),NBTTag=(Fuse=50b,Motion=#randLaunchMotion),amount=15,delay=5)"])
+type=entity,ID=tnt,pos=[#]sPos(4,4,4),NBTTag=(Fuse=50b,Motion=#randLaunchMotion),amount=15,delay=5)"]))
 
 / === lever ===
 4,3,8,lever,(facing=south)
