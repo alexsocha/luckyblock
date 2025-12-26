@@ -1,6 +1,5 @@
 / TODO
 / test all structures
-/ fix delayed drop
 / fix lucky potion & lucky sword
 / test all lucky bow/sword/potion drops
 / test all drops one more time

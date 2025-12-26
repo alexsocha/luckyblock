@@ -17,7 +17,9 @@ data class DropContext(
     val world: World,
     val pos: Vec3d,
     val player: PlayerEntity? = null,
+    val playerUUID: String? = null,
     val hitEntity: Entity? = null,
+    val hitEntityUUID: String? = null,
     val bowPower: Double = 1.0,
     val sourceId: String,
 ) { companion object }

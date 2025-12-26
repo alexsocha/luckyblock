@@ -125,8 +125,6 @@ class LuckyProjectileRenderer(ctx: EntityRendererProvider.Context) : EntityRende
         bufferSource: MultiBufferSource,
         packedLight: Int
     ) {
-        println("will render!")
-        println(renderState.itemEntity)
         renderState.itemEntity?.let {
             try {
                 entityRenderDispatcher.getRenderer(it).render(

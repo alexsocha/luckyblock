@@ -9,6 +9,7 @@ import mod.lucky.common.PLATFORM_API
 import mod.lucky.java.JAVA_GAME_API
 import mod.lucky.java.JavaLuckyRegistry
 import mod.lucky.java.JavaPlatformAPI
+import mod.lucky.neoforge.ForgeLuckyRegistry.delayedDrop
 import mod.lucky.neoforge.ForgeLuckyRegistry.luckyProjectile
 import mod.lucky.neoforge.game.*
 import net.minecraft.core.component.DataComponentType
@@ -88,6 +89,13 @@ object ForgeLuckyRegistry {
             .setTrackingRange(100)
             .setUpdateInterval(20)
             .setShouldReceiveVelocityUpdates(true)
+            .build(ResourceKey.create(Registries.ENTITY_TYPE, id))
+    }
+
+    val delayedDrop = entityTypeRegistry.register(MCIdentifier.parse(JavaLuckyRegistry.delayedDropId).path) { id ->
+        EntityType.Builder.of(::DelayedDrop, MobCategory.MISC)
+            .setTrackingRange(100)
+            .setUpdateInterval(20)
             .build(ResourceKey.create(Registries.ENTITY_TYPE, id))
     }
 
@@ -191,6 +199,7 @@ class ForgeMod(modEventBus: IEventBus, modContainer: ModContainer) {
             @SubscribeEvent
             private fun registerEntityRenderers(event: RegisterRenderers) {
                 event.registerEntityRenderer(luckyProjectile.get(), ::LuckyProjectileRenderer)
+                event.registerEntityRenderer(delayedDrop.get(), ::DelayedDropRenderer)
             }
 
             @SubscribeEvent

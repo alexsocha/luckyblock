@@ -5,14 +5,14 @@ import mod.lucky.common.World
 import mod.lucky.common.attribute.DictAttr
 import mod.lucky.common.attribute.dictAttrOf
 import mod.lucky.common.attribute.intAttrOf
-import mod.lucky.common.drop.DropContext
-import mod.lucky.common.drop.SingleDrop
-import mod.lucky.common.drop.runDropAfterDelay
 import mod.lucky.common.GAME_API
+import mod.lucky.common.attribute.stringAttrOf
+import mod.lucky.common.drop.*
 import mod.lucky.java.*
 
 data class DelayedDropData(
-    val singleDrop: SingleDrop,
+    val singleDropString: String? = null,
+    val singleDrop: SingleDrop? = null,
     val context: DropContext,
     var ticksRemaining: Int,
 ) {
@@ -26,7 +26,10 @@ fun DelayedDropData.tick(world: World) {
         if (ticksRemaining > 0) {
             ticksRemaining--
             if (ticksRemaining == 0) {
-                runDropAfterDelay(singleDrop, context.copy(world = world))
+                val player = context.player ?: context.playerUUID?.let { JAVA_GAME_API.findEntityByUUID(world, it)}
+                val hitEntity = context.hitEntity ?: context.hitEntityUUID?.let { JAVA_GAME_API.findEntityByUUID(world, it)}
+                val parsedDrop = singleDrop ?: singleDropString?.let { SingleDrop.fromString(it) }
+                parsedDrop?.let { runDropAfterDelay(it, context.copy(world = world, player = player, hitEntity = hitEntity)) }
             }
         }
     } catch (e: Exception) {
@@ -36,7 +39,7 @@ fun DelayedDropData.tick(world: World) {
 
 fun DelayedDropData.toAttr(): DictAttr {
     return dictAttrOf(
-        "drop" to singleDrop.toAttr(),
+        "drop" to stringAttrOf(singleDropString ?: ""),
         "context" to context.toAttr(),
         "ticksRemaining" to intAttrOf(ticksRemaining),
     )
@@ -45,7 +48,7 @@ fun DelayedDropData.toAttr(): DictAttr {
 fun DelayedDropData.Companion.fromAttr(attr: DictAttr, world: World): DelayedDropData {
     return try {
         DelayedDropData(
-            singleDrop=SingleDrop.fromAttr(attr.getDict("drop")),
+            singleDropString=attr.getValue("drop"),
             context=DropContext.fromAttr(attr.getDict("context"), world),
             ticksRemaining=attr.getValue("ticksRemaining"),
         )
@@ -57,7 +60,6 @@ fun DelayedDropData.Companion.fromAttr(attr: DictAttr, world: World): DelayedDro
 
 fun DelayedDropData.Companion.createDefault(world: World): DelayedDropData {
     return DelayedDropData(
-        singleDrop = SingleDrop.nothingDrop,
         context = DropContext(world, Vec3d(0.0, 0.0, 0.0), sourceId = JavaLuckyRegistry.blockId),
         ticksRemaining = 0
     )

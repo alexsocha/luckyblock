@@ -9,10 +9,8 @@ import mod.lucky.common.drop.DropContext
 import mod.lucky.common.drop.SingleDrop
 import mod.lucky.common.drop.action.withBlockMode
 import mod.lucky.java.*
-import mod.lucky.java.game.ENCHANTMENTS
-import mod.lucky.java.game.spawnEggSuffix
-import mod.lucky.java.game.usefulStatusEffectIds
-import mod.lucky.java.game.uselessPostionNames
+import mod.lucky.java.game.*
+import mod.lucky.neoforge.game.DelayedDrop
 import net.minecraft.commands.CommandSource
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.ParticleArgument
@@ -262,13 +260,15 @@ object ForgeGameAPI : GameAPI {
     }
 
     override fun scheduleDrop(drop: SingleDrop, context: DropContext, seconds: Double) {
-        return
-        /* TODO
         val world = toServerWorld(context.world)
-        val delayedDrop = DelayedDrop(world = world, data = DelayedDropData(drop, context, (seconds * 20).toInt()))
+        val delayedDrop = DelayedDrop(world = world, data = DelayedDropData(
+            singleDrop = drop,
+            singleDropString = drop.propsString,
+            context=context,
+            ticksRemaining = (seconds * 20).toInt())
+        )
         delayedDrop.setPos(context.pos.x, context.pos.y, context.pos.z)
         world.addFreshEntity(delayedDrop)
-         */
     }
 
     override fun setBlock(world: World, pos: Vec3i, id: String, state: DictAttr?, components: DictAttr?, rotation: Int, notify: Boolean) {

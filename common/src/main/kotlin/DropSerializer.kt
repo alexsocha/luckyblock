@@ -48,8 +48,10 @@ fun DropContext.Companion.fromAttr(attr: DictAttr, world: World): DropContext {
         pos = attr.getVec3("dropPos"),
         world = world,
         bowPower = attr.getValue("bowPower"),
-        player = playerUUID?.let { JAVA_GAME_API.findEntityByUUID(world, it) as PlayerEntity },
+        player = playerUUID?.let { JAVA_GAME_API.findEntityByUUID(world, it) },
+        playerUUID = playerUUID,
         hitEntity = hitEntityUUID?.let { JAVA_GAME_API.findEntityByUUID(world, it) },
+        hitEntityUUID = hitEntityUUID,
         sourceId = attr.getValue("sourceId"),
     )
 }
@@ -58,8 +60,8 @@ fun DropContext.toAttr(): DictAttr {
     return dictAttrOf(
         "dropPos" to vec3AttrOf(AttrType.DOUBLE, pos),
         "bowPower" to doubleAttrOf(bowPower),
-        "playerUUID" to player?.let { stringAttrOf(JAVA_GAME_API.getEntityUUID(it)) },
-        "hitEntityUUID" to hitEntity?.let { stringAttrOf(JAVA_GAME_API.getEntityUUID(it)) },
+        "playerUUID" to (player?.let { stringAttrOf(JAVA_GAME_API.getEntityUUID(it)) } ?: playerUUID?.let {stringAttrOf(it)}),
+        "hitEntityUUID" to (hitEntity?.let { stringAttrOf(JAVA_GAME_API.getEntityUUID(it)) } ?: hitEntityUUID?.let { stringAttrOf(it) }),
         "sourceId" to stringAttrOf(sourceId),
     )
 }
