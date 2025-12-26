@@ -1,6 +1,6 @@
 projects:
   lucky-block-neoforge:
-    version: 1.21.1-13.0
+    version: 1.21.6-13.0
     dependencies:
       java:
         minInclusive: 21
@@ -54,5 +54,5 @@ projects:
       lucky-block:
         minInclusive: 1.0
       minecraft:
-        minInclusive: 1.9.3
-        maxExclusive: 1.10
+        minInclusive: 1.21.6
+        maxExclusive: 1.22
