@@ -92,7 +92,7 @@ type=entity,ID=lucky:lucky_projectile,pos=#bowPos,NBTTag=(
     Motion=#bowMotion(1.0,2.0),
     item=(id=splash_potion,tag=(Potion=#randList(poison,weakness,slowness,harming))),
     impact=["group(
-        type=effect,ID=#randList(19,18,2,7),range=4,amplifier=#rand(0,2),duration=30;
+        type=effect,ID=#randList(poison,weakness,slowness,harming),range=4,amplifier=#rand(0,2),duration=30;
         type=particle,ID=splashpotion,potion=#randList(poison,weakness,slowness,harming)
     )"]
 ),amount=#rand(7,10)@luck=2

@@ -11,6 +11,7 @@ import mod.lucky.common.drop.action.withBlockMode
 import mod.lucky.java.*
 import mod.lucky.java.game.*
 import mod.lucky.neoforge.game.DelayedDrop
+import mod.lucky.neoforge.game.LuckySword
 import net.minecraft.commands.CommandSource
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.arguments.ParticleArgument
@@ -230,7 +231,7 @@ object ForgeGameAPI : GameAPI {
             entity.yHeadRot = yaw.toFloat()
             entity.deltaMovement = velocity
 
-            if (sourceItem.isPresent && sourceItem.get() is BowItem) {
+            if (sourceItem.isPresent && (sourceItem.get() is BowItem || sourceItem.get() is LuckySword)) {
                 val d0 = velocity.horizontalDistance()
                 entity.yRot = ((Mth.atan2(velocity.x, velocity.z) * 180.0 / Math.PI.toFloat().toDouble()).toFloat())
                 entity.xRot = ((Mth.atan2(velocity.y, d0) * 180.0 / Math.PI.toFloat().toDouble()).toFloat())

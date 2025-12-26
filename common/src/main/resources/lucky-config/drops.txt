@@ -1,7 +1,3 @@
-/ TODO
-/ test all drops one more time
-/ test runServer
-
 / ========== TOOLS & ARMOR ==========
 
 / all wood, stone and gold tools
@@ -470,7 +466,7 @@ ID=potion,components=(
 / evil potion
 ID=splash_potion,components=(
     potion_contents=(potion="harming",custom_effects=#unluckyPotionEffects),
-    custom_name=(text="Evil Potion",color=dard_red,bold=true,italic=false)
+    custom_name=(text="Evil Potion",color=dark_red,bold=true,italic=false)
 )@luck=1
 
 / lucky items
@@ -482,7 +478,7 @@ group(
     type=item,ID=lucky:lucky_sword;
     type=item,ID=lucky:lucky_bow;
     type=item,ID=lucky:lucky_potion,components=(lucky:luck=#randList(100,-100)),amount=#rand(10,15);
-    type=entity,ID=firework_rocket,components=(
+    type=entity,ID=firework_rocket,NBTTag=(
         LifeTime=20,FireworksItem=(id=firework_rocket,Count=1,components=#randFireworksRocket)
     ),amount=20,posOffset=#circleOffset(0,2)
 )@luck=2

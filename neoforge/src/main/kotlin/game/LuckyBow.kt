@@ -28,8 +28,7 @@ class LuckyBow(registryId: MCIdentifier) : BowItem(
 ) {
     override fun releaseUsing(stack: MCItemStack, world: Level, player: LivingEntity, timeLeft: Int): Boolean {
         if (player is MCPlayerEntity) {
-            // val unlimitedArrows = player.abilities.instabuild || EnchantmentHelper.getTagEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0
-            var arrowStack = player.getProjectile(stack)
+            val arrowStack = player.getProjectile(stack)
             if (arrowStack.isEmpty) {
                 return false
             } else {
@@ -59,15 +58,6 @@ class LuckyBow(registryId: MCIdentifier) : BowItem(
                         1.0f,
                         1.0f / (DEFAULT_RANDOM.nextDouble().toFloat() * 0.4f + 1.2f) + power * 0.5f
                     )
-
-                    /*
-                    if (!unlimitedArrows && !player.abilities.instabuild) {
-                        arrowStack.shrink(1)
-                        if (arrowStack.isEmpty) {
-                            player.inventory.removeItem(arrowStack)
-                        }
-                    }
-                    */
                     return true;
                 }
             }
