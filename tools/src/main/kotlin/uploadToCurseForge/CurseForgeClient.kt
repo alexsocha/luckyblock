@@ -31,13 +31,14 @@ enum class CurseForgeGameVersionType(val id: Int) {
     MINECRAFT(1),
     JAVA(2),
     FORGE(3),
+    NEOFORGE(10150),
     FABRIC_LOADER(73247),
     LOADER_TYPE(68441), // Forge, Fabric, Rift
 }
 
 fun getCurseForgeLoaderType(loader: LuckyBlockLoader): String {
     return when(loader) {
-        LuckyBlockLoader.FORGE -> "Forge"
+        LuckyBlockLoader.NEOFORGE -> "NeoForge"
         LuckyBlockLoader.FABRIC -> "Fabric"
     }
 }

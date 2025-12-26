@@ -41,7 +41,7 @@ data class ProjectDistMeta(
 )
 
 enum class LuckyBlockLoader {
-    FORGE,
+    NEOFORGE,
     FABRIC,
 }
 
@@ -52,11 +52,14 @@ data class LuckyBlockDist(
 )
 
 fun readLuckyBlockDist(distFolder: File): LuckyBlockDist {
+    if (!distFolder.exists()) throw Exception("Folder does not exist: ${distFolder.absolutePath}")
+    if (!distFolder.isDirectory) throw Exception("Folder is not a directory: ${distFolder.absolutePath}")
+
     val distFolderName = distFolder.relativeTo(distFolder.parentFile).name
     val loader = when {
-        distFolder.isDirectory && distFolderName.startsWith("lucky-block-forge") ->
-            LuckyBlockLoader.FORGE
-        distFolder.isDirectory && distFolderName.startsWith("lucky-block-fabric") ->
+        distFolderName.startsWith("lucky-block-neoforge") ->
+            LuckyBlockLoader.NEOFORGE
+        distFolderName.startsWith("lucky-block-fabric") ->
             LuckyBlockLoader.FABRIC
         else -> throw Exception("Invalid folder name $distFolderName")
     }
