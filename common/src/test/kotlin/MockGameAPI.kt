@@ -20,12 +20,11 @@ object MockGameAPI : GameAPI {
     override fun getEnchantments(): List<Enchantment> =
         listOf(Enchantment("minecraft:sharpness", type = EnchantmentType.WEAPON, maxLevel = 4, isCurse = false))
     override fun getUsefulStatusEffects(): List<StatusEffect> =
-        listOf(StatusEffect("minecraft:speed", 1, isNegative = false, isInstant = false))
+        listOf(StatusEffect("minecraft:speed", isNegative = false, isInstant = false))
 
     override fun getEntityPos(entity: Entity): Vec3d = (entity as MockEntity).pos
     override fun getPlayerName(player: PlayerEntity): String = "Test Player"
     override fun applyStatusEffect(target: String?, targetEntity: Entity?, effectId: String, durationSeconds: Double, amplifier: Int) {}
-    override fun convertStatusEffectId(effectId: Int): String? = null
     override fun getLivingEntitiesInBox(world: World, boxMin: Vec3d, boxMax: Vec3d): List<Entity> = emptyList()
     override fun setEntityOnFire(entity: Entity, durationSeconds: Int) {}
     override fun setEntityMotion(entity: Entity, motion: Vec3d) {}

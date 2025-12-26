@@ -123,13 +123,13 @@ class Tests {
     @Test
     fun testTemplateCancelling() {
         val drop = evalSingleDrop("type=entity,nbttag=("
-            + "Drops=[\"group(a1=#bPosY,b1=[#]bPosY,c1='#'bPosY)\"],"
+            + "components=(lucky:drops=[\"group(a1=#bPosY,b1=[#]bPosY,c1='#'bPosY)\"]),"
             + "a2=#bPosY,b2='#'bPosY,"
             + "otherList=[\"group(a3=#bPosY,b3='#'bPosY)\"])",
         )
 
         val nbt: DictAttr = drop["nbttag"]
-        assertEquals("group(a1=#bPosY,b1=2,c1=#bPosY)", (nbt.getList("Drops")[0] as ValueAttr).value)
+        assertEquals("group(a1=#bPosY,b1=2,c1=#bPosY)", (nbt.getDict("components").getList("lucky:drops")[0] as ValueAttr).value)
         assertEquals(2, nbt.getValue("a2"))
         assertEquals("#bPosY", nbt.getValue("b2"))
         assertEquals("group(a3=2,b3=#bPosY)", (nbt.getList("otherList")[0] as ValueAttr).value)

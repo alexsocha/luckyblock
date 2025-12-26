@@ -7,7 +7,6 @@ import java.io.InputStream
 object MockJavaGameAPI : JavaGameAPI {
     override fun getLoaderName(): String = "test"
     override fun getModVersion() = "0.0.0-0"
-    override fun getMinecraftVersion() = "0.0.0"
     override fun getGameDir() = File("build/test-run")
 
     override fun attrToNBT(attr: Attr): NBTTag = ""
@@ -35,7 +34,6 @@ object MockJavaGameAPI : JavaGameAPI {
     override fun getEntityVelocity(entity: Entity): Vec3d = Vec3d(0.0, 0.0, 0.0)
     override fun getEntityUUID(entity: Entity): String = "123e4567-e89b-12d3-a456-426614174000"
     override fun findEntityByUUID(world: World, uuid: String): Entity? = null
-    override fun showClientMessage(textJsonStr: String) {}
     override fun getBlockId(block: Block): String? = null
     override fun getItemId(item: Item): String? = null
     override fun isValidItemId(id: String): Boolean = true
