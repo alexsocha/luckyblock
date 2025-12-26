@@ -68,16 +68,18 @@ class LuckyProjectile(
     override fun readAdditionalSaveData(tag: ValueInput) {
         super.readAdditionalSaveData(tag)
 
-        data = LuckyProjectileData(
-            trailFreqPerTick = tag.child("trail").getOrNull()?.getDoubleOr("frequency", 0.0) ?: 0.0,
-            trailDrops = dropsFromStrList(tag.child("trail").getOrNull()?.listOrEmpty("drops", Codec.STRING)?.toList() ?: emptyList()),
-            impactDrops = dropsFromStrList(tag.listOrEmpty("impact", Codec.STRING).toList()),
-            sourceId = tag.getString("sourceId").getOrNull() ?: JavaLuckyRegistry.blockId,
-        )
+        try {
+            data = LuckyProjectileData(
+                trailFreqPerTick = tag.child("trail").getOrNull()?.getDoubleOr("frequency", 0.0) ?: 0.0,
+                trailDrops = dropsFromStrList(
+                    tag.child("trail").getOrNull()?.listOrEmpty("drops", Codec.STRING)?.toList() ?: emptyList()
+                ),
+                impactDrops = dropsFromStrList(tag.listOrEmpty("impact", Codec.STRING).toList()),
+                sourceId = tag.getString("sourceId").getOrNull() ?: JavaLuckyRegistry.blockId,
+            )
 
-        val itemInput = tag.child("item").getOrNull() ?: tag.child("Item").getOrNull()
-        val stack = itemInput?.let {
-            val id = it.getString("id").getOrDefault("minecraft:invalid")
+            val itemInput = tag.child("item").getOrNull() ?: tag.child("Item").get()
+            val id = itemInput.getString("id").getOrDefault("minecraft:invalid")
             val itemKey = MCIdentifier.parse(id)
             if (!BuiltInRegistries.ITEM.containsKey(itemKey)) {
                 GAME_API.logError("Invalid item ID: '$id'")
@@ -85,11 +87,13 @@ class LuckyProjectile(
             }
             val item = BuiltInRegistries.ITEM.getOptional(itemKey).get()
             val stack = MCItemStack(item, 1)
-            it.read("components", DataComponentMap.CODEC).getOrNull()?.let { stack.applyComponents(it) }
+            itemInput.read("components", DataComponentMap.CODEC).getOrNull()?.let { stack.applyComponents(it) }
             stack.count = 1
-            stack
-        } ?: defaultDisplayItemStack
-        entityData.set(ITEM_STACK, stack)
+            entityData.set(ITEM_STACK, stack)
+        } catch (e: Exception) {
+            GAME_API.logError("Failed to read LuckyProjectile", e)
+            entityData.set(ITEM_STACK, defaultDisplayItemStack)
+        }
     }
 
     override fun addAdditionalSaveData(tag: ValueOutput) {

@@ -9,8 +9,10 @@ import mod.lucky.common.PLATFORM_API
 import mod.lucky.java.JAVA_GAME_API
 import mod.lucky.java.JavaLuckyRegistry
 import mod.lucky.java.JavaPlatformAPI
+import mod.lucky.java.game.LuckyItemValues
 import mod.lucky.neoforge.ForgeLuckyRegistry.delayedDrop
 import mod.lucky.neoforge.ForgeLuckyRegistry.luckyProjectile
+import mod.lucky.neoforge.ForgeLuckyRegistry.thrownLuckyPotion
 import mod.lucky.neoforge.game.*
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
@@ -91,17 +93,27 @@ object ForgeLuckyRegistry {
             .setShouldReceiveVelocityUpdates(true)
             .build(ResourceKey.create(Registries.ENTITY_TYPE, id))
     }
-
     val delayedDrop = entityTypeRegistry.register(MCIdentifier.parse(JavaLuckyRegistry.delayedDropId).path) { id ->
         EntityType.Builder.of(::DelayedDrop, MobCategory.MISC)
             .setTrackingRange(100)
             .setUpdateInterval(20)
             .build(ResourceKey.create(Registries.ENTITY_TYPE, id))
     }
+    val thrownLuckyPotion = entityTypeRegistry.register(MCIdentifier.parse(JavaLuckyRegistry.potionId).path) { id ->
+        EntityType.Builder.of(::ThrownLuckyPotion, MobCategory.MISC)
+            .setTrackingRange(100)
+            .setUpdateInterval(20)
+            .setShouldReceiveVelocityUpdates(true)
+            .build(ResourceKey.create(Registries.ENTITY_TYPE, id))
+    }
 
     val luckyBow = itemRegistry.register(
         MCIdentifier.parse(JavaLuckyRegistry.bowId).path,
         { id -> LuckyBow(id) }
+    )
+    val luckyPotion = itemRegistry.register(
+        MCIdentifier.parse(JavaLuckyRegistry.potionId).path,
+        { id -> LuckyPotion(id) }
     )
 
     val luckyBiomeModifierSerializer = biomeModifierRegistry.register(
@@ -152,9 +164,12 @@ fun registerAddons() {
             ForgeLuckyRegistry.addonItems[it] =
                 ForgeLuckyRegistry.itemRegistry.register(MCIdentifier.parse(it).path, { id -> LuckyBow(id) })
         }
+        addon.ids.potion?.let {
+            ForgeLuckyRegistry.addonItems[it] =
+                ForgeLuckyRegistry.itemRegistry.register(MCIdentifier.parse(it).path, { id -> LuckyPotion(id) })
+        }
         /*
         if (addon.ids.sword != null) ForgeLuckyRegistry.itemRegistry.register(MCIdentifier(addon.ids.sword!!).path) { LuckySword() }
-        if (addon.ids.potion != null) ForgeLuckyRegistry.itemRegistry.register(MCIdentifier(addon.ids.potion!!).path) { LuckyPotion() }
          */
     }
 }
@@ -172,8 +187,13 @@ class CommonModEvents {
         if (event.tabKey.equals(CreativeModeTabs.COMBAT)) {
             //event.accept(ForgeLuckyRegistry.luckySword)
             event.accept(ForgeLuckyRegistry.luckyBow)
-            //event.accept(ForgeLuckyRegistry.luckyPotion)
-            //createLuckySubItems(ForgeLuckyRegistry.luckyPotion.get(), LuckyItemValues.veryLuckyPotion, LuckyItemValues.veryUnluckyPotion).forEach { event.accept(it) }
+            event.accept(ForgeLuckyRegistry.luckyPotion)
+            createLuckySubItems(
+                ForgeLuckyRegistry.luckyPotion.get(),
+                event.parameters.holders,
+                LuckyItemValues.veryLuckyPotion,
+                LuckyItemValues.veryUnluckyPotion
+            ).forEach { event.accept(it) }
         }
 
         for (addon in JavaLuckyRegistry.addons) {
@@ -185,7 +205,7 @@ class CommonModEvents {
             if (event.tabKey.equals(CreativeModeTabs.COMBAT)) {
                 //if (addon.ids.sword != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.sword!!))!! }
                 if (addon.ids.bow != null) event.accept { ForgeLuckyRegistry.addonItems[addon.ids.bow]!!.get() }
-                //if (addon.ids.potion != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.potion!!))!! }
+                if (addon.ids.potion != null) event.accept { ForgeLuckyRegistry.addonItems[addon.ids.potion]!!.get() }
             }
         }
     }
@@ -200,6 +220,7 @@ class ForgeMod(modEventBus: IEventBus, modContainer: ModContainer) {
             private fun registerEntityRenderers(event: RegisterRenderers) {
                 event.registerEntityRenderer(luckyProjectile.get(), ::LuckyProjectileRenderer)
                 event.registerEntityRenderer(delayedDrop.get(), ::DelayedDropRenderer)
+                event.registerEntityRenderer(thrownLuckyPotion.get(), ::ThrownLuckyPotionRenderer)
             }
 
             @SubscribeEvent

@@ -63,7 +63,7 @@ class DelayedDrop(
                 context = DropContext.fromAttr(dropContextAttr, level())
             )
         } catch (e: Exception) {
-            GAME_API.logError("Failed to parse DelayedDrop: $e")
+            GAME_API.logError("Failed to read DelayedDrop", e)
             data = DelayedDropData.createDefault(level())
         }
     }

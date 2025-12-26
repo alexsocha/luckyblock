@@ -1,7 +1,7 @@
 / TODO
 / test all structures
-/ fix lucky potion & lucky sword
-/ test all lucky bow/sword/potion drops
+/ fix lucky sword
+/ test all lucky sword drops
 / test all drops one more time
 / test runServer
 

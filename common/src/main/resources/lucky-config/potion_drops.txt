@@ -68,17 +68,17 @@ type=entity,ID=experience_bottle,NBTTag=(
 / enchanting books
 group(
     type=item,ID=anvil;
-    ID=enchanted_book,NBTTag=(StoredEnchantments=#randEnchantment),posOffset=#circleOffset(0.0,2.0),amount=#rand(7,10);
+    ID=enchanted_book,components=(stored_enchantments=#randEnchantment),posOffset=#circleOffset(0.0,2.0),amount=#rand(7,10);
     type=particle,ID=splashpotion,potion=strength
 )@luck=2
 
 / positive potions
 group(
-    type=entity,ID=potion,NBTTag=(
-        Item=(id=splash_potion,tag=(Potion=#randList(
+    type=entity,ID=splash_potion,NBTTag=(
+        Item=(id=splash_potion,components=(potion_contents=(potion=#randList(
             night_vision,leaping,fire_resistance,swiftness,
             water_breathing,healing,regeneration,strength
-        )),Count=1),
+        ))),Count=1),
         Motion=#motionFromDirection(#rand(0,360),-70,0.4)
     ),amount=10
 )@luck=2
@@ -162,10 +162,10 @@ group(
 
 / negative potions
 group(
-    type=entity,ID=potion,NBTTag=(
-        Item=(id=splash_potion,tag=(Potion=#randList(
+    type=entity,ID=splash_potion,NBTTag=(
+        Item=(id=splash_potion,components=(potion_contents=(potion=#randList(
             slowness,harming,poison,weakness
-        )),Count=1),
+        ))),Count=1),
         Motion=#motionFromDirection(#rand(0,360),-70,0.4)
     ),amount=10
 )@luck=-2

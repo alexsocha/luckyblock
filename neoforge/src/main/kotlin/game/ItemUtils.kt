@@ -34,16 +34,21 @@ fun createLuckyTooltip(stack: MCItemStack, access: RegistryAccess): List<MCChatC
     return listOf(nameTooltip)
 }
 
-fun createLuckySubItems(item: MCItem, access: HolderLookup.Provider): List<MCItemStack> {
+fun createLuckySubItems(
+    item: MCItem,
+    access: HolderLookup.Provider,
+    veryLuckyText: String = LuckyItemValues.veryLuckyBlock,
+    veryUnluckyText: String = LuckyItemValues.veryUnluckyBlock,
+): List<MCItemStack> {
     val luckyStack = MCItemStack(item, 1)
     val luckyNbt = JAVA_GAME_API.attrToNBT(LuckyItemStackData(luck=80).toAttr()) as CompoundTag
     luckyStack.applyComponents(nbtToComponents(luckyNbt, access))
-    luckyStack.set(DataComponents.CUSTOM_NAME, MCChatComponent.translatable(LuckyItemValues.veryLuckyBlock))
+    luckyStack.set(DataComponents.CUSTOM_NAME, MCChatComponent.translatable(veryLuckyText))
 
     val unluckyStack = MCItemStack(item, 1)
     val unluckyNbt = JAVA_GAME_API.attrToNBT(LuckyItemStackData(luck=-80).toAttr()) as CompoundTag
     unluckyStack.applyComponents(nbtToComponents(unluckyNbt, access))
-    unluckyStack.set(DataComponents.CUSTOM_NAME, MCChatComponent.translatable(LuckyItemValues.veryUnluckyBlock))
+    unluckyStack.set(DataComponents.CUSTOM_NAME, MCChatComponent.translatable(veryUnluckyText))
 
     return listOf(luckyStack, unluckyStack)
 }

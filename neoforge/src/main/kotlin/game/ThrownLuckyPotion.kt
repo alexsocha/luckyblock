@@ -1,27 +1,26 @@
 package mod.lucky.neoforge.game
 
+import com.mojang.serialization.Codec
+import mod.lucky.common.GAME_API
+import mod.lucky.common.drop.dropsFromStrList
 import mod.lucky.neoforge.*
 import mod.lucky.java.*
+import mod.lucky.java.game.LuckyProjectileData
 import mod.lucky.java.game.ThrownLuckyPotionData
 import mod.lucky.java.game.onImpact
-import mod.lucky.java.game.readFromTag
 import mod.lucky.java.game.writeToTag
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
-import net.minecraft.network.FriendlyByteBuf
 
-import net.minecraft.network.protocol.Packet
-import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.projectile.ItemSupplier
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile
+import net.minecraft.world.level.storage.ValueInput
+import net.minecraft.world.level.storage.ValueOutput
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
-import net.minecraftforge.common.ForgeHooks
-import net.minecraftforge.entity.IEntityAdditionalSpawnData
 
-class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier, IEntityAdditionalSpawnData {
+class ThrownLuckyPotion : ThrowableItemProjectile {
     private var data: ThrownLuckyPotionData
 
     constructor(
@@ -36,8 +35,9 @@ class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier, IEntityAddition
         world: MCWorld,
         user: LivingEntity,
         data: ThrownLuckyPotionData,
+        itemStack: MCItemStack,
         type: EntityType<ThrownLuckyPotion> = ForgeLuckyRegistry.thrownLuckyPotion.get(),
-    ) : super(type, user, world) {
+    ) : super(type, user, world, itemStack) {
         this.data = data
     }
 
@@ -46,39 +46,40 @@ class ThrownLuckyPotion : ThrowableItemProjectile, ItemSupplier, IEntityAddition
         if (hitResult.type != HitResult.Type.MISS) {
             if (!isClientWorld(level())) {
                 val hitEntity: MCEntity? = (hitResult as? EntityHitResult)?.entity
-                data.onImpact(level(), this, owner, hitEntity)
+                data.onImpact(level(), this, getOwner(), hitEntity)
             }
             remove(RemovalReason.DISCARDED)
         }
     }
 
-    override fun readAdditionalSaveData(tag: CompoundTag) {
-        (JAVA_GAME_API.readNBTKey(tag, "itemLuckyPotion") as? CompoundTag?)?.let {
-            JAVA_GAME_API.writeNBTKey(tag, "Item", it)
-        }
+    override fun readAdditionalSaveData(tag: ValueInput) {
         super.readAdditionalSaveData(tag)
-        data = ThrownLuckyPotionData.readFromTag(tag)
+        try {
+            data = ThrownLuckyPotionData(
+                customDrops = dropsFromStrList(tag.child("impact").get().list("drops", Codec.STRING).get().toList()),
+                luck = tag.getIntOr("luck", 0),
+                sourceId = tag.getStringOr("sourceId", JavaLuckyRegistry.potionId),
+            )
+        } catch (e: java.lang.Exception) {
+            GAME_API.logError("Failed to read LuckyPotion", e)
+            data = ThrownLuckyPotionData()
+        }
     }
 
-    override fun addAdditionalSaveData(tag: CompoundTag) {
+    override fun addAdditionalSaveData(tag: ValueOutput) {
         super.addAdditionalSaveData(tag)
-        data.writeToTag(tag)
+        val parentTag = CompoundTag()
+        data.writeToTag(parentTag)
+        tag.store(parentTag)
     }
 
-    override fun getGravity(): Float {
-        return 0.05f
+    override fun getDefaultGravity(): Double {
+        return 0.05
     }
 
     override fun getDefaultItem(): MCItem {
         return ForgeLuckyRegistry.luckyPotion.get()
     }
-
-    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> {
-        return ForgeHooks.getEntitySpawnPacket(this)
-    }
-
-    override fun writeSpawnData(buffer: FriendlyByteBuf?) {}
-    override fun readSpawnData(additionalData: FriendlyByteBuf?) {}
 }
 
 @OnlyInClient

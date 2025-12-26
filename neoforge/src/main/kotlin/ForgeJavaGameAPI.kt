@@ -4,19 +4,16 @@ import mod.lucky.common.*
 import mod.lucky.common.Random
 import mod.lucky.common.attribute.*
 import mod.lucky.java.*
-import net.minecraft.core.Holder
 import net.minecraft.core.HolderLookup
-import net.minecraft.core.RegistryAccess
 import net.minecraft.core.component.DataComponentMap
-import net.minecraft.core.component.PatchedDataComponentMap
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.LongArrayTag
 import net.minecraft.nbt.NbtAccounter
 import net.minecraft.nbt.NbtIo
 import net.minecraft.nbt.NbtOps
+import net.minecraft.resources.RegistryOps
 import net.minecraft.resources.ResourceKey
-import net.minecraft.util.ProblemReporter.ScopedCollector
 import net.minecraft.util.datafix.fixes.ItemIdFix
 import net.minecraft.util.datafix.fixes.ItemStackTheFlatteningFix
 import net.minecraft.world.entity.projectile.Arrow
@@ -25,9 +22,6 @@ import net.minecraft.world.item.enchantment.Enchantments
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.ChestBlockEntity
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate
-import net.minecraft.world.level.storage.TagValueInput
-import net.minecraft.world.level.storage.TagValueOutput
-import net.minecraft.world.level.storage.ValueInput
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
 import net.neoforged.fml.loading.FMLLoader
@@ -45,8 +39,9 @@ fun isClientWorld(world: MCIWorld): Boolean = world.isClientSide
 
 fun nbtToComponents(tag: CompoundTag, access: HolderLookup.Provider): DataComponentMap {
     try {
+        val ops = RegistryOps.create(NbtOps.INSTANCE, access)
         return DataComponentMap.CODEC
-            .parse(NbtOps.INSTANCE, tag)
+            .parse(ops, tag)
             .getOrThrow()
     } catch (e: Exception) {
         GAME_API.logError("Failed to parse NBT: ${e}")
@@ -56,8 +51,9 @@ fun nbtToComponents(tag: CompoundTag, access: HolderLookup.Provider): DataCompon
 
 fun componentsToNbt(components: DataComponentMap, access: HolderLookup.Provider): CompoundTag {
     try {
+        val ops = RegistryOps.create(NbtOps.INSTANCE, access)
         return (DataComponentMap.CODEC
-            .encodeStart(NbtOps.INSTANCE, components)
+            .encodeStart(ops, components)
             .result() as Optional<CompoundTag>)
             .orElseThrow()
     } catch (e: Exception) {
