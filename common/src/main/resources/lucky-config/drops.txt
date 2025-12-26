@@ -1,6 +1,4 @@
 / TODO
-/ fix lucky sword
-/ test all lucky sword drops
 / test all drops one more time
 / test runServer
 

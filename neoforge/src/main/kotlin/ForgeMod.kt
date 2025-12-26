@@ -107,6 +107,10 @@ object ForgeLuckyRegistry {
             .build(ResourceKey.create(Registries.ENTITY_TYPE, id))
     }
 
+    val luckySword = itemRegistry.register(
+        MCIdentifier.parse(JavaLuckyRegistry.swordId).path,
+        { id -> LuckySword(id) }
+    )
     val luckyBow = itemRegistry.register(
         MCIdentifier.parse(JavaLuckyRegistry.bowId).path,
         { id -> LuckyBow(id) }
@@ -160,6 +164,10 @@ fun registerAddons() {
                     id -> LuckyBlockItem(ForgeLuckyRegistry.addonBlocks[blockId]!!.get(), id)
                 }
         }
+        addon.ids.sword?.let {
+            ForgeLuckyRegistry.addonItems[it] =
+                ForgeLuckyRegistry.itemRegistry.register(MCIdentifier.parse(it).path, { id -> LuckySword(id) })
+        }
         addon.ids.bow?.let {
             ForgeLuckyRegistry.addonItems[it] =
                 ForgeLuckyRegistry.itemRegistry.register(MCIdentifier.parse(it).path, { id -> LuckyBow(id) })
@@ -168,9 +176,6 @@ fun registerAddons() {
             ForgeLuckyRegistry.addonItems[it] =
                 ForgeLuckyRegistry.itemRegistry.register(MCIdentifier.parse(it).path, { id -> LuckyPotion(id) })
         }
-        /*
-        if (addon.ids.sword != null) ForgeLuckyRegistry.itemRegistry.register(MCIdentifier(addon.ids.sword!!).path) { LuckySword() }
-         */
     }
 }
 
@@ -185,7 +190,7 @@ class CommonModEvents {
             ).forEach { event.accept(it) }
         }
         if (event.tabKey.equals(CreativeModeTabs.COMBAT)) {
-            //event.accept(ForgeLuckyRegistry.luckySword)
+            event.accept(ForgeLuckyRegistry.luckySword)
             event.accept(ForgeLuckyRegistry.luckyBow)
             event.accept(ForgeLuckyRegistry.luckyPotion)
             createLuckySubItems(
@@ -203,7 +208,7 @@ class CommonModEvents {
                 }
             }
             if (event.tabKey.equals(CreativeModeTabs.COMBAT)) {
-                //if (addon.ids.sword != null) event.accept { ForgeRegistries.ITEMS.getValue(MCIdentifier(addon.ids.sword!!))!! }
+                if (addon.ids.sword != null) event.accept { ForgeLuckyRegistry.addonItems[addon.ids.sword]!!.get() }
                 if (addon.ids.bow != null) event.accept { ForgeLuckyRegistry.addonItems[addon.ids.bow]!!.get() }
                 if (addon.ids.potion != null) event.accept { ForgeLuckyRegistry.addonItems[addon.ids.potion]!!.get() }
             }
