@@ -44,6 +44,18 @@ fun getCurseForgeLoaderType(loader: LuckyBlockLoader): String {
 }
 
 @Serializable
+data class CurseForgeProject(
+    val slug: String,
+    val projectID: String,
+    val type: String
+)
+
+@Serializable
+data class CurseForgeRelations(
+    val projects: List<CurseForgeProject>
+)
+
+@Serializable
 data class CurseForgeUploadMetadata(
     val changelog: String, // Can be HTML or markdown if changelogType is set.
     val changelogType: String = "text", // One of "text", "html", "markdown"
@@ -51,6 +63,13 @@ data class CurseForgeUploadMetadata(
     val parentFileID: Int? = null, // Optional: The parent file of this file.
     val gameVersions: List<Int>, // A list of supported game versions, see the Game Versions API for details. Not supported if parentFileID is provided.
     val releaseType: String, // One of "alpha", "beta", "release".
+    val relations: CurseForgeRelations? = null
+)
+
+val KOTLIN_FOR_FORGE = CurseForgeProject(
+    slug = "kotlin-for-forge",
+    projectID = "351264",
+    type = "requiredDependency"
 )
 
 class CurseForgeClient(private val token: String) {
