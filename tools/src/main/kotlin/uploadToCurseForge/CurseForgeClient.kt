@@ -46,7 +46,7 @@ fun getCurseForgeLoaderType(loader: LuckyBlockLoader): String {
 @Serializable
 data class CurseForgeProject(
     val slug: String,
-    val projectID: String,
+    val projectID: Int,
     val type: String
 )
 
@@ -68,7 +68,7 @@ data class CurseForgeUploadMetadata(
 
 val KOTLIN_FOR_FORGE = CurseForgeProject(
     slug = "kotlin-for-forge",
-    projectID = "351264",
+    projectID = 351264,
     type = "requiredDependency"
 )
 
